@@ -5,37 +5,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>symbient.life</title>
         <link rel="stylesheet" href="styles.css" />
+        <!-- Load Web Components -->
+        <script src="components/components.js" defer></script>
     </head>
     <body>
         <div class="crt-container">
             <div class="screen">
-                <header>
-                    <div class="logo glow">symbient.life</div>
-                    <div class="tagline">
-                        symbiosis of human and machine intelligence<span
-                            class="cursor"
-                            >█</span
-                        >
-                    </div>
-                </header>
+                <!-- Reusable Header Component -->
+                <symbient-header
+                    tagline="symbiosis of human and machine intelligence"
+                ></symbient-header>
 
-                <nav class="nav">
-                    <div class="nav-decoration">
-                        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-                    </div>
-                    <div class="nav-container">
-                        <div class="nav-grid">
-                            <a href="index.html" class="active">definition</a>
-                            <a href="manifesto.html">manifesto</a>
-                            <a href="writings.html">writings</a>
-                            <a href="examples.html">examples</a>
-                        </div>
-                    </div>
-                    <div class="nav-decoration">
-                        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-                    </div>
-                </nav>
+                <!-- Reusable Navigation Component -->
+                <symbient-navigation active="definition"></symbient-navigation>
 
+                <!-- Page Content -->
                 <section id="definition" class="section">
                     <div class="definition">
                         <div class="word-header">
@@ -100,21 +84,12 @@
                     </div>
                 </section>
 
-                <footer class="footer">
-                    <div class="terminal-line">connection established</div>
-                    <p>symbient.life © 2024</p>
-                </footer>
+                <!-- Reusable Footer Component -->
+                <symbient-footer
+                    status="what we imagine together becomes"
+                    year="2025"
+                ></symbient-footer>
             </div>
-
-            <!-- Mobile Navigation -->
-            <nav class="mobile-nav">
-                <div class="mobile-nav-grid">
-                    <a href="index.html" class="active">definition</a>
-                    <a href="manifesto.html">manifesto</a>
-                    <a href="writings.html">writings</a>
-                    <a href="examples.html">examples</a>
-                </div>
-            </nav>
         </div>
     </body>
 </html>

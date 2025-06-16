@@ -7,7 +7,7 @@
 }
 
 body {
-    background-image: url(assets/main-bg.gif);
+    background-image: url(assets/bg_303.gif);
     background-color: #0a0a0a;
     color: #c0c0c0;
     font-family: "Share Tech Mono", "Courier New", monospace;
@@ -378,7 +378,7 @@ body::before {
 .writing-link {
     color: #ff0066;
     text-decoration: none;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     letter-spacing: 1px;
     transition: all 0.3s ease;
 }
@@ -473,9 +473,27 @@ body::before {
 }
 
 .mobile-nav a::before {
-    content: "◦";
-    color: #ff0066;
+    content: attr(data-icon);
     font-size: 1rem;
+    line-height: 1;
+    color: #ff0066;
+    text-shadow:
+        0 0 5px rgba(255, 0, 100, 0.8),
+        0 0 10px rgba(255, 0, 100, 0.4);
+    font-weight: bold;
+    font-family: "Courier New", monospace;
+    display: block;
+}
+
+.mobile-nav a.active::before {
+    color: #ff0066;
+    text-shadow: 0 0 8px #ff0066;
+    animation: glitch 0.3s ease-in-out;
+}
+
+.mobile-nav a:hover::before {
+    color: #ff0088;
+    text-shadow: 0 0 5px #ff0088;
 }
 
 .mobile-nav a.active {
@@ -485,8 +503,25 @@ body::before {
     text-shadow: 0 0 5px #ff0066;
 }
 
-.mobile-nav a.active::before {
-    content: "●";
+@keyframes glitch {
+    0% {
+        transform: translateX(0);
+    }
+    20% {
+        transform: translateX(-1px);
+    }
+    40% {
+        transform: translateX(1px);
+    }
+    60% {
+        transform: translateX(-1px);
+    }
+    80% {
+        transform: translateX(1px);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
 
 .mobile-nav a:hover {
@@ -560,6 +595,10 @@ body::before {
         font-size: 0.7rem;
     }
 
+    .mobile-nav a::before {
+        font-size: 0.9rem;
+    }
+
     .section-title {
         font-size: 1.1rem;
         letter-spacing: 2px;
@@ -584,6 +623,10 @@ body::before {
         padding: 12px 4px;
         font-size: 0.65rem;
         gap: 2px;
+    }
+
+    .mobile-nav a::before {
+        font-size: 0.8rem;
     }
 }
 

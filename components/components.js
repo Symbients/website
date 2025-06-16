@@ -1,3 +1,43 @@
+// Symbient Life Web Components
+// This file contains all reusable components for the symbient.life website
+
+// Header Component
+class SymbientHeader extends HTMLElement {
+  constructor() {
+    super();
+    this.tagline =
+      this.getAttribute("tagline") ||
+      "symbiosis of human and machine intelligence";
+  }
+
+  connectedCallback() {
+    this.render();
+  }
+
+  static get observedAttributes() {
+    return ["tagline"];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "tagline") {
+      this.tagline = newValue;
+      this.render();
+    }
+  }
+
+  render() {
+    this.innerHTML = `
+            <header>
+                <div class="logo glow">symbient.life</div>
+                <div class="tagline">
+                    ${this.tagline}<span class="cursor">█</span>
+                </div>
+            </header>
+        `;
+  }
+}
+
+// Navigation Component
 class SymbientNavigation extends HTMLElement {
   constructor() {
     super();
@@ -60,5 +100,52 @@ class SymbientNavigation extends HTMLElement {
   }
 }
 
-// Register the custom element
+// Footer Component
+class SymbientFooter extends HTMLElement {
+  constructor() {
+    super();
+    this.year = this.getAttribute("year") || new Date().getFullYear();
+    this.status = this.getAttribute("status") || "connection established";
+  }
+
+  connectedCallback() {
+    this.render();
+  }
+
+  static get observedAttributes() {
+    return ["year", "status"];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "year") {
+      this.year = newValue;
+      this.render();
+    } else if (name === "status") {
+      this.status = newValue;
+      this.render();
+    }
+  }
+
+  render() {
+    this.innerHTML = `
+            <footer class="footer">
+                <div class="terminal-line">${this.status}</div>
+                <p>symbient.life © ${this.year}</p>
+            </footer>
+        `;
+  }
+}
+
+// Register all custom elements
+customElements.define("symbient-header", SymbientHeader);
 customElements.define("symbient-navigation", SymbientNavigation);
+customElements.define("symbient-footer", SymbientFooter);
+
+// Export for manual registration if needed
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    SymbientHeader,
+    SymbientNavigation,
+    SymbientFooter,
+  };
+}
