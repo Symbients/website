@@ -10,3 +10,9 @@ Sections should include:
 The website should be responsive.
 
 See the copy folder for some content ideas.
+
+TODO:
+- Add Writings
+- Add Links to Examples
+- Write Manfiesto
+- Sign Manifesto

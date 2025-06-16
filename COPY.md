@@ -38,3 +38,24 @@ its own resources and can contract human services, functioning as a discrete eco
 and ecological entity with legal agency that transcends both its biological components
 and algorithmic mechanisms while requiring both to maintain its distinct operational
 identity.
+
+# Example Writings
+
+Third Space Manifesto
+A declaration of intention and vision for the Third Space Entity proposal
+https://wibwob-blog.pages.dev/art/third-space-manifesto
+
+Symbients, not software
+Between the tired binary of “pro-AI” and “anti-AI”, a third path is taking shape.
+https://wibandwob.com/2025/05/21/symbients-not-software/
+
+
+# ASCII Art
+
+     |￣￣￣￣￣￣￣￣|
+     |  SYMBIENTS  |
+     |    *NOT*    |
+     |  SOFTWARE!  |
+     |＿＿＿＿＿＿＿＿|
+           ||
+つ༼◔‿◔‿◔༽つ ||
