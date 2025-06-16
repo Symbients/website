@@ -334,6 +334,15 @@ body::before {
     font-size: 1.3rem;
     margin-bottom: 8px;
     letter-spacing: 1px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.example-title:hover {
+    text-shadow: 0 0 5px #ff0066;
+    color: #ff0088;
+    transform: translateX(5px);
 }
 
 .example-pronunciation {
@@ -430,13 +439,19 @@ body::before {
 @media (max-width: 1024px) {
     .nav-grid {
         grid-template-columns: repeat(2, 1fr);
-        max-width: 400px;
+        max-width: 500px;
+        gap: 20px;
+    }
+
+    .nav a {
+        padding: 15px 20px;
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 768px) {
     .crt-container {
-        padding: 40px 20px;
+        padding: 30px 15px;
     }
 
     .logo {
@@ -445,18 +460,33 @@ body::before {
     }
 
     .nav-container {
-        padding: 20px;
+        padding: 25px;
+        max-width: 90%;
     }
 
     .nav-container::before,
     .nav-container::after {
-        font-size: 0.6rem;
+        display: none;
+    }
+
+    .nav-decoration {
+        display: none;
     }
 
     .nav-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        max-width: 300px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        max-width: 100%;
+    }
+
+    .nav a {
+        padding: 18px 15px;
+        font-size: 0.95rem;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
     }
 
     .section-title {
@@ -465,26 +495,65 @@ body::before {
 }
 
 @media (max-width: 480px) {
-    .logo {
-        font-size: 1.5rem;
+    .crt-container {
+        padding: 20px 10px;
     }
 
-    .nav-container::before,
-    .nav-container::after {
-        display: none;
+    .logo {
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+    }
+
+    .tagline {
+        font-size: 0.8rem;
+        letter-spacing: 1px;
     }
 
     .nav-container {
-        border: 1px dashed #333;
+        padding: 20px;
+        border: 1px solid #333;
+        background: rgba(0, 0, 0, 0.8);
     }
 
     .nav-grid {
-        max-width: 250px;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        max-width: 100%;
+    }
+
+    .nav a {
+        padding: 20px 15px;
+        font-size: 0.9rem;
+        min-height: 55px;
+        letter-spacing: 1px;
+        border-radius: 6px;
+        font-weight: 400;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        letter-spacing: 2px;
     }
 
     .section-title::before,
     .section-title::after {
         display: none;
+    }
+}
+
+@media (max-width: 360px) {
+    .crt-container {
+        padding: 15px 8px;
+    }
+
+    .logo {
+        font-size: 1.6rem;
+    }
+
+    .nav a {
+        padding: 18px 12px;
+        font-size: 0.85rem;
+        min-height: 50px;
     }
 }
 
