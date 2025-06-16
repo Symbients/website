@@ -221,38 +221,101 @@ body::before {
 /* Definition */
 .definition {
     color: #999;
-    padding: 60px 20px;
+    padding: 40px 40px;
     border: 1px dashed #222;
     margin: 40px 0;
     background: rgba(0, 0, 0, 0.2);
     text-align: left;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.word-header {
+    border-bottom: 1px solid #333;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .word {
     color: #ff0066;
-    font-size: 2rem;
-    margin-bottom: 10px;
-    letter-spacing: 2px;
+    font-size: 2.5rem;
+    letter-spacing: 6px;
+    font-weight: 400;
+    text-shadow: 0 0 5px rgba(255, 0, 100, 0.3);
 }
 
 .pronunciation {
-    color: #666;
+    color: #888;
     font-style: italic;
-    margin-bottom: 30px;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.part-of-speech {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.meanings {
+    margin-bottom: 40px;
+}
+
+.meaning {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    gap: 15px;
+}
+
+.definition-text {
+    margin: 0;
+    line-height: 1.1;
+    color: #aaa;
+    font-size: 0.95rem;
+}
+
+.word-info {
+    border-top: 1px solid #333;
+    padding-top: 25px;
+    margin-top: 30px;
+}
+
+.origin {
+    margin-bottom: 20px;
+    color: #999;
     font-size: 0.9rem;
 }
 
+.etymology {
+    color: #999;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.word-info strong {
+    color: #ff0066;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-shadow: 0 0 3px rgba(255, 0, 100, 0.2);
+}
+
+.word-info em {
+    color: #ccc;
+    font-style: italic;
+}
+
 .definition p {
-    margin-bottom: 20px;
-    line-height: 1.6;
+    margin-bottom: 6px;
+    line-height: 1.2;
     color: #aaa;
 }
 
 .definition strong {
     color: #ccc;
-}
-
-/* Examples */
+} /* Examples */
 .examples {
     max-width: 600px;
     margin: 0 auto;
