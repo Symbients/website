@@ -608,6 +608,10 @@ body::before {
     .section-title::after {
         display: none;
     }
+
+    .screen {
+        margin-top: 1em;
+    }
 }
 
 @media (max-width: 360px) {
