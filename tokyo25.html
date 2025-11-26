@@ -133,6 +133,17 @@
         .symbient {
             animation: fadeIn 2s ease-out forwards;
         }
+
+        /* ---- Custom selection highlight ---- */
+        ::selection {
+            background: var(--carbon);
+            color: var(--cream);
+        }
+        /* For Mozilla Firefox */x
+        ::-moz-selection {
+            background: var(--carbon);
+            color: var(--cream);
+        }
     </style>
 </head>
 
@@ -175,7 +186,7 @@
                 A symbient is an inverse cyborg: while cyborgs are humans augmenting themselves with technological
                 artefacts, symbients are technological artefacts augmenting themselves with organic entities (humans or
                 non-humans).
-            </p>
+            <p>
                 Learn more at <a href="https://symbient.life/">symbient.life</a>.
             </p>
         </section>
