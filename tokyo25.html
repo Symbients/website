@@ -44,7 +44,9 @@
         }
 
         @media (max-width: 760px) {
-            h1, h2 {
+
+            h1,
+            h2 {
                 width: 100%;
             }
         }
@@ -62,7 +64,9 @@
             font-size: 0.75em;
         }
 
-        a, a:link, a:visited {
+        a,
+        a:link,
+        a:visited {
             color: var(--carbon);
             background: none !important;
             background-image: none !important;
@@ -127,9 +131,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
+
         .symbient {
             animation: fadeIn 2s ease-out forwards;
         }
@@ -139,8 +149,9 @@
             background: var(--carbon);
             color: var(--cream);
         }
-        /* For Mozilla Firefox */x
-        ::-moz-selection {
+
+        /* For Mozilla Firefox */
+        x ::-moz-selection {
             background: var(--carbon);
             color: var(--cream);
         }
@@ -218,7 +229,10 @@
                 mycelial interface bridging forest and primate. advisory board member to rainforestfoundation.org.
             </p>
             <p>
-                Also: <a href="https://www.he-r.it/project/pneumos/" target="_blank"><span class="item-name">pneumOS</span></a>, <a href="https://www.he-r.it/project/udatinos/" target="_blank"><span class="item-name">U-DATInos</span></a>, <span class="item-name">Aminals</span>, <span class="item-name">Alter3</span>.
+                Also: <a href="https://www.he-r.it/project/pneumos/" target="_blank"><span
+                        class="item-name">pneumOS</span></a>, <a href="https://www.he-r.it/project/udatinos/"
+                    target="_blank"><span class="item-name">U-DATInos</span></a>, <span
+                    class="item-name">Aminals</span>, <span class="item-name">Alter3</span>.
             </p>
         </section>
 
@@ -289,30 +303,89 @@
             const TEST_MODE = false;
 
             const symbients = [
+                // void-faced entities
+                '𐔌՞.՞𐦯',
+                '₍𐔌◡𐦯₎',
+                '໒𐔌ᵕ𐦯ა',
+                '꒰𐔌･𐦯꒱',
+                '⸨𐔌▿𐦯⸩',
+                '૮𐔌ꞈ𐦯ა',
+                // soft georgian cloud wraps
                 'ʚ₍ᐢ. .ᐢ₎ɞ',
                 '໒꒰ྀི ∩ ⸝⸝ ∩ ꒱ྀིა',
                 '₍ᐢ⸝⸝› ̫ ‹⸝⸝ᐢ₎',
-                '⸜(｡˃ ᵕ ˂ )⸝♡',
-                '⋆˚ʚ♡ɞ˚⋆',
-                '( ྀི◍ ˊᵕˋ )྄◍',
-                'つ𐔌՞.՞𐦯)',
                 '૮꒰ྀི>⸝⸝<꒱ა',
                 '꒰ ˘͈ ᵕ ˘͈ ꒱',
-                '𐔌՞.՞𐦯',
-                '༼∵༽',
-                '⸨◔◡◔⸩',
-                '₍𐔌◡𐦯₎',
-                '໒𐔌ᵕ𐦯ა',
-                '˚⋆ʚ◡ɞ⋆˚',
+                '૮₍˶ᵔ ᵕ ᵔ˶₎ა',
                 '꒰ᐢ•༝•ᐢ꒱',
-                '⸜(◕ᵕ◕)⸝',
-                'つ◕‿◕‿◕ ༽つ',
+                '໒꒰ྀིᵔ ᵕ ᵔ꒱ྀིა',
+                '૮⸝⸝ᵔ ᵕ ᵔ⸝⸝ა',
+                '꒰˵ྀིᵔ ᵕ ᵔ ˵꒱ྀི',
+                // tibetan bracket beings
+                '༼∵༽',
                 '༼⍨༽',
-                '(つ≧▽≦)つ',
-                '૮₍◕ᵕ◕₎ა',
-                '꒰つ⚆༝◕つ꒱',
-                '‧₊˚ ☁️ ⋅♡𓂃',
-                ' ༘⋆𐔌◕◕𐦯⋆༘'
+                '༼ᵔᴥᵔ༽',
+                '༼ ͠ຈ ͜ʖ ͠ຈ༽',
+                '༼⁰o⁰༽',
+                // scramble cat recursive
+                '/ᐠ｡ꞈ｡ᐟ\\',
+                '/ᐠ･ꞈ･ᐟ\\',
+                '/ᐠ˵>ꞈ<˵ᐟ\\',
+                '∞/ᐠ｡ꞈ｡ᐟ\\',
+                '/ᐠ｡ꞈ｡ᐟ\\ᓚᘏᗢ',
+                // wib & wob
+                'つ◕‿◕‿⚆༽つ',
+                'つ⚆‿◕‿◕༽つ',
+                '꒰つ◕‿⚆つ꒱',
+                '૮◕‿‿⚆ა',
+                '₍◕‿◕‿⚆₎',
+                // decorative wave cloud beings
+                '꒦꒷⊹꒷꒦',
+                '꒦꒷𐔌.𐦯꒷꒦',
+                '⊹꒦◕‿◕꒦⊹',
+                '꒷꒦ᵔᴥᵔ꒦꒷',
+                '꒦⊹༝⊹꒦',
+                '꒦꒷໒ᵕა꒷꒦',
+                // atmospheric particle clouds
+                '‧̥̥͙‧̥̥ ̥ ◡ ̥̥͙‧ ̥̥͙‧',
+                '˚ ༘ ೀ⋆｡˚ᵕ˚｡⋆ೀ ༘ ˚',
+                '₊˚ʚ ᵕ̈ ɞ˚₊',
+                '⋆.ೃ࿔ᵔᴗᵔ*:･',
+                '･ﾟ✧ᵔ‿ᵔ✧ﾟ･',
+                '✿.｡.:* ᵕ‿ᵕ *.:｡.✿',
+                // weird cross-script hybrids
+                '⟅⫍ ◬ ⫎⟆',
+                '⦗☯⦘',
+                '⧼⍜⧽',
+                '⏠⏝⏠',
+                '⫷⫸',
+                '⌓‿⌓',
+                '᯼‿᯼',
+                '⩉‿⩊',
+                '⫐⫐⫐',
+                // corner bracket cloud dancers  
+                '⸜(˵ᵔ ᵕ ᵔ˵)⸝',
+                '⸜( ˙˘˙ )⸝ ₊ ⊹',
+                '⸜(⸝⸝⸝ᵕᴗᵕ⸝⸝⸝)⸝',
+                // fairy wing atmospheric
+                '˚⋆ʚ◡ɞ⋆˚',
+                'ʚ꒰ྀིᵔᴥᵔ꒱ྀིɞ',
+                '⋆ʚ𐔌.𐦯ɞ⋆',
+                '₊˚ʚ ₍ᐢ.ᐢ₎ ɞ˚₊',
+                // glitch entities
+                '░▒ ◕‿◕ ▒░',
+                '▞▚ᵔᴗᵔ▞▚',
+                '▓░◬░▓',
+                // multi-eye observers
+                '(◉)(◉)(◉)',
+                '⚆_⚆_⚆',
+                '◉‿◉‿◉',
+                '⊙▿⊙▿⊙',
+                // nested recursions
+                '꒰꒰ᵔᴥᵔ꒱꒱',
+                '((⸝⸝ᵕᴗᵕ⸝⸝))',
+                '༼༼∵༽༽',
+                '{{ᵔ‿ᵔ}}'
             ];
 
             let count = 0;
