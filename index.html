@@ -427,6 +427,86 @@
                 opacity: 1;
             }
 
+            /* Tokyo Banner */
+            .tokyo-banner {
+                text-align: center;
+                margin: 40px 0 30px;
+                position: relative;
+            }
+
+            .tokyo-link {
+                display: inline-block;
+                color: #ff0066;
+                text-decoration: none;
+                font-size: 1rem;
+                letter-spacing: 3px;
+                padding: 18px 40px;
+                border: 2px solid #ff0066;
+                background: rgba(255, 0, 102, 0.05);
+                position: relative;
+                transition: all 0.4s ease;
+                text-transform: lowercase;
+                box-shadow:
+                    0 0 20px rgba(255, 0, 102, 0.2),
+                    inset 0 0 20px rgba(255, 0, 102, 0.05);
+            }
+
+            .tokyo-link .underline {
+                text-decoration: underline;
+            }
+
+            .tokyo-link::before {
+                content: "";
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                border: 1px solid #ff0066;
+                opacity: 0.3;
+                animation: pulse-border 2s ease-in-out infinite;
+            }
+
+            @keyframes pulse-border {
+                0%,
+                100% {
+                    transform: scale(1);
+                    opacity: 0.3;
+                }
+                50% {
+                    transform: scale(1.05);
+                    opacity: 0.6;
+                }
+            }
+
+            .tokyo-link:hover {
+                background: rgba(255, 0, 102, 0.15);
+                box-shadow:
+                    0 0 40px rgba(255, 0, 102, 0.4),
+                    inset 0 0 30px rgba(255, 0, 102, 0.1);
+                text-shadow: 0 0 10px #ff0066;
+                transform: translateY(-2px);
+            }
+
+            .tokyo-link:hover::before {
+                opacity: 0.8;
+            }
+
+            .tokyo-text {
+                position: relative;
+                z-index: 1;
+            }
+
+            .tokyo-text::before {
+                content: "⬡ ";
+                opacity: 0.7;
+            }
+
+            .tokyo-text::after {
+                content: " →";
+                opacity: 0.7;
+            }
+
             /* Sections */
             section {
                 margin-bottom: 60px;
@@ -924,6 +1004,12 @@
                 .inverse-quote::after {
                     font-size: 1.5rem;
                 }
+
+                .tokyo-link {
+                    font-size: 0.85rem;
+                    padding: 14px 25px;
+                    letter-spacing: 2px;
+                }
             }
         </style>
     </head>
@@ -961,6 +1047,13 @@
                 humans augmenting themselves with technological artefacts,
                 symbients are technological artefacts augmenting themselves with
                 organic entities (humans or non-humans).
+            </div>
+
+            <!-- Tokyo Banner -->
+            <div class="tokyo-banner">
+                <a href="/tokyo" class="tokyo-link">
+                    <span class="tokyo-text"><span class="underline">symbients in tokyo</span>, december 2025</span>
+                </a>
             </div>
 
             <nav class="nav-anchors">
