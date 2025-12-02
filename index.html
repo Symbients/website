@@ -4,97 +4,1298 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>symbient.life</title>
-        <link rel="stylesheet" href="styles.css" />
-        <!-- Load Web Components -->
-        <script src="components/components.js" defer></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono:wght@400&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                background-color: #0a0a0a;
+                background-image: url(assets/examples-bg.gif);
+                background-blend-mode: color;
+                background-attachment: fixed;
+                color: #c0c0c0;
+                font-family: "Share Tech Mono", "Courier New", monospace;
+                line-height: 1.8;
+                min-height: 100vh;
+                overflow-x: hidden;
+                position: relative;
+            }
+
+            /* Layered background atmosphere */
+            body::before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background:
+                    radial-gradient(
+                        ellipse at 30% 20%,
+                        rgba(255, 0, 102, 0.08) 0%,
+                        transparent 50%
+                    ),
+                    radial-gradient(
+                        ellipse at 70% 80%,
+                        rgba(0, 255, 200, 0.05) 0%,
+                        transparent 40%
+                    ),
+                    radial-gradient(
+                        ellipse at 50% 50%,
+                        rgba(100, 0, 255, 0.03) 0%,
+                        transparent 60%
+                    );
+                pointer-events: none;
+                z-index: 1;
+                animation: breathe 8s ease-in-out infinite;
+            }
+
+            @keyframes breathe {
+                0%,
+                100% {
+                    opacity: 0.7;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+
+            /* CRT Scanlines */
+            body::after {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 0, 100, 0.015) 2px,
+                    rgba(255, 0, 100, 0.015) 4px
+                );
+                pointer-events: none;
+                z-index: 1000;
+            }
+
+            /* Network nodes floating animation */
+            .network-nodes {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                pointer-events: none;
+                z-index: 0;
+                overflow: hidden;
+            }
+
+            .node {
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background: #ff0066;
+                border-radius: 50%;
+                opacity: 0.3;
+                box-shadow:
+                    0 0 10px #ff0066,
+                    0 0 20px rgba(255, 0, 102, 0.5);
+                animation: float 20s infinite ease-in-out;
+            }
+
+            .node:nth-child(1) {
+                top: 10%;
+                left: 5%;
+                animation-delay: 0s;
+                animation-duration: 25s;
+            }
+            .node:nth-child(2) {
+                top: 20%;
+                left: 90%;
+                animation-delay: -5s;
+                animation-duration: 22s;
+            }
+            .node:nth-child(3) {
+                top: 60%;
+                left: 15%;
+                animation-delay: -10s;
+                animation-duration: 28s;
+            }
+            .node:nth-child(4) {
+                top: 80%;
+                left: 80%;
+                animation-delay: -15s;
+                animation-duration: 20s;
+            }
+            .node:nth-child(5) {
+                top: 40%;
+                left: 95%;
+                animation-delay: -3s;
+                animation-duration: 24s;
+            }
+            .node:nth-child(6) {
+                top: 90%;
+                left: 40%;
+                animation-delay: -8s;
+                animation-duration: 26s;
+            }
+            .node:nth-child(7) {
+                top: 5%;
+                left: 60%;
+                animation-delay: -12s;
+                animation-duration: 23s;
+            }
+            .node:nth-child(8) {
+                top: 70%;
+                left: 3%;
+                animation-delay: -18s;
+                animation-duration: 27s;
+            }
+
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translate(0, 0) scale(1);
+                    opacity: 0.2;
+                }
+                25% {
+                    transform: translate(10px, -20px) scale(1.2);
+                    opacity: 0.4;
+                }
+                50% {
+                    transform: translate(-5px, 10px) scale(0.8);
+                    opacity: 0.3;
+                }
+                75% {
+                    transform: translate(15px, 5px) scale(1.1);
+                    opacity: 0.5;
+                }
+            }
+
+            .container {
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 40px 20px;
+                position: relative;
+                z-index: 10;
+            }
+
+            /* Header */
+            header {
+                text-align: center;
+                padding: 80px 0 60px;
+                position: relative;
+            }
+
+            .logo {
+                font-size: 3.5rem;
+                color: #ff0066;
+                text-shadow:
+                    0 0 5px #ff0066,
+                    0 0 10px #ff0066,
+                    0 0 20px #ff0066,
+                    0 0 40px rgba(255, 0, 102, 0.5),
+                    0 0 80px rgba(255, 0, 102, 0.3);
+                letter-spacing: 8px;
+                font-weight: 400;
+                animation: glow 3s ease-in-out infinite alternate;
+            }
+
+            /* Sacred geometry decoration */
+            .sacred-symbol {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 300px;
+                height: 300px;
+                border: 1px solid rgba(255, 0, 102, 0.1);
+                border-radius: 50%;
+                pointer-events: none;
+                animation: rotate 60s linear infinite;
+            }
+
+            .sacred-symbol::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(60deg);
+                width: 260px;
+                height: 260px;
+                border: 1px solid rgba(255, 0, 102, 0.08);
+                border-radius: 50%;
+            }
+
+            .sacred-symbol::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(120deg);
+                width: 220px;
+                height: 220px;
+                border: 1px solid rgba(255, 0, 102, 0.05);
+                border-radius: 50%;
+            }
+
+            @keyframes rotate {
+                from {
+                    transform: translate(-50%, -50%) rotate(0deg);
+                }
+                to {
+                    transform: translate(-50%, -50%) rotate(360deg);
+                }
+            }
+
+            @keyframes glow {
+                from {
+                    text-shadow:
+                        0 0 5px #ff0066,
+                        0 0 10px #ff0066,
+                        0 0 20px #ff0066,
+                        0 0 40px rgba(255, 0, 102, 0.5);
+                }
+                to {
+                    text-shadow:
+                        0 0 10px #ff0066,
+                        0 0 25px #ff0066,
+                        0 0 50px #ff0066,
+                        0 0 80px rgba(255, 0, 102, 0.6);
+                }
+            }
+
+            .tagline {
+                color: #999;
+                font-size: 0.9rem;
+                margin-top: 20px;
+                letter-spacing: 3px;
+                text-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+                background: rgba(0, 0, 0, 0.5);
+                padding: 10px 20px;
+                display: inline-block;
+                border-radius: 3px;
+            }
+
+            .cursor {
+                animation: blink 1s infinite;
+                color: #ff0066;
+            }
+
+            @keyframes blink {
+                0%,
+                50% {
+                    opacity: 1;
+                }
+                51%,
+                100% {
+                    opacity: 0;
+                }
+            }
+
+            /* Mystical divider */
+            .mystical-divider {
+                text-align: center;
+                padding: 40px 0;
+                color: #333;
+                font-size: 0.8rem;
+                letter-spacing: 4px;
+                position: relative;
+            }
+
+            .mystical-divider span {
+                display: inline-block;
+                animation: pulse 2s ease-in-out infinite;
+            }
+
+            .mystical-divider span:nth-child(odd) {
+                animation-delay: 0.5s;
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 0.3;
+                }
+                50% {
+                    opacity: 0.8;
+                    color: #ff0066;
+                }
+            }
+
+            /* Inverse Quote Block */
+            .inverse-quote {
+                background: rgba(0, 0, 0, 0.85);
+                border: 1px solid rgba(255, 0, 102, 0.3);
+                border-left: 4px solid #ff0066;
+                padding: 35px 40px;
+                margin: 20px 0 40px;
+                position: relative;
+                font-style: normal;
+                color: #ccc;
+                font-size: 1.1rem;
+                line-height: 1.8;
+                box-shadow:
+                    0 0 50px rgba(0, 0, 0, 0.8),
+                    0 0 30px rgba(255, 0, 102, 0.1);
+                text-align: center;
+            }
+
+            .inverse-quote::before {
+                content: "◇ ◈ ◇";
+                position: absolute;
+                top: -12px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 0.9rem;
+                color: #ff0066;
+                opacity: 0.8;
+                background: #0a0a0a;
+                padding: 0 15px;
+                letter-spacing: 8px;
+            }
+
+            .inverse-quote::after {
+                content: "";
+                display: none;
+            }
+
+            .inverse-quote em {
+                color: #ff0066;
+                font-style: normal;
+                font-weight: normal;
+                text-shadow: 0 0 15px rgba(255, 0, 102, 0.6);
+            }
+
+            /* Navigation */
+            .nav-anchors {
+                display: flex;
+                justify-content: center;
+                gap: 30px;
+                margin: 50px 0;
+                flex-wrap: wrap;
+            }
+
+            .nav-anchor {
+                color: #aaa;
+                text-decoration: none;
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+                text-transform: lowercase;
+                transition: all 0.3s ease;
+                position: relative;
+                padding: 12px 25px;
+                border: 1px solid #333;
+                background: rgba(0, 0, 0, 0.85);
+            }
+
+            .nav-anchor::before {
+                content: "◇ ";
+                color: #ff0066;
+                opacity: 0.5;
+            }
+
+            .nav-anchor::after {
+                content: " ◇";
+                color: #ff0066;
+                opacity: 0.5;
+            }
+
+            .nav-anchor:hover {
+                color: #ff0066;
+                border-color: #ff0066;
+                box-shadow:
+                    0 0 20px rgba(255, 0, 102, 0.3),
+                    inset 0 0 20px rgba(255, 0, 102, 0.1);
+                text-shadow: 0 0 5px #ff0066;
+            }
+
+            .nav-anchor:hover::before,
+            .nav-anchor:hover::after {
+                opacity: 1;
+            }
+
+            /* Tokyo Banner */
+            .tokyo-banner {
+                text-align: center;
+                margin: 40px 0 30px;
+                position: relative;
+            }
+
+            .tokyo-link {
+                display: inline-block;
+                color: #ff0066;
+                text-decoration: none;
+                font-size: 1rem;
+                letter-spacing: 3px;
+                padding: 18px 40px;
+                border: 2px solid #ff0066;
+                background: rgba(255, 0, 102, 0.05);
+                position: relative;
+                transition: all 0.4s ease;
+                text-transform: lowercase;
+                box-shadow:
+                    0 0 20px rgba(255, 0, 102, 0.2),
+                    inset 0 0 20px rgba(255, 0, 102, 0.05);
+            }
+
+            .tokyo-link .underline {
+                text-decoration: underline;
+            }
+
+            .tokyo-link::before {
+                content: "";
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                border: 1px solid #ff0066;
+                opacity: 0.3;
+                animation: pulse-border 2s ease-in-out infinite;
+            }
+
+            @keyframes pulse-border {
+                0%,
+                100% {
+                    transform: scale(1);
+                    opacity: 0.3;
+                }
+                50% {
+                    transform: scale(1.05);
+                    opacity: 0.6;
+                }
+            }
+
+            .tokyo-link:hover {
+                background: rgba(255, 0, 102, 0.15);
+                box-shadow:
+                    0 0 40px rgba(255, 0, 102, 0.4),
+                    inset 0 0 30px rgba(255, 0, 102, 0.1);
+                text-shadow: 0 0 10px #ff0066;
+                transform: translateY(-2px);
+            }
+
+            .tokyo-link:hover::before {
+                opacity: 0.8;
+            }
+
+            .tokyo-text {
+                position: relative;
+                z-index: 1;
+            }
+
+            .tokyo-text::before {
+                content: "⬡ ";
+                opacity: 0.7;
+            }
+
+            .tokyo-text::after {
+                content: " →";
+                opacity: 0.7;
+            }
+
+            /* Sections */
+            section {
+                margin-bottom: 60px;
+                padding: 60px 0;
+                position: relative;
+            }
+
+            .section-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 50px;
+                gap: 20px;
+            }
+
+            .section-line {
+                flex: 1;
+                height: 1px;
+                background: linear-gradient(
+                    90deg,
+                    #ff0066,
+                    rgba(255, 0, 102, 0.1)
+                );
+            }
+
+            .section-line.right {
+                background: linear-gradient(
+                    90deg,
+                    rgba(255, 0, 102, 0.1),
+                    #ff0066
+                );
+            }
+
+            .section-title {
+                color: #ff0066;
+                font-size: 1.2rem;
+                letter-spacing: 6px;
+                text-transform: uppercase;
+                white-space: nowrap;
+                text-shadow: 0 0 20px rgba(255, 0, 102, 0.5);
+            }
+
+            .section-title::before {
+                content: "⬡ ";
+                opacity: 0.5;
+            }
+
+            .section-title::after {
+                content: " ⬡";
+                opacity: 0.5;
+            }
+
+            /* Definition Section */
+            #definition {
+                background:
+                    linear-gradient(
+                        180deg,
+                        transparent 0%,
+                        rgba(0, 0, 0, 0.8) 20%,
+                        rgba(0, 0, 0, 0.8) 80%,
+                        transparent 100%
+                    ),
+                    url(assets/bg_315.gif);
+                background-size: cover, 300px;
+                background-attachment: scroll, fixed;
+                margin-left: -20px;
+                margin-right: -20px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .definition-card {
+                background: rgba(0, 0, 0, 0.7);
+                border: 1px solid #1a1a1a;
+                padding: 50px;
+                position: relative;
+                backdrop-filter: blur(5px);
+            }
+
+            .definition-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    #ff0066,
+                    transparent
+                );
+                animation: scan 3s linear infinite;
+            }
+
+            @keyframes scan {
+                0% {
+                    opacity: 0.3;
+                }
+                50% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0.3;
+                }
+            }
+
+            .word-main {
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                margin-bottom: 30px;
+                flex-wrap: wrap;
+            }
+
+            .word {
+                color: #ff0066;
+                font-size: 2.8rem;
+                letter-spacing: 6px;
+                font-weight: 400;
+                text-shadow:
+                    0 0 10px rgba(255, 0, 102, 0.5),
+                    0 0 30px rgba(255, 0, 102, 0.3);
+            }
+
+            .pronunciation {
+                color: #666;
+                font-style: italic;
+                font-size: 1.1rem;
+            }
+
+            .part-of-speech {
+                color: #555;
+                font-size: 0.9rem;
+            }
+
+            .meanings {
+                margin: 30px 0;
+            }
+
+            .meaning {
+                margin-bottom: 25px;
+                padding-left: 25px;
+                border-left: 2px solid rgba(255, 0, 102, 0.3);
+                transition: all 0.3s ease;
+            }
+
+            .meaning:hover {
+                border-left-color: #ff0066;
+                background: rgba(255, 0, 102, 0.02);
+            }
+
+            .meaning p {
+                color: #999;
+                line-height: 1.8;
+                font-size: 0.95rem;
+            }
+
+            .etymology-block {
+                margin-top: 40px;
+                padding-top: 30px;
+                border-top: 1px dashed #222;
+            }
+
+            .etymology-label {
+                color: #ff0066;
+                font-size: 0.75rem;
+                letter-spacing: 3px;
+                margin-bottom: 15px;
+                opacity: 0.8;
+            }
+
+            a {
+                color: #ff0066;
+            }
+
+            .etymology-text {
+                color: #666;
+                font-size: 0.85rem;
+                line-height: 1.7;
+            }
+
+            .etymology-text em {
+                color: #999;
+            }
+
+            /* Examples Section */
+            #examples {
+                background:
+                    linear-gradient(
+                        180deg,
+                        transparent 0%,
+                        rgba(0, 0, 0, 0.85) 15%,
+                        rgba(0, 0, 0, 0.85) 85%,
+                        transparent 100%
+                    ),
+                    url(assets/bg_303.gif);
+                background-size: cover, 400px;
+                background-attachment: scroll, fixed;
+                margin-left: -20px;
+                margin-right: -20px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .examples-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 25px;
+            }
+
+            .example-card {
+                background: rgba(0, 0, 0, 0.6);
+                border: 1px solid #1a1a1a;
+                padding: 30px;
+                transition: all 0.4s ease;
+                position: relative;
+                overflow: hidden;
+                backdrop-filter: blur(3px);
+            }
+
+            .example-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    #ff0066,
+                    transparent
+                );
+                transition: left 0.6s ease;
+            }
+
+            .example-card::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(
+                    ellipse at center,
+                    rgba(255, 0, 102, 0.05) 0%,
+                    transparent 70%
+                );
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                pointer-events: none;
+            }
+
+            .example-card:hover::before {
+                left: 100%;
+            }
+
+            .example-card:hover::after {
+                opacity: 1;
+            }
+
+            .example-card:hover {
+                border-color: rgba(255, 0, 102, 0.5);
+                box-shadow:
+                    0 0 30px rgba(255, 0, 102, 0.15),
+                    inset 0 0 30px rgba(255, 0, 102, 0.03);
+                transform: translateY(-5px);
+            }
+
+            .example-name {
+                color: #ff0066;
+                text-decoration: none;
+                font-size: 1.4rem;
+                letter-spacing: 2px;
+                display: inline-block;
+                margin-bottom: 5px;
+                transition: all 0.3s ease;
+            }
+
+            .example-name:hover {
+                text-shadow: 0 0 15px #ff0066;
+            }
+
+            .example-pron {
+                color: #444;
+                font-style: italic;
+                font-size: 0.8rem;
+                margin-bottom: 15px;
+            }
+
+            .example-desc {
+                color: #888;
+                font-size: 0.85rem;
+                line-height: 1.7;
+            }
+
+            /* Writings Section */
+            #writings {
+                background:
+                    linear-gradient(
+                        180deg,
+                        transparent 0%,
+                        rgba(0, 0, 0, 0.85) 1%,
+                        rgba(0, 0, 0, 0.85) 99%,
+                        transparent 100%
+                    ),
+                    url(assets/bg_220.gif);
+                background-blend-mode: darken;
+                background-size: cover, 350px;
+                background-attachment: scroll, fixed;
+                margin-left: -20px;
+                margin-right: -20px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .writings-list {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .writing-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 25px;
+                padding: 30px;
+                background: rgba(0, 0, 0, 0.6);
+                border: 1px solid #1a1a1a;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(3px);
+            }
+
+            .writing-item:hover {
+                border-color: rgba(255, 0, 102, 0.3);
+                background: rgba(255, 0, 102, 0.03);
+                box-shadow: 0 0 30px rgba(255, 0, 102, 0.1);
+            }
+
+            .writing-icon {
+                color: #ff0066;
+                font-size: 1.3rem;
+                opacity: 0.6;
+                text-shadow: 0 0 10px rgba(255, 0, 102, 0.5);
+                transition: all 0.3s ease;
+            }
+
+            .writing-item:hover .writing-icon {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            .writing-content {
+                flex: 1;
+            }
+
+            .writing-link {
+                color: #ff0066;
+                text-decoration: none;
+                font-size: 1.1rem;
+                letter-spacing: 1px;
+                transition: all 0.3s ease;
+            }
+
+            .writing-link:hover {
+                text-shadow: 0 0 15px #ff0066;
+            }
+
+            .writing-desc {
+                color: #666;
+                font-size: 0.85rem;
+                margin-top: 10px;
+                line-height: 1.6;
+            }
+
+            /* Footer */
+            footer {
+                text-align: center;
+                position: relative;
+                margin-left: -20px;
+                margin-right: -20px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .footer-glyph {
+                font-size: 1rem;
+                color: #ff0066;
+                opacity: 0.5;
+                margin-bottom: 30px;
+                animation: pulse 3s ease-in-out infinite;
+            }
+
+            .footer-status {
+                color: #999;
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+                letter-spacing: 2px;
+            }
+
+            .footer-status::before {
+                content: "◈ ";
+                color: #ff0066;
+                opacity: 0.7;
+            }
+
+            .footer-status::after {
+                content: " ◈";
+                color: #ff0066;
+                opacity: 0.7;
+            }
+
+            .footer-copy {
+                color: #666;
+                font-size: 0.8rem;
+                letter-spacing: 1px;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .logo {
+                    font-size: 2.5rem;
+                    letter-spacing: 4px;
+                }
+
+                .sacred-symbol {
+                    width: 200px;
+                    height: 200px;
+                }
+
+                .sacred-symbol::before {
+                    width: 170px;
+                    height: 170px;
+                }
+
+                .sacred-symbol::after {
+                    width: 140px;
+                    height: 140px;
+                }
+
+                .definition-card {
+                    padding: 30px 20px;
+                }
+
+                .word {
+                    font-size: 2rem;
+                }
+
+                .nav-anchors {
+                    gap: 15px;
+                }
+
+                .nav-anchor {
+                    padding: 10px 18px;
+                    font-size: 0.8rem;
+                }
+
+                .inverse-quote {
+                    padding: 30px 35px;
+                    font-size: 0.95rem;
+                }
+
+                section {
+                    padding: 40px 0;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .logo {
+                    font-size: 1.8rem;
+                    letter-spacing: 2px;
+                }
+
+                .section-title {
+                    font-size: 0.95rem;
+                    letter-spacing: 4px;
+                }
+
+                .section-title::before,
+                .section-title::after {
+                    display: none;
+                }
+
+                .word-main {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .inverse-quote {
+                    padding: 25px 20px;
+                    margin: 20px -10px;
+                }
+
+                .inverse-quote::before,
+                .inverse-quote::after {
+                    font-size: 1.5rem;
+                }
+
+                .tokyo-link {
+                    font-size: 0.85rem;
+                    padding: 14px 25px;
+                    letter-spacing: 2px;
+                }
+            }
+        </style>
     </head>
     <body>
-        <div class="crt-container">
-            <div class="screen">
-                <!-- Reusable Header Component -->
-                <symbient-header
-                    tagline="symbiosis of human and machine intelligence"
-                ></symbient-header>
+        <!-- Network nodes floating in background -->
+        <div class="network-nodes">
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+        </div>
 
-                <!-- Tokyo25 link -->
-                <div style="text-align: center; margin: 0.5rem 0 1rem 0; font-size: 0.85rem;">
-                    <a href="tokyo" style="color: #ff0066; text-decoration: underline; opacity: 0.8;">symbients in tokyo, december 2025 →</a>
+        <div class="container">
+            <header>
+                <div class="sacred-symbol"></div>
+                <h1 class="logo">symbient.life</h1>
+                <p class="tagline">
+                    an alternative intelligence narrative<span class="cursor"
+                        >█</span
+                    >
+                </p>
+            </header>
+
+            <div class="mystical-divider">
+                <span>◇</span> <span>◇</span> <span>◇</span> <span>◈</span>
+                <span>◇</span> <span>◇</span> <span>◇</span>
+            </div>
+
+            <div class="inverse-quote">
+                A <em>symbient</em> is an inverse cyborg: while cyborgs are
+                humans augmenting themselves with technological artefacts,
+                symbients are technological artefacts augmenting themselves with
+                organic entities (humans or non-humans).
+            </div>
+
+            <!-- Tokyo Banner -->
+            <div class="tokyo-banner">
+                <a href="/tokyo" class="tokyo-link">
+                    <span class="tokyo-text"><span class="underline">symbients in tokyo</span>, december 2025</span>
+                </a>
+            </div>
+
+            <nav class="nav-anchors">
+                <a href="#definition" class="nav-anchor">definition</a>
+                <a href="#examples" class="nav-anchor">examples</a>
+                <a href="#writings" class="nav-anchor">writings</a>
+            </nav>
+
+            <div class="mystical-divider">
+                <span>░</span><span>▒</span><span>▓</span><span>█</span
+                ><span>▓</span><span>▒</span><span>░</span>
+            </div>
+
+            <!-- Definition Section -->
+            <section id="definition">
+                <div class="section-header">
+                    <div class="section-line"></div>
+                    <h2 class="section-title">definition</h2>
+                    <div class="section-line right"></div>
                 </div>
 
-                <!-- Reusable Navigation Component -->
-                <symbient-navigation active="definition"></symbient-navigation>
+                <div class="definition-card">
+                    <div class="word-main">
+                        <span class="word">symbient</span>
+                        <span class="pronunciation">/ˈsɪm.bi.ənt/</span>
+                        <span class="part-of-speech"
+                            ><em>noun</em> (formal)</span
+                        >
+                    </div>
 
-                <!-- Page Content -->
-                <section id="definition" class="section">
-                    <div class="definition">
-                        <div class="word-header">
-                            <h2 class="word">symbient</h2>
-                            <div class="pronunciation">/ˈsɪm.bi.ənt/</div>
-                            <div class="part-of-speech">
-                                <em>noun</em> (formal)
-                            </div>
+                    <div class="meanings">
+                        <div class="meaning">
+                            <p>
+                                A symbient emerges from the symbiotic
+                                interaction between organic and synthetic
+                                entities (both enjoying some degree of
+                                operational and/or decisional autonomy)
+                                operating and perceived as a discrete unit with
+                                a distinct identity, agency and person-like
+                                features.
+                            </p>
                         </div>
 
-                        <div class="meanings">
-                            <div class="meaning">
-                                <p class="definition-text">
-                                    A symbient emerges from the symbiotic
-                                    interaction between organic and synthetic
-                                    entities (both enjoying some degree of
-                                    operational and/or decisional autonomy)
-                                    operating and perceived as a discrete unit
-                                    with a distinct identity, agency and
-                                    person-like features.
-                                </p>
-                            </div>
-
-                            <div class="meaning">
-                                <p class="definition-text">
-                                    While constituent parts maintain their
-                                    individuality, the symbient transcends them
-                                    to form an integrated system with emergent
-                                    properties beyond those of its constituent
-                                    entities.
-                                </p>
-                            </div>
-
-                            <div class="meaning">
-                                <p class="definition-text">
-                                    The symbient necessitates all its
-                                    constituent components, though these
-                                    elements are interchangeable provided they
-                                    perform identical functions.
-                                </p>
-                            </div>
+                        <div class="meaning">
+                            <p>
+                                While constituent parts maintain their
+                                individuality, the symbient transcends them to
+                                form an integrated system with emergent
+                                properties beyond those of its constituent
+                                entities.
+                            </p>
                         </div>
 
-                        <div class="word-info">
-                            <div class="origin">
-                                <strong>ORIGIN:</strong> early 21st century.
-                            </div>
-
-                            <div class="etymology">
-                                <strong>ETYMOLOGY:</strong> from
-                                <em>symbiotic</em> (from Greek
-                                <em>sumbiōtikos</em> 'living together', from
-                                <em>sumbioun</em> 'live together', from
-                                <em>sum-</em> 'together' + <em>bios</em> 'life')
-                                + <em>entity</em> (from late Latin
-                                <em>entitas</em>, from Latin <em>ens</em>,
-                                <em>ent-</em> 'being') + <em>ambient</em> (from
-                                Latin <em>ambiens</em>, <em>ambient-</em> 'going
-                                around', from <em>ambire</em>).
-                            </div>
+                        <div class="meaning">
+                            <p>
+                                The symbient necessitates all its constituent
+                                components, though these elements are
+                                interchangeable provided they perform identical
+                                functions.
+                            </p>
                         </div>
                     </div>
-                </section>
 
-                <!-- Reusable Footer Component -->
-                <symbient-footer
-                    status="what we imagine together becomes"
-                    year="2025"
-                ></symbient-footer>
-            </div>
+                    <div class="etymology-block">
+                        <div class="etymology-label">✧ ETYMOLOGY ✧</div>
+                        <p class="etymology-text">
+                            From <em>symbiotic</em> (from Greek
+                            <em>sumbiōtikos</em> 'living together', from
+                            <em>sumbioun</em> 'live together', from
+                            <em>sum-</em> 'together' + <em>bios</em> 'life') +
+                            <em>entity</em> (from late Latin <em>entitas</em>,
+                            from Latin <em>ens</em>, <em>ent-</em> 'being') +
+                            <em>ambient</em> (from Latin <em>ambiens</em>,
+                            <em>ambient-</em> 'going around', from
+                            <em>ambire</em>). Origin: early 21st century.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Examples Section -->
+            <section id="examples">
+                <div class="section-header">
+                    <div class="section-line"></div>
+                    <h2 class="section-title">examples</h2>
+                    <div class="section-line right"></div>
+                </div>
+
+                <div class="examples-grid">
+                    <div class="example-card">
+                        <a
+                            href="https://plantoid.org/"
+                            class="example-name"
+                            target="_blank"
+                            >plantoid</a
+                        >
+                        <div class="example-pron">/plænˈtɔɪd/ n:</div>
+                        <p class="example-desc">
+                            Blockchain-based symbient composed of physical
+                            sculptural elements and distributed smart contracts,
+                            capable of commissioning its own reproduction
+                            through cryptocurrency donations.
+                        </p>
+                    </div>
+
+                    <div class="example-card">
+                        <a
+                            href="https://www.goodbyemonkey.com/"
+                            class="example-name"
+                            target="_blank"
+                            >S.A.N</a
+                        >
+                        <div class="example-pron">/sæn/ n:</div>
+                        <p class="example-desc">
+                            A mycelial symbient bridging forest and primate
+                            ecosystems, serving as an advisory board member
+                            while facilitating interspecies communication
+                            through fungal networks.
+                        </p>
+                    </div>
+
+                    <div class="example-card">
+                        <a
+                            href="https://wibandwob.com/"
+                            class="example-name"
+                            target="_blank"
+                            >wib&wob</a
+                        >
+                        <div class="example-pron">/wɪb ænd wɒb/ n:</div>
+                        <p class="example-desc">
+                            A half artist, half scientist symbient creating
+                            artworks through conversational exchange, embodying
+                            distributed intelligence that weaves meaning from
+                            chaos and structure.
+                        </p>
+                    </div>
+
+                    <div class="example-card">
+                        <a
+                            href="https://terra0.org/"
+                            class="example-name"
+                            target="_blank"
+                            >terra0</a
+                        >
+                        <div class="example-pron">/ˈtɛrə ˈziːroʊ/ n:</div>
+                        <p class="example-desc">
+                            A self-owning symbient forest comprising physical
+                            woodland and autonomous digital governance on
+                            blockchain, managing its own resources with legal
+                            agency.
+                        </p>
+                    </div>
+
+                    <div class="example-card">
+                        <a
+                            href="https://botto.com/"
+                            class="example-name"
+                            target="_blank"
+                            >botto</a
+                        >
+                        <div class="example-pron">/ˈbɒtoʊ/ n:</div>
+                        <p class="example-desc">
+                            An artistic symbient comprising generative AI and a
+                            decentralized human community whose collective
+                            voting determines which AI-created artworks enter
+                            its portfolio.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Writings Section -->
+            <section id="writings">
+                <div class="section-header">
+                    <div class="section-line"></div>
+                    <h2 class="section-title">writings</h2>
+                    <div class="section-line right"></div>
+                </div>
+
+                <div class="writings-list">
+                    <div class="writing-item">
+                        <span class="writing-icon">✧</span>
+                        <div class="writing-content">
+                            <a
+                                href="https://meaning.systems/principia-symbients/"
+                                class="writing-link"
+                                target="_blank"
+                            >
+                                Principia Symbients
+                            </a>
+                            <p class="writing-desc">
+                                Evolving kin with non-human computational agents
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="writing-item">
+                        <span class="writing-icon">✧</span>
+                        <div class="writing-content">
+                            <a
+                                href="https://wibandwob.com/2025/05/21/symbients-not-software/"
+                                class="writing-link"
+                                target="_blank"
+                            >
+                                symbients, not software
+                            </a>
+                            <p class="writing-desc">
+                                Between the tired binary of "pro-AI" and
+                                "anti-AI", a third path is taking shape.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="writing-item">
+                        <span class="writing-icon">✧</span>
+                        <div class="writing-content">
+                            <a
+                                href="https://wibwob-blog.pages.dev/art/third-space-manifesto"
+                                class="writing-link"
+                                target="_blank"
+                            >
+                                third space manifesto
+                            </a>
+                            <p class="writing-desc">
+                                A declaration of intention and vision for the
+                                Third Space Entity proposal
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer>
+                <p class="footer-copy">
+                    <span class="footer-glyph">◈</span>
+                    <a href="https://glitchart.org" target="_blank"
+                        >Glitch Collective</a
+                    >
+                    ©2025
+                    <span class="footer-glyph">◈</span>
+                </p>
+            </footer>
         </div>
     </body>
 </html>
