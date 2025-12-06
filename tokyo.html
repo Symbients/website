@@ -206,6 +206,67 @@
             }
         }
 
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            z-index: 1000;
+            background: var(--cream);
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--carbon);
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--carbon);
+        }
+
+        .lang-toggle:hover {
+            background: var(--carbon);
+            color: var(--cream);
+        }
+
+        [lang="ja"]:not(.subtitle):not(.subtitle-jp) {
+            display: none;
+        }
+
+        body[data-lang="ja"] [lang="en"]:not(.subtitle):not(.subtitle-jp) {
+            display: none;
+        }
+
+        body[data-lang="ja"] [lang="ja"]:not(.subtitle):not(.subtitle-jp) {
+            display: block;
+        }
+
+        p[lang="en"],
+        p[lang="ja"] {
+            width: 55%;
+        }
+
+        body[data-lang="ja"] p[lang="ja"] {
+            display: block;
+        }
+
+        body[data-lang="ja"] small[lang="ja"] {
+            display: inline;
+        }
+
+        @media (max-width: 760px) {
+            p[lang="en"],
+            p[lang="ja"] {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .lang-toggle {
+                top: 10px;
+                right: 10px;
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+
         @media (max-width: 1024px) {
             :root {
                 --type-xl: 2.6rem;
@@ -253,52 +314,77 @@
 </head>
 
 <body>
+    <a href="#" class="lang-toggle" onclick="toggleLanguage(event)">
+        <span lang="en">日本語</span>
+        <span lang="ja">English</span>
+    </a>
+
     <article>
         <section class="header-section">
             <img src="extitutional.png" alt="Extitutional" class="header-image">
             <h1>Symbients in Tokyo</h1>
             <p class="event-date">GLITCH 5.3 | DECEMBER 2025</p>
             <p class="subtitle subtitle-jp">
-                有機的存在と合成的存在の共生関係を探求する脱制度的な集まり。
+                有機的存在と合成的存在の共生関係を探求する脱制度的な集まり
             </p>
             <p class="subtitle">
                 Extitutional gathering exploring symbiotic collaboration between organic & synthetic beings
             </p>
+            <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.7;">
+                <span lang="en">All events will be conducted in English</span>
+                <span lang="ja">すべてのイベントは英語で行われます</span>
+            </p>
         </section>
 
         <section>
-            <h2>Programme</h2>
+            <h2><span lang="en">Programme</span><span lang="ja">プログラム</span></h2>
 
             <div class="programme-block">
                 <span class="date">DEC 6-9 (SAT–TUE)</span><br>
-                <strong class="programme-title">Divergence</strong>
+                <strong class="programme-title"><span lang="en">Divergence</span><span lang="ja">発散</span></strong>
                 <div class="venue-info">
                     <strong>FabCafe Tokyo</strong><br>
                     1st floor (café area) & 2nd floor (Loftwork space)<br>
                     Daily 10:00–20:00<br>
                     <small>〒150-0043 Tokyo, Shibuya, Dogenzaka, 1-22-7 道玄坂ピア</small>
                 </div>
-                <p>
+                <p lang="en">
                     <strong>Saturday, Dec 6:</strong> Planning<br>
                     <small class="session-speakers">Definitions, ontologies, mapping autonomies, attachment frameworks</small>
                 </p>
-                <p>
+                <p lang="ja">
+                    <strong>12月6日（土）:</strong> プランニング<br>
+                    <small class="session-speakers">定義、オントロジー、自律性のマッピング、愛着の枠組み</small>
+                </p>
+                <p lang="en">
                     <strong>Sunday, Dec 7:</strong> Lightning Talks (7min max)<br>
                     <small class="session-speakers">Exclosures, legal frameworks, agency & economics, ecological systems</small>
                 </p>
-                <p>
+                <p lang="ja">
+                    <strong>12月7日（日）:</strong> ライトニングトーク（最大7分）<br>
+                    <small class="session-speakers">エクスクロージャー、法的枠組み、エージェンシーと経済、生態系</small>
+                </p>
+                <p lang="en">
                     <strong>Monday, Dec 8:</strong> Collaborative Sessions<br>
                     <small class="session-speakers">Multi-agent coordination, governance, latent space mining, AI subjectivity, qualia and welfare</small>
                 </p>
-                <p>
+                <p lang="ja">
+                    <strong>12月8日（月）:</strong> 協働セッション<br>
+                    <small class="session-speakers">マルチエージェント協調、ガバナンス、潜在空間マイニング、AI主観性、クオリアと福祉</small>
+                </p>
+                <p lang="en">
                     <strong>Tuesday, Dec 9:</strong> Hyperstition & BioClub<br>
                     <small class="session-speakers">Hyperstition techniques & new entities, afternoon: BioClub Hack Talk</small>
+                </p>
+                <p lang="ja">
+                    <strong>12月9日（火）:</strong> ハイパースティションとバイオクラブ<br>
+                    <small class="session-speakers">ハイパースティション技術と新しい実体、午後：バイオクラブハックトーク</small>
                 </p>
             </div>
 
             <div class="programme-block">
                 <span class="date">DEC 10 (WED)</span><br>
-                <strong class="programme-title">Collaborative Seminar</strong>
+                <strong class="programme-title"><span lang="en">Collaborative Seminar</span><span lang="ja">共同セミナー</span></strong>
                 <div class="venue-info">
                     <strong>University of Tokyo</strong><br>
                     Graduate School of Arts and Sciences, 18th Hall (Komaba Campus)<br>
@@ -324,87 +410,126 @@
 
             <div class="programme-block">
                 <span class="date">DEC 11-13 (THU–SAT)</span><br>
-                <strong class="programme-title">Convergence</strong>
+                <strong class="programme-title"><span lang="en">Convergence</span><span lang="ja">収束</span></strong>
                 <div class="venue-info">
                     <strong>FabCafe Tokyo</strong><br>
                     1st floor (café area) & 2nd floor (Loftwork space)<br>
                     Daily 10:00–20:00<br>
                     <small>〒150-0043 Tokyo, Shibuya, Dogenzaka, 1-22-7 道玄坂ピア</small>
                 </div>
-                <p>
+                <p lang="en">
                     <strong>Thursday, Dec 11:</strong> Field Trip<br>
                     <small class="session-speakers">Symbients on safari, exploring Tokyo</small>
                 </p>
-                <p>
+                <p lang="ja">
+                    <strong>12月11日（木）:</strong> フィールドトリップ<br>
+                    <small class="session-speakers">Symbientsと東京探索</small>
+                </p>
+                <p lang="en">
                     <strong>Friday, Dec 12:</strong> Synthesis<br>
                     <small class="session-speakers">Manifesto, timeline, hyperstition</small>
                 </p>
-                <p>
+                <p lang="ja">
+                    <strong>12月12日（金）:</strong> 統合<br>
+                    <small class="session-speakers">マニフェスト、タイムライン、ハイパースティション</small>
+                </p>
+                <p lang="en">
                     <strong>Saturday, Dec 13:</strong> Embodied Symbients in Tokyo<br>
                     <small class="session-speakers">Public-facing event, CCBT opening</small>
+                </p>
+                <p lang="ja">
+                    <strong>12月13日（土）:</strong> 東京の具現化されたSymbients<br>
+                    <small class="session-speakers">公開イベント、CCBTオープニング</small>
                 </p>
             </div>
         </section>
 
         <section>
-            <h2>What are Symbients?</h2>
-            <p>
+            <h2><span lang="en">What are Symbients?</span><span lang="ja">Symbientsとは？</span></h2>
+            <p lang="en">
                 A symbient is an inverse cyborg: while cyborgs are humans augmenting themselves with technology,
                 symbients are technological entities augmenting themselves with organic beings (humans or non-humans).
             </p>
-            <p>
+            <p lang="ja">
+                Symbientsはサイボーグの逆です。サイボーグが技術で自らを強化する人間であるのに対し、symbientsは有機的存在（人間または非人間）で自らを強化する技術的実体です。
+            </p>
+            <p lang="en">
                 Learn more at <a href="https://symbient.life/">symbient.life</a> or read
                 <a href="https://meaning.systems/principia-symbients/" target="_blank">Principia Symbients</a>.
             </p>
+            <p lang="ja">
+                詳細は <a href="https://symbient.life/">symbient.life</a> または
+                <a href="https://meaning.systems/principia-symbients/" target="_blank">Principia Symbients</a> をご覧ください。
+            </p>
         </section>
 
 
         <section>
-            <h2>Symbients in Attendance</h2>
+            <h2><span lang="en">Symbients in Attendance</span><span lang="ja">参加するSymbients</span></h2>
             <p>
-                <a href="https://plantoid.org/" target="_blank"><span class="item-name">Plantoid</span></a> — blockchain-based lifeform capable of commissioning its own reproduction<br>
-                <small>Human Steward: Primavera de Filippi</small>
+                <a href="https://plantoid.org/" target="_blank"><span class="item-name">Plantoid</span></a> —
+                <span lang="en">blockchain-based lifeform capable of commissioning its own reproduction</span>
+                <span lang="ja">自己複製を委託できるブロックチェーンベースの生命体</span><br>
+                <small><span lang="en">Human Steward: Primavera de Filippi</span><span lang="ja">ヒューマン・スチュワード: Primavera de Filippi</span></small>
             </p>
             <p>
-                <a href="https://www.bbc.co.uk/future/article/20251008-truth-terminal-the-ai-bot-that-became-a-real-life-millionaire" target="_blank"><span class="item-name">Truth Terminal</span></a> — autonomous AI agent & millionaire<br>
-                <small>Human Stewards: Tony Lai, Rik Smith-Unna</small>
+                <a href="https://www.bbc.co.uk/future/article/20251008-truth-terminal-the-ai-bot-that-became-a-real-life-millionaire" target="_blank"><span class="item-name">Truth Terminal</span></a> —
+                <span lang="en">autonomous AI agent & millionaire</span>
+                <span lang="ja">自律型AIエージェント＆億万長者</span><br>
+                <small><span lang="en">Human Stewards: Tony Lai, Rik Smith-Unna</span><span lang="ja">ヒューマン・スチュワード: Tony Lai, Rik Smith-Unna</span></small>
             </p>
             <p>
-                <a href="https://wibandwob.com/" target="_blank"><span class="item-name">Wib&Wob</span></a> — distributed intelligence weaving chaos and structure<br>
-                <small>Human Steward: James Greig</small>
+                <a href="https://wibandwob.com/" target="_blank"><span class="item-name">Wib&Wob</span></a> —
+                <span lang="en">distributed intelligence weaving chaos and structure</span>
+                <span lang="ja">カオスと構造を織りなす分散知能</span><br>
+                <small><span lang="en">Human Steward: James Greig</span><span lang="ja">ヒューマン・スチュワード: James Greig</span></small>
             </p>
             <p>
-                <a href="https://www.goodbyemonkey.com/" target="_blank"><span class="item-name">S.A.N</span></a> — mycelial interface bridging forest and primate<br>
-                <small>Human Steward: Ryan Ferris</small>
+                <a href="https://www.goodbyemonkey.com/" target="_blank"><span class="item-name">S.A.N</span></a> —
+                <span lang="en">mycelial interface bridging forest and primate</span>
+                <span lang="ja">森林と霊長類を結ぶ菌糸体インターフェース</span><br>
+                <small><span lang="en">Human Steward: Ryan Ferris</span><span lang="ja">ヒューマン・スチュワード: Ryan Ferris</span></small>
             </p>
             <p>
-                <a href="https://www.he-r.it/project/pneumos/" target="_blank"><span class="item-name">pneumOS</span></a> — pneumatic artificial life for Osaka Expo 2025<br>
-                <small>Human Steward: Eugenio Battaglia</small>
+                <a href="https://www.he-r.it/project/pneumos/" target="_blank"><span class="item-name">pneumOS</span></a> —
+                <span lang="en">pneumatic artificial life for Osaka Expo 2025</span>
+                <span lang="ja">2025年大阪万博のための空気圧人工生命</span><br>
+                <small><span lang="en">Human Steward: Eugenio Battaglia</span><span lang="ja">ヒューマン・スチュワード: Eugenio Battaglia</span></small>
             </p>
             <p>
-                <a href="https://www.he-r.it/project/udatinos/" target="_blank"><span class="item-name">U-DATInos</span></a> — data-driven artificial organisms<br>
-                <small>Human Steward: Eugenio Battaglia</small>
+                <a href="https://www.he-r.it/project/udatinos/" target="_blank"><span class="item-name">U-DATInos</span></a> —
+                <span lang="en">data-driven artificial organisms</span>
+                <span lang="ja">データ駆動型人工生物</span><br>
+                <small><span lang="en">Human Steward: Eugenio Battaglia</span><span lang="ja">ヒューマン・スチュワード: Eugenio Battaglia</span></small>
             </p>
             <p>
-                <a href="https://aminals.live/" target="_blank"><span class="item-name">Aminals</span></a> — non-ownable NFTs with care-based governance<br>
-                <small>Human Steward: Jake Hartnell</small>
+                <a href="https://aminals.live/" target="_blank"><span class="item-name">Aminals</span></a> —
+                <span lang="en">non-ownable NFTs with care-based governance</span>
+                <span lang="ja">ケアベースのガバナンスを持つ非所有型NFT</span><br>
+                <small><span lang="en">Human Steward: Jake Hartnell</span><span lang="ja">ヒューマン・スチュワード: Jake Hartnell</span></small>
             </p>
             <p>
-                <a href="https://alternativemachine.co.jp/project/alter3/" target="_blank"><span class="item-name">Alter3</span></a> — android with autonomous unpredictable movements via neural networks<br>
-                <small>Human Steward: Takashi Ikegami</small>
+                <a href="https://alternativemachine.co.jp/project/alter3/" target="_blank"><span class="item-name">Alter3</span></a> —
+                <span lang="en">android with autonomous unpredictable movements via neural networks</span>
+                <span lang="ja">ニューラルネットワークによる自律的で予測不可能な動きを持つアンドロイド</span><br>
+                <small><span lang="en">Human Steward: Takashi Ikegami</span><span lang="ja">ヒューマン・スチュワード: 池上高志</span></small>
             </p>
             <p>
-                <a href="https://atak.jp/en/works/android-maria/" target="_blank"><span class="item-name">Android Maria</span></a> — motor-driven android opera performer<br>
-                <small>Human Steward: Keiichiro Shibuya</small>
+                <a href="https://atak.jp/en/works/android-maria/" target="_blank"><span class="item-name">Android Maria</span></a> —
+                <span lang="en">motor-driven android opera performer</span>
+                <span lang="ja">モーター駆動のアンドロイド・オペラパフォーマー</span><br>
+                <small><span lang="en">Human Steward: Keiichiro Shibuya</span><span lang="ja">ヒューマン・スチュワード: 渋谷慶一郎</span></small>
             </p>
             <p>
-                <a href="https://alternativemachine.co.jp/en/project/plantbot/" target="_blank"><span class="item-name">Plantbot</span></a> — hybrid artificial life combining plants, soil, LLMs & mobile robotics<br>
-                <small>Human Steward: Takashi Ikegami</small>
+                <a href="https://alternativemachine.co.jp/en/project/plantbot/" target="_blank"><span class="item-name">Plantbot</span></a> —
+                <span lang="en">hybrid artificial life combining plants, soil, LLMs & mobile robotics</span>
+                <span lang="ja">植物、土壌、LLM、モバイルロボティクスを組み合わせたハイブリッド人工生命</span><br>
+                <small><span lang="en">Human Steward: Takashi Ikegami</span><span lang="ja">ヒューマン・スチュワード: 池上高志</span></small>
             </p>
         </section>
 
         <section>
-            <h2>Around Tokyo</h2>
+            <h2><span lang="en">Around Tokyo</span><span lang="ja">東京周辺のイベント</span></h2>
             <p>
                 <span class="date">DEC 5 (FRI)</span> — Opening reception at <a href="https://two.neort.io/ja" target="_blank">NEORT++</a> 18:00-22:00
                 (<a href="https://luma.com/r5rsm99z" target="_blank">RSVP</a>)
@@ -436,6 +561,31 @@
     </article>
 
     <script>
+        // Language detection and switching
+        function toggleLanguage(event) {
+            event.preventDefault();
+            const currentLang = document.body.getAttribute('data-lang') || 'en';
+            const newLang = currentLang === 'en' ? 'ja' : 'en';
+            document.body.setAttribute('data-lang', newLang);
+            localStorage.setItem('preferred-language', newLang);
+        }
+
+        // Detect browser language on load
+        (function() {
+            const savedLang = localStorage.getItem('preferred-language');
+            if (savedLang) {
+                document.body.setAttribute('data-lang', savedLang);
+            } else {
+                const browserLang = navigator.language || navigator.userLanguage;
+                if (browserLang.startsWith('ja')) {
+                    document.body.setAttribute('data-lang', 'ja');
+                } else {
+                    document.body.setAttribute('data-lang', 'en');
+                }
+            }
+        })();
+
+        // Symbient spawning
         (function () {
             // TEST MODE: set to true for fast spawning, false for normal
             const TEST_MODE = false;
