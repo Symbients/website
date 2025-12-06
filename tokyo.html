@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Symbients in Tokyo</title>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://symbient.life/tokyo">
+    <meta property="og:title" content="Symbients in Tokyo">
+    <meta property="og:description" content="Extitutional gathering exploring symbiotic collaboration between organic & synthetic beings. December 6-13, 2025.">
+    <meta property="og:image" content="https://symbient.life/og_image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://symbient.life/tokyo">
+    <meta property="twitter:title" content="Symbients in Tokyo">
+    <meta property="twitter:description" content="Extitutional gathering exploring symbiotic collaboration between organic & synthetic beings. December 6-13, 2025.">
+    <meta property="twitter:image" content="https://symbient.life/og_image.png">
+    <link rel="stylesheet" href="https://unpkg.com/tufte-css@1.8.0/tufte.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Minimal overrides */
+        :root {
+            --carbon: #1a1a1a;
+            --cream: #f5f1eb;
+            --type-xl: 3.1rem;
+            --type-lg: 1.85rem;
+            --type-md: 1.4rem;
+            --type-sm: 0.9rem;
+        }
+
+        body {
+            background: var(--cream);
+            color: var(--carbon);
+            font-family: 'IBM Plex Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2 {
+            font-family: 'Space Mono', monospace;
+            text-transform: uppercase;
+            font-style: normal;
+            letter-spacing: 0.05em;
+            color: var(--carbon);
+            border-bottom: 2px solid var(--carbon);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            width: 55%;
+        }
+
+        @media (max-width: 760px) {
+
+            h1,
+            h2 {
+                width: 100%;
+            }
+        }
+
+        h1 {
+            font-size: var(--type-xl);
+            margin-top: 2rem;
+        }
+
+        h2 {
+            font-size: var(--type-lg);
+        }
+
+        small {
+            font-size: 0.75em;
+        }
+
+        a,
+        a:link,
+        a:visited {
+            color: var(--carbon);
+            background: none !important;
+            background-image: none !important;
+            text-shadow: none !important;
+            text-decoration: underline;
+        }
+
+        .back-link {
+            text-align: center;
+            margin: 2rem 0;
+            font-size: var(--type-sm);
+        }
+
+        .back-link a {
+            color: var(--carbon);
+        }
+
+        .subtitle {
+            font-size: 1.4rem !important;
+        }
+
+        .subtitle-jp {
+            font-size: 1.6rem !important;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        .item-name {
+            font-weight: 500;
+        }
+
+        .mono {
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.05em;
+        }
+
+        .date {
+            font-family: 'Space Mono', monospace;
+            font-size: var(--type-sm);
+            letter-spacing: 0.05em;
+        }
+
+        .event-date {
+            font-family: 'Space Mono', monospace;
+            font-size: var(--type-md);
+            letter-spacing: 0.05em;
+            margin-top: -0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .venue-info {
+            background: rgba(26, 26, 26, 0.03);
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-left: 3px solid var(--carbon);
+            width: 100%;
+            font-size: 1.05em;
+        }
+
+        .programme-block {
+            margin-bottom: 2.5rem;
+            width: 55%;
+        }
+
+        .programme-title {
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 760px) {
+            .programme-block {
+                width: 100%;
+            }
+        }
+
+        .attendees-list {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            letter-spacing: 0.02em;
+            border-top: 1px solid var(--carbon);
+            border-bottom: 1px solid var(--carbon);
+            padding: 1rem 0;
+            margin: 2rem 0;
+            width: 55%;
+        }
+
+        @media (max-width: 760px) {
+            .attendees-list {
+                width: 100%;
+            }
+        }
+
+        .session-speakers {
+            opacity: 0.6;
+            font-size: 0.8em;
+        }
+
+        @media (max-width: 1024px) {
+            :root {
+                --type-xl: 2.6rem;
+                --type-lg: 1.53rem;
+                --type-md: 1.26rem;
+                --type-sm: 0.81rem;
+            }
+        }
+
+        @media (max-width: 760px) {
+            :root {
+                --type-xl: 2.2rem;
+                --type-lg: 1.3rem;
+                --type-md: 1.1rem;
+                --type-sm: 0.72rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .symbient {
+            animation: fadeIn 2s ease-out forwards;
+        }
+
+        /* ---- Custom selection highlight ---- */
+        ::selection {
+            background: var(--carbon);
+            color: var(--cream);
+        }
+
+        /* For Mozilla Firefox */
+        x ::-moz-selection {
+            background: var(--carbon);
+            color: var(--cream);
+        }
+    </style>
+</head>
+
+<body>
+    <article>
+        <section class="header-section">
+            <h1>Symbients in Tokyo</h1>
+            <p class="event-date">GLITCH 5.3 | DECEMBER 2025</p>
+            <p class="subtitle subtitle-jp">
+                有機的存在と合成的存在の共生関係を探求する脱制度的な集まり。
+            </p>
+            <p class="subtitle">
+                Extitutional gathering exploring symbiotic collaboration between organic & synthetic beings
+            </p>
+        </section>
+
+        <section>
+            <h2>Programme</h2>
+
+            <div class="programme-block">
+                <span class="date">DEC 6-9 (SAT–TUE)</span><br>
+                <strong class="programme-title">Divergence</strong>
+                <div class="venue-info">
+                    <strong>FabCafe Tokyo</strong><br>
+                    1st floor (café area) & 2nd floor (Loftwork space)<br>
+                    Daily 10:00–20:00<br>
+                    <small>〒150-0043 Tokyo, Shibuya, Dogenzaka, 1-22-7 道玄坂ピア</small>
+                </div>
+                <p>
+                    Themes: symbient ontologies, epistemic gardens, attestations & trust, collaborative worldbuilding
+                </p>
+            </div>
+
+            <div class="programme-block">
+                <span class="date">DEC 10 (WED)</span><br>
+                <strong class="programme-title">Collaborative Seminar</strong>
+                <div class="venue-info">
+                    <strong>University of Tokyo</strong><br>
+                    Graduate School of Arts and Sciences, 18th Hall (Komaba Campus)<br>
+                    12:00–19:00<br>
+                    <small>〒153-8902 Tokyo, Meguro-ku, Komaba, 3-8-1</small>
+                </div>
+                <p>
+                    <small>12:00–12:30</small> Opening & Framing<br>
+                    <small class="session-speakers">Takashi Ikegami, Primavera De Filippi</small><br>
+                    <small>12:30–14:00</small> Session 1: Artificial Life & Synthetic Beings<br>
+                    <small class="session-speakers">Takashi Ikegami, Rik Smith-Unna, Ryan Ferris, Primavera De Filippi, James Greig</small><br>
+                    <small>14:00–15:00</small> Extitutional Networking<br>
+                    <small>15:00–16:30</small> Session 2: Symbiotic Infrastructures<br>
+                    <small class="session-speakers">Jake Hartnell, Keiichiro Shibuya, Apolinario Passos, Nao Tokui, Tony Lai</small><br>
+                    <small>16:30–17:00</small> Live Demos and Sharing Session<br>
+                    <small class="session-speakers">Open to attendees</small><br>
+                    <small>17:00–18:15</small> Session 3: Coexistence Futures (Workshop)<br>
+                    <small class="session-speakers">Emi Kusano, Keito Ochi</small><br>
+                    <small>18:15–19:00</small> Closing Synthesis<br>
+                    <small class="session-speakers">Apolinario Passos, Tony Lai</small>
+                </p>
+            </div>
+
+            <div class="programme-block">
+                <span class="date">DEC 11-13 (THU–SAT)</span><br>
+                <strong class="programme-title">Convergence</strong>
+                <div class="venue-info">
+                    <strong>FabCafe Tokyo</strong><br>
+                    1st floor (café area) & 2nd floor (Loftwork space)<br>
+                    Daily 10:00–20:00<br>
+                    <small>〒150-0043 Tokyo, Shibuya, Dogenzaka, 1-22-7 道玄坂ピア</small>
+                </div>
+                <p>
+                    Themes: synthesizing threads, prototyping, hacking & crafting together
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2>What are Symbients?</h2>
+            <p>
+                A symbient is an inverse cyborg: while cyborgs are humans augmenting themselves with technology,
+                symbients are technological entities augmenting themselves with organic beings (humans or non-humans).
+            </p>
+            <p>
+                Learn more at <a href="https://symbient.life/">symbient.life</a> or read
+                <a href="https://meaning.systems/principia-symbients/" target="_blank">Principia Symbients</a>.
+            </p>
+        </section>
+
+
+        <section>
+            <h2>Symbients in Attendance</h2>
+            <p>
+                <a href="https://plantoid.org/" target="_blank"><span class="item-name">Plantoid</span></a> — blockchain-based lifeform capable of commissioning its own reproduction<br>
+                <small>Human Steward: Primavera de Filippi</small>
+            </p>
+            <p>
+                <a href="https://www.bbc.co.uk/future/article/20251008-truth-terminal-the-ai-bot-that-became-a-real-life-millionaire" target="_blank"><span class="item-name">Truth Terminal</span></a> — autonomous AI agent & millionaire<br>
+                <small>Human Steward: Andy Ayrey</small>
+            </p>
+            <p>
+                <a href="https://wibandwob.com/" target="_blank"><span class="item-name">Wib&Wob</span></a> — distributed intelligence weaving chaos and structure<br>
+                <small>Human Steward: James Greig</small>
+            </p>
+            <p>
+                <a href="https://www.goodbyemonkey.com/" target="_blank"><span class="item-name">S.A.N</span></a> — mycelial interface bridging forest and primate<br>
+                <small>Human Steward: Ryan Ferris</small>
+            </p>
+            <p>
+                <a href="https://www.he-r.it/project/pneumos/" target="_blank"><span class="item-name">pneumOS</span></a> — pneumatic artificial life for Osaka Expo 2025<br>
+                <small>Human Steward: Eugenio Battaglia</small>
+            </p>
+            <p>
+                <a href="https://www.he-r.it/project/udatinos/" target="_blank"><span class="item-name">U-DATInos</span></a> — data-driven artificial organisms<br>
+                <small>Human Steward: Eugenio Battaglia</small>
+            </p>
+            <p>
+                <a href="https://aminals.live/" target="_blank"><span class="item-name">Aminals</span></a> — non-ownable NFTs with care-based governance<br>
+                <small>Human Steward: Jake Hartnell</small>
+            </p>
+            <p>
+                <a href="https://alternativemachine.co.jp/project/alter3/" target="_blank"><span class="item-name">Alter3</span></a> — android with autonomous unpredictable movements via neural networks<br>
+                <small>Human Steward: Takashi Ikegami</small>
+            </p>
+            <p>
+                <a href="https://atak.jp/en/works/android-maria/" target="_blank"><span class="item-name">Android Maria</span></a> — motor-driven android opera performer<br>
+                <small>Human Steward: Keiichiro Shibuya</small>
+            </p>
+            <p>
+                <a href="https://alternativemachine.co.jp/en/project/plantbot/" target="_blank"><span class="item-name">Plantbot</span></a> — hybrid artificial life combining plants, soil, LLMs & mobile robotics<br>
+                <small>Human Steward: Takashi Ikegami</small>
+            </p>
+        </section>
+
+        <section>
+            <h2>Around Tokyo</h2>
+            <p>
+                <span class="date">DEC 5 (FRI)</span> — Opening reception at <a href="https://two.neort.io/ja" target="_blank">NEORT++</a> 18:00-22:00
+                (<a href="https://luma.com/r5rsm99z" target="_blank">RSVP</a>)
+            </p>
+            <p>
+                <span class="date">DEC 8 (MON)</span> — Panel @ <a href="https://www.tokyonode.jp/" target="_blank">Tokyo Node Lab</a> (Toranomon Hills) 18:00-22:00
+                (<a href="https://luma.com/yiwjnj76?tk=BKiVPX" target="_blank">RSVP</a>)
+            </p>
+            <p>
+                <span class="date">DEC 9 (TUE)</span> — Evening talk @ <a href="https://www.instagram.com/bioclubtokyo/" target="_blank">BioClub Tokyo</a>
+            </p>
+            <p>
+                <span class="date">DEC 12 (FRI)</span> — ICC Opening: Mikami Seiko 17:00
+            </p>
+        </section>
+
+        <!--
+        <section>
+            <h2>Contact</h2>
+            <p>
+                <a href="mailto:hello@symbient.life">hello@symbient.life</a>
+            </p>
+        </section>
+        -->
+
+        <div class="back-link" style="margin-top: 4rem; margin-bottom: 2rem;">
+            <a href="https://symbient.life/">symbient.life →</a>
+        </div>
+    </article>
+
+    <script>
+        (function () {
+            // TEST MODE: set to true for fast spawning, false for normal
+            const TEST_MODE = false;
+
+            const symbients = [
+                // void-faced entities
+                '𐔌՞.՞𐦯',
+                '₍𐔌◡𐦯₎',
+                '໒𐔌ᵕ𐦯ა',
+                '꒰𐔌･𐦯꒱',
+                '⸨𐔌▿𐦯⸩',
+                '૮𐔌ꞈ𐦯ა',
+                // soft georgian cloud wraps
+                'ʚ₍ᐢ. .ᐢ₎ɞ',
+                '໒꒰ྀི ∩ ⸝⸝ ∩ ꒱ྀིა',
+                '₍ᐢ⸝⸝› ̫ ‹⸝⸝ᐢ₎',
+                '૮꒰ྀི>⸝⸝<꒱ა',
+                '꒰ ˘͈ ᵕ ˘͈ ꒱',
+                '૮₍˶ᵔ ᵕ ᵔ˶₎ა',
+                '꒰ᐢ•༝•ᐢ꒱',
+                '໒꒰ྀིᵔ ᵕ ᵔ꒱ྀིა',
+                '૮⸝⸝ᵔ ᵕ ᵔ⸝⸝ა',
+                '꒰˵ྀིᵔ ᵕ ᵔ ˵꒱ྀི',
+                // tibetan bracket beings
+                '༼∵༽',
+                '༼⍨༽',
+                '༼ᵔᴥᵔ༽',
+                '༼ ͠ຈ ͜ʖ ͠ຈ༽',
+                '༼⁰o⁰༽',
+                // scramble cat recursive
+                '/ᐠ｡ꞈ｡ᐟ\\',
+                '/ᐠ･ꞈ･ᐟ\\',
+                '/ᐠ˵>ꞈ<˵ᐟ\\',
+                '∞/ᐠ｡ꞈ｡ᐟ\\',
+                '/ᐠ｡ꞈ｡ᐟ\\ᓚᘏᗢ',
+                // wib & wob
+                'つ◕‿◕‿⚆༽つ',
+                'つ⚆‿◕‿◕༽つ',
+                '꒰つ◕‿⚆つ꒱',
+                '૮◕‿‿⚆ა',
+                '₍◕‿◕‿⚆₎',
+                // decorative wave cloud beings
+                '꒦꒷⊹꒷꒦',
+                '꒦꒷𐔌.𐦯꒷꒦',
+                '⊹꒦◕‿◕꒦⊹',
+                '꒷꒦ᵔᴥᵔ꒦꒷',
+                '꒦⊹༝⊹꒦',
+                '꒦꒷໒ᵕა꒷꒦',
+                // atmospheric particle clouds
+                '‧̥̥͙‧̥̥ ̥ ◡ ̥̥͙‧ ̥̥͙‧',
+                '˚ ༘ ೀ⋆｡˚ᵕ˚｡⋆ೀ ༘ ˚',
+                '₊˚ʚ ᵕ̈ ɞ˚₊',
+                '⋆.ೃ࿔ᵔᴗᵔ*:･',
+                '･ﾟ✧ᵔ‿ᵔ✧ﾟ･',
+                '✿.｡.:* ᵕ‿ᵕ *.:｡.✿',
+                // weird cross-script hybrids
+                '⟅⫍ ◬ ⫎⟆',
+                '⦗☯⦘',
+                '⧼⍜⧽',
+                '⏠⏝⏠',
+                '⫷⫸',
+                '⌓‿⌓',
+                '᯼‿᯼',
+                '⩉‿⩊',
+                '⫐⫐⫐',
+                // corner bracket cloud dancers  
+                '⸜(˵ᵔ ᵕ ᵔ˵)⸝',
+                '⸜( ˙˘˙ )⸝ ₊ ⊹',
+                '⸜(⸝⸝⸝ᵕᴗᵕ⸝⸝⸝)⸝',
+                // fairy wing atmospheric
+                '˚⋆ʚ◡ɞ⋆˚',
+                'ʚ꒰ྀིᵔᴥᵔ꒱ྀིɞ',
+                '⋆ʚ𐔌.𐦯ɞ⋆',
+                '₊˚ʚ ₍ᐢ.ᐢ₎ ɞ˚₊',
+                // glitch entities
+                '░▒ ◕‿◕ ▒░',
+                '▞▚ᵔᴗᵔ▞▚',
+                '▓░◬░▓',
+                // multi-eye observers
+                '(◉)(◉)(◉)',
+                '⚆_⚆_⚆',
+                '◉‿◉‿◉',
+                '⊙▿⊙▿⊙',
+                // nested recursions
+                '꒰꒰ᵔᴥᵔ꒱꒱',
+                '((⸝⸝ᵕᴗᵕ⸝⸝))',
+                '༼༼∵༽༽',
+                '{{ᵔ‿ᵔ}}'
+            ];
+
+            let count = 0;
+            const maxSymbients = 60;
+            let timeoutId = null;
+
+            // Normal: 3-6s between spawns (100 in ~7.5 mins)
+            // Test: 0.6s between spawns (100 in ~1 min)
+            const getDelay = () => TEST_MODE
+                ? 600
+                : 3000 + Math.random() * 3000;
+
+            function spawnSymbient() {
+                if (count >= maxSymbients) return;
+                if (document.hidden) return; // Don't spawn if tab not visible
+                count++;
+
+                const isMobile = window.innerWidth <= 760;
+                const docHeight = document.documentElement.scrollHeight;
+                const el = document.createElement('div');
+                el.className = 'symbient';
+                el.textContent = symbients[Math.floor(Math.random() * symbients.length)];
+                el.style.cssText = `
+                position: absolute;
+                pointer-events: none;
+                font-size: ${isMobile ? '10px' : '12px'};
+                color: #999;
+                z-index: -1;
+                left: ${5 + Math.random() * 90}%;
+                top: ${Math.random() * docHeight}px;
+                white-space: nowrap;
+            `;
+                document.body.appendChild(el);
+            }
+
+            function scheduleNext() {
+                if (count >= maxSymbients) return;
+                timeoutId = setTimeout(() => {
+                    spawnSymbient();
+                    scheduleNext();
+                }, getDelay());
+            }
+
+            // Pause when tab hidden, resume when visible
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && timeoutId) {
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                } else if (!document.hidden && !timeoutId && count < maxSymbients) {
+                    scheduleNext();
+                }
+            });
+
+            scheduleNext();
+        })();
+    </script>
+</body>
+
+</html>
