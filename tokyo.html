@@ -186,6 +186,26 @@
             border: 1px solid rgba(26, 26, 26, 0.1);
         }
 
+        .header-section {
+            position: relative;
+        }
+
+        .header-image {
+            width: 250px;
+            height: auto;
+            position: fixed;
+            left: 60%;
+            top: 20px;
+        }
+
+        @media (max-width: 760px) {
+            .header-image {
+                position: static;
+                width: 200px;
+                margin-bottom: 1rem;
+            }
+        }
+
         @media (max-width: 1024px) {
             :root {
                 --type-xl: 2.6rem;
@@ -235,6 +255,7 @@
 <body>
     <article>
         <section class="header-section">
+            <img src="extitutional.png" alt="Extitutional" class="header-image">
             <h1>Symbients in Tokyo</h1>
             <p class="event-date">GLITCH 5.3 | DECEMBER 2025</p>
             <p class="subtitle subtitle-jp">
