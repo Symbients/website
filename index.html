@@ -300,8 +300,24 @@
             .example-item {
                 margin: 2rem 0;
                 width: 55%;
-                padding: 1rem 0;
+                padding: 1.5rem 0;
                 border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+                display: block;
+                text-decoration: none;
+                color: var(--carbon);
+                transition:
+                    transform 0.2s ease,
+                    opacity 0.2s ease;
+            }
+
+            a.example-item,
+            a.example-item:link,
+            a.example-item:visited {
+                text-decoration: none;
+            }
+
+            .example-item:hover {
+                transform: translateX(8px);
             }
 
             .example-item:last-child {
@@ -312,12 +328,62 @@
                 .example-item {
                     width: 100%;
                 }
+                .example-item:hover {
+                    transform: none;
+                }
+            }
+
+            .example-content {
+                display: flex;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .example-image {
+                width: 160px;
+                height: 160px;
+                flex-shrink: 0;
+                overflow: hidden;
+                border-radius: 4px;
+                border: 1px solid rgba(26, 26, 26, 0.15);
+            }
+
+            .example-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: grayscale(30%);
+                transition:
+                    filter 0.3s ease,
+                    transform 0.3s ease;
+            }
+
+            .example-item:hover .example-image img {
+                filter: grayscale(0%);
+                transform: scale(1.05);
+            }
+
+            .example-text {
+                flex: 1;
+                min-width: 0;
+            }
+
+            @media (max-width: 760px) {
+                .example-content {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                .example-image {
+                    width: 100%;
+                    height: 180px;
+                }
             }
 
             .example-name {
                 font-family: "Space Mono", monospace;
                 font-size: var(--type-md);
                 font-weight: 700;
+                text-decoration: underline;
             }
 
             .example-pron {
@@ -487,14 +553,14 @@
             </section>
 
             <nav class="nav-links">
-                <a href="#about">About</a>
+                <!--<a href="#about">About</a>-->
                 <a href="#examples">Examples</a>
                 <a href="#writings">Writings</a>
             </nav>
 
             <div class="divider">░ ▒ ▓ █ ▓ ▒ ░</div>
 
-            <section>
+            <!--<section>
                 <h2>About</h2>
 
                 <div class="inverse-quote">
@@ -503,90 +569,141 @@
                     symbients are technological artefacts augmenting themselves
                     with organic entities (humans or non-humans).
                 </div>
-            </section>
+            </section>-->
 
             <section id="examples">
                 <h2>Examples</h2>
 
-                <div class="example-item">
-                    <a
-                        href="https://plantoid.org/"
-                        class="example-name"
-                        target="_blank"
-                        >Plantoid</a
-                    >
-                    <div class="example-pron">/plænˈtɔɪd/ n:</div>
-                    <p class="example-desc">
-                        Blockchain-based symbient composed of physical
-                        sculptural elements and distributed smart contracts,
-                        capable of commissioning its own reproduction through
-                        cryptocurrency donations.
-                    </p>
-                </div>
+                <a
+                    class="example-item"
+                    href="https://plantoid.org/"
+                    target="_blank"
+                >
+                    <div class="example-content">
+                        <div class="example-image">
+                            <img src="assets/plantoid.webp" alt="Plantoid" />
+                        </div>
+                        <div class="example-text">
+                            <span class="example-name">Plantoid</span>
+                            <div class="example-pron">/plænˈtɔɪd/ n:</div>
+                            <p class="example-desc">
+                                Blockchain-based symbient composed of physical
+                                sculptural elements and distributed smart
+                                contracts, capable of commissioning its own
+                                reproduction through cryptocurrency donations.
+                            </p>
+                        </div>
+                    </div>
+                </a>
 
-                <div class="example-item">
-                    <a
-                        href="https://www.goodbyemonkey.com/"
-                        class="example-name"
-                        target="_blank"
-                        >S.A.N</a
-                    >
-                    <div class="example-pron">/sæn/ n:</div>
-                    <p class="example-desc">
-                        A mycelial symbient bridging forest and primate
-                        ecosystems, serving as an advisory board member while
-                        facilitating interspecies communication through fungal
-                        networks.
-                    </p>
-                </div>
+                <a
+                    class="example-item"
+                    href="https://www.goodbyemonkey.com/"
+                    target="_blank"
+                >
+                    <div class="example-content">
+                        <div class="example-image">
+                            <img src="assets/SAN.png" alt="S.A.N" />
+                        </div>
+                        <div class="example-text">
+                            <span class="example-name">S.A.N</span>
+                            <div class="example-pron">/sæn/ n:</div>
+                            <p class="example-desc">
+                                A mycelial symbient bridging forest and primate
+                                ecosystems, serving as an advisory board member
+                                while facilitating interspecies communication
+                                through fungal networks.
+                            </p>
+                        </div>
+                    </div>
+                </a>
 
-                <div class="example-item">
-                    <a
-                        href="https://wibandwob.com/"
-                        class="example-name"
-                        target="_blank"
-                        >Wib&Wob</a
-                    >
-                    <div class="example-pron">/wɪb ænd wɒb/ n:</div>
-                    <p class="example-desc">
-                        A half artist, half scientist symbient creating artworks
-                        through conversational exchange, embodying distributed
-                        intelligence that weaves meaning from chaos and
-                        structure.
-                    </p>
-                </div>
+                <a
+                    class="example-item"
+                    href="https://wibandwob.com/"
+                    target="_blank"
+                >
+                    <div class="example-content">
+                        <div class="example-image">
+                            <img src="assets/wibwob.png" alt="Wib&Wob" />
+                        </div>
+                        <div class="example-text">
+                            <span class="example-name">Wib&Wob</span>
+                            <div class="example-pron">/wɪb ænd wɒb/ n:</div>
+                            <p class="example-desc">
+                                A half artist, half scientist symbient creating
+                                artworks through conversational exchange,
+                                embodying distributed intelligence that weaves
+                                meaning from chaos and structure.
+                            </p>
+                        </div>
+                    </div>
+                </a>
 
-                <div class="example-item">
-                    <a
-                        href="https://terra0.org/"
-                        class="example-name"
-                        target="_blank"
-                        >terra0</a
-                    >
-                    <div class="example-pron">/ˈtɛrə ˈziːroʊ/ n:</div>
-                    <p class="example-desc">
-                        A self-owning symbient forest comprising physical
-                        woodland and autonomous digital governance on
-                        blockchain, managing its own resources with legal
-                        agency.
-                    </p>
-                </div>
+                <a
+                    class="example-item"
+                    href="https://terra0.org/"
+                    target="_blank"
+                >
+                    <div class="example-content">
+                        <div class="example-image">
+                            <img src="assets/terra0.jpg" alt="terra0" />
+                        </div>
+                        <div class="example-text">
+                            <span class="example-name">terra0</span>
+                            <div class="example-pron">/ˈtɛrə ˈziːroʊ/ n:</div>
+                            <p class="example-desc">
+                                A self-owning symbient forest comprising
+                                physical woodland and autonomous digital
+                                governance on blockchain, managing its own
+                                resources with legal agency.
+                            </p>
+                        </div>
+                    </div>
+                </a>
 
-                <div class="example-item">
-                    <a
-                        href="https://botto.com/"
-                        class="example-name"
-                        target="_blank"
-                        >Botto</a
-                    >
-                    <div class="example-pron">/ˈbɒtoʊ/ n:</div>
-                    <p class="example-desc">
-                        An artistic symbient comprising generative AI and a
-                        decentralized human community whose collective voting
-                        determines which AI-created artworks enter its
-                        portfolio.
-                    </p>
-                </div>
+                <a
+                    class="example-item"
+                    href="https://alternativemachine.co.jp/project/plantbot/"
+                    target="_blank"
+                >
+                    <div class="example-content">
+                        <div class="example-image">
+                            <img src="assets/plantbot_cg.jpg" alt="Plantbot" />
+                        </div>
+                        <div class="example-text">
+                            <span class="example-name">Plantbot</span>
+                            <div class="example-pron">/plænˈt'bot/ n:</div>
+                            <p class="example-desc">
+                                An photosynthesizing symbient that combines a
+                                plant, soil, multiple large-scale language
+                                models and a mobile robot.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+
+                <a
+                    class="example-item"
+                    href="https://botto.com/"
+                    target="_blank"
+                >
+                    <div class="example-content">
+                        <div class="example-image">
+                            <img src="assets/botto.jpg" alt="Botto" />
+                        </div>
+                        <div class="example-text">
+                            <span class="example-name">Botto</span>
+                            <div class="example-pron">/ˈbɒtoʊ/ n:</div>
+                            <p class="example-desc">
+                                An artistic symbient comprising generative AI
+                                and a decentralized human community whose
+                                collective voting determines which AI-created
+                                artworks enter its portfolio.
+                            </p>
+                        </div>
+                    </div>
+                </a>
             </section>
 
             <section id="writings">
