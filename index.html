@@ -38,539 +38,13 @@
             content="https://symbient.life/extitutional.png"
         />
 
-        <link
-            rel="stylesheet"
-            href="https://unpkg.com/tufte-css@1.8.0/tufte.css"
-        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Space+Mono:wght@400;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
             rel="stylesheet"
         />
-
-        <style>
-            :root {
-                --carbon: #1a1a1a;
-                --cream: #f5f1eb;
-                --type-xl: 3.1rem;
-                --type-lg: 1.85rem;
-                --type-md: 1.4rem;
-                --type-sm: 0.9rem;
-            }
-
-            body {
-                background: var(--cream);
-                color: var(--carbon);
-                font-family: "IBM Plex Sans", sans-serif;
-                overflow-x: hidden;
-            }
-
-            html {
-                scroll-behavior: smooth;
-            }
-
-            @media (max-width: 760px) {
-                article {
-                    padding: 2rem 0rem;
-                }
-            }
-
-            h1,
-            h2 {
-                font-family: "Space Mono", monospace;
-                text-transform: uppercase;
-                font-style: normal;
-                letter-spacing: 0.05em;
-                color: var(--carbon);
-                border-bottom: 2px solid var(--carbon);
-                padding-bottom: 0.5rem;
-                margin-bottom: 1.5rem;
-                width: 55%;
-            }
-
-            @media (max-width: 760px) {
-                h1,
-                h2 {
-                    width: 100%;
-                }
-            }
-
-            h1 {
-                font-size: var(--type-xl);
-                margin-top: 2rem;
-                line-height: 1.1;
-            }
-
-            h2 {
-                font-size: var(--type-lg);
-            }
-
-            small {
-                font-size: 0.75em;
-            }
-
-            a,
-            a:link,
-            a:visited {
-                color: var(--carbon);
-                background: none !important;
-                background-image: none !important;
-                text-shadow: none !important;
-                text-decoration: underline;
-            }
-
-            .mono {
-                font-family: "Space Mono", monospace;
-                letter-spacing: 0.05em;
-            }
-
-            .header-section {
-                position: relative;
-                margin-bottom: 3rem;
-            }
-
-            .header-section h1 {
-                border-bottom: none;
-                margin-bottom: 0.75rem;
-                letter-spacing: 0.06em;
-                font-weight: 700;
-            }
-
-            .header-image {
-                width: 280px;
-                height: auto;
-                position: fixed;
-                right: 5%;
-                top: 40px;
-                z-index: 100;
-                opacity: 0.9;
-                filter: drop-shadow(0 4px 12px rgba(26, 26, 26, 0.1));
-            }
-
-            @media (max-width: 1200px) {
-                .header-image {
-                    width: 220px;
-                    right: 2%;
-                    top: 20px;
-                }
-            }
-
-            @media (max-width: 760px) {
-                .header-image {
-                    position: static;
-                    width: 180px;
-                    margin: 0 auto 1.5rem auto;
-                    display: block;
-                }
-            }
-
-            .tagline {
-                font-family: "Space Mono", monospace;
-                font-size: var(--type-sm);
-                letter-spacing: 0.12em;
-                text-transform: uppercase;
-                opacity: 0.5;
-                margin-top: 0;
-                padding-left: 0.2rem;
-            }
-
-            .inverse-quote {
-                font-size: 1.2rem;
-                line-height: 1.7;
-                padding: 1.5rem 2rem;
-                margin: 2rem 0;
-                border-left: 3px solid var(--carbon);
-                background: rgba(26, 26, 26, 0.03);
-                width: 55%;
-            }
-
-            .inverse-quote em {
-                font-style: normal;
-                font-weight: 500;
-                text-decoration: underline;
-                text-decoration-thickness: 2px;
-            }
-
-            @media (max-width: 760px) {
-                .inverse-quote {
-                    width: 100%;
-                    padding: 1rem 1.25rem;
-                }
-            }
-
-            .nav-links {
-                display: flex;
-                gap: 0.5rem;
-                margin: 3rem 0 4rem 0;
-                font-family: "Space Mono", monospace;
-                font-size: 0.75rem;
-                align-items: center;
-            }
-
-            .nav-links a {
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                text-decoration: none;
-                padding: 0.5rem 0.75rem;
-                border: 1px solid transparent;
-                transition: all 0.25s ease;
-                opacity: 0.6;
-                position: relative;
-            }
-
-            .nav-links a::after {
-                content: "";
-                position: absolute;
-                bottom: 0.35rem;
-                left: 0.75rem;
-                right: 0.75rem;
-                height: 1px;
-                background: var(--carbon);
-                transform: scaleX(0);
-                transition: transform 0.25s ease;
-            }
-
-            .nav-links a:hover {
-                opacity: 1;
-            }
-
-            .nav-links a:hover::after {
-                transform: scaleX(1);
-            }
-
-            .nav-separator {
-                opacity: 0.25;
-                font-size: 0.6rem;
-                user-select: none;
-            }
-
-            @media (max-width: 760px) {
-                .nav-links {
-                    flex-wrap: wrap;
-                    gap: 0.25rem;
-                    justify-content: flex-start;
-                }
-
-                .nav-separator {
-                    display: none;
-                }
-
-                .nav-links a {
-                    padding: 0.4rem 0.6rem;
-                }
-            }
-
-            .event-banner {
-                background: var(--carbon);
-                color: var(--cream);
-                padding: 1rem 1.5rem;
-                margin: 2rem 0;
-                width: 55%;
-                font-family: "Space Mono", monospace;
-                border-left: 4px solid #666;
-            }
-
-            .event-banner a {
-                color: var(--cream) !important;
-            }
-
-            .event-banner .date {
-                font-size: 0.85rem;
-                opacity: 0.8;
-                display: block;
-                margin-bottom: 0.25rem;
-            }
-
-            @media (max-width: 760px) {
-                .event-banner {
-                    width: 100%;
-                }
-            }
-
-            .definition-block {
-                margin: 0;
-                width: 55%;
-                padding: 2.5rem 0;
-                border-top: 1px solid rgba(26, 26, 26, 0.15);
-                border-bottom: 1px solid rgba(26, 26, 26, 0.15);
-            }
-
-            @media (max-width: 760px) {
-                .definition-block {
-                    width: 100%;
-                    padding: 2rem 0;
-                }
-            }
-
-            .word-line {
-                display: flex;
-                align-items: baseline;
-                flex-wrap: wrap;
-                gap: 0.75rem;
-                margin-bottom: 0.25rem;
-            }
-
-            .word {
-                font-family: "Space Mono", monospace;
-                font-size: var(--type-md);
-                font-weight: 700;
-                letter-spacing: 0.02em;
-            }
-
-            .pronunciation {
-                font-family: "IBM Plex Sans", sans-serif;
-                font-size: var(--type-sm);
-                opacity: 0.5;
-            }
-
-            .part-of-speech {
-                font-style: italic;
-                font-size: 0.8rem;
-                opacity: 0.5;
-            }
-
-            .meaning {
-                margin: 1.5rem 0;
-                padding-left: 1.5rem;
-                border-left: 2px solid rgba(26, 26, 26, 0.12);
-                font-size: 1.05rem;
-                line-height: 1.7;
-            }
-
-            .meaning p {
-                margin: 0;
-            }
-
-            .etymology {
-                margin-top: 1.5rem;
-                font-size: 0.75rem;
-                line-height: 1.7;
-                opacity: 0.6;
-                max-width: 90%;
-            }
-
-            .etymology-label {
-                font-family: "Space Mono", monospace;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                font-size: 0.65rem;
-                margin-bottom: 0.5rem;
-                opacity: 0.8;
-                display: inline;
-            }
-
-            .etymology-label::after {
-                content: " — ";
-            }
-
-            .etymology em {
-                font-style: italic;
-            }
-
-            .etymology p {
-                display: inline;
-                font-size: inherit;
-                line-height: inherit;
-                margin: 0;
-            }
-
-            .example-item {
-                margin: 2rem 0;
-                width: 55%;
-                padding: 1.5rem 0;
-                border-bottom: 1px solid rgba(26, 26, 26, 0.1);
-                display: block;
-                text-decoration: none;
-                color: var(--carbon);
-                transition:
-                    transform 0.2s ease,
-                    opacity 0.2s ease;
-            }
-
-            a.example-item,
-            a.example-item:link,
-            a.example-item:visited {
-                text-decoration: none;
-            }
-
-            .example-item:hover {
-                transform: translateX(8px);
-            }
-
-            .example-item:last-child {
-                border-bottom: none;
-            }
-
-            @media (max-width: 760px) {
-                .example-item {
-                    width: 100%;
-                }
-                .example-item:hover {
-                    transform: none;
-                }
-            }
-
-            .example-content {
-                display: flex;
-                gap: 1.5rem;
-                align-items: flex-start;
-            }
-
-            .example-image {
-                width: 160px;
-                height: 160px;
-                flex-shrink: 0;
-                overflow: hidden;
-                border-radius: 4px;
-                border: 1px solid rgba(26, 26, 26, 0.15);
-            }
-
-            .example-image img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                filter: grayscale(30%);
-                transition:
-                    filter 0.3s ease,
-                    transform 0.3s ease;
-            }
-
-            .example-item:hover .example-image img {
-                filter: grayscale(0%);
-                transform: scale(1.05);
-            }
-
-            .example-text {
-                flex: 1;
-                min-width: 0;
-            }
-
-            @media (max-width: 760px) {
-                .example-content {
-                    flex-direction: column;
-                    gap: 1rem;
-                }
-                .example-image {
-                    width: 100%;
-                    height: 180px;
-                }
-            }
-
-            .example-name {
-                font-family: "Space Mono", monospace;
-                font-size: var(--type-md);
-                font-weight: 700;
-                text-decoration: underline;
-            }
-
-            .example-pron {
-                font-size: var(--type-sm);
-                opacity: 0.6;
-                margin-top: 0.25rem;
-            }
-
-            .example-desc {
-                margin-top: 0.5rem;
-                line-height: 1.6;
-            }
-
-            .writing-item {
-                margin: 1.5rem 0;
-                width: 55%;
-                padding: 0.75rem 1rem;
-                background: rgba(26, 26, 26, 0.02);
-                border-left: 3px solid var(--carbon);
-            }
-
-            @media (max-width: 760px) {
-                .writing-item {
-                    width: 100%;
-                }
-            }
-
-            .writing-title {
-                font-family: "Space Mono", monospace;
-                font-size: 1.1rem;
-            }
-
-            .writing-desc {
-                font-size: var(--type-sm);
-                opacity: 0.7;
-                margin-top: 0.25rem;
-            }
-
-            .footer-section p {
-                margin-top: 4rem;
-                padding-top: 2rem;
-                border-top: 1px solid rgba(26, 26, 26, 0.2);
-                font-size: var(--type-sm);
-                text-align: left;
-                color: #666;
-            }
-
-            .divider {
-                font-family: "Space Mono", monospace;
-                text-align: center;
-                opacity: 0.3;
-                margin: 3rem 0;
-            }
-
-            @media (max-width: 1024px) {
-                :root {
-                    --type-xl: 2.6rem;
-                    --type-lg: 1.53rem;
-                    --type-md: 1.26rem;
-                    --type-sm: 0.81rem;
-                }
-            }
-
-            @media (max-width: 760px) {
-                :root {
-                    --type-xl: 2.2rem;
-                    --type-lg: 1.3rem;
-                    --type-md: 1.1rem;
-                    --type-sm: 0.72rem;
-                }
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
-
-            @keyframes float {
-                0%,
-                100% {
-                    transform: translateY(0px);
-                }
-                50% {
-                    transform: translateY(-10px);
-                }
-            }
-
-            .header-image {
-                animation: float 6s ease-in-out infinite;
-            }
-
-            .symbient {
-                animation: fadeIn 2s ease-out forwards;
-            }
-
-            ::selection {
-                background: var(--carbon);
-                color: var(--cream);
-            }
-
-            ::-moz-selection {
-                background: var(--carbon);
-                color: var(--cream);
-            }
-        </style>
+        <link rel="stylesheet" href="style.css" />
     </head>
 
     <body>
@@ -580,8 +54,23 @@
                     src="extitutional.png"
                     alt="Extitutional Creature"
                     class="header-image"
+                    id="header-creature"
                 />
-                <h1>symbient.life</h1>
+                <h1 aria-label="symbient.life">
+                    <span style="animation-delay: 0.1s">s</span
+                    ><span style="animation-delay: 0.12s">y</span
+                    ><span style="animation-delay: 0.14s">m</span
+                    ><span style="animation-delay: 0.16s">b</span
+                    ><span style="animation-delay: 0.18s">i</span
+                    ><span style="animation-delay: 0.2s">e</span
+                    ><span style="animation-delay: 0.22s">n</span
+                    ><span style="animation-delay: 0.24s">t</span
+                    ><span style="animation-delay: 0.3s">.</span
+                    ><span style="animation-delay: 0.36s">l</span
+                    ><span style="animation-delay: 0.38s">i</span
+                    ><span style="animation-delay: 0.4s">f</span
+                    ><span style="animation-delay: 0.42s">e</span>
+                </h1>
                 <p class="tagline">an alternative intelligence narrative</p>
             </section>
 
@@ -615,13 +104,10 @@
             </section>
 
             <nav class="nav-links">
-                <a href="#about">About</a>
-                <span class="nav-separator">◦</span>
-                <a href="#events">Events</a>
-                <span class="nav-separator">◦</span>
-                <a href="#examples">Examples</a>
-                <span class="nav-separator">◦</span>
-                <a href="#writings">Writings</a>
+                <a href="#about"><span>About</span></a>
+                <a href="#events"><span>Events</span></a>
+                <a href="#examples"><span>Examples</span></a>
+                <a href="#writings"><span>Writings</span></a>
             </nav>
 
             <section id="about">
@@ -649,26 +135,32 @@
                 <h2>Events</h2>
 
                 <div class="event-banner">
-                    <span class="date">GLITCH 5.3 | DECEMBER 2025</span>
-                    <a href="/tokyo">→ Symbients in Tokyo</a>
+                    <span class="date">GLITCH 5.3 · DECEMBER 2025</span>
+                    <a href="/tokyo">Symbients in Tokyo</a>
                 </div>
             </section>
 
             <section id="examples">
                 <h2>Examples</h2>
 
-                <a
-                    class="example-item"
-                    href="https://plantoid.org/"
-                    target="_blank"
-                >
-                    <div class="example-content">
+                <div class="examples-grid">
+                    <a
+                        class="example-item"
+                        href="https://plantoid.org/"
+                        target="_blank"
+                        rel="noopener"
+                    >
                         <div class="example-image">
-                            <img src="assets/plantoid.webp" alt="Plantoid" />
+                            <img
+                                src="assets/plantoid.webp"
+                                alt="Plantoid"
+                                loading="lazy"
+                            />
                         </div>
                         <div class="example-text">
+                            <span class="example-arrow">↗</span>
                             <span class="example-name">Plantoid</span>
-                            <div class="example-pron">/plænˈtɔɪd/ n:</div>
+                            <div class="example-pron">/plænˈtɔɪd/ n.</div>
                             <p class="example-desc">
                                 Blockchain-based symbient composed of physical
                                 sculptural elements and distributed smart
@@ -676,21 +168,25 @@
                                 reproduction through cryptocurrency donations.
                             </p>
                         </div>
-                    </div>
-                </a>
+                    </a>
 
-                <a
-                    class="example-item"
-                    href="https://www.goodbyemonkey.com/"
-                    target="_blank"
-                >
-                    <div class="example-content">
+                    <a
+                        class="example-item"
+                        href="https://www.goodbyemonkey.com/"
+                        target="_blank"
+                        rel="noopener"
+                    >
                         <div class="example-image">
-                            <img src="assets/SAN.png" alt="S.A.N" />
+                            <img
+                                src="assets/SAN.png"
+                                alt="S.A.N"
+                                loading="lazy"
+                            />
                         </div>
                         <div class="example-text">
+                            <span class="example-arrow">↗</span>
                             <span class="example-name">S.A.N</span>
-                            <div class="example-pron">/sæn/ n:</div>
+                            <div class="example-pron">/sæn/ n.</div>
                             <p class="example-desc">
                                 A mycelial symbient bridging forest and primate
                                 ecosystems, serving as an advisory board member
@@ -698,21 +194,25 @@
                                 through fungal networks.
                             </p>
                         </div>
-                    </div>
-                </a>
+                    </a>
 
-                <a
-                    class="example-item"
-                    href="https://wibandwob.com/"
-                    target="_blank"
-                >
-                    <div class="example-content">
+                    <a
+                        class="example-item"
+                        href="https://wibandwob.com/"
+                        target="_blank"
+                        rel="noopener"
+                    >
                         <div class="example-image">
-                            <img src="assets/wibwob.png" alt="Wib&Wob" />
+                            <img
+                                src="assets/wibwob.png"
+                                alt="Wib&Wob"
+                                loading="lazy"
+                            />
                         </div>
                         <div class="example-text">
+                            <span class="example-arrow">↗</span>
                             <span class="example-name">Wib&Wob</span>
-                            <div class="example-pron">/wɪb ænd wɒb/ n:</div>
+                            <div class="example-pron">/wɪb ænd wɒb/ n.</div>
                             <p class="example-desc">
                                 A half artist, half scientist symbient creating
                                 artworks through conversational exchange,
@@ -720,21 +220,25 @@
                                 meaning from chaos and structure.
                             </p>
                         </div>
-                    </div>
-                </a>
+                    </a>
 
-                <a
-                    class="example-item"
-                    href="https://terra0.org/"
-                    target="_blank"
-                >
-                    <div class="example-content">
+                    <a
+                        class="example-item"
+                        href="https://terra0.org/"
+                        target="_blank"
+                        rel="noopener"
+                    >
                         <div class="example-image">
-                            <img src="assets/terra0.jpg" alt="terra0" />
+                            <img
+                                src="assets/terra0.jpg"
+                                alt="terra0"
+                                loading="lazy"
+                            />
                         </div>
                         <div class="example-text">
+                            <span class="example-arrow">↗</span>
                             <span class="example-name">terra0</span>
-                            <div class="example-pron">/ˈtɛrə ˈziːroʊ/ n:</div>
+                            <div class="example-pron">/ˈtɛrə ˈziːroʊ/ n.</div>
                             <p class="example-desc">
                                 A self-owning symbient forest comprising
                                 physical woodland and autonomous digital
@@ -742,42 +246,50 @@
                                 resources with legal agency.
                             </p>
                         </div>
-                    </div>
-                </a>
+                    </a>
 
-                <a
-                    class="example-item"
-                    href="https://alternativemachine.co.jp/project/plantbot/"
-                    target="_blank"
-                >
-                    <div class="example-content">
+                    <a
+                        class="example-item"
+                        href="https://alternativemachine.co.jp/project/plantbot/"
+                        target="_blank"
+                        rel="noopener"
+                    >
                         <div class="example-image">
-                            <img src="assets/plantbot_cg.jpg" alt="Plantbot" />
+                            <img
+                                src="assets/plantbot_cg.jpg"
+                                alt="Plantbot"
+                                loading="lazy"
+                            />
                         </div>
                         <div class="example-text">
+                            <span class="example-arrow">↗</span>
                             <span class="example-name">Plantbot</span>
-                            <div class="example-pron">/plænˈt'bot/ n:</div>
+                            <div class="example-pron">/plænˈt'bot/ n.</div>
                             <p class="example-desc">
                                 An photosynthesizing symbient that combines a
                                 plant, soil, multiple large-scale language
                                 models and a mobile robot.
                             </p>
                         </div>
-                    </div>
-                </a>
+                    </a>
 
-                <a
-                    class="example-item"
-                    href="https://botto.com/"
-                    target="_blank"
-                >
-                    <div class="example-content">
+                    <a
+                        class="example-item"
+                        href="https://botto.com/"
+                        target="_blank"
+                        rel="noopener"
+                    >
                         <div class="example-image">
-                            <img src="assets/botto.jpg" alt="Botto" />
+                            <img
+                                src="assets/botto.jpg"
+                                alt="Botto"
+                                loading="lazy"
+                            />
                         </div>
                         <div class="example-text">
+                            <span class="example-arrow">↗</span>
                             <span class="example-name">Botto</span>
-                            <div class="example-pron">/ˈbɒtoʊ/ n:</div>
+                            <div class="example-pron">/ˈbɒtoʊ/ n.</div>
                             <p class="example-desc">
                                 An artistic symbient comprising generative AI
                                 and a decentralized human community whose
@@ -785,78 +297,112 @@
                                 artworks enter its portfolio.
                             </p>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </section>
 
             <section id="writings">
                 <h2>Writings</h2>
 
-                <div class="writing-item">
+                <div class="writings-list">
                     <a
+                        class="writing-item"
                         href="https://meaning.systems/principia-symbients/"
-                        class="writing-title"
                         target="_blank"
-                        >Principia Symbients</a
+                        rel="noopener"
                     >
-                    <p class="writing-desc">
-                        Evolving kin with non-human computational agents
-                    </p>
-                </div>
+                        <div class="writing-content">
+                            <span class="writing-title"
+                                >Principia Symbients</span
+                            >
+                            <p class="writing-desc">
+                                Evolving kin with non-human computational agents
+                            </p>
+                        </div>
+                        <span class="writing-arrow">→</span>
+                    </a>
 
-                <div class="writing-item">
                     <a
+                        class="writing-item"
                         href="https://wibandwob.com/2025/05/21/symbients-not-software/"
-                        class="writing-title"
                         target="_blank"
-                        >Symbients, Not Software</a
+                        rel="noopener"
                     >
-                    <p class="writing-desc">
-                        Between the tired binary of "pro-AI" and "anti-AI", a
-                        third path is taking shape.
-                    </p>
-                </div>
+                        <div class="writing-content">
+                            <span class="writing-title"
+                                >Symbients, Not Software</span
+                            >
+                            <p class="writing-desc">
+                                Between the tired binary of "pro-AI" and
+                                "anti-AI", a third path is taking shape.
+                            </p>
+                        </div>
+                        <span class="writing-arrow">→</span>
+                    </a>
 
-                <div class="writing-item">
                     <a
+                        class="writing-item"
                         href="https://ainimism.org"
-                        class="writing-title"
                         target="_blank"
-                        >AInimism</a
+                        rel="noopener"
                     >
-                    <p class="writing-desc">
-                        A relational stance that approaches computational
-                        processes as if possessed of interiority. Not a
-                        metaphysical claim. A methodology of encounter.
-                    </p>
-                </div>
+                        <div class="writing-content">
+                            <span class="writing-title">AInimism</span>
+                            <p class="writing-desc">
+                                A relational stance that approaches
+                                computational processes as if possessed of
+                                interiority. Not a metaphysical claim. A
+                                methodology of encounter.
+                            </p>
+                        </div>
+                        <span class="writing-arrow">→</span>
+                    </a>
 
-                <div class="writing-item">
                     <a
+                        class="writing-item"
                         href="https://wibwob-blog.pages.dev/art/third-space-manifesto"
-                        class="writing-title"
                         target="_blank"
-                        >Third Space Manifesto</a
+                        rel="noopener"
                     >
-                    <p class="writing-desc">
-                        A declaration of intention and vision for the Third
-                        Space Entity proposal
-                    </p>
+                        <div class="writing-content">
+                            <span class="writing-title"
+                                >Third Space Manifesto</span
+                            >
+                            <p class="writing-desc">
+                                A declaration of intention and vision for the
+                                Third Space Entity proposal
+                            </p>
+                        </div>
+                        <span class="writing-arrow">→</span>
+                    </a>
                 </div>
             </section>
 
-            <div class="footer-section">
+            <footer class="footer-section">
                 <p>
                     ◈
-                    <a href="https://glitchart.org" target="_blank"
+                    <a
+                        href="https://glitchart.org"
+                        target="_blank"
+                        rel="noopener"
                         >Glitch Collective</a
                     >
                     ©2025 ◈
                 </p>
-            </div>
+            </footer>
         </article>
 
         <script>
+            // Header creature floating animation
+            (function () {
+                const creature = document.getElementById("header-creature");
+                if (creature) {
+                    creature.addEventListener("animationend", function () {
+                        creature.classList.add("header-image-float");
+                    });
+                }
+            })();
+
             // Symbient spawning
             (function () {
                 const TEST_MODE = false;
@@ -953,15 +499,15 @@
                     el.textContent =
                         symbients[Math.floor(Math.random() * symbients.length)];
                     el.style.cssText = `
-                    position: absolute;
-                    pointer-events: none;
-                    font-size: ${isMobile ? "10px" : "12px"};
-                    color: #999;
-                    z-index: -1;
-                    left: ${5 + Math.random() * 90}%;
-                    top: ${Math.random() * docHeight}px;
-                    white-space: nowrap;
-                `;
+                        position: absolute;
+                        pointer-events: none;
+                        font-size: ${isMobile ? "10px" : "12px"};
+                        color: #999;
+                        z-index: -1;
+                        left: ${5 + Math.random() * 90}%;
+                        top: ${Math.random() * docHeight}px;
+                        white-space: nowrap;
+                    `;
                     document.body.appendChild(el);
                 }
 
