@@ -1026,6 +1026,16 @@ section:nth-child(8) {
         --type-hero: clamp(2rem, 12vw, 3rem);
     }
 
+    .nav-links {
+        gap: 0.35rem;
+    }
+
+    .nav-links a {
+        padding: 0.5rem 0.7rem;
+        letter-spacing: 0.08em;
+        font-size: clamp(0.6rem, 2.5vw, 0.7rem);
+    }
+
     .definition-block::before {
         left: -0.75rem;
         width: 2px;
