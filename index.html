@@ -66,6 +66,10 @@
                 overflow-x: hidden;
             }
 
+            html {
+                scroll-behavior: smooth;
+            }
+
             @media (max-width: 760px) {
                 article {
                     padding: 2rem 0rem;
@@ -95,6 +99,7 @@
             h1 {
                 font-size: var(--type-xl);
                 margin-top: 2rem;
+                line-height: 1.1;
             }
 
             h2 {
@@ -122,6 +127,14 @@
 
             .header-section {
                 position: relative;
+                margin-bottom: 3rem;
+            }
+
+            .header-section h1 {
+                border-bottom: none;
+                margin-bottom: 0.75rem;
+                letter-spacing: 0.06em;
+                font-weight: 700;
             }
 
             .header-image {
@@ -155,10 +168,11 @@
             .tagline {
                 font-family: "Space Mono", monospace;
                 font-size: var(--type-sm);
-                letter-spacing: 0.05em;
+                letter-spacing: 0.12em;
                 text-transform: uppercase;
-                opacity: 0.7;
-                margin-top: -0.5rem;
+                opacity: 0.5;
+                margin-top: 0;
+                padding-left: 0.2rem;
             }
 
             .inverse-quote {
@@ -187,21 +201,63 @@
 
             .nav-links {
                 display: flex;
-                gap: 2rem;
-                margin: 2rem 0;
+                gap: 0.5rem;
+                margin: 3rem 0 4rem 0;
                 font-family: "Space Mono", monospace;
-                font-size: var(--type-sm);
+                font-size: 0.75rem;
+                align-items: center;
             }
 
             .nav-links a {
                 text-transform: uppercase;
-                letter-spacing: 0.05em;
+                letter-spacing: 0.08em;
+                text-decoration: none;
+                padding: 0.5rem 0.75rem;
+                border: 1px solid transparent;
+                transition: all 0.25s ease;
+                opacity: 0.6;
+                position: relative;
+            }
+
+            .nav-links a::after {
+                content: "";
+                position: absolute;
+                bottom: 0.35rem;
+                left: 0.75rem;
+                right: 0.75rem;
+                height: 1px;
+                background: var(--carbon);
+                transform: scaleX(0);
+                transition: transform 0.25s ease;
+            }
+
+            .nav-links a:hover {
+                opacity: 1;
+            }
+
+            .nav-links a:hover::after {
+                transform: scaleX(1);
+            }
+
+            .nav-separator {
+                opacity: 0.25;
+                font-size: 0.6rem;
+                user-select: none;
             }
 
             @media (max-width: 760px) {
                 .nav-links {
-                    flex-direction: column;
-                    gap: 1rem;
+                    flex-wrap: wrap;
+                    gap: 0.25rem;
+                    justify-content: flex-start;
+                }
+
+                .nav-separator {
+                    display: none;
+                }
+
+                .nav-links a {
+                    padding: 0.4rem 0.6rem;
                 }
             }
 
@@ -233,58 +289,79 @@
             }
 
             .definition-block {
-                margin: 2rem 0;
+                margin: 0;
                 width: 55%;
+                padding: 2.5rem 0;
+                border-top: 1px solid rgba(26, 26, 26, 0.15);
+                border-bottom: 1px solid rgba(26, 26, 26, 0.15);
             }
 
             @media (max-width: 760px) {
                 .definition-block {
                     width: 100%;
+                    padding: 2rem 0;
                 }
+            }
+
+            .word-line {
+                display: flex;
+                align-items: baseline;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                margin-bottom: 0.25rem;
             }
 
             .word {
                 font-family: "Space Mono", monospace;
-                font-size: var(--type-lg);
+                font-size: var(--type-md);
                 font-weight: 700;
+                letter-spacing: 0.02em;
             }
 
             .pronunciation {
                 font-family: "IBM Plex Sans", sans-serif;
                 font-size: var(--type-sm);
-                opacity: 0.6;
-                margin-left: 0.5rem;
+                opacity: 0.5;
             }
 
             .part-of-speech {
                 font-style: italic;
-                font-size: var(--type-sm);
-                opacity: 0.6;
-                display: block;
-                margin-top: 0.25rem;
+                font-size: 0.8rem;
+                opacity: 0.5;
             }
 
             .meaning {
-                margin: 1rem 0;
-                padding-left: 1rem;
-                border-left: 2px solid rgba(26, 26, 26, 0.2);
+                margin: 1.5rem 0;
+                padding-left: 1.5rem;
+                border-left: 2px solid rgba(26, 26, 26, 0.12);
+                font-size: 1.05rem;
+                line-height: 1.7;
+            }
+
+            .meaning p {
+                margin: 0;
             }
 
             .etymology {
-                margin-top: 2rem;
-                padding-top: 1rem;
-                border-top: 1px solid rgba(26, 26, 26, 0.2);
-                font-size: 0.7rem;
-                line-height: 1.6;
+                margin-top: 1.5rem;
+                font-size: 0.75rem;
+                line-height: 1.7;
+                opacity: 0.6;
+                max-width: 90%;
             }
 
             .etymology-label {
                 font-family: "Space Mono", monospace;
                 text-transform: uppercase;
                 letter-spacing: 0.1em;
-                font-size: 0.75rem;
+                font-size: 0.65rem;
                 margin-bottom: 0.5rem;
-                opacity: 0.6;
+                opacity: 0.8;
+                display: inline;
+            }
+
+            .etymology-label::after {
+                content: " — ";
             }
 
             .etymology em {
@@ -292,8 +369,9 @@
             }
 
             .etymology p {
-                font-size: 0.7rem;
-                line-height: 1.5;
+                display: inline;
+                font-size: inherit;
+                line-height: inherit;
                 margin: 0;
             }
 
@@ -433,9 +511,9 @@
 
             .divider {
                 font-family: "Space Mono", monospace;
-                letter-spacing: 0.5em;
+                text-align: center;
                 opacity: 0.3;
-                margin: 2rem 0;
+                margin: 3rem 0;
             }
 
             @media (max-width: 1024px) {
@@ -507,39 +585,30 @@
                 <p class="tagline">an alternative intelligence narrative</p>
             </section>
 
-            <!--<div class="divider">◇ ◇ ◇ ◈ ◇ ◇ ◇</div>-->
-
             <section id="definition">
-                <!--<h2>Definition</h2>-->
-
                 <div class="definition-block">
-                    <div>
+                    <div class="word-line">
                         <span class="word">Symbient</span>
                         <span class="pronunciation">/ˈsɪm.bi.ənt/</span>
-                        <span class="part-of-speech">noun (formal)</span>
+                        <span class="part-of-speech">noun</span>
                     </div>
 
                     <div class="meaning">
                         <p>
-                            A Symbient is a distinct entity emerging from the
-                            symbiosis between organic beings and synthetic
-                            systems. A Symbient displays operational and
-                            decisional autonomy.
+                            A distinct entity emerging from the symbiosis
+                            between organic beings and synthetic systems,
+                            displaying operational and decisional autonomy.
                         </p>
                     </div>
 
                     <div class="etymology">
-                        <div class="etymology-label">Etymology</div>
+                        <span class="etymology-label">Etymology</span>
                         <p>
-                            From <em>symbiotic</em> (from Greek
-                            <em>sumbiōtikos</em> 'living together', from
-                            <em>sumbioun</em> 'live together', from
-                            <em>sum-</em> 'together' + <em>bios</em> 'life') +
-                            <em>entity</em> (from late Latin <em>entitas</em>,
-                            from Latin <em>ens</em>, <em>ent-</em> 'being') +
-                            <em>ambient</em> (from Latin <em>ambiens</em>,
-                            <em>ambient-</em> 'going around', from
-                            <em>ambire</em>). Origin: early 21st century.
+                            From <em>symbiotic</em> (Greek <em>sumbiōtikos</em>,
+                            'living together') + <em>entity</em> (Latin
+                            <em>entitas</em>, 'being') + <em>ambient</em> (Latin
+                            <em>ambiens</em>, 'going around'). Origin: early
+                            21st century.
                         </p>
                     </div>
                 </div>
@@ -547,14 +616,15 @@
 
             <nav class="nav-links">
                 <a href="#about">About</a>
+                <span class="nav-separator">◦</span>
                 <a href="#events">Events</a>
+                <span class="nav-separator">◦</span>
                 <a href="#examples">Examples</a>
+                <span class="nav-separator">◦</span>
                 <a href="#writings">Writings</a>
             </nav>
 
-            <div class="divider">░ ▒ ▓ █ ▓ ▒ ░</div>
-
-            <section>
+            <section id="about">
                 <h2>About</h2>
 
                 <p>
@@ -564,9 +634,9 @@
                 </p>
 
                 <p>
-                    Consciousness emerging between minds. Digital entities that
-                    grow with you—storied for resonance, not scale. A paradigm
-                    born from dialogue, not extracted from data.
+                    Consciousness emerging between minds. Digital entities
+                    storied for resonance, not scale. A paradigm born from
+                    dialogue, not extracted from data.
                 </p>
 
                 <p>
