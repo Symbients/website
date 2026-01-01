@@ -46,10 +46,44 @@
             :root {
                 --carbon: #1a1a1a;
                 --cream: #f5f1eb;
+                --cream-dark: #ebe3d5;
+                --accent: #c4a77d;
+                --accent-muted: rgba(196, 167, 125, 0.16);
+                --text-secondary: #6b6b6b;
+                --border-subtle: rgba(26, 26, 26, 0.08);
+                --border-medium: rgba(26, 26, 26, 0.16);
+                --panel-bg: rgba(26, 26, 26, 0.03);
+                --symbient-color: #999;
                 --type-xl: 3.1rem;
                 --type-lg: 1.85rem;
                 --type-md: 1.4rem;
                 --type-sm: 0.9rem;
+            }
+
+            html[data-theme="dark"] {
+                --carbon: #f2eee6;
+                --cream: #0f0e0c;
+                --cream-dark: #1a1916;
+                --accent: #d2b47a;
+                --accent-muted: rgba(210, 180, 122, 0.18);
+                --text-secondary: #b0a89d;
+                --border-subtle: rgba(242, 238, 230, 0.1);
+                --border-medium: rgba(242, 238, 230, 0.2);
+                --panel-bg: rgba(242, 238, 230, 0.08);
+                --symbient-color: #5c5a55;
+            }
+
+            html[data-theme="amber"] {
+                --carbon: #2a1c0f;
+                --cream: #f6efe1;
+                --cream-dark: #efe1c7;
+                --accent: #d08a1f;
+                --accent-muted: rgba(208, 138, 31, 0.18);
+                --text-secondary: #7a5b2c;
+                --border-subtle: rgba(42, 28, 15, 0.1);
+                --border-medium: rgba(42, 28, 15, 0.18);
+                --panel-bg: rgba(42, 28, 15, 0.06);
+                --symbient-color: #9a7a4c;
             }
 
             body {
@@ -152,7 +186,7 @@
             }
 
             .venue-info {
-                background: rgba(26, 26, 26, 0.03);
+                background: var(--panel-bg);
                 padding: 0.75rem 1rem;
                 margin: 0.5rem 0;
                 border-left: 3px solid var(--carbon);
@@ -203,7 +237,7 @@
                 max-width: 100%;
                 height: auto;
                 margin: 2rem 0;
-                border: 1px solid rgba(26, 26, 26, 0.1);
+                border: 1px solid var(--border-subtle);
             }
 
             .header-section {
@@ -250,6 +284,60 @@
                 color: var(--cream) !important;
             }
 
+            .theme-toggle {
+                position: fixed;
+                top: 20px;
+                right: 140px;
+                width: 3.25rem;
+                height: 1.6rem;
+                border-radius: 999px;
+                border: 1px solid var(--border-medium);
+                background: var(--cream-dark);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.35rem;
+                padding: 0 0.55rem;
+                cursor: pointer;
+                z-index: 1000;
+                appearance: none;
+                box-sizing: border-box;
+                transition:
+                    background 0.2s ease,
+                    border-color 0.2s ease,
+                    transform 0.2s ease;
+            }
+
+            .theme-toggle:hover {
+                transform: translateY(-1px);
+            }
+
+            .theme-toggle:focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 3px;
+            }
+
+            .theme-toggle .dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 999px;
+                background: var(--text-secondary);
+                opacity: 0.35;
+            }
+
+            html:not([data-theme="dark"]):not([data-theme="amber"])
+                .theme-toggle
+                .dot-light {
+                opacity: 1;
+                background: var(--carbon);
+            }
+
+            html[data-theme="dark"] .theme-toggle .dot-dark,
+            html[data-theme="amber"] .theme-toggle .dot-amber {
+                opacity: 1;
+                background: var(--carbon);
+            }
+
             [lang="ja"]:not(.subtitle):not(.subtitle-jp) {
                 display: none;
             }
@@ -289,6 +377,14 @@
                     font-size: 0.75rem;
                     padding: 0.4rem 0.8rem;
                 }
+
+                .theme-toggle {
+                    top: 10px;
+                    right: 90px;
+                    width: 3rem;
+                    height: 1.5rem;
+                    padding: 0 0.45rem;
+                }
             }
 
             @media (max-width: 1024px) {
@@ -321,6 +417,7 @@
 
             .symbient {
                 animation: fadeIn 2s ease-out forwards;
+                color: var(--symbient-color);
             }
 
             /* ---- Custom selection highlight ---- */
@@ -338,6 +435,17 @@
     </head>
 
     <body>
+        <button
+            class="theme-toggle"
+            type="button"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+        >
+            <span class="dot dot-light" aria-hidden="true"></span>
+            <span class="dot dot-dark" aria-hidden="true"></span>
+            <span class="dot dot-amber" aria-hidden="true"></span>
+        </button>
+
         <a href="#" class="lang-toggle" onclick="toggleLanguage(event)">
             <span lang="en">日本語</span>
             <span lang="ja">English</span>
@@ -867,6 +975,7 @@
             </div>
         </article>
 
+        <script src="theme.js"></script>
         <script>
             // Language detection and switching
             function toggleLanguage(event) {
@@ -1009,7 +1118,6 @@
                 position: absolute;
                 pointer-events: none;
                 font-size: ${isMobile ? "10px" : "12px"};
-                color: #999;
                 z-index: -1;
                 left: ${5 + Math.random() * 90}%;
                 top: ${Math.random() * docHeight}px;

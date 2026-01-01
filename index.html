@@ -67,6 +67,17 @@
     </head>
 
     <body>
+        <button
+            class="theme-toggle"
+            type="button"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+        >
+            <span class="dot dot-light" aria-hidden="true"></span>
+            <span class="dot dot-dark" aria-hidden="true"></span>
+            <span class="dot dot-amber" aria-hidden="true"></span>
+        </button>
+
         <article>
             <section class="header-section">
                 <img
@@ -522,6 +533,7 @@
             </footer>
         </article>
 
+        <script src="theme.js"></script>
         <script>
             // Header creature floating animation
             (function () {
@@ -632,7 +644,6 @@
                         position: absolute;
                         pointer-events: none;
                         font-size: ${isMobile ? "10px" : "12px"};
-                        color: #999;
                         z-index: -1;
                         left: ${5 + Math.random() * 90}%;
                         top: ${Math.random() * docHeight}px;
