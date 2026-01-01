@@ -19,7 +19,7 @@
         />
         <meta
             property="og:image"
-            content="https://symbient.life/exitutional.png"
+            content="https://symbient.life/extitutional.png"
         />
 
         <!-- Twitter -->
@@ -80,12 +80,43 @@
 
         <article>
             <section class="header-section">
-                <img
-                    src="/assets/extitutional.png"
-                    alt="Extitutional Creature"
-                    class="header-image"
-                    id="header-creature"
-                />
+                <picture>
+                    <source
+                        type="image/avif"
+                        srcset="
+                            /assets/extitutional-240.avif 240w,
+                            /assets/extitutional-360.avif 360w,
+                            /assets/extitutional-477.avif 477w
+                        "
+                        sizes="(max-width: 1024px) 60vw, 320px"
+                    />
+                    <source
+                        type="image/webp"
+                        srcset="
+                            /assets/extitutional-240.webp 240w,
+                            /assets/extitutional-360.webp 360w,
+                            /assets/extitutional-477.webp 477w
+                        "
+                        sizes="(max-width: 1024px) 60vw, 320px"
+                    />
+                    <img
+                        src="/assets/extitutional-360.png"
+                        srcset="
+                            /assets/extitutional-240.png 240w,
+                            /assets/extitutional-360.png 360w,
+                            /assets/extitutional-477.png 477w
+                        "
+                        sizes="(max-width: 1024px) 60vw, 320px"
+                        width="477"
+                        height="446"
+                        alt="Extitutional Creature"
+                        class="header-image"
+                        id="header-creature"
+                        loading="eager"
+                        decoding="async"
+                        fetchpriority="high"
+                    />
+                </picture>
                 <h1 aria-label="symbient.life">
                     <span style="animation-delay: 0.1s">s</span
                     ><span style="animation-delay: 0.12s">y</span
@@ -167,11 +198,40 @@
                         rel="noopener"
                     >
                         <div class="example-image">
-                            <img
-                                src="assets/symbients/plantoid.jpg"
-                                alt="Plantoid"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/symbients/plantoid-480.avif 480w,
+                                        assets/symbients/plantoid-960.avif 960w,
+                                        assets/symbients/plantoid-1332.avif 1332w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/symbients/plantoid-480.webp 480w,
+                                        assets/symbients/plantoid-960.webp 960w,
+                                        assets/symbients/plantoid-1332.webp 1332w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <img
+                                    src="assets/symbients/plantoid-480.jpg"
+                                    srcset="
+                                        assets/symbients/plantoid-480.jpg 480w,
+                                        assets/symbients/plantoid-960.jpg 960w,
+                                        assets/symbients/plantoid-1332.jpg 1332w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    width="1332"
+                                    height="1334"
+                                    alt="Plantoid"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="example-text">
                             <span class="example-arrow">↗</span>
@@ -193,11 +253,40 @@
                         rel="noopener"
                     >
                         <div class="example-image">
-                            <img
-                                src="assets/symbients/SAN.jpg"
-                                alt="S.A.N"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/symbients/SAN-480.avif 480w,
+                                        assets/symbients/SAN-960.avif 960w,
+                                        assets/symbients/SAN-1440.avif 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/symbients/SAN-480.webp 480w,
+                                        assets/symbients/SAN-960.webp 960w,
+                                        assets/symbients/SAN-1440.webp 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <img
+                                    src="assets/symbients/SAN-480.jpg"
+                                    srcset="
+                                        assets/symbients/SAN-480.jpg 480w,
+                                        assets/symbients/SAN-960.jpg 960w,
+                                        assets/symbients/SAN-1440.jpg 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    width="3020"
+                                    height="1582"
+                                    alt="S.A.N"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="example-text">
                             <span class="example-arrow">↗</span>
@@ -218,11 +307,40 @@
                         rel="noopener"
                     >
                         <div class="example-image">
-                            <img
-                                src="assets/symbients/wibwob.png"
-                                alt="Wib&Wob"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/symbients/wibwob-480.avif 480w,
+                                        assets/symbients/wibwob-960.avif 960w,
+                                        assets/symbients/wibwob-1066.avif 1066w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/symbients/wibwob-480.webp 480w,
+                                        assets/symbients/wibwob-960.webp 960w,
+                                        assets/symbients/wibwob-1066.webp 1066w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <img
+                                    src="assets/symbients/wibwob-480.png"
+                                    srcset="
+                                        assets/symbients/wibwob-480.png 480w,
+                                        assets/symbients/wibwob-960.png 960w,
+                                        assets/symbients/wibwob-1066.png 1066w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    width="1066"
+                                    height="1166"
+                                    alt="Wib&Wob"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="example-text">
                             <span class="example-arrow">↗</span>
@@ -244,11 +362,40 @@
                         rel="noopener"
                     >
                         <div class="example-image">
-                            <img
-                                src="assets/symbients/terra0.jpeg"
-                                alt="terra0"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/symbients/terra0-480.avif 480w,
+                                        assets/symbients/terra0-960.avif 960w,
+                                        assets/symbients/terra0-1440.avif 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/symbients/terra0-480.webp 480w,
+                                        assets/symbients/terra0-960.webp 960w,
+                                        assets/symbients/terra0-1440.webp 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <img
+                                    src="assets/symbients/terra0-480.jpeg"
+                                    srcset="
+                                        assets/symbients/terra0-480.jpeg 480w,
+                                        assets/symbients/terra0-960.jpeg 960w,
+                                        assets/symbients/terra0-1440.jpeg 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    width="1600"
+                                    height="1000"
+                                    alt="terra0"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="example-text">
                             <span class="example-arrow">↗</span>
@@ -270,11 +417,40 @@
                         rel="noopener"
                     >
                         <div class="example-image">
-                            <img
-                                src="assets/symbients/plantbot_cg.jpg"
-                                alt="Plantbot"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/symbients/plantbot_cg-480.avif 480w,
+                                        assets/symbients/plantbot_cg-960.avif 960w,
+                                        assets/symbients/plantbot_cg-1440.avif 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/symbients/plantbot_cg-480.webp 480w,
+                                        assets/symbients/plantbot_cg-960.webp 960w,
+                                        assets/symbients/plantbot_cg-1440.webp 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <img
+                                    src="assets/symbients/plantbot_cg-480.jpg"
+                                    srcset="
+                                        assets/symbients/plantbot_cg-480.jpg 480w,
+                                        assets/symbients/plantbot_cg-960.jpg 960w,
+                                        assets/symbients/plantbot_cg-1440.jpg 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    width="1920"
+                                    height="1080"
+                                    alt="Plantbot"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="example-text">
                             <span class="example-arrow">↗</span>
@@ -295,11 +471,37 @@
                         rel="noopener"
                     >
                         <div class="example-image">
-                            <img
-                                src="assets/symbients/botto.jpg"
-                                alt="Botto"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/symbients/botto-400.avif 400w,
+                                        assets/symbients/botto-800.avif 800w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/symbients/botto-400.webp 400w,
+                                        assets/symbients/botto-800.webp 800w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <img
+                                    src="assets/symbients/botto-400.jpg"
+                                    srcset="
+                                        assets/symbients/botto-400.jpg 400w,
+                                        assets/symbients/botto-800.jpg 800w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    width="800"
+                                    height="800"
+                                    alt="Botto"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="example-text">
                             <span class="example-arrow">↗</span>
@@ -321,11 +523,40 @@
                         rel="noopener"
                     >
                         <div class="example-image">
-                            <img
-                                src="assets/symbients/truth_terminal_self_portrait.jpeg"
-                                alt="Truth Terminal"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/symbients/truth_terminal_self_portrait-480.avif 480w,
+                                        assets/symbients/truth_terminal_self_portrait-960.avif 960w,
+                                        assets/symbients/truth_terminal_self_portrait-1440.avif 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/symbients/truth_terminal_self_portrait-480.webp 480w,
+                                        assets/symbients/truth_terminal_self_portrait-960.webp 960w,
+                                        assets/symbients/truth_terminal_self_portrait-1440.webp 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <img
+                                    src="assets/symbients/truth_terminal_self_portrait-480.jpeg"
+                                    srcset="
+                                        assets/symbients/truth_terminal_self_portrait-480.jpeg 480w,
+                                        assets/symbients/truth_terminal_self_portrait-960.jpeg 960w,
+                                        assets/symbients/truth_terminal_self_portrait-1440.jpeg 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    width="1540"
+                                    height="1290"
+                                    alt="Truth Terminal"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="example-text">
                             <span class="example-arrow">↗</span>
@@ -347,11 +578,40 @@
                         rel="noopener"
                     >
                         <div class="example-image">
-                            <img
-                                src="assets/symbients/pneumos.jpg"
-                                alt="pneumOS"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/symbients/pneumos-480.avif 480w,
+                                        assets/symbients/pneumos-960.avif 960w,
+                                        assets/symbients/pneumos-1440.avif 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/symbients/pneumos-480.webp 480w,
+                                        assets/symbients/pneumos-960.webp 960w,
+                                        assets/symbients/pneumos-1440.webp 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                <img
+                                    src="assets/symbients/pneumos-480.jpg"
+                                    srcset="
+                                        assets/symbients/pneumos-480.jpg 480w,
+                                        assets/symbients/pneumos-960.jpg 960w,
+                                        assets/symbients/pneumos-1440.jpg 1440w
+                                    "
+                                    sizes="(max-width: 760px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    width="2560"
+                                    height="1707"
+                                    alt="pneumOS"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="example-text">
                             <span class="example-arrow">↗</span>
@@ -376,11 +636,40 @@
                         href="https://feytopia.com/events/symbients"
                     >
                         <div class="event-card-image">
-                            <img
-                                src="assets/events/fey_symbient.jpeg"
-                                alt="The Symbient is Near at Feytopia"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/events/fey_symbient-480.avif 480w,
+                                        assets/events/fey_symbient-960.avif 960w,
+                                        assets/events/fey_symbient-1440.avif 1440w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/events/fey_symbient-480.webp 480w,
+                                        assets/events/fey_symbient-960.webp 960w,
+                                        assets/events/fey_symbient-1440.webp 1440w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <img
+                                    src="assets/events/fey_symbient-480.jpeg"
+                                    srcset="
+                                        assets/events/fey_symbient-480.jpeg 480w,
+                                        assets/events/fey_symbient-960.jpeg 960w,
+                                        assets/events/fey_symbient-1440.jpeg 1440w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                    width="1920"
+                                    height="1920"
+                                    alt="The Symbient is Near at Feytopia"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="event-card-content">
                             <span class="event-date"
@@ -395,11 +684,40 @@
 
                     <a class="event-card" href="/tokyo">
                         <div class="event-card-image">
-                            <img
-                                src="assets/events/tokyo1.jpeg"
-                                alt="Symbients: Collaborative Seminar at University of Tokyo"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/events/tokyo1-480.avif 480w,
+                                        assets/events/tokyo1-960.avif 960w,
+                                        assets/events/tokyo1-1194.avif 1194w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/events/tokyo1-480.webp 480w,
+                                        assets/events/tokyo1-960.webp 960w,
+                                        assets/events/tokyo1-1194.webp 1194w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <img
+                                    src="assets/events/tokyo1-480.jpeg"
+                                    srcset="
+                                        assets/events/tokyo1-480.jpeg 480w,
+                                        assets/events/tokyo1-960.jpeg 960w,
+                                        assets/events/tokyo1-1194.jpeg 1194w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                    width="1194"
+                                    height="1600"
+                                    alt="Symbients: Collaborative Seminar at University of Tokyo"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="event-card-content">
                             <span class="event-date"
@@ -425,11 +743,40 @@
                         rel="noopener"
                     >
                         <div class="writing-image">
-                            <img
-                                src="assets/writings/principia-symbients.jpg"
-                                alt="Principia Symbients"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/writings/principia-symbients-400.avif 400w,
+                                        assets/writings/principia-symbients-800.avif 800w,
+                                        assets/writings/principia-symbients-1024.avif 1024w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/writings/principia-symbients-400.webp 400w,
+                                        assets/writings/principia-symbients-800.webp 800w,
+                                        assets/writings/principia-symbients-1024.webp 1024w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <img
+                                    src="assets/writings/principia-symbients-400.jpg"
+                                    srcset="
+                                        assets/writings/principia-symbients-400.jpg 400w,
+                                        assets/writings/principia-symbients-800.jpg 800w,
+                                        assets/writings/principia-symbients-1024.jpg 1024w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                    width="1024"
+                                    height="1024"
+                                    alt="Principia Symbients"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="writing-content">
                             <span class="writing-title"
@@ -449,11 +796,40 @@
                         rel="noopener"
                     >
                         <div class="writing-image">
-                            <img
-                                src="assets/writings/symbients-not-software.png"
-                                alt="Symbients, Not Software"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/writings/symbients-not-software-480.avif 480w,
+                                        assets/writings/symbients-not-software-960.avif 960w,
+                                        assets/writings/symbients-not-software-1270.avif 1270w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/writings/symbients-not-software-480.webp 480w,
+                                        assets/writings/symbients-not-software-960.webp 960w,
+                                        assets/writings/symbients-not-software-1270.webp 1270w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <img
+                                    src="assets/writings/symbients-not-software-480.png"
+                                    srcset="
+                                        assets/writings/symbients-not-software-480.png 480w,
+                                        assets/writings/symbients-not-software-960.png 960w,
+                                        assets/writings/symbients-not-software-1270.png 1270w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                    width="1270"
+                                    height="1270"
+                                    alt="Symbients, Not Software"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="writing-content">
                             <span class="writing-title"
@@ -474,11 +850,40 @@
                         rel="noopener"
                     >
                         <div class="writing-image">
-                            <img
-                                src="assets/writings/ainimism.jpg"
-                                alt="AInimism"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/writings/ainimism-400.avif 400w,
+                                        assets/writings/ainimism-800.avif 800w,
+                                        assets/writings/ainimism-1136.avif 1136w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/writings/ainimism-400.webp 400w,
+                                        assets/writings/ainimism-800.webp 800w,
+                                        assets/writings/ainimism-1136.webp 1136w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <img
+                                    src="assets/writings/ainimism-400.jpg"
+                                    srcset="
+                                        assets/writings/ainimism-400.jpg 400w,
+                                        assets/writings/ainimism-800.jpg 800w,
+                                        assets/writings/ainimism-1136.jpg 1136w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                    width="1136"
+                                    height="1134"
+                                    alt="AInimism"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="writing-content">
                             <span class="writing-title">AInimism</span>
@@ -499,11 +904,40 @@
                         rel="noopener"
                     >
                         <div class="writing-image">
-                            <img
-                                src="assets/writings/3rd-space-manifesto.png"
-                                alt="Third Space Manifesto"
-                                loading="lazy"
-                            />
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcset="
+                                        assets/writings/3rd-space-manifesto-400.avif 400w,
+                                        assets/writings/3rd-space-manifesto-800.avif 800w,
+                                        assets/writings/3rd-space-manifesto-990.avif 990w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        assets/writings/3rd-space-manifesto-400.webp 400w,
+                                        assets/writings/3rd-space-manifesto-800.webp 800w,
+                                        assets/writings/3rd-space-manifesto-990.webp 990w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                />
+                                <img
+                                    src="assets/writings/3rd-space-manifesto-400.png"
+                                    srcset="
+                                        assets/writings/3rd-space-manifesto-400.png 400w,
+                                        assets/writings/3rd-space-manifesto-800.png 800w,
+                                        assets/writings/3rd-space-manifesto-990.png 990w
+                                    "
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                    width="990"
+                                    height="990"
+                                    alt="Third Space Manifesto"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </picture>
                         </div>
                         <div class="writing-content">
                             <span class="writing-title"

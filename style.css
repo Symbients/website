@@ -49,18 +49,18 @@ html[data-theme="dark"] {
 }
 
 html[data-theme="amber"] {
-    --carbon: #2a1c0f;
-    --carbon-soft: #3a2816;
-    --cream: #f6efe1;
-    --cream-dark: #efe1c7;
-    --accent: #d08a1f;
-    --accent-muted: rgba(208, 138, 31, 0.18);
-    --text-secondary: #7a5b2c;
-    --border-subtle: rgba(42, 28, 15, 0.1);
-    --border-medium: rgba(42, 28, 15, 0.18);
-    --image-overlay: rgba(246, 239, 225, 0.45);
-    --image-overlay-soft: rgba(246, 239, 225, 0.32);
-    --symbient-color: #9a7a4c;
+    --carbon: #2a190a;
+    --carbon-soft: #3b2411;
+    --cream: #f1dfb1;
+    --cream-dark: #e6cf9a;
+    --accent: #c7780a;
+    --accent-muted: rgba(199, 120, 10, 0.25);
+    --text-secondary: #6b4a1f;
+    --border-subtle: rgba(42, 25, 10, 0.14);
+    --border-medium: rgba(42, 25, 10, 0.26);
+    --image-overlay: rgba(241, 223, 177, 0.6);
+    --image-overlay-soft: rgba(241, 223, 177, 0.42);
+    --symbient-color: #8a6331;
 }
 
 *,
@@ -693,6 +693,14 @@ html[data-theme="dark"] .event-card {
     aspect-ratio: 4 / 3;
     overflow: hidden;
     position: relative;
+}
+
+.example-image picture,
+.event-card-image picture,
+.writing-image picture {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .example-image::after {

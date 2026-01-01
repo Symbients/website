@@ -74,16 +74,16 @@
             }
 
             html[data-theme="amber"] {
-                --carbon: #2a1c0f;
-                --cream: #f6efe1;
-                --cream-dark: #efe1c7;
-                --accent: #d08a1f;
-                --accent-muted: rgba(208, 138, 31, 0.18);
-                --text-secondary: #7a5b2c;
-                --border-subtle: rgba(42, 28, 15, 0.1);
-                --border-medium: rgba(42, 28, 15, 0.18);
-                --panel-bg: rgba(42, 28, 15, 0.06);
-                --symbient-color: #9a7a4c;
+                --carbon: #2a190a;
+                --cream: #f1dfb1;
+                --cream-dark: #e6cf9a;
+                --accent: #c7780a;
+                --accent-muted: rgba(199, 120, 10, 0.25);
+                --text-secondary: #6b4a1f;
+                --border-subtle: rgba(42, 25, 10, 0.14);
+                --border-medium: rgba(42, 25, 10, 0.26);
+                --panel-bg: rgba(42, 25, 10, 0.1);
+                --symbient-color: #8a6331;
             }
 
             body {
@@ -453,11 +453,42 @@
 
         <article>
             <section class="header-section">
-                <img
-                    src="extitutional.png"
-                    alt="Extitutional"
-                    class="header-image"
-                />
+                <picture>
+                    <source
+                        type="image/avif"
+                        srcset="
+                            assets/extitutional-240.avif 240w,
+                            assets/extitutional-360.avif 360w,
+                            assets/extitutional-477.avif 477w
+                        "
+                        sizes="(max-width: 760px) 200px, 250px"
+                    />
+                    <source
+                        type="image/webp"
+                        srcset="
+                            assets/extitutional-240.webp 240w,
+                            assets/extitutional-360.webp 360w,
+                            assets/extitutional-477.webp 477w
+                        "
+                        sizes="(max-width: 760px) 200px, 250px"
+                    />
+                    <img
+                        src="assets/extitutional-360.png"
+                        srcset="
+                            assets/extitutional-240.png 240w,
+                            assets/extitutional-360.png 360w,
+                            assets/extitutional-477.png 477w
+                        "
+                        sizes="(max-width: 760px) 200px, 250px"
+                        width="477"
+                        height="446"
+                        alt="Extitutional"
+                        class="header-image"
+                        loading="eager"
+                        decoding="async"
+                        fetchpriority="high"
+                    />
+                </picture>
                 <h1>Symbients in Tokyo</h1>
                 <p class="event-date">GLITCH 5.3 | DECEMBER 2025</p>
                 <p class="subtitle subtitle-jp">
