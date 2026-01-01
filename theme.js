@@ -32,6 +32,10 @@
         const label = labels[theme] || "Light";
         toggle.setAttribute("aria-label", `Theme: ${label}. Click to switch.`);
         toggle.setAttribute("title", `Theme: ${label}`);
+        const labelEl = toggle.querySelector(".theme-label");
+        if (labelEl) {
+            labelEl.textContent = label;
+        }
     };
 
     let toggle = null;
