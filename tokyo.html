@@ -74,16 +74,16 @@
             }
 
             html[data-theme="amber"] {
-                --carbon: #2a190a;
-                --cream: #f1dfb1;
-                --cream-dark: #e6cf9a;
-                --accent: #c7780a;
-                --accent-muted: rgba(199, 120, 10, 0.25);
-                --text-secondary: #6b4a1f;
-                --border-subtle: rgba(42, 25, 10, 0.14);
-                --border-medium: rgba(42, 25, 10, 0.26);
-                --panel-bg: rgba(42, 25, 10, 0.1);
-                --symbient-color: #8a6331;
+                --carbon: #241507;
+                --cream: #edd39a;
+                --cream-dark: #e1c58a;
+                --accent: #b86800;
+                --accent-muted: rgba(184, 104, 0, 0.28);
+                --text-secondary: #5b3f19;
+                --border-subtle: rgba(36, 21, 7, 0.18);
+                --border-medium: rgba(36, 21, 7, 0.32);
+                --panel-bg: rgba(36, 21, 7, 0.12);
+                --symbient-color: #7b5526;
             }
 
             body {
@@ -288,20 +288,21 @@
                 position: fixed;
                 top: 20px;
                 right: 140px;
-                width: 3.25rem;
-                height: 1.6rem;
+                width: 3.75rem;
+                height: 1.85rem;
                 border-radius: 999px;
-                border: 1px solid var(--border-medium);
+                border: 1.5px solid var(--border-medium);
                 background: var(--cream-dark);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                gap: 0.35rem;
-                padding: 0 0.55rem;
+                gap: 0.4rem;
+                padding: 0 0.65rem;
                 cursor: pointer;
                 z-index: 1000;
                 appearance: none;
                 box-sizing: border-box;
+                box-shadow: 0 6px 16px rgba(20, 20, 20, 0.1);
                 transition:
                     background 0.2s ease,
                     border-color 0.2s ease,
@@ -318,11 +319,11 @@
             }
 
             .theme-toggle .dot {
-                width: 6px;
-                height: 6px;
+                width: 7px;
+                height: 7px;
                 border-radius: 999px;
                 background: var(--text-secondary);
-                opacity: 0.35;
+                opacity: 0.4;
             }
 
             html:not([data-theme="dark"]):not([data-theme="amber"])
@@ -381,9 +382,9 @@
                 .theme-toggle {
                     top: 10px;
                     right: 90px;
-                    width: 3rem;
-                    height: 1.5rem;
-                    padding: 0 0.45rem;
+                    width: 3.4rem;
+                    height: 1.7rem;
+                    padding: 0 0.55rem;
                 }
             }
 
