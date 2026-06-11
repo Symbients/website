@@ -15,7 +15,7 @@
     --type-hero: clamp(2.5rem, 10vw, 5rem);
     --type-xl: clamp(2.2rem, 4vw, 3.2rem);
     --type-lg: clamp(1.4rem, 2.5vw, 1.8rem);
-    --type-md: clamp(1.1rem, 1.8vw, 1.35rem);
+    --type-md: clamp(1.1rem, 1.8vw, 1.3rem);
     --type-base: clamp(1rem, 1.2vw, 1.1rem);
     --type-sm: clamp(0.8rem, 1vw, 0.9rem);
     --type-xs: clamp(0.7rem, 0.9vw, 0.78rem);
@@ -25,6 +25,8 @@
     --space-md: clamp(2rem, 4vw, 3rem);
     --space-lg: clamp(4rem, 8vw, 6rem);
     --space-xl: clamp(6rem, 12vw, 10rem);
+
+    --nav-h: 3.35rem;
 
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
@@ -241,11 +243,15 @@ em {
 /* Header Section */
 .header-section {
     position: relative;
-    min-height: 50vh;
+    /* Fill the viewport below the sticky navbar and center the hero in it.
+       Negative top margin cancels <article>'s top padding so the hero sits
+       flush under the navbar. */
+    min-height: calc(100svh - var(--nav-h));
+    margin: calc(-1 * var(--space-lg)) 0 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: var(--space-xl) 0;
+    padding: var(--space-md) 0;
 }
 
 .header-section h1 {
@@ -253,32 +259,15 @@ em {
     z-index: 2;
 }
 
-.header-section h1 span {
-    display: inline-block;
-    opacity: 0;
-    animation: revealLetter 0.8s var(--ease-out-expo) forwards;
-}
-
-@keyframes revealLetter {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.tagline {
-    font-family: "Space Mono", monospace;
-    font-size: var(--type-sm);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    margin-top: var(--space-sm);
-    opacity: 0;
-    animation: fadeUp 1s var(--ease-out-expo) 0.6s forwards;
+/* Creature: vertically centered on the right, in flow with the hero.
+   Positioning lives on the wrapper so the <img> float animations are free. */
+.header-section picture {
+    position: absolute;
+    right: clamp(2rem, 2vw, 11rem);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    line-height: 0;
 }
 
 @keyframes fadeUp {
@@ -293,12 +282,9 @@ em {
 }
 
 .header-image {
-    width: clamp(200px, 25vw, 320px);
+    width: clamp(240px, 32vw, 460px);
     height: auto;
-    position: fixed;
-    right: clamp(2rem, 8vw, 10rem);
-    top: clamp(2rem, 10vh, 8rem);
-    z-index: 100;
+    display: block;
     opacity: 0;
     filter: drop-shadow(0 20px 40px rgba(20, 20, 20, 0.08));
     animation: floatIn 1.2s var(--ease-out-expo) 0.3s forwards;
@@ -338,60 +324,131 @@ em {
 }
 
 @media (max-width: 1024px) {
-    .header-image {
-        position: relative;
-        right: auto;
-        top: auto;
-        margin: 0 auto var(--space-md);
+    .header-section picture {
+        position: static;
+        transform: none;
         display: block;
+        margin: 0 auto var(--space-md);
+        line-height: 0;
+    }
+
+    .header-image {
+        width: clamp(200px, 48vw, 340px);
+        margin: 0 auto;
     }
 }
 
-/* Navigation */
-.nav-links {
+/* Top Navigation */
+.topnav {
+    top: 0;
+    z-index: 300;
     display: flex;
-    gap: var(--space-xs);
-    margin: var(--space-md) 0 var(--space-lg);
-    font-family: "Space Mono", monospace;
-    font-size: var(--type-xs);
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 1s var(--ease-out-expo) 0.8s forwards;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 1.85rem clamp(1.5rem, 5vw, 3rem);
+    background: color-mix(in srgb, var(--cream) 80%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
 }
 
-.nav-links a {
+.topnav-brand {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-sm);
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--border-subtle);
-    border-radius: 2px;
-    position: relative;
-    overflow: hidden;
-    transition: all var(--transition-medium);
     color: var(--text-secondary);
+    white-space: nowrap;
+    transition: opacity var(--transition-fast);
 }
 
-.nav-links a::before {
+.topnav-brand:hover {
+    opacity: 0.6;
+}
+
+.topnav-dot {
+    color: var(--accent);
+}
+
+.topnav-links {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 2.25rem);
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+}
+
+.topnav-links a {
+    position: relative;
+    color: var(--text-secondary);
+    padding: 0.15em 0;
+    transition: color var(--transition-fast);
+}
+
+.topnav-links a::after {
     content: "";
     position: absolute;
-    inset: 0;
+    left: 0;
+    bottom: -0.3em;
+    width: 100%;
+    height: 1px;
     background: var(--carbon);
-    transform: translateY(100%);
+    transform: scaleX(0);
+    transform-origin: left;
     transition: transform var(--transition-medium);
 }
 
-.nav-links a span {
-    position: relative;
-    z-index: 1;
+.topnav-links a:hover {
+    color: var(--carbon);
 }
 
-.nav-links a:hover {
-    color: var(--cream);
-    border-color: var(--carbon);
+.topnav-links a:hover::after {
+    transform: scaleX(1);
 }
 
-.nav-links a:hover::before {
-    transform: translateY(0);
+/* Theme toggle inside the navbar */
+.topnav .theme-toggle {
+    position: static;
+    top: auto;
+    right: auto;
+    box-shadow: none;
+    flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+    .topnav {
+        gap: var(--space-xs);
+        padding: 0.7rem clamp(1rem, 4vw, 2rem);
+    }
+
+    .topnav-brand {
+        display: none;
+    }
+
+    .topnav-links {
+        flex: 1;
+        justify-content: flex-start;
+        gap: clamp(0.7rem, 3.2vw, 1.25rem);
+        letter-spacing: 0.06em;
+    }
+
+    /* Slim the toggle to just its state dots on small screens */
+    .topnav .theme-toggle {
+        min-width: 0;
+    }
+
+    .topnav .theme-toggle .theme-label {
+        display: none;
+    }
+}
+
+/* Offset anchored scrolling for the sticky navbar */
+section[id],
+#top {
+    scroll-margin-top: 4.5rem;
 }
 
 /* Definition Block */
@@ -400,6 +457,13 @@ em {
     padding: var(--space-md) 0;
     max-width: 700px;
     position: relative;
+}
+
+/* Definition is the hero */
+.header-section .definition-block {
+    margin: 0;
+    opacity: 0;
+    animation: fadeUp 1s var(--ease-out-expo) 0.3s forwards;
 }
 
 .definition-block::before {
@@ -424,7 +488,10 @@ em {
     font-family: "Space Mono", monospace;
     font-size: var(--type-xl);
     font-weight: 700;
+    line-height: 1.1;
     letter-spacing: -0.02em;
+    text-transform: none;
+    margin: 0;
     background: linear-gradient(
         135deg,
         var(--carbon) 0%,
@@ -527,28 +594,249 @@ section:nth-child(8) {
     }
 }
 
-/* About Section */
-#about p:first-of-type strong {
-    font-family: "Space Mono", monospace;
-    font-size: var(--type-md);
-    font-weight: 400;
-    display: block;
-    margin-bottom: var(--space-sm);
-    letter-spacing: -0.01em;
+/* About Section — editorial / zine treatment.
+   The essay breaks into alternating figure-rows: each thematic block pairs
+   its text with a sticky, animated SVG that illustrates the idea, so the
+   page stops collapsing into one starved column between the wide sections. */
+#about {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+/* The section heading reads at the same scale as the in-essay subheads —
+   no oversized title, no special underline. */
+#about > h2 {
+    font-size: clamp(1.15rem, 1.9vw, 1.45rem);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-lg);
+}
+#about > h2::after {
+    display: none;
+}
+
+#about p {
+    font-size: var(--type-md);
+    line-height: 1.8;
+    max-width: none;
+    margin: 0 0 1.3em;
+}
+
+#about .about-block-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* Alternating figure rows. */
+.about-block {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    align-items: start;
+    margin: var(--space-xl) 0;
+}
+
+.about-block-text {
+    max-width: 66ch;
+}
+
+.about-figure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Photographic figures (e.g. the relationality block) sit in the same slot
+   as the ASCII rasters but scale to the column width. */
+.about-img {
+    width: 100%;
+    height: auto;
+}
+
+/* A captioned figure fills the column; the caption sits quietly beneath. */
+.about-figure-fig {
+    margin: 0;
+    width: 100%;
+}
+
+.about-caption {
+    margin-top: var(--space-sm);
+    font-size: var(--type-sm);
+    font-style: italic;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+@media (min-width: 880px) {
+    .about-block {
+        /* Equal halves — text and ASCII figure each take 50%. */
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(2rem, 4vw, 4rem);
+        margin: clamp(3rem, 7vw, 6rem) 0;
+    }
+
+    /* Alternate the figure to the opposite side on even blocks. The columns
+       are symmetric, so only the source order needs to flip. */
+    .about-block:nth-child(even) .about-figure {
+        order: 1;
+    }
+    .about-block:nth-child(even) .about-block-text {
+        order: 2;
+    }
+
+    /* Each figure sits fixed in the flow, centered beside its passage. */
+    .about-figure {
+        align-self: center;
+    }
+}
+
+/* Standfirst: the opening lines set the tone, larger and lighter. */
+#about .about-lead {
+    font-size: clamp(1.4rem, 2.4vw, 1.75rem);
+    line-height: 1.45;
+    font-weight: 300;
+    margin-bottom: var(--space-md);
+}
+
+.about-subhead {
+    font-size: clamp(1.15rem, 1.9vw, 1.35rem);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin: var(--space-lg) 0 var(--space-md);
+}
+
+/* Emphasis: quiet italics instead of loud highlight boxes. */
 #about em {
-    background: var(--accent-muted);
-    padding: 0.1em 0.3em;
-    border-radius: 2px;
+    font-style: italic;
+    color: var(--carbon);
+}
+
+/* The thesis line: a quiet, slightly larger statement in the reading flow. */
+.about-pullquote {
+    font-size: clamp(1.2rem, 1.8vw, 1.4rem);
+    line-height: 1.5;
+    font-weight: 500;
+    margin: var(--space-md) 0;
+}
+
+.training-signal {
+    margin: var(--space-md) 0;
+    padding: 0;
+    border: none;
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-sm);
+    line-height: 2.1;
+    color: var(--text-secondary);
+}
+
+.about-coda {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-md);
+    letter-spacing: 0.02em;
+    margin-top: var(--space-sm);
+}
+
+/* ----------------------------------------------------------------------
+   ASCII illustration figures for the About blocks.
+   Each figure is a 68x34 tonal raster typed in Space Mono, dimmed, with
+   the accent glyphs in tan. ascii.js fills each <pre> once on load.
+   The line-height/char-width ratio (1.15 / 0.6) matches the ASPECT
+   constant in tools/render-figs.js — change them together.
+   ---------------------------------------------------------------------- */
+.ascii-fig {
+    margin: 0;
+    font-family: "Space Mono", monospace;
+    /* 68 columns: the clamp floor keeps the raster inside a 360px phone,
+       the ceiling keeps it under the desktop half-column. */
+    font-size: clamp(0.45rem, 1.1vw, 0.72rem);
+    line-height: 1.15;
+    letter-spacing: 0;
+    white-space: pre;
+    color: var(--text-secondary);
+    text-align: left;
+}
+
+.ascii-fig .hot {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.lineage {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.lineage-label {
+    font-size: var(--type-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xs);
+}
+
+.lineage-intro {
+    font-size: var(--type-sm);
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: var(--space-sm);
+}
+
+.lineage ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.lineage li {
+    position: relative;
+    padding-left: 1.25em;
+    max-width: 60ch;
+    font-size: var(--type-sm);
+    line-height: 1.55;
+}
+
+.lineage li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--text-secondary);
+}
+
+.lineage em {
+    background: none;
+    padding: 0;
+}
+
+.about-credo-link {
+    display: inline-block;
+    margin-top: var(--space-sm);
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-sm);
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 0.15em;
+    transition:
+        color 0.2s,
+        border-color 0.2s;
+}
+
+.about-credo-link:hover {
+    color: var(--carbon);
+    border-color: var(--carbon);
 }
 
 /* Event Banner */
 /* Events Grid */
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: clamp(1.5rem, 3vw, 2.5rem);
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.25rem, 2.5vw, 2rem);
     margin-top: var(--space-md);
 }
 
@@ -938,6 +1226,10 @@ html[data-theme="dark"] .event-card {
     margin-top: var(--space-xl);
     padding-top: var(--space-md);
     border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
 }
 
 .footer-section p {
@@ -945,7 +1237,33 @@ html[data-theme="dark"] .event-card {
     font-size: var(--type-xs);
     color: var(--text-secondary);
     letter-spacing: 0.1em;
+    margin: 0;
+}
+
+.footer-left {
     text-align: left;
+}
+
+.footer-social {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.footer-social a {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-secondary);
+    opacity: 0.55;
+    text-decoration: none;
+    transition:
+        color var(--transition-fast),
+        opacity var(--transition-fast);
+}
+
+.footer-social a:hover {
+    color: var(--accent);
+    opacity: 1;
 }
 
 .footer-section a {
@@ -1108,14 +1426,6 @@ html[data-theme="dark"] .event-card {
         display: none;
     }
 
-    .nav-links a {
-        padding: 0.75rem 1.25rem;
-    }
-
-    .tagline {
-        letter-spacing: 0.12em;
-    }
-
     .events-grid {
         grid-template-columns: 1fr;
         gap: var(--space-sm);
@@ -1146,6 +1456,11 @@ html[data-theme="dark"] .event-card {
         display: none;
     }
 
+    .footer-section {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
     .footer-section p {
         text-align: center;
     }
@@ -1155,16 +1470,6 @@ html[data-theme="dark"] .event-card {
 @media (max-width: 400px) {
     :root {
         --type-hero: clamp(2rem, 12vw, 3rem);
-    }
-
-    .nav-links {
-        gap: 0.35rem;
-    }
-
-    .nav-links a {
-        padding: 0.5rem 0.7rem;
-        letter-spacing: 0.08em;
-        font-size: clamp(0.6rem, 2.5vw, 0.7rem);
     }
 
     .definition-block::before {
@@ -1180,11 +1485,6 @@ html[data-theme="dark"] .event-card {
         flex-direction: column;
         gap: 0.25rem;
         align-items: flex-start;
-    }
-
-    .tagline {
-        letter-spacing: 0.08em;
-        font-size: var(--type-xs);
     }
 }
 
