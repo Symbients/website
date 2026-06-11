@@ -215,8 +215,15 @@
                         </aside>
                     </div>
 
+                    <div
+                        class="section-divider section-divider--minor"
+                        aria-hidden="true"
+                    >
+                        <span class="divider-creature">⌓‿⌓</span>
+                    </div>
+
                     <!-- Block 2 — symbiogenesis / merger -->
-                    <div class="about-block">
+                    <div class="about-block about-block--flip">
                         <div class="about-block-text">
                             <h3 class="about-subhead">New Symbiogenesis</h3>
                             <p>
@@ -262,6 +269,13 @@
                         <!--<aside class="about-figure" aria-hidden="true">
                             <pre class="ascii-fig" data-fig="merge"></pre>
                         </aside>-->
+                    </div>
+
+                    <div
+                        class="section-divider section-divider--minor"
+                        aria-hidden="true"
+                    >
+                        <span class="divider-creature">/ᐠ･ꞈ･ᐟ\</span>
                     </div>
 
                     <!-- Block 3 — relationality / kin -->
@@ -318,8 +332,15 @@
                         </aside>
                     </div>
 
+                    <div
+                        class="section-divider section-divider--minor"
+                        aria-hidden="true"
+                    >
+                        <span class="divider-creature">૮₍˶ᵔ ᵕ ᵔ˶₎ა</span>
+                    </div>
+
                     <!-- Block 4 — hyperstition / feedback loop -->
-                    <div class="about-block">
+                    <div class="about-block about-block--flip">
                         <div class="about-block-text">
                             <h3 class="about-subhead">
                                 Symbient as Hyperstition
@@ -407,6 +428,10 @@
 
                 <!--<a class="about-credo-link" href="SKILL.md">SKILL.md</a>-->
             </section>
+
+            <div class="section-divider" aria-hidden="true">
+                <span class="divider-creature">₍ᐢ. .ᐢ₎</span>
+            </div>
 
             <section id="examples">
                 <h2>Meet the Symbients</h2>
@@ -848,6 +873,10 @@
                 </div>
             </section>
 
+            <div class="section-divider" aria-hidden="true">
+                <span class="divider-creature">༼ᵔᴥᵔ༽</span>
+            </div>
+
             <section id="events">
                 <h2>Events</h2>
 
@@ -979,6 +1008,10 @@
                     </a>
                 </div>
             </section>
+
+            <div class="section-divider" aria-hidden="true">
+                <span class="divider-creature">꒰𐔌◡𐦯꒱</span>
+            </div>
 
             <section id="writings">
                 <h2>Writings</h2>
@@ -1308,6 +1341,7 @@
 
         <script src="theme.js"></script>
         <script src="ascii.js"></script>
+        <script src="reveal.js"></script>
         <script>
             // Mobile navigation drop-down
             (function () {
@@ -1411,6 +1445,77 @@
                         creature.classList.add("header-image-float");
                     });
                 }
+            })();
+
+            // Section-divider creatures: each one blinks on its own
+            // rhythm and, once in a while, becomes someone else.
+            (function () {
+                const creatures =
+                    document.querySelectorAll(".divider-creature");
+                if (!creatures.length) return;
+                if (
+                    window.matchMedia &&
+                    window.matchMedia("(prefers-reduced-motion: reduce)")
+                        .matches
+                )
+                    return;
+
+                // [awake, eyes-shut] pairs
+                const FACES = [
+                    ["₍ᐢ. .ᐢ₎", "₍ᐢ- -ᐢ₎"],
+                    ["꒰ᐢ•༝•ᐢ꒱", "꒰ᐢ˗༝˗ᐢ꒱"],
+                    ["༼ᵔᴥᵔ༽", "༼˗ᴥ˗༽"],
+                    ["⌓‿⌓", "−‿−"],
+                    ["/ᐠ･ꞈ･ᐟ\\", "/ᐠ˗ꞈ˗ᐟ\\"],
+                    ["૮₍˶ᵔ ᵕ ᵔ˶₎ა", "૮₍˶˗ ᵕ ˗˶₎ა"],
+                    ["₍𐔌◡𐦯₎", "₍𐔌˘𐦯₎"],
+                    ["꒰𐔌･𐦯꒱", "꒰𐔌˘𐦯꒱"],
+                ];
+
+                creatures.forEach((el, i) => {
+                    // Spread the starting faces out so neighbors differ.
+                    let face = FACES[(i * 3) % FACES.length];
+                    el.textContent = face[0];
+
+                    const shut = (ms) => {
+                        el.textContent = face[1];
+                        setTimeout(() => {
+                            el.textContent = face[0];
+                        }, ms);
+                    };
+
+                    const blink = () => {
+                        shut(160);
+                        // Sometimes a double blink.
+                        if (Math.random() < 0.3)
+                            setTimeout(() => shut(160), 420);
+                    };
+
+                    const morph = () => {
+                        el.classList.add("is-morphing");
+                        setTimeout(() => {
+                            face =
+                                FACES[
+                                    Math.floor(Math.random() * FACES.length)
+                                ];
+                            el.textContent = face[0];
+                            el.classList.remove("is-morphing");
+                        }, 350);
+                    };
+
+                    (function tick() {
+                        setTimeout(
+                            () => {
+                                if (!document.hidden) {
+                                    if (Math.random() < 0.2) morph();
+                                    else blink();
+                                }
+                                tick();
+                            },
+                            3000 + Math.random() * 5000,
+                        );
+                    })();
+                });
             })();
 
             // Symbient spawning

@@ -694,35 +694,77 @@ section[id],
 /* Sections */
 section {
     margin: var(--space-xl) 0;
+}
+
+/* Scroll-triggered reveal: reveal.js tags below-the-fold sections and
+   dividers with .reveal, then lifts each to .is-visible as it enters the
+   viewport. Without JS — or with prefers-reduced-motion — nothing is
+   tagged and the page stays fully visible. */
+.reveal {
     opacity: 0;
     transform: translateY(30px);
-    animation: sectionReveal 1s var(--ease-out-expo) forwards;
+    transition:
+        opacity 1.6s var(--ease-out-expo),
+        transform 1.6s var(--ease-out-expo);
 }
 
-section:nth-child(3) {
-    animation-delay: 0.1s;
-}
-section:nth-child(4) {
-    animation-delay: 0.15s;
-}
-section:nth-child(5) {
-    animation-delay: 0.2s;
-}
-section:nth-child(6) {
-    animation-delay: 0.25s;
-}
-section:nth-child(7) {
-    animation-delay: 0.3s;
-}
-section:nth-child(8) {
-    animation-delay: 0.35s;
+.reveal.is-visible {
+    opacity: 1;
+    transform: none;
 }
 
-@keyframes sectionReveal {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Section dividers — a small symbient inhabits each seam between
+   sections. A script in index.html makes it blink and, now and then,
+   become someone else. The negative margin centers the creature inside
+   the sections' existing --space-xl gap instead of widening it. */
+.section-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: 420px;
+    margin: calc(var(--space-xl) / -2) auto;
+}
+
+.section-divider::before,
+.section-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border-medium);
+}
+
+.divider-creature {
+    font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+    font-size: 0.85rem;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--symbient-color);
+    transition: opacity 0.35s ease;
+}
+
+.divider-creature.is-morphing {
+    opacity: 0;
+}
+
+/* Minor dividers — a lone creature marking the beat between essay
+   blocks inside #about, like a dinkus between scenes. No rules; those
+   stay at the section seams. Centers in the blocks' --about-gap. */
+.section-divider--minor {
+    max-width: none;
+    justify-content: center;
+    margin: calc(var(--about-gap, var(--space-xl)) / -2) auto;
+}
+
+.section-divider--minor::before,
+.section-divider--minor::after {
+    content: none;
+}
+
+.section-divider--minor .divider-creature {
+    font-size: 0.8rem;
 }
 
 /* About Section — editorial / zine treatment.
@@ -757,13 +799,18 @@ section:nth-child(8) {
     margin-bottom: 0;
 }
 
-/* Alternating figure rows. */
+/* Alternating figure rows. --about-gap is the vertical rhythm between
+   blocks; the minor kaomoji dividers center themselves inside it. */
+.about-blocks {
+    --about-gap: var(--space-xl);
+}
+
 .about-block {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-md);
     align-items: start;
-    margin: var(--space-xl) 0;
+    margin: var(--about-gap) 0;
 }
 
 .about-block-text {
@@ -798,19 +845,24 @@ section:nth-child(8) {
 }
 
 @media (min-width: 880px) {
+    .about-blocks {
+        --about-gap: clamp(3rem, 7vw, 6rem);
+    }
+
     .about-block {
         /* Equal halves — text and ASCII figure each take 50%. */
         grid-template-columns: 1fr 1fr;
         gap: clamp(2rem, 4vw, 4rem);
-        margin: clamp(3rem, 7vw, 6rem) 0;
     }
 
-    /* Alternate the figure to the opposite side on even blocks. The columns
-       are symmetric, so only the source order needs to flip. */
-    .about-block:nth-child(even) .about-figure {
+    /* Alternate the figure to the opposite side on flipped blocks. The
+       columns are symmetric, so only the source order needs to flip.
+       (An explicit class, not :nth-child — the kaomoji dividers between
+       blocks would throw the child count off.) */
+    .about-block--flip .about-figure {
         order: 1;
     }
-    .about-block:nth-child(even) .about-block-text {
+    .about-block--flip .about-block-text {
         order: 2;
     }
 
