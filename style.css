@@ -418,21 +418,105 @@ em {
     flex-shrink: 0;
 }
 
+/* Hamburger — hidden on desktop, revealed in the mobile breakpoint */
+.topnav-burger {
+    display: none;
+}
+
 @media (max-width: 640px) {
     .topnav {
-        gap: var(--space-xs);
+        position: relative;
+        gap: var(--space-sm);
         padding: 0.7rem clamp(1rem, 4vw, 2rem);
     }
 
+    /* Brand stays — it anchors the bar opposite the menu button */
     .topnav-brand {
-        display: none;
+        display: inline;
     }
 
+    .topnav-burger {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-left: auto;
+        padding: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .topnav-burger-bar {
+        display: block;
+        width: 1.4rem;
+        height: 2px;
+        margin: 0 auto;
+        background: var(--text-secondary);
+        border-radius: 1px;
+        transition: transform var(--transition-medium),
+            opacity var(--transition-fast);
+    }
+
+    /* Bars morph into an X while the menu is open */
+    .topnav-burger[aria-expanded="true"] .topnav-burger-bar:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+
+    .topnav-burger[aria-expanded="true"] .topnav-burger-bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .topnav-burger[aria-expanded="true"] .topnav-burger-bar:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Links collapse into a drop-down panel under the bar */
     .topnav-links {
-        flex: 1;
-        justify-content: flex-start;
-        gap: clamp(0.7rem, 3.2vw, 1.25rem);
-        letter-spacing: 0.06em;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 0 clamp(1rem, 4vw, 2rem);
+        background: color-mix(in srgb, var(--cream) 92%, transparent);
+        -webkit-backdrop-filter: blur(14px) saturate(1.2);
+        backdrop-filter: blur(14px) saturate(1.2);
+        border-bottom: 1px solid var(--border-subtle);
+        letter-spacing: 0.14em;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transition: max-height var(--transition-medium),
+            opacity var(--transition-medium),
+            visibility var(--transition-medium);
+    }
+
+    .topnav-links.is-open {
+        max-height: 80vh;
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .topnav-links a {
+        display: block;
+        padding: 0.9rem 0;
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .topnav-links a:first-child {
+        border-top: none;
+    }
+
+    /* The desktop hover-underline is meaningless in the stacked menu */
+    .topnav-links a::after {
+        display: none;
     }
 
     /* Slim the toggle to just its state dots on small screens */
@@ -1345,9 +1429,15 @@ html[data-theme="dark"] .event-card {
         padding: var(--space-md) var(--space-sm);
     }
 
+    /* Give the hero the whole first screen: the creature and the
+       definition sit centered in the viewport, so the "Alternative
+       Intelligence Narrative" copy only appears once you scroll. */
     .header-section {
-        min-height: auto;
-        padding: var(--space-md) 0;
+        min-height: calc(100svh - var(--nav-h));
+        margin-top: calc(-1 * var(--space-md));
+        justify-content: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) 0 var(--space-md);
     }
 
     .definition-block::before {

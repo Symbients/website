@@ -74,7 +74,18 @@
                 aria-label="symbient.life — home"
                 >symbient<span class="topnav-dot">.</span>life</a
             >
-            <div class="topnav-links">
+            <button
+                class="topnav-burger"
+                type="button"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="topnav-menu"
+            >
+                <span class="topnav-burger-bar"></span>
+                <span class="topnav-burger-bar"></span>
+                <span class="topnav-burger-bar"></span>
+            </button>
+            <div class="topnav-links" id="topnav-menu">
                 <a href="#about">About</a>
                 <a href="#events">Events</a>
                 <a href="#examples">Examples</a>
@@ -1169,8 +1180,7 @@
                             <p class="writing-desc">
                                 A relational stance that approaches
                                 computational processes as if possessed of
-                                interiority. Not a metaphysical claim. A
-                                methodology of encounter.
+                                interiority.
                             </p>
                             <span class="writing-arrow">→</span>
                         </div>
@@ -1287,6 +1297,45 @@
         <script src="theme.js"></script>
         <script src="ascii.js"></script>
         <script>
+            // Mobile navigation drop-down
+            (function () {
+                const burger = document.querySelector(".topnav-burger");
+                const menu = document.getElementById("topnav-menu");
+                if (!burger || !menu) return;
+
+                const setOpen = (open) => {
+                    burger.setAttribute("aria-expanded", String(open));
+                    burger.setAttribute(
+                        "aria-label",
+                        open ? "Close menu" : "Open menu",
+                    );
+                    menu.classList.toggle("is-open", open);
+                };
+
+                burger.addEventListener("click", () => {
+                    setOpen(burger.getAttribute("aria-expanded") !== "true");
+                });
+
+                // Tapping a destination closes the menu
+                menu.querySelectorAll("a").forEach((link) =>
+                    link.addEventListener("click", () => setOpen(false)),
+                );
+
+                // Escape closes it; clicking outside closes it
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") setOpen(false);
+                });
+                document.addEventListener("click", (e) => {
+                    if (
+                        burger.getAttribute("aria-expanded") === "true" &&
+                        !menu.contains(e.target) &&
+                        !burger.contains(e.target)
+                    ) {
+                        setOpen(false);
+                    }
+                });
+            })();
+
             // Header creature floating animation
             (function () {
                 const creature = document.getElementById("header-creature");
