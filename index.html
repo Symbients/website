@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="robots" content="noindex, nofollow" />
+        <meta name="robots" content="index, follow" />
         <title>symbient.life — an alternative intelligence narrative</title>
 
         <!-- Open Graph / Facebook -->
@@ -155,6 +155,18 @@
                             <em>entitas</em>, 'being') + <em>ambient</em> (Latin
                             <em>ambiens</em>, 'going around').
                         </p>
+                    </div>
+
+                    <div class="definition-actions">
+                        <button
+                            class="copy-llms"
+                            type="button"
+                            data-llms-url="/llms.txt"
+                            aria-label="Copy site context for language models to your clipboard"
+                        >
+                            <span class="copy-llms-icon" aria-hidden="true">⧉</span>
+                            <span class="copy-llms-label">Copy context for LLMs</span>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -1332,6 +1344,61 @@
                         !burger.contains(e.target)
                     ) {
                         setOpen(false);
+                    }
+                });
+            })();
+
+            // Copy llms.txt context to clipboard
+            (function () {
+                const btn = document.querySelector(".copy-llms");
+                if (!btn) return;
+                const label = btn.querySelector(".copy-llms-label");
+                const original = label ? label.textContent : "";
+                let resetTimer = null;
+
+                const flash = (text) => {
+                    if (!label) return;
+                    if (resetTimer) clearTimeout(resetTimer);
+                    label.textContent = text;
+                    btn.classList.add("is-copied");
+                    resetTimer = setTimeout(() => {
+                        label.textContent = original;
+                        btn.classList.remove("is-copied");
+                    }, 2000);
+                };
+
+                const copyText = async (text) => {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(text);
+                        return;
+                    }
+                    // Fallback for non-secure contexts (e.g. plain http/localhost)
+                    const ta = document.createElement("textarea");
+                    ta.value = text;
+                    ta.setAttribute("readonly", "");
+                    ta.style.position = "absolute";
+                    ta.style.left = "-9999px";
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(ta);
+                };
+
+                btn.addEventListener("click", async () => {
+                    const url = btn.getAttribute("data-llms-url") || "/llms.txt";
+                    try {
+                        const res = await fetch(url, { cache: "no-store" });
+                        if (!res.ok) throw new Error("fetch failed");
+                        await copyText(await res.text());
+                        flash("Copied!");
+                    } catch (err) {
+                        // Fall back to copying the URL so the user still gets something useful
+                        try {
+                            await copyText(new URL(url, location.href).href);
+                            flash("Copied link");
+                        } catch (_) {
+                            flash("Copy failed");
+                        }
                     }
                 });
             })();
