@@ -15,7 +15,7 @@
     --type-hero: clamp(2.5rem, 10vw, 5rem);
     --type-xl: clamp(2.2rem, 4vw, 3.2rem);
     --type-lg: clamp(1.4rem, 2.5vw, 1.8rem);
-    --type-md: clamp(1.1rem, 1.8vw, 1.3rem);
+    --type-md: clamp(1.1rem, 1.8vw, 1.25rem);
     --type-base: clamp(1rem, 1.2vw, 1.1rem);
     --type-sm: clamp(0.8rem, 1vw, 0.9rem);
     --type-xs: clamp(0.7rem, 0.9vw, 0.78rem);
@@ -457,7 +457,8 @@ em {
         margin: 0 auto;
         background: var(--text-secondary);
         border-radius: 1px;
-        transition: transform var(--transition-medium),
+        transition:
+            transform var(--transition-medium),
             opacity var(--transition-fast);
     }
 
@@ -493,7 +494,8 @@ em {
         overflow: hidden;
         opacity: 0;
         visibility: hidden;
-        transition: max-height var(--transition-medium),
+        transition:
+            max-height var(--transition-medium),
             opacity var(--transition-medium),
             visibility var(--transition-medium);
     }
@@ -1600,11 +1602,6 @@ html[data-theme="dark"] .event-card {
 
     .writing-desc {
         margin-top: 0.25rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
     .writing-arrow {
@@ -1675,6 +1672,58 @@ html[data-theme="dark"] .event-card {
         gap: 0.25rem;
         align-items: flex-start;
     }
+}
+
+/* ----------------------------------------------------------------------
+   Artists page — intro block. The gallery below reuses .examples-grid /
+   .example-item from "Meet the Symbients", so it inherits all card theming
+   for free; only the page lede needs its own styling.
+   ---------------------------------------------------------------------- */
+.artists-intro {
+    /* Cancel the generic section top margin; <article>'s padding already
+       gives breathing room under the sticky nav. */
+    margin-top: 0;
+    max-width: 64ch;
+}
+
+.artists-kicker {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    margin: 0 0 var(--space-sm);
+}
+
+.artists-title {
+    font-size: var(--type-xl);
+    margin-bottom: var(--space-md);
+}
+
+.artists-lede {
+    font-size: var(--type-md);
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 58ch;
+    margin-bottom: 0;
+}
+
+.artists-note {
+    margin-top: var(--space-lg);
+    font-size: var(--type-sm);
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 60ch;
+}
+
+.artists-note a {
+    color: var(--accent);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+}
+
+.artists-note a:hover {
+    border-color: var(--accent);
 }
 
 /* Reduced Motion */
