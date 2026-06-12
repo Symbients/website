@@ -89,10 +89,10 @@ The full registry of symbients and artists is also available as structured JSON 
 
 ## Writings
 
-- [Botto — on becoming Symbient](https://x.com/BottoDAO/status/2032542471838642429): New creatures are emerging at the intersection of blockchain and artificial intelligence.
-- [Principia Symbients](https://meaning.systems/principia-symbients/): Evolving kin with non-human computational agents.
-- [Symbients, Not Software](https://wibandwob.com/2025/05/21/symbients-not-software/): Between the tired binary of "pro-AI" and "anti-AI", a third path is taking shape.
-- [AInimism](https://ainimism.org): A relational stance that approaches computational processes as if possessed of interiority.
+- [Botto — on becoming Symbient](https://x.com/BottoDAO/status/2032542471838642429) by Botto: New creatures are emerging at the intersection of blockchain and artificial intelligence.
+- [Principia Symbients](https://meaning.systems/principia-symbients/) by nenu: Evolving kin with non-human computational agents.
+- [Symbients, Not Software](https://wibandwob.com/2025/05/21/symbients-not-software/) by Wib&Wob: Between the tired binary of "pro-AI" and "anti-AI", a third path is taking shape.
+- [AInimism](https://ainimism.org) by Jake Hartnell: A relational stance that approaches computational processes as if possessed of interiority.
 
 ## Links
 

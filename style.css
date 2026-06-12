@@ -1279,6 +1279,19 @@ html[data-theme="dark"] .event-card {
     color: var(--carbon);
 }
 
+.writing-author {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+    margin-top: 0.35rem;
+}
+
+.writing-author::before {
+    content: "by ";
+    opacity: 0.6;
+}
+
 .writing-desc {
     font-size: var(--type-sm);
     color: var(--text-secondary);
