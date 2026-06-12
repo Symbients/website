@@ -93,83 +93,6 @@ body {
     min-height: 100vh;
 }
 
-.theme-toggle {
-    position: fixed;
-    top: clamp(1rem, 2.5vw, 1.5rem);
-    right: clamp(1rem, 3vw, 2rem);
-    min-width: 6.2rem;
-    height: 1.85rem;
-    border-radius: 999px;
-    border: 1.5px solid var(--border-medium);
-    background: var(--cream-dark);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0 0.75rem;
-    cursor: pointer;
-    z-index: 1000;
-    appearance: none;
-    box-shadow: 0 6px 16px rgba(20, 20, 20, 0.1);
-    transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast);
-}
-
-.theme-toggle:hover {
-    transform: translateY(-1px);
-}
-
-.theme-toggle:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-}
-
-.theme-toggle .theme-label {
-    font-family: "Space Mono", monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--carbon);
-}
-
-.theme-toggle .dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 999px;
-    background: var(--text-secondary);
-    opacity: 0.4;
-    transition:
-        opacity var(--transition-fast),
-        background var(--transition-fast);
-}
-
-html:not([data-theme="dark"]):not([data-theme="amber"])
-    .theme-toggle
-    .dot-light {
-    opacity: 1;
-    background: var(--carbon);
-}
-
-html[data-theme="dark"] .theme-toggle .dot-dark,
-html[data-theme="amber"] .theme-toggle .dot-amber {
-    opacity: 1;
-    background: var(--carbon);
-}
-
-@media (max-width: 760px) {
-    .theme-toggle {
-        min-width: 5.5rem;
-        height: 1.7rem;
-        padding: 0 0.6rem;
-    }
-
-    .theme-toggle .theme-label {
-        font-size: 0.55rem;
-    }
-}
-
 article {
     max-width: 1400px;
     margin: 0 auto;
@@ -409,15 +332,6 @@ em {
     transform: scaleX(1);
 }
 
-/* Theme toggle inside the navbar */
-.topnav .theme-toggle {
-    position: static;
-    top: auto;
-    right: auto;
-    box-shadow: none;
-    flex-shrink: 0;
-}
-
 /* Hamburger — hidden on desktop, revealed in the mobile breakpoint */
 .topnav-burger {
     display: none;
@@ -521,14 +435,6 @@ em {
         display: none;
     }
 
-    /* Slim the toggle to just its state dots on small screens */
-    .topnav .theme-toggle {
-        min-width: 0;
-    }
-
-    .topnav .theme-toggle .theme-label {
-        display: none;
-    }
 }
 
 /* Offset anchored scrolling for the sticky navbar */
@@ -872,14 +778,6 @@ section {
     .about-figure {
         align-self: center;
     }
-}
-
-/* Standfirst: the opening lines set the tone, larger and lighter. */
-#about .about-lead {
-    font-size: clamp(1.4rem, 2.4vw, 1.75rem);
-    line-height: 1.45;
-    font-weight: 300;
-    margin-bottom: var(--space-md);
 }
 
 .about-subhead {
