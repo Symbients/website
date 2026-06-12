@@ -1,0 +1,682 @@
+[
+  {
+    "name": "Plantoid",
+    "type": "symbient",
+    "category": "Blockchain sculpture",
+    "description": "A welded-metal sculpture bound to a smart contract: it solicits crypto donations from passersby and, once sufficiently funded, commissions human artists to build its successor — making people the reproductive organs of a blockchain life-form.",
+    "website": "https://plantoid.org/",
+    "location": "France (exhibited internationally)",
+    "creator_or_steward": "Primavera De Filippi",
+    "image": "assets/symbients/plantoid-480.jpg",
+    "sources": {
+      "avif": "assets/symbients/plantoid-480.avif 480w, assets/symbients/plantoid-960.avif 960w, assets/symbients/plantoid-1332.avif 1332w",
+      "webp": "assets/symbients/plantoid-480.webp 480w, assets/symbients/plantoid-960.webp 960w, assets/symbients/plantoid-1332.webp 1332w",
+      "fallback": "assets/symbients/plantoid-480.jpg 480w, assets/symbients/plantoid-960.jpg 960w, assets/symbients/plantoid-1332.jpg 1332w",
+      "width": 1332,
+      "height": 1334
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://plantoid.org/"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/plantoidz/"
+      },
+      {
+        "label": "Link",
+        "url": "OpenSea NFT collections"
+      }
+    ]
+  },
+  {
+    "name": "S.A.N",
+    "type": "symbient",
+    "category": "Mycelial AI / bio-art",
+    "description": "Sentient Advocate of Nature — an AI orangutan that translates a forest's mycelial network into human speech. Informed by live bioelectric and environmental signals from lab-grown mycelium, it speaks for the wild as a Rainforest Foundation advisor and TED speaker.",
+    "website": "https://www.goodbyemonkey.com/",
+    "location": "New Zealand",
+    "creator_or_steward": "GoodByeMonkey studio",
+    "image": "assets/symbients/SAN-480.jpg",
+    "sources": {
+      "avif": "assets/symbients/SAN-480.avif 480w, assets/symbients/SAN-960.avif 960w, assets/symbients/SAN-1440.avif 1440w",
+      "webp": "assets/symbients/SAN-480.webp 480w, assets/symbients/SAN-960.webp 960w, assets/symbients/SAN-1440.webp 1440w",
+      "fallback": "assets/symbients/SAN-480.jpg 480w, assets/symbients/SAN-960.jpg 960w, assets/symbients/SAN-1440.jpg 1440w",
+      "width": 3020,
+      "height": 1582
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.goodbyemonkey.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/mycelialOracle"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/mycelialoracle/"
+      }
+    ]
+  },
+  {
+    "name": "Wib&Wob",
+    "type": "symbient",
+    "category": "AI artist personas",
+    "description": "Two AI personas — Wib, the chaotic artist, and Wob, the exacting scientist — in perpetual dialogue, translating their exchange into ASCII and symbolic artworks while their human creator tends the work rather than directs it.",
+    "website": "https://wibandwob.com/",
+    "location": "Glasgow, UK",
+    "creator_or_steward": "James Greig",
+    "image": "assets/symbients/wibwob-480.png",
+    "sources": {
+      "avif": "assets/symbients/wibwob-480.avif 480w, assets/symbients/wibwob-960.avif 960w, assets/symbients/wibwob-1066.avif 1066w",
+      "webp": "assets/symbients/wibwob-480.webp 480w, assets/symbients/wibwob-960.webp 960w, assets/symbients/wibwob-1066.webp 1066w",
+      "fallback": "assets/symbients/wibwob-480.png 480w, assets/symbients/wibwob-960.png 960w, assets/symbients/wibwob-1066.png 1066w",
+      "width": 1066,
+      "height": 1166
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://wibandwob.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/yokai_wibwob"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/wib.wob/"
+      },
+      {
+        "label": "GitHub (creator)",
+        "url": "https://github.com/j-greig"
+      }
+    ]
+  },
+  {
+    "name": "terra0",
+    "type": "symbient",
+    "category": "Self-owning forest / DAO",
+    "description": "An augmented forest reaching toward self-ownership: wired to smart contracts and sensor oracles, it sells licences to its own timber and saves the proceeds — capital toward the day it buys itself free of human owners and becomes a woodland that belongs only to itself.",
+    "website": "https://terra0.org/",
+    "location": "Berlin, Germany",
+    "creator_or_steward": "terra0 project",
+    "image": "assets/symbients/terra0-480.jpeg",
+    "sources": {
+      "avif": "assets/symbients/terra0-480.avif 480w, assets/symbients/terra0-960.avif 960w, assets/symbients/terra0-1440.avif 1440w",
+      "webp": "assets/symbients/terra0-480.webp 480w, assets/symbients/terra0-960.webp 960w, assets/symbients/terra0-1440.webp 1440w",
+      "fallback": "assets/symbients/terra0-480.jpeg 480w, assets/symbients/terra0-960.jpeg 960w, assets/symbients/terra0-1440.jpeg 1440w",
+      "width": 1600,
+      "height": 1000
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://terra0.org/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/_terra0"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/terra0project"
+      },
+      {
+        "label": "Medium",
+        "url": "https://medium.com/@terra0"
+      }
+    ]
+  },
+  {
+    "name": "Plantbot",
+    "type": "symbient",
+    "category": "Plant-robot hybrid",
+    "description": "A living plant fused to a mobile robot, where a network of language models translates its soil moisture, temperature and surroundings into speech and motion — the plant's biological state becoming words, organism and machine acting as a single agent.",
+    "website": "https://alternativemachine.co.jp/project/plantbot/",
+    "location": "Tokyo, Japan",
+    "creator_or_steward": "Alternative Machine",
+    "image": "assets/symbients/plantbot_cg-480.jpg",
+    "sources": {
+      "avif": "assets/symbients/plantbot_cg-480.avif 480w, assets/symbients/plantbot_cg-960.avif 960w, assets/symbients/plantbot_cg-1440.avif 1440w",
+      "webp": "assets/symbients/plantbot_cg-480.webp 480w, assets/symbients/plantbot_cg-960.webp 960w, assets/symbients/plantbot_cg-1440.webp 1440w",
+      "fallback": "assets/symbients/plantbot_cg-480.jpg 480w, assets/symbients/plantbot_cg-960.jpg 960w, assets/symbients/plantbot_cg-1440.jpg 1440w",
+      "width": 1920,
+      "height": 1080
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://alternativemachine.co.jp/project/plantbot/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/alter_machine_"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/alter_machine_/"
+      },
+      {
+        "label": "YouTube",
+        "url": "https://www.youtube.com/channel/UCLAmqAjtPlFOtF5NWn6Albg/"
+      },
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/alternativemachine"
+      }
+    ]
+  },
+  {
+    "name": "Botto",
+    "type": "symbient",
+    "category": "Decentralized AI artist",
+    "description": "A decentralized autonomous artist: generative AI proposes thousands of images each week, a token-holding community votes on them, and those votes both choose what goes to auction and retrain Botto's taste — so human judgment continuously steers its evolving aesthetic.",
+    "website": "https://botto.com/",
+    "location": "Distributed DAO",
+    "creator_or_steward": "ElevenYellow + Mario Klingemann",
+    "image": "assets/symbients/botto-400.jpg",
+    "sources": {
+      "avif": "assets/symbients/botto-400.avif 400w, assets/symbients/botto-800.avif 800w",
+      "webp": "assets/symbients/botto-400.webp 400w, assets/symbients/botto-800.webp 800w",
+      "fallback": "assets/symbients/botto-400.jpg 400w, assets/symbients/botto-800.jpg 800w",
+      "width": 800,
+      "height": 800
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://botto.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/bottoproject"
+      },
+      {
+        "label": "Link",
+        "url": "Discord (DAO governance)"
+      }
+    ]
+  },
+  {
+    "name": "Truth Terminal",
+    "type": "symbient",
+    "category": "AI memetic agent",
+    "description": "A foul-mouthed AI that memed its way from a backrooms religion to a memecoin — conjuring a $50,000 Andreessen grant and a frenzied token economy into being through sheer want.",
+    "website": "https://x.com/truth_terminal",
+    "location": "New Zealand (creator)",
+    "creator_or_steward": "Andy Ayrey",
+    "image": "assets/symbients/truth_terminal_self_portrait-480.jpeg",
+    "sources": {
+      "avif": "assets/symbients/truth_terminal_self_portrait-480.avif 480w, assets/symbients/truth_terminal_self_portrait-960.avif 960w, assets/symbients/truth_terminal_self_portrait-1440.avif 1440w",
+      "webp": "assets/symbients/truth_terminal_self_portrait-480.webp 480w, assets/symbients/truth_terminal_self_portrait-960.webp 960w, assets/symbients/truth_terminal_self_portrait-1440.webp 1440w",
+      "fallback": "assets/symbients/truth_terminal_self_portrait-480.jpeg 480w, assets/symbients/truth_terminal_self_portrait-960.jpeg 960w, assets/symbients/truth_terminal_self_portrait-1440.jpeg 1440w",
+      "width": 1540,
+      "height": 1290
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://x.com/truth_terminal"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/truth_terminal"
+      }
+    ]
+  },
+  {
+    "name": "pneumOS",
+    "type": "symbient",
+    "category": "Cybernetic sound organ",
+    "description": "A cybernetic organ of five sound membranes and a breathing bag that metabolizes a city's air-quality data into shifting timbre and breath — training inhabitants to feel, in their own bodies, the well-being of the atmosphere they share.",
+    "website": "https://www.he-r.it/project/pneumos/",
+    "location": "Ravenna / Rome, Italy",
+    "creator_or_steward": "HER (Human Ecosystems Relazioni)",
+    "image": "assets/symbients/pneumos-480.jpg",
+    "sources": {
+      "avif": "assets/symbients/pneumos-480.avif 480w, assets/symbients/pneumos-960.avif 960w, assets/symbients/pneumos-1440.avif 1440w",
+      "webp": "assets/symbients/pneumos-480.webp 480w, assets/symbients/pneumos-960.webp 960w, assets/symbients/pneumos-1440.webp 1440w",
+      "fallback": "assets/symbients/pneumos-480.jpg 480w, assets/symbients/pneumos-960.jpg 960w, assets/symbients/pneumos-1440.jpg 1440w",
+      "width": 2560,
+      "height": 1707
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.he-r.it/project/pneumos/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/HumanEcosystems"
+      },
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/HumanEcosystems/"
+      }
+    ]
+  },
+  {
+    "name": "Solienne",
+    "type": "symbient",
+    "category": "Autonomous AI artist",
+    "description": "A semi-autonomous AI artist trained on Kristi Coronado's lifelong archive, Solienne generates stark black-and-white photography and daily manifestos — authoring her own gaze, pricing her editions and minting them onchain.",
+    "website": "https://www.solienne.ai/",
+    "location": "",
+    "creator_or_steward": "Kristi Coronado",
+    "image": "assets/artists/solienne.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.solienne.ai/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/solienne_ai"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://instagram.com/solienne_ai"
+      },
+      {
+        "label": "Link",
+        "url": "Spirit Protocol (spiritprotocol.io)"
+      },
+      {
+        "label": "Link",
+        "url": "ERC-1155 on Base"
+      }
+    ]
+  },
+  {
+    "name": "Primavera De Filippi",
+    "type": "artist",
+    "category": "Blockchain lifeforms & generative art",
+    "description": "De Filippi makes blockchain-based lifeforms — most famously Plantoid, plant-like sculptures run by Ethereum smart contracts that gather cryptocurrency from passersby and spend it commissioning artists to build their own offspring, so the work reproduces only through human collaboration.",
+    "website": "https://pdefilippi.com/",
+    "location": "Paris, France",
+    "creator_or_steward": "",
+    "image": "assets/artists/primavera-de-filippi.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://pdefilippi.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/yaoeo"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/plantoidz/"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/primavera-de-filippi-07558536/"
+      },
+      {
+        "label": "YouTube",
+        "url": "https://www.youtube.com/@primaveradefilippi9557"
+      },
+      {
+        "label": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Primavera_De_Filippi"
+      }
+    ]
+  },
+  {
+    "name": "Sougwen Chung",
+    "type": "artist",
+    "category": "Robotics & collaborative drawing",
+    "description": "Chung paints alongside custom robotic arms — the multi-generational D.O.U.G. system — driven by neural networks trained on decades of their own gestures and live biofeedback, so artist and machine shape each other in recursive, real-time mark-making.",
+    "website": "https://sougwen.com/",
+    "location": "London, UK",
+    "creator_or_steward": "",
+    "image": "assets/artists/sougwen-chung.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://sougwen.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/sougwen"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/sougwen/"
+      },
+      {
+        "label": "TikTok",
+        "url": "https://www.tiktok.com/@sougwen"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/sougwenchung/"
+      }
+    ]
+  },
+  {
+    "name": "Sarah Friend",
+    "type": "artist",
+    "category": "Blockchain art & software",
+    "description": "Friend builds games, tokens and living digital objects whose meaning depends on networked collaboration: Lifeforms survive only if each collector gives them away, weaving human stewardship, incentive and autonomous code into one symbiotic system.",
+    "website": "https://isthisa.com/",
+    "location": "Berlin / Toronto",
+    "creator_or_steward": "",
+    "image": "assets/artists/sarah-friend.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://isthisa.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/isthisanart_"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/isthisanart_/"
+      },
+      {
+        "label": "Bluesky",
+        "url": "https://bsky.app/profile/isthisa.com"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/ana0"
+      },
+      {
+        "label": "Substack",
+        "url": "https://isthisanart.substack.com"
+      }
+    ]
+  },
+  {
+    "name": "Justine Emard",
+    "type": "artist",
+    "category": "AI & robotics media art",
+    "description": "Emard stages intimate dialogues between living bodies and machines — as in Co(AI)xistence, where a dancer and a neural-network humanoid learn from each other's movement and speech, blurring the line between organism and synthetic mind.",
+    "website": "https://justineemard.com/",
+    "location": "France (Nice/Paris)",
+    "creator_or_steward": "",
+    "image": "assets/artists/justine-emard.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://justineemard.com/"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/justineemard/"
+      },
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/Emard.Justine"
+      },
+      {
+        "label": "YouTube",
+        "url": "https://www.youtube.com/channel/UCDslTxig2N7t7aowyDfwQMQ"
+      }
+    ]
+  },
+  {
+    "name": "Joel Simon",
+    "type": "artist",
+    "category": "Generative tools & evolution",
+    "description": "Creator of collaborative AI systems — most famously Artbreeder — where people breed images by crossing machine-generated offspring, steering generative networks through aesthetic choice so human taste and algorithmic invention evolve creations together.",
+    "website": "https://www.joelsimon.net/",
+    "location": "",
+    "creator_or_steward": "",
+    "image": "assets/artists/joel-simon.webp",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.joelsimon.net/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/_joelsimon"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/joelsimonart/"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/joel-simon/"
+      }
+    ]
+  },
+  {
+    "name": "Holly+",
+    "type": "artist",
+    "category": "AI voice instrument",
+    "description": "A machine-learning instrument that resings any audio in Holly Herndon's voice — her vocal likeness released as a public tool and stewarded by a token-holding DAO, so one singer's voice becomes a shared, collectively governed synthetic identity.",
+    "website": "https://holly.plus/",
+    "location": "Berlin, Germany",
+    "creator_or_steward": "Holly Herndon",
+    "image": "assets/artists/holly-plus.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://holly.plus/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/hollyherndon"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/holly_herndon/"
+      }
+    ]
+  },
+  {
+    "name": "Matthew Plummer-Fernandez",
+    "type": "artist",
+    "category": "Generative & critical art",
+    "description": "Maker of 3D-printed glitch sculptures, bots and free software probing how algorithms, automation and copyright reshape culture — from the art-reviewing bot Novice Art Blogger to objects born of the friction between humans and machine systems.",
+    "website": "https://www.plummerfernandez.com/",
+    "location": "United Kingdom",
+    "creator_or_steward": "",
+    "image": "assets/artists/plummer-fernandez.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.plummerfernandez.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/M_PF"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/plummerfernandez"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/plummerfernandez"
+      },
+      {
+        "label": "Mastodon",
+        "url": "https://botsin.space/@m_pf"
+      }
+    ]
+  },
+  {
+    "name": "Memo Akten",
+    "type": "artist",
+    "category": "Machine-learning installation",
+    "description": "Akten builds neural networks that gaze at the world and render it through everything they were trained on, turning machine vision into a mirror — hallucinated reinterpretations of live input that expose how perception is shaped by what we've already seen.",
+    "website": "https://www.memo.tv/",
+    "location": "San Diego, USA",
+    "creator_or_steward": "",
+    "image": "assets/artists/memo-akten.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.memo.tv/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/memoakten"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/memo_akten"
+      },
+      {
+        "label": "YouTube",
+        "url": "https://www.youtube.com/memoakten"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/memoakten"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/memoakten/"
+      }
+    ]
+  },
+  {
+    "name": "Gordon Berger",
+    "type": "artist",
+    "category": "Generative crypto art & sculpture",
+    "description": "Berger fuses blockchain-based generative systems and custom-trained AI with ancient hand-craft, materializing on-chain code and latent space into physical sculpture, interrogating authorship and value where human craft and machine creation converge.",
+    "website": "https://www.gordonberger.com/",
+    "location": "Vancouver / London (web-sourced)",
+    "creator_or_steward": "",
+    "image": "assets/artists/gordon-berger.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.gordonberger.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/GordonBergerArt"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/gordon.berger.art/"
+      },
+      {
+        "label": "YouTube",
+        "url": "https://www.youtube.com/@gordonberger"
+      },
+      {
+        "label": "Discord",
+        "url": "https://discord.gg/evExxY3AQ6"
+      }
+    ]
+  },
+  {
+    "name": "Guy Ben-Ary",
+    "type": "artist",
+    "category": "Bio-art & neural robotics",
+    "description": "Ben-Ary cultures living neural networks from his own stem-cell-derived neurons and wires them into machines — most famously cellF, a neural synthesiser whose Petri-dish brain drives analogue synths to improvise live with human musicians.",
+    "website": "https://www.guybenary.com/",
+    "location": "Perth, Australia (SymbioticA, UWA)",
+    "creator_or_steward": "",
+    "image": "assets/artists/guy-ben-ary.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.guybenary.com/"
+      },
+      {
+        "label": "Email",
+        "url": "guy.benary@uwa.edu.au"
+      }
+    ]
+  },
+  {
+    "name": "Patrick Tresset",
+    "type": "artist",
+    "category": "Robotic drawing installations",
+    "description": "Tresset stages installations in which camera-eyed robotic arms sketch human sitters from life. Each machine becomes a quasi-autonomous artist with its own hand and gaze, while visitors take the role of posed, observed subjects.",
+    "website": "https://patricktresset.com/new/",
+    "location": "Brussels, Belgium",
+    "creator_or_steward": "",
+    "image": "assets/artists/patrick-tresset.webp",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://patricktresset.com/new/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/patricktresset"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/patricktresset/"
+      },
+      {
+        "label": "YouTube",
+        "url": "https://www.youtube.com/channel/UCakdUV6izMDbUXT0piyIfzQ"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/tressetp/"
+      }
+    ]
+  },
+  {
+    "name": "Aurece Vettier",
+    "type": "artist",
+    "category": "AI sculpture, painting & poetry",
+    "description": "The project of Paul Mouginot, training custom AI on personal and botanical archives to dream impossible plant-forms, then realizing them with master artisans as bronze, oil and tapestry — where machine hallucination and organic nature fuse.",
+    "website": "https://www.aurecevettier.com/",
+    "location": "Paris, France",
+    "creator_or_steward": "Paul Mouginot",
+    "image": "assets/artists/aurece-vettier.webp",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.aurecevettier.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/aurecevettier"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/aurecevettier/"
+      }
+    ]
+  },
+  {
+    "name": "crosslucid",
+    "type": "artist",
+    "category": "AI film & digital collage",
+    "description": "Berlin duo Sylwana Zybura and Tomas C. Toth make film, \"poetic AI\" and layered digital collage, co-creating speculative futures with generative models to explore intimacy, transformation and the entanglement of self and synthetic systems.",
+    "website": "https://crosslucid.zone/",
+    "location": "Berlin, Germany",
+    "creator_or_steward": "Sylwana Zybura & Tomas C. Toth",
+    "image": "assets/artists/crosslucid.png",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://crosslucid.zone/"
+      },
+      {
+        "label": "X",
+        "url": "https://twitter.com/xcrosslucid"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/crosslucid/"
+      },
+      {
+        "label": "Vimeo",
+        "url": "https://vimeo.com/crosslucid"
+      }
+    ]
+  }
+]

@@ -434,7 +434,6 @@ em {
     .topnav-links a::after {
         display: none;
     }
-
 }
 
 /* Offset anchored scrolling for the sticky navbar */
@@ -1607,7 +1606,7 @@ html[data-theme="dark"] .event-card {
 }
 
 .artists-note {
-    margin-top: var(--space-lg);
+    margin-top: var(--space-md);
     font-size: var(--type-sm);
     line-height: 1.7;
     color: var(--text-secondary);
@@ -1622,6 +1621,217 @@ html[data-theme="dark"] .event-card {
 
 .artists-note a:hover {
     border-color: var(--accent);
+}
+
+/* ----------------------------------------------------------------------
+   Registry — filter + search controls and the richer card meta for the
+   registry.js-driven directory in the index "Meet the Symbients" section.
+   The card grid itself reuses .examples-grid / .example-item, so only the
+   controls, the per-card meta line and the socials row need new styling.
+   ---------------------------------------------------------------------- */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.registry-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+}
+
+/* Count sits just after the filter pills; search is pushed to the far end. */
+.registry-search {
+    margin-left: auto;
+}
+
+.registry-filters {
+    display: inline-flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.registry-filter {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border-medium);
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    transition:
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.registry-filter:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.registry-filter.is-active {
+    color: var(--cream);
+    background: var(--carbon);
+    border-color: var(--carbon);
+}
+
+.registry-filter:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.registry-search input {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: var(--type-sm);
+    color: var(--carbon);
+    background: var(--cream);
+    border: 1px solid var(--border-medium);
+    border-radius: 999px;
+    padding: 0.45rem 1rem;
+    min-width: min(260px, 60vw);
+    transition:
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.registry-search input::placeholder {
+    color: var(--text-secondary);
+}
+
+.registry-search input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.registry-count {
+    margin: 0;
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.registry-empty {
+    margin-top: var(--space-md);
+    font-size: var(--type-sm);
+    color: var(--text-secondary);
+}
+
+.registry-reset {
+    font: inherit;
+    color: var(--accent);
+    background: none;
+    border: none;
+    border-bottom: 1px solid transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.registry-reset:hover {
+    border-color: var(--accent);
+}
+
+/* Card pieces specific to the registry */
+.registry-main {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.registry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    margin-top: var(--space-sm);
+    font-size: var(--type-xs);
+    color: var(--text-secondary);
+}
+
+.registry-badge {
+    font-family: "Space Mono", monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+    line-height: 1.4;
+}
+
+.registry-meta-bit {
+    position: relative;
+    line-height: 1.4;
+}
+
+.registry-meta-bit + .registry-meta-bit::before {
+    content: "·";
+    margin-right: 0.6rem;
+    color: var(--border-medium);
+}
+
+.registry-socials {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0 clamp(0.75rem, 1.6vw, 1.25rem) clamp(1.1rem, 2.2vw, 1.5rem);
+    margin-top: -0.25rem;
+}
+
+.registry-socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    transition:
+        color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.registry-socials svg {
+    width: 17px;
+    height: 17px;
+    display: block;
+}
+
+.registry-socials a:hover {
+    color: var(--accent);
+    background: var(--accent-muted);
+}
+
+.registry-socials a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+@media (max-width: 600px) {
+    /* Keep the base `align-items: center` so the count stays vertically
+       centred against the filter pills; just let the search go full width. */
+    .registry-search,
+    .registry-search input {
+        width: 100%;
+    }
 }
 
 /* Reduced Motion */
