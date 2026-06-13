@@ -15,7 +15,7 @@
     --type-hero: clamp(2.5rem, 10vw, 5rem);
     --type-xl: clamp(2.2rem, 4vw, 3.2rem);
     --type-lg: clamp(1.4rem, 2.5vw, 1.8rem);
-    --type-md: clamp(1.1rem, 1.8vw, 1.35rem);
+    --type-md: clamp(1.1rem, 1.8vw, 1.25rem);
     --type-base: clamp(1rem, 1.2vw, 1.1rem);
     --type-sm: clamp(0.8rem, 1vw, 0.9rem);
     --type-xs: clamp(0.7rem, 0.9vw, 0.78rem);
@@ -25,6 +25,8 @@
     --space-md: clamp(2rem, 4vw, 3rem);
     --space-lg: clamp(4rem, 8vw, 6rem);
     --space-xl: clamp(6rem, 12vw, 10rem);
+
+    --nav-h: 3.35rem;
 
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
@@ -89,83 +91,6 @@ body {
     padding: 0;
     overflow-x: hidden;
     min-height: 100vh;
-}
-
-.theme-toggle {
-    position: fixed;
-    top: clamp(1rem, 2.5vw, 1.5rem);
-    right: clamp(1rem, 3vw, 2rem);
-    min-width: 6.2rem;
-    height: 1.85rem;
-    border-radius: 999px;
-    border: 1.5px solid var(--border-medium);
-    background: var(--cream-dark);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0 0.75rem;
-    cursor: pointer;
-    z-index: 1000;
-    appearance: none;
-    box-shadow: 0 6px 16px rgba(20, 20, 20, 0.1);
-    transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast);
-}
-
-.theme-toggle:hover {
-    transform: translateY(-1px);
-}
-
-.theme-toggle:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-}
-
-.theme-toggle .theme-label {
-    font-family: "Space Mono", monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--carbon);
-}
-
-.theme-toggle .dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 999px;
-    background: var(--text-secondary);
-    opacity: 0.4;
-    transition:
-        opacity var(--transition-fast),
-        background var(--transition-fast);
-}
-
-html:not([data-theme="dark"]):not([data-theme="amber"])
-    .theme-toggle
-    .dot-light {
-    opacity: 1;
-    background: var(--carbon);
-}
-
-html[data-theme="dark"] .theme-toggle .dot-dark,
-html[data-theme="amber"] .theme-toggle .dot-amber {
-    opacity: 1;
-    background: var(--carbon);
-}
-
-@media (max-width: 760px) {
-    .theme-toggle {
-        min-width: 5.5rem;
-        height: 1.7rem;
-        padding: 0 0.6rem;
-    }
-
-    .theme-toggle .theme-label {
-        font-size: 0.55rem;
-    }
 }
 
 article {
@@ -241,11 +166,15 @@ em {
 /* Header Section */
 .header-section {
     position: relative;
-    min-height: 50vh;
+    /* Fill the viewport below the sticky navbar and center the hero in it.
+       Negative top margin cancels <article>'s top padding so the hero sits
+       flush under the navbar. */
+    min-height: calc(100svh - var(--nav-h));
+    margin: calc(-1 * var(--space-lg)) 0 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: var(--space-xl) 0;
+    padding: var(--space-md) 0;
 }
 
 .header-section h1 {
@@ -253,32 +182,15 @@ em {
     z-index: 2;
 }
 
-.header-section h1 span {
-    display: inline-block;
-    opacity: 0;
-    animation: revealLetter 0.8s var(--ease-out-expo) forwards;
-}
-
-@keyframes revealLetter {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.tagline {
-    font-family: "Space Mono", monospace;
-    font-size: var(--type-sm);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    margin-top: var(--space-sm);
-    opacity: 0;
-    animation: fadeUp 1s var(--ease-out-expo) 0.6s forwards;
+/* Creature: vertically centered on the right, in flow with the hero.
+   Positioning lives on the wrapper so the <img> float animations are free. */
+.header-section picture {
+    position: absolute;
+    right: clamp(2rem, 2vw, 11rem);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    line-height: 0;
 }
 
 @keyframes fadeUp {
@@ -293,12 +205,9 @@ em {
 }
 
 .header-image {
-    width: clamp(200px, 25vw, 320px);
+    width: clamp(240px, 32vw, 460px);
     height: auto;
-    position: fixed;
-    right: clamp(2rem, 8vw, 10rem);
-    top: clamp(2rem, 10vh, 8rem);
-    z-index: 100;
+    display: block;
     opacity: 0;
     filter: drop-shadow(0 20px 40px rgba(20, 20, 20, 0.08));
     animation: floatIn 1.2s var(--ease-out-expo) 0.3s forwards;
@@ -338,60 +247,199 @@ em {
 }
 
 @media (max-width: 1024px) {
-    .header-image {
-        position: relative;
-        right: auto;
-        top: auto;
-        margin: 0 auto var(--space-md);
+    .header-section picture {
+        position: static;
+        transform: none;
         display: block;
+        margin: 0 auto var(--space-md);
+        line-height: 0;
+    }
+
+    .header-image {
+        width: clamp(200px, 48vw, 340px);
+        margin: 0 auto;
     }
 }
 
-/* Navigation */
-.nav-links {
+/* Top Navigation */
+.topnav {
+    top: 0;
+    z-index: 300;
     display: flex;
-    gap: var(--space-xs);
-    margin: var(--space-md) 0 var(--space-lg);
-    font-family: "Space Mono", monospace;
-    font-size: var(--type-xs);
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 1s var(--ease-out-expo) 0.8s forwards;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 1.85rem clamp(1.5rem, 5vw, 3rem);
+    background: color-mix(in srgb, var(--cream) 80%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
 }
 
-.nav-links a {
+.topnav-brand {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-sm);
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--border-subtle);
-    border-radius: 2px;
-    position: relative;
-    overflow: hidden;
-    transition: all var(--transition-medium);
     color: var(--text-secondary);
+    white-space: nowrap;
+    transition: opacity var(--transition-fast);
 }
 
-.nav-links a::before {
+.topnav-brand:hover {
+    opacity: 0.6;
+}
+
+.topnav-dot {
+    color: var(--accent);
+}
+
+.topnav-links {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 2.25rem);
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+}
+
+.topnav-links a {
+    position: relative;
+    color: var(--text-secondary);
+    padding: 0.15em 0;
+    transition: color var(--transition-fast);
+}
+
+.topnav-links a::after {
     content: "";
     position: absolute;
-    inset: 0;
+    left: 0;
+    bottom: -0.3em;
+    width: 100%;
+    height: 1px;
     background: var(--carbon);
-    transform: translateY(100%);
+    transform: scaleX(0);
+    transform-origin: left;
     transition: transform var(--transition-medium);
 }
 
-.nav-links a span {
-    position: relative;
-    z-index: 1;
+.topnav-links a:hover {
+    color: var(--carbon);
 }
 
-.nav-links a:hover {
-    color: var(--cream);
-    border-color: var(--carbon);
+.topnav-links a:hover::after {
+    transform: scaleX(1);
 }
 
-.nav-links a:hover::before {
-    transform: translateY(0);
+/* Hamburger — hidden on desktop, revealed in the mobile breakpoint */
+.topnav-burger {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .topnav {
+        position: relative;
+        gap: var(--space-sm);
+        padding: 0.7rem clamp(1rem, 4vw, 2rem);
+    }
+
+    /* Brand stays — it anchors the bar opposite the menu button */
+    .topnav-brand {
+        display: inline;
+    }
+
+    .topnav-burger {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-left: auto;
+        padding: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .topnav-burger-bar {
+        display: block;
+        width: 1.4rem;
+        height: 2px;
+        margin: 0 auto;
+        background: var(--text-secondary);
+        border-radius: 1px;
+        transition:
+            transform var(--transition-medium),
+            opacity var(--transition-fast);
+    }
+
+    /* Bars morph into an X while the menu is open */
+    .topnav-burger[aria-expanded="true"] .topnav-burger-bar:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+
+    .topnav-burger[aria-expanded="true"] .topnav-burger-bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .topnav-burger[aria-expanded="true"] .topnav-burger-bar:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Links collapse into a drop-down panel under the bar */
+    .topnav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 0 clamp(1rem, 4vw, 2rem);
+        background: color-mix(in srgb, var(--cream) 92%, transparent);
+        -webkit-backdrop-filter: blur(14px) saturate(1.2);
+        backdrop-filter: blur(14px) saturate(1.2);
+        border-bottom: 1px solid var(--border-subtle);
+        letter-spacing: 0.14em;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+            max-height var(--transition-medium),
+            opacity var(--transition-medium),
+            visibility var(--transition-medium);
+    }
+
+    .topnav-links.is-open {
+        max-height: 80vh;
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .topnav-links a {
+        display: block;
+        padding: 0.9rem 0;
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .topnav-links a:first-child {
+        border-top: none;
+    }
+
+    /* The desktop hover-underline is meaningless in the stacked menu */
+    .topnav-links a::after {
+        display: none;
+    }
+}
+
+/* Offset anchored scrolling for the sticky navbar */
+section[id],
+#top {
+    scroll-margin-top: 4.5rem;
 }
 
 /* Definition Block */
@@ -400,6 +448,13 @@ em {
     padding: var(--space-md) 0;
     max-width: 700px;
     position: relative;
+}
+
+/* Definition is the hero */
+.header-section .definition-block {
+    margin: 0;
+    opacity: 0;
+    animation: fadeUp 1s var(--ease-out-expo) 0.3s forwards;
 }
 
 .definition-block::before {
@@ -424,7 +479,10 @@ em {
     font-family: "Space Mono", monospace;
     font-size: var(--type-xl);
     font-weight: 700;
+    line-height: 1.1;
     letter-spacing: -0.02em;
+    text-transform: none;
+    margin: 0;
     background: linear-gradient(
         135deg,
         var(--carbon) 0%,
@@ -493,62 +551,374 @@ em {
     margin: 0;
 }
 
+/* Copy-context-for-LLMs button under the definition */
+.definition-actions {
+    margin-top: var(--space-md);
+}
+
+.copy-llms {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: "Space Mono", monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border-medium);
+    border-radius: 999px;
+    padding: 0.5rem 0.95rem;
+    cursor: pointer;
+    transition:
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.copy-llms:hover {
+    color: var(--carbon);
+    border-color: var(--accent);
+    background: var(--accent-muted);
+}
+
+.copy-llms:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.copy-llms.is-copied {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.copy-llms-icon {
+    font-size: 0.85rem;
+    line-height: 1;
+}
+
 /* Sections */
 section {
     margin: var(--space-xl) 0;
+}
+
+/* Scroll-triggered reveal: reveal.js tags below-the-fold sections and
+   dividers with .reveal, then lifts each to .is-visible as it enters the
+   viewport. Without JS — or with prefers-reduced-motion — nothing is
+   tagged and the page stays fully visible. */
+.reveal {
     opacity: 0;
     transform: translateY(30px);
-    animation: sectionReveal 1s var(--ease-out-expo) forwards;
+    transition:
+        opacity 1.6s var(--ease-out-expo),
+        transform 1.6s var(--ease-out-expo);
 }
 
-section:nth-child(3) {
-    animation-delay: 0.1s;
-}
-section:nth-child(4) {
-    animation-delay: 0.15s;
-}
-section:nth-child(5) {
-    animation-delay: 0.2s;
-}
-section:nth-child(6) {
-    animation-delay: 0.25s;
-}
-section:nth-child(7) {
-    animation-delay: 0.3s;
-}
-section:nth-child(8) {
-    animation-delay: 0.35s;
+.reveal.is-visible {
+    opacity: 1;
+    transform: none;
 }
 
-@keyframes sectionReveal {
-    to {
-        opacity: 1;
-        transform: translateY(0);
+/* Section dividers — a small symbient inhabits each seam between
+   sections. A script in index.html makes it blink and, now and then,
+   become someone else. The negative margin centers the creature inside
+   the sections' existing --space-xl gap instead of widening it. */
+.section-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: 420px;
+    margin: calc(var(--space-xl) / -2) auto;
+}
+
+.section-divider::before,
+.section-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border-medium);
+}
+
+.divider-creature {
+    font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+    font-size: 0.85rem;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--symbient-color);
+    transition: opacity 0.35s ease;
+}
+
+.divider-creature.is-morphing {
+    opacity: 0;
+}
+
+/* Minor dividers — a lone creature marking the beat between essay
+   blocks inside #about, like a dinkus between scenes. No rules; those
+   stay at the section seams. Centers in the blocks' --about-gap. */
+.section-divider--minor {
+    max-width: none;
+    justify-content: center;
+    margin: calc(var(--about-gap, var(--space-xl)) / -2) auto;
+}
+
+.section-divider--minor::before,
+.section-divider--minor::after {
+    content: none;
+}
+
+.section-divider--minor .divider-creature {
+    font-size: 0.8rem;
+}
+
+/* About Section — editorial / zine treatment.
+   The essay breaks into alternating figure-rows: each thematic block pairs
+   its text with a sticky, animated SVG that illustrates the idea, so the
+   page stops collapsing into one starved column between the wide sections. */
+#about {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* The section heading reads at the same scale as the in-essay subheads —
+   no oversized title, no special underline. */
+#about > h2 {
+    font-size: clamp(1.15rem, 1.9vw, 1.45rem);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-lg);
+}
+#about > h2::after {
+    display: none;
+}
+
+#about p {
+    font-size: var(--type-md);
+    line-height: 1.8;
+    max-width: none;
+    margin: 0 0 1.3em;
+}
+
+#about .about-block-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* Alternating figure rows. --about-gap is the vertical rhythm between
+   blocks; the minor kaomoji dividers center themselves inside it. */
+.about-blocks {
+    --about-gap: var(--space-xl);
+}
+
+.about-block {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    align-items: start;
+    margin: var(--about-gap) 0;
+}
+
+.about-block-text {
+    max-width: 66ch;
+}
+
+.about-figure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Photographic figures (e.g. the relationality block) sit in the same slot
+   as the ASCII rasters but scale to the column width. */
+.about-img {
+    width: 100%;
+    height: auto;
+}
+
+/* A captioned figure fills the column; the caption sits quietly beneath. */
+.about-figure-fig {
+    margin: 0;
+    width: 100%;
+}
+
+.about-caption {
+    margin-top: var(--space-sm);
+    font-size: var(--type-sm);
+    font-style: italic;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+@media (min-width: 880px) {
+    .about-blocks {
+        --about-gap: clamp(3rem, 7vw, 6rem);
+    }
+
+    .about-block {
+        /* Equal halves — text and ASCII figure each take 50%. */
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(2rem, 4vw, 4rem);
+    }
+
+    /* Alternate the figure to the opposite side on flipped blocks. The
+       columns are symmetric, so only the source order needs to flip.
+       (An explicit class, not :nth-child — the kaomoji dividers between
+       blocks would throw the child count off.) */
+    .about-block--flip .about-figure {
+        order: 1;
+    }
+    .about-block--flip .about-block-text {
+        order: 2;
+    }
+
+    /* Each figure sits fixed in the flow, centered beside its passage. */
+    .about-figure {
+        align-self: center;
     }
 }
 
-/* About Section */
-#about p:first-of-type strong {
-    font-family: "Space Mono", monospace;
-    font-size: var(--type-md);
-    font-weight: 400;
-    display: block;
-    margin-bottom: var(--space-sm);
-    letter-spacing: -0.01em;
+.about-subhead {
+    font-size: clamp(1.15rem, 1.9vw, 1.35rem);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin: var(--space-lg) 0 var(--space-md);
 }
 
+/* Emphasis: quiet italics instead of loud highlight boxes. */
 #about em {
-    background: var(--accent-muted);
-    padding: 0.1em 0.3em;
-    border-radius: 2px;
+    font-style: italic;
+    color: var(--carbon);
+}
+
+/* The thesis line: a quiet, slightly larger statement in the reading flow. */
+.about-pullquote {
+    font-size: clamp(1.2rem, 1.8vw, 1.4rem);
+    line-height: 1.5;
+    font-weight: 500;
+    margin: var(--space-md) 0;
+}
+
+.training-signal {
+    margin: var(--space-md) 0;
+    padding: 0;
+    border: none;
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-sm);
+    line-height: 2.1;
+    color: var(--text-secondary);
+}
+
+.about-coda {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-md);
+    letter-spacing: 0.02em;
+    margin-top: var(--space-sm);
+}
+
+/* ----------------------------------------------------------------------
+   ASCII illustration figures for the About blocks.
+   Each figure is a 68x34 tonal raster typed in Space Mono, dimmed, with
+   the accent glyphs in tan. ascii.js fills each <pre> once on load.
+   The line-height/char-width ratio (1.15 / 0.6) matches the ASPECT
+   constant in tools/render-figs.js — change them together.
+   ---------------------------------------------------------------------- */
+.ascii-fig {
+    margin: 0;
+    font-family: "Space Mono", monospace;
+    /* 68 columns: the clamp floor keeps the raster inside a 360px phone,
+       the ceiling keeps it under the desktop half-column. */
+    font-size: clamp(0.45rem, 1.1vw, 0.72rem);
+    line-height: 1.15;
+    letter-spacing: 0;
+    white-space: pre;
+    color: var(--text-secondary);
+    text-align: left;
+}
+
+.ascii-fig .hot {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.lineage {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.lineage-label {
+    font-size: var(--type-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xs);
+}
+
+.lineage-intro {
+    font-size: var(--type-sm);
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: var(--space-sm);
+}
+
+.lineage ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.lineage li {
+    position: relative;
+    padding-left: 1.25em;
+    max-width: 60ch;
+    font-size: var(--type-sm);
+    line-height: 1.55;
+}
+
+.lineage li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--text-secondary);
+}
+
+.lineage em {
+    background: none;
+    padding: 0;
+}
+
+.about-credo-link {
+    display: inline-block;
+    margin-top: var(--space-sm);
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-sm);
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 0.15em;
+    transition:
+        color 0.2s,
+        border-color 0.2s;
+}
+
+.about-credo-link:hover {
+    color: var(--carbon);
+    border-color: var(--carbon);
 }
 
 /* Event Banner */
 /* Events Grid */
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: clamp(1.5rem, 3vw, 2.5rem);
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.25rem, 2.5vw, 2rem);
     margin-top: var(--space-md);
 }
 
@@ -909,6 +1279,19 @@ html[data-theme="dark"] .event-card {
     color: var(--carbon);
 }
 
+.writing-author {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+    margin-top: 0.35rem;
+}
+
+.writing-author::before {
+    content: "by ";
+    opacity: 0.6;
+}
+
 .writing-desc {
     font-size: var(--type-sm);
     color: var(--text-secondary);
@@ -938,6 +1321,10 @@ html[data-theme="dark"] .event-card {
     margin-top: var(--space-xl);
     padding-top: var(--space-md);
     border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
 }
 
 .footer-section p {
@@ -945,7 +1332,33 @@ html[data-theme="dark"] .event-card {
     font-size: var(--type-xs);
     color: var(--text-secondary);
     letter-spacing: 0.1em;
+    margin: 0;
+}
+
+.footer-left {
     text-align: left;
+}
+
+.footer-social {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.footer-social a {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-secondary);
+    opacity: 0.55;
+    text-decoration: none;
+    transition:
+        color var(--transition-fast),
+        opacity var(--transition-fast);
+}
+
+.footer-social a:hover {
+    color: var(--accent);
+    opacity: 1;
 }
 
 .footer-section a {
@@ -1027,9 +1440,15 @@ html[data-theme="dark"] .event-card {
         padding: var(--space-md) var(--space-sm);
     }
 
+    /* Give the hero the whole first screen: the creature and the
+       definition sit centered in the viewport, so the "Alternative
+       Intelligence Narrative" copy only appears once you scroll. */
     .header-section {
-        min-height: auto;
-        padding: var(--space-md) 0;
+        min-height: calc(100svh - var(--nav-h));
+        margin-top: calc(-1 * var(--space-md));
+        justify-content: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) 0 var(--space-md);
     }
 
     .definition-block::before {
@@ -1093,11 +1512,6 @@ html[data-theme="dark"] .event-card {
 
     .writing-desc {
         margin-top: 0.25rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
     .writing-arrow {
@@ -1106,14 +1520,6 @@ html[data-theme="dark"] .event-card {
 
     h2::after {
         display: none;
-    }
-
-    .nav-links a {
-        padding: 0.75rem 1.25rem;
-    }
-
-    .tagline {
-        letter-spacing: 0.12em;
     }
 
     .events-grid {
@@ -1146,6 +1552,11 @@ html[data-theme="dark"] .event-card {
         display: none;
     }
 
+    .footer-section {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
     .footer-section p {
         text-align: center;
     }
@@ -1155,16 +1566,6 @@ html[data-theme="dark"] .event-card {
 @media (max-width: 400px) {
     :root {
         --type-hero: clamp(2rem, 12vw, 3rem);
-    }
-
-    .nav-links {
-        gap: 0.35rem;
-    }
-
-    .nav-links a {
-        padding: 0.5rem 0.7rem;
-        letter-spacing: 0.08em;
-        font-size: clamp(0.6rem, 2.5vw, 0.7rem);
     }
 
     .definition-block::before {
@@ -1181,10 +1582,268 @@ html[data-theme="dark"] .event-card {
         gap: 0.25rem;
         align-items: flex-start;
     }
+}
 
-    .tagline {
-        letter-spacing: 0.08em;
-        font-size: var(--type-xs);
+/* ----------------------------------------------------------------------
+   Artists page — intro block. The gallery below reuses .examples-grid /
+   .example-item from "Meet the Symbients", so it inherits all card theming
+   for free; only the page lede needs its own styling.
+   ---------------------------------------------------------------------- */
+.artists-intro {
+    /* Cancel the generic section top margin; <article>'s padding already
+       gives breathing room under the sticky nav. */
+    margin-top: 0;
+    max-width: 64ch;
+}
+
+.artists-kicker {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    margin: 0 0 var(--space-sm);
+}
+
+.artists-title {
+    font-size: var(--type-xl);
+    margin-bottom: var(--space-md);
+}
+
+.artists-lede {
+    font-size: var(--type-md);
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 58ch;
+    margin-bottom: 0;
+}
+
+.artists-note {
+    margin-top: var(--space-md);
+    font-size: var(--type-sm);
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 60ch;
+}
+
+.artists-note a {
+    color: var(--accent);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+}
+
+.artists-note a:hover {
+    border-color: var(--accent);
+}
+
+/* ----------------------------------------------------------------------
+   Registry — filter + search controls and the richer card meta for the
+   registry.js-driven directory in the index "Meet the Symbients" section.
+   The card grid itself reuses .examples-grid / .example-item, so only the
+   controls, the per-card meta line and the socials row need new styling.
+   ---------------------------------------------------------------------- */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.registry-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+}
+
+/* Count sits just after the filter pills; search is pushed to the far end. */
+.registry-search {
+    margin-left: auto;
+}
+
+.registry-filters {
+    display: inline-flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.registry-filter {
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border-medium);
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    transition:
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.registry-filter:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.registry-filter.is-active {
+    color: var(--cream);
+    background: var(--carbon);
+    border-color: var(--carbon);
+}
+
+.registry-filter:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.registry-search input {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: var(--type-sm);
+    color: var(--carbon);
+    background: var(--cream);
+    border: 1px solid var(--border-medium);
+    border-radius: 999px;
+    padding: 0.45rem 1rem;
+    min-width: min(260px, 60vw);
+    transition:
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.registry-search input::placeholder {
+    color: var(--text-secondary);
+}
+
+.registry-search input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.registry-count {
+    margin: 0;
+    font-family: "Space Mono", monospace;
+    font-size: var(--type-xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.registry-empty {
+    margin-top: var(--space-md);
+    font-size: var(--type-sm);
+    color: var(--text-secondary);
+}
+
+.registry-reset {
+    font: inherit;
+    color: var(--accent);
+    background: none;
+    border: none;
+    border-bottom: 1px solid transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.registry-reset:hover {
+    border-color: var(--accent);
+}
+
+/* Card pieces specific to the registry */
+.registry-main {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.registry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    margin-top: var(--space-sm);
+    font-size: var(--type-xs);
+    color: var(--text-secondary);
+}
+
+.registry-badge {
+    font-family: "Space Mono", monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+    line-height: 1.4;
+}
+
+.registry-meta-bit {
+    position: relative;
+    line-height: 1.4;
+}
+
+.registry-meta-bit + .registry-meta-bit::before {
+    content: "·";
+    margin-right: 0.6rem;
+    color: var(--border-medium);
+}
+
+.registry-socials {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0 clamp(0.75rem, 1.6vw, 1.25rem) clamp(1.1rem, 2.2vw, 1.5rem);
+    margin-top: -0.25rem;
+}
+
+.registry-socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    transition:
+        color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.registry-socials svg {
+    width: 17px;
+    height: 17px;
+    display: block;
+}
+
+.registry-socials a:hover {
+    color: var(--accent);
+    background: var(--accent-muted);
+}
+
+.registry-socials a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+@media (max-width: 600px) {
+    /* Keep the base `align-items: center` so the count stays vertically
+       centred against the filter pills; just let the search go full width. */
+    .registry-search,
+    .registry-search input {
+        width: 100%;
     }
 }
 
