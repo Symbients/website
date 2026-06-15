@@ -706,6 +706,23 @@ section {
     margin-bottom: 0;
 }
 
+/* Inline prose links: tinted with the theme accent and a faint underline
+   that warms up on hover/focus, so they read as links without shouting. */
+.about-block-text a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: var(--accent-muted);
+    text-underline-offset: 0.18em;
+    transition:
+        text-decoration-color var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.about-block-text a:hover,
+.about-block-text a:focus-visible {
+    text-decoration-color: var(--accent);
+}
+
 /* Alternating figure rows. --about-gap is the vertical rhythm between
    blocks; the minor kaomoji dividers center themselves inside it. */
 .about-blocks {
