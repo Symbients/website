@@ -768,6 +768,72 @@ section {
     text-align: center;
 }
 
+/* "Technology + Humans = Symbient" — an icon triad drawn inline (machine
+   glyph in accent, human glyph in carbon, the creature's face) instead of a
+   flat PNG, so it recolors with every theme. Sizes scale with the column. */
+.equation {
+    margin: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eq-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: clamp(0.5rem, 2.2vw, 1.5rem);
+}
+
+.eq-term {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.6rem, 1.5vw, 1.2rem);
+    flex: none;
+}
+
+.eq-icon {
+    height: clamp(56px, 10vw, 116px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.eq-glyph {
+    height: 88%;
+    width: auto;
+}
+
+.eq-face {
+    height: 100%;
+    width: auto;
+}
+
+.eq-op {
+    height: clamp(56px, 10vw, 116px);
+    display: flex;
+    align-items: center;
+    font-family: "Space Mono", monospace;
+    font-size: clamp(1.4rem, 3.6vw, 2.8rem);
+    line-height: 1;
+    color: var(--text-secondary);
+    flex: none;
+}
+
+.eq-word {
+    font-family: "Space Mono", monospace;
+    font-size: clamp(0.72rem, 1.7vw, 1.2rem);
+    letter-spacing: 0.01em;
+    color: var(--carbon);
+    white-space: nowrap;
+}
+
+.eq-word.accent {
+    color: var(--accent);
+}
+
 @media (min-width: 880px) {
     .about-blocks {
         --about-gap: clamp(3rem, 7vw, 6rem);
