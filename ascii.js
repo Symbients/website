@@ -312,11 +312,14 @@
     /* Hyperstition: the spiral turns, stories streaming inward and
        condensing into matter. Fictions that make themselves real. */
     FIGS.loop = {
-        frames: 16,
+        frames: 64,
         speed: 170,
         build: function (t, f) {
             var PHRASE = "tell stories of symbiosis ";
-            var phase = Math.PI * t; // 2-arm spiral: pi is a full period
+            // The image rotates by phase/2 (the 2*th arm term), so a full
+            // 360 turn needs phase to sweep 2*TAU. That is a whole multiple
+            // of TAU, so the loop stays seamless (no snap-back).
+            var phase = 2 * TAU * t;
 
             function armAt(x, y) {
                 var r = Math.sqrt(x * x + y * y);
