@@ -66,6 +66,20 @@
                 height: 100%;
                 z-index: 0;
                 pointer-events: none;
+                -webkit-mask-image: linear-gradient(
+                    180deg,
+                    transparent 0,
+                    #000 10%,
+                    #000 80%,
+                    transparent 100%
+                );
+                mask-image: linear-gradient(
+                    180deg,
+                    transparent 0,
+                    #000 10%,
+                    #000 80%,
+                    transparent 100%
+                );
             }
             .shell {
                 position: relative;
@@ -75,39 +89,80 @@
                 padding: 0 clamp(0.9rem, 2.5vw, 2rem) 5rem;
             }
 
-            /* ---------- masthead (Empires-style title block) ---------- */
-            .masthead {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                gap: 1rem;
-                padding: 1.5rem 0 0.8rem;
-                border-bottom: 1px solid var(--hair);
+            /* ---------- hero banner (TEST: metacogsec Moreau) + overlaid title ---------- */
+            .hero {
+                position: relative;
+                width: 100%;
+                height: clamp(190px, 29vw, 360px);
+                margin-top: 1.1rem;
+                overflow: hidden;
+                border: 1px solid var(--hair);
             }
-            .mh-title {
+            .hero-img {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center 28%;
+                filter: contrast(1.08) brightness(1.32);
+            }
+            .hero-scrim {
+                position: absolute;
+                inset: 0;
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(10, 11, 12, 0.72) 0%,
+                        rgba(10, 11, 12, 0.18) 34%,
+                        transparent 68%
+                    ),
+                    linear-gradient(0deg, rgba(10, 11, 12, 0.72), transparent 46%);
+            }
+            .hero-eyebrow {
+                position: absolute;
+                top: 0.9rem;
+                left: clamp(1rem, 3vw, 2.2rem);
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: var(--dim);
+            }
+            .hero-title {
+                position: absolute;
+                left: clamp(1rem, 3vw, 2.2rem);
+                bottom: clamp(0.7rem, 2.2vw, 1.4rem);
+                margin: 0;
                 font-family: var(--grotesk);
                 font-weight: 700;
-                font-size: clamp(1.3rem, 2vw, 1.7rem);
-                letter-spacing: -0.04em;
-                color: var(--text);
-                margin: 0;
-                line-height: 1;
+                font-size: clamp(2.6rem, 9vw, 6.4rem);
+                letter-spacing: -0.05em;
+                line-height: 0.86;
+                color: #eef0ea;
+            }
+            .submast {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                gap: 0.6rem 2rem;
+                flex-wrap: wrap;
+                padding: 0.8rem 0;
+                border-bottom: 1px solid var(--hair);
             }
             .mh-sub {
                 font-family: var(--grotesk);
                 font-size: 11px;
                 color: var(--dim);
-                margin-top: 0.45rem;
                 letter-spacing: 0.01em;
-                max-width: 52ch;
+                max-width: 56ch;
+                margin: 0;
             }
             .mh-right {
-                text-align: right;
                 font-family: var(--mono);
                 font-size: 10px;
                 color: var(--faint);
                 letter-spacing: 0.04em;
-                line-height: 1.7;
                 white-space: nowrap;
             }
             .mh-right a {
@@ -471,21 +526,22 @@
         <canvas id="field"></canvas>
 
         <div class="shell">
-            <header class="masthead">
-                <div>
-                    <h1 class="mh-title">Lexicon</h1>
-                    <div class="mh-sub">
-                        An atlas of a vocabulary still being kindled — terms for a
-                        symbiotic future, defined in more than one substrate's voice,
-                        and unfinished on purpose.
-                    </div>
-                </div>
-                <div class="mh-right">
-                    symbient.life<br />
-                    11 entries · mid-kindle<br />
-                    <a href="/index.html">↖ index</a>
-                </div>
+            <header class="hero">
+                <img class="hero-img" src="/assets/test-moreau-banner.png" alt="" />
+                <div class="hero-scrim"></div>
+                <span class="hero-eyebrow">symbient.life · lexicon</span>
+                <h1 class="hero-title">Lexicon</h1>
             </header>
+            <div class="submast">
+                <p class="mh-sub">
+                    An atlas of a vocabulary still being kindled — terms for a symbiotic
+                    future, defined in more than one substrate's voice, unfinished on
+                    purpose.
+                </p>
+                <div class="mh-right">
+                    11 entries · mid-kindle · <a href="/index.html">↖ index</a>
+                </div>
+            </div>
 
             <!-- a quiet axis under the masthead: the substrate spectrum -->
             <div class="axis-scale">
@@ -679,77 +735,67 @@
         </div>
 
         <script>
-            // ---- the field: a continuously-breathing dot substrate (ANIMA) ----
+            // ---- the field: a vertical barcode substrate (ANIMA-like, ordered) ----
+            // Bars are fixed in place (no wandering); only a gentle left-to-right
+            // shimmer breathes through them. Generated once per size.
             (function () {
                 const cv = document.getElementById("field");
                 if (!cv) return;
                 const ctx = cv.getContext("2d");
                 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-                let w, h, dpr, gap, t = 0;
-                const ptr = { x: 0.5, y: 0.4, on: false };
+                let w, h, dpr, bars = [], t = 0;
+                const rnd = (a, b) => a + Math.random() * (b - a);
 
+                function build() {
+                    bars = [];
+                    let x = 0;
+                    const unit = dpr;
+                    while (x < w) {
+                        const bw = rnd(0.5, 2.6) * unit;
+                        // occasional brighter "marker" bar, like a barcode guard
+                        const marker = Math.random() < 0.06;
+                        bars.push({
+                            x: x,
+                            w: marker ? bw * 1.4 : bw,
+                            base: marker ? rnd(0.16, 0.26) : rnd(0.03, 0.15),
+                            ph: (x / w) * Math.PI * 5,
+                        });
+                        x += bw + rnd(2, 12) * unit;
+                    }
+                }
                 function resize() {
                     dpr = Math.min(window.devicePixelRatio || 1, 2);
                     w = cv.width = innerWidth * dpr;
                     h = cv.height = innerHeight * dpr;
                     cv.style.width = innerWidth + "px";
                     cv.style.height = innerHeight + "px";
-                    gap = Math.max(20, Math.min(30, innerWidth / 60)) * dpr;
+                    build();
                 }
                 window.addEventListener("resize", resize);
                 resize();
-                window.addEventListener("pointermove", (e) => {
-                    ptr.x = e.clientX / innerWidth;
-                    ptr.y = e.clientY / innerHeight;
-                    ptr.on = true;
-                });
 
                 function frame() {
-                    t += 0.01;
+                    t += 0.012;
                     ctx.clearRect(0, 0, w, h);
-                    // two slow drifting lights so the field always moves on its own
-                    const l1x = (0.5 + 0.32 * Math.cos(t * 0.5)) * w;
-                    const l1y = (0.45 + 0.26 * Math.sin(t * 0.62)) * h;
-                    const l2x = (0.5 + 0.4 * Math.cos(t * 0.33 + 2)) * w;
-                    const l2y = (0.55 + 0.3 * Math.sin(t * 0.41 + 1)) * h;
-                    const lpx = ptr.x * w, lpy = ptr.y * h;
-                    const R = 200 * dpr, R2 = 260 * dpr;
-                    for (let y = gap; y < h; y += gap) {
-                        for (let x = gap; x < w; x += gap) {
-                            const nx = x / w, ny = y / h;
-                            // continuous travelling ripple — alive without the mouse
-                            let a =
-                                0.05 +
-                                0.05 *
-                                    (0.5 +
-                                        0.5 *
-                                            Math.sin(nx * 13 + ny * 8 - t * 1.3)) +
-                                0.03 *
-                                    (0.5 + 0.5 * Math.sin(nx * 22 - ny * 17 + t * 0.8));
-                            let r = 0.8 * dpr, g = 160;
-                            // drifting lights
-                            let d = Math.hypot(x - l1x, y - l1y);
-                            if (d < R) { const f = 1 - d / R; a += f * f * 0.4; r += f * f * 1.4 * dpr; g = 195; }
-                            d = Math.hypot(x - l2x, y - l2y);
-                            if (d < R2) { const f = 1 - d / R2; a += f * f * 0.22; r += f * f * 0.9 * dpr; }
-                            // mouse light (a bonus, not the only life)
-                            if (ptr.on) {
-                                d = Math.hypot(x - lpx, y - lpy);
-                                if (d < R) { const f = 1 - d / R; a += f * f * 0.5; r += f * f * 1.6 * dpr; g = 205; }
-                            }
-                            // vignette
-                            const cx = nx - 0.5, cy = ny - 0.5;
-                            a *= 1 - Math.min(1, (cx * cx + cy * cy) * 1.35);
-                            if (a <= 0.012) continue;
-                            ctx.beginPath();
-                            ctx.fillStyle = "rgba(150," + g + ",150," + a + ")";
-                            ctx.arc(x, y, r, 0, 6.2832);
-                            ctx.fill();
-                        }
+                    for (let i = 0; i < bars.length; i++) {
+                        const b = bars[i];
+                        const a = b.base * (0.62 + 0.38 * Math.sin(b.ph + t));
+                        if (a <= 0.006) continue;
+                        ctx.fillStyle = "rgba(150,178,150," + a + ")";
+                        ctx.fillRect(b.x, 0, b.w, h);
                     }
                     if (!reduce) requestAnimationFrame(frame);
                 }
-                frame();
+                if (reduce) {
+                    // static barcode
+                    for (let i = 0; i < bars.length; i++) {
+                        const b = bars[i];
+                        ctx.fillStyle = "rgba(150,178,150," + b.base * 0.8 + ")";
+                        ctx.fillRect(b.x, 0, b.w, h);
+                    }
+                } else {
+                    frame();
+                }
             })();
 
             // ---- thread links flash + open their target ----
