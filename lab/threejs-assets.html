@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex" />
+        <title>Lab · 2D three.js generative assets — Symbients</title>
+
+        <!-- Pin three.js via importmap. Vendored locally under lab/vendor/ so
+             this runs fully offline; no build step. -->
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "./vendor/three.module.js"
+                }
+            }
+        </script>
+
+        <style>
+            /* ---- palette, copied to mirror lexicon.html's three themes ---- */
+            :root {
+                --void: #f4f0e7;
+                --text: #1f1c16;
+                --dim: #6c675c;
+                --faint: #a39c8d;
+                --hair: rgba(31, 28, 22, 0.18);
+                --hair-2: rgba(31, 28, 22, 0.09);
+                --field-rgb: 92, 90, 82;
+                --mono: "Space Mono", ui-monospace, monospace;
+                --body: "IBM Plex Sans", system-ui, sans-serif;
+                --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            html[data-theme="dark"] {
+                --void: #0a0b0c;
+                --text: #c6ccc0;
+                --dim: #7e857a;
+                --faint: #515750;
+                --hair: rgba(196, 204, 192, 0.16);
+                --hair-2: rgba(196, 204, 192, 0.08);
+                --field-rgb: 158, 162, 152;
+            }
+            html[data-theme="amber"] {
+                --void: #e9cf93;
+                --text: #2a1808;
+                --dim: #6b4a1c;
+                --faint: #9c7c3e;
+                --hair: rgba(42, 24, 8, 0.22);
+                --hair-2: rgba(42, 24, 8, 0.11);
+                --field-rgb: 120, 82, 28;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: var(--void);
+                color: var(--text);
+                font-family: var(--body);
+                font-size: 13px;
+                line-height: 1.55;
+                font-weight: 300;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            header.lab-head {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 1rem;
+                flex-wrap: wrap;
+                padding: 1.6rem 1.6rem 0.6rem;
+                border-bottom: 1px solid var(--hair);
+            }
+            header.lab-head h1 {
+                font-family: var(--mono);
+                font-weight: 400;
+                font-size: 1rem;
+                letter-spacing: 0.04em;
+                margin: 0;
+                text-transform: uppercase;
+            }
+            header.lab-head .sub {
+                color: var(--dim);
+                font-size: 0.78rem;
+                max-width: 56ch;
+            }
+            header.lab-head .sub code {
+                font-family: var(--mono);
+                color: var(--text);
+            }
+
+            .theme-toggle {
+                font-family: var(--mono);
+                font-size: 0.72rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--text);
+                background: transparent;
+                border: 1px solid var(--hair);
+                border-radius: 2px;
+                padding: 0.45rem 0.8rem;
+                cursor: pointer;
+                transition: border-color 0.3s var(--ease);
+            }
+            .theme-toggle:hover {
+                border-color: var(--text);
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+                gap: 1.4rem;
+                padding: 1.4rem 1.6rem 4rem;
+            }
+
+            .tile {
+                border: 1px solid var(--hair);
+                background: var(--void);
+                display: flex;
+                flex-direction: column;
+            }
+            .tile .stage {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 4 / 3;
+                border-bottom: 1px solid var(--hair-2);
+                overflow: hidden;
+            }
+            .tile canvas {
+                display: block;
+                width: 100% !important;
+                height: 100% !important;
+            }
+            .tile .label {
+                position: absolute;
+                top: 0.5rem;
+                left: 0.6rem;
+                font-family: var(--mono);
+                font-size: 0.66rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--dim);
+                pointer-events: none;
+                mix-blend-mode: difference;
+                opacity: 0.7;
+            }
+            .tile .meta {
+                padding: 0.7rem 0.9rem 0.4rem;
+            }
+            .tile .meta h2 {
+                font-family: var(--mono);
+                font-weight: 400;
+                font-size: 0.86rem;
+                margin: 0 0 0.2rem;
+            }
+            .tile .meta .evokes {
+                color: var(--dim);
+                font-size: 0.74rem;
+                margin: 0;
+            }
+
+            .controls {
+                padding: 0.5rem 0.9rem 0.9rem;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 0.35rem;
+            }
+            .ctl {
+                display: grid;
+                grid-template-columns: 8.2rem 1fr 2.6rem;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .ctl label {
+                font-family: var(--mono);
+                font-size: 0.66rem;
+                color: var(--dim);
+                text-transform: lowercase;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .ctl input[type="range"] {
+                width: 100%;
+                accent-color: var(--text);
+                background: transparent;
+                height: 1.1rem;
+            }
+            .ctl .val {
+                font-family: var(--mono);
+                font-size: 0.66rem;
+                color: var(--text);
+                text-align: right;
+            }
+            .tile .actions {
+                padding: 0 0.9rem 0.9rem;
+            }
+            .tile .actions button {
+                font-family: var(--mono);
+                font-size: 0.64rem;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                color: var(--dim);
+                background: transparent;
+                border: 1px solid var(--hair);
+                border-radius: 2px;
+                padding: 0.3rem 0.6rem;
+                cursor: pointer;
+            }
+            .tile .actions button:hover {
+                border-color: var(--text);
+                color: var(--text);
+            }
+            footer.lab-foot {
+                padding: 0 1.6rem 3rem;
+                color: var(--faint);
+                font-size: 0.72rem;
+                max-width: 70ch;
+            }
+            footer.lab-foot code {
+                font-family: var(--mono);
+                color: var(--dim);
+            }
+            .err {
+                padding: 1rem;
+                color: var(--dim);
+                font-family: var(--mono);
+                font-size: 0.72rem;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="lab-head">
+            <div>
+                <h1>Generative Assets · 2D three.js</h1>
+                <p class="sub">
+                    Exploratory R&amp;D lab — flat, monochrome, theme-aware
+                    forms. Two families: <em>tree-like</em> (recursive
+                    branching, echoing the <code>symdome</code> ascii trees) and
+                    <em>faggot-like</em> (bundles of kindling bound together).
+                    Strictly 2D (ortho / fullscreen-shader). Not wired into the
+                    main site.
+                </p>
+            </div>
+            <button class="theme-toggle" type="button">
+                <span class="theme-label">Light</span>
+            </button>
+        </header>
+
+        <main class="grid" id="grid"></main>
+
+        <footer class="lab-foot">
+            One asset uses a fragment shader (<code>Thicket Field</code>)
+            echoing symdome's noise-field technique (hash / value-noise / fbm
+            cascade, domain-warp, smoothstep edges). Pause a tile to save GPU.
+            three.js r160 vendored under <code>lab/vendor/</code> — runs offline.
+        </footer>
+
+        <script type="module">
+            import { readPalette } from "./assets/common.js";
+
+            // theme handling — reuses the site's key + data-theme approach
+            const THEMES = ["light", "dark", "amber"];
+            const LABELS = { light: "Light", dark: "Dark", amber: "Amber" };
+            const KEY = "symbient-theme";
+            const root = document.documentElement;
+
+            function applyTheme(t) {
+                const n = THEMES.includes(t) ? t : "light";
+                if (n === "light") root.removeAttribute("data-theme");
+                else root.setAttribute("data-theme", n);
+                return n;
+            }
+            const stored = localStorage.getItem(KEY);
+            let current = applyTheme(THEMES.includes(stored) ? stored : "light");
+
+            const toggle = document.querySelector(".theme-toggle");
+            const labelEl = toggle.querySelector(".theme-label");
+            labelEl.textContent = LABELS[current];
+
+            const instances = [];
+
+            function broadcastTheme() {
+                const pal = readPalette();
+                instances.forEach((it) => {
+                    try {
+                        it.setTheme(pal);
+                    } catch (e) {
+                        /* ignore */
+                    }
+                });
+            }
+
+            toggle.addEventListener("click", () => {
+                const idx = THEMES.indexOf(current);
+                current = THEMES[(idx + 1) % THEMES.length];
+                applyTheme(current);
+                localStorage.setItem(KEY, current);
+                labelEl.textContent = LABELS[current];
+                // let CSS vars settle, then re-read palette into each asset
+                requestAnimationFrame(broadcastTheme);
+            });
+
+            // --- the asset set ---------------------------------------------
+            const MODULES = [
+                "./assets/tree-recursive.js",
+                "./assets/tree-ascii.js",
+                "./assets/curl-tendril.js",
+                "./assets/faggot-bundle.js",
+                "./assets/faggot-radial.js",
+                "./assets/shader-thicket.js",
+            ];
+
+            const grid = document.getElementById("grid");
+
+            function buildTile(mod) {
+                const meta = mod.meta;
+                const tile = document.createElement("section");
+                tile.className = "tile";
+
+                const stageWrap = document.createElement("div");
+                stageWrap.className = "stage";
+                const canvas = document.createElement("canvas");
+                stageWrap.appendChild(canvas);
+                const label = document.createElement("div");
+                label.className = "label";
+                label.textContent = meta.id;
+                stageWrap.appendChild(label);
+                tile.appendChild(stageWrap);
+
+                const metaBox = document.createElement("div");
+                metaBox.className = "meta";
+                metaBox.innerHTML = `<h2>${meta.name}</h2><p class="evokes">${meta.evokes}</p>`;
+                tile.appendChild(metaBox);
+
+                const controls = document.createElement("div");
+                controls.className = "controls";
+                tile.appendChild(controls);
+
+                const actions = document.createElement("div");
+                actions.className = "actions";
+                const pauseBtn = document.createElement("button");
+                pauseBtn.textContent = "Pause";
+                actions.appendChild(pauseBtn);
+                tile.appendChild(actions);
+
+                grid.appendChild(tile);
+                return { tile, canvas, controls, pauseBtn };
+            }
+
+            async function mount(path) {
+                let mod;
+                try {
+                    mod = await import(path);
+                } catch (e) {
+                    console.error("import failed", path, e);
+                    return;
+                }
+                const ui = buildTile(mod);
+                let inst;
+                try {
+                    inst = mod.create(ui.canvas);
+                    inst.setTheme(readPalette());
+                    inst._init && inst._init();
+                    // size correctly now that it's laid out
+                    requestAnimationFrame(() => inst.resize());
+                } catch (e) {
+                    console.error("create failed", path, e);
+                    ui.controls.innerHTML =
+                        '<div class="err">asset failed to start — see console</div>';
+                    return;
+                }
+                instances.push(inst);
+
+                // controls
+                mod.meta.params.forEach((p) => {
+                    const row = document.createElement("div");
+                    row.className = "ctl";
+                    const lab = document.createElement("label");
+                    lab.textContent = p.label;
+                    const input = document.createElement("input");
+                    input.type = "range";
+                    input.min = p.min;
+                    input.max = p.max;
+                    input.step = p.step;
+                    input.value = p.value;
+                    const val = document.createElement("span");
+                    val.className = "val";
+                    const fmt = (v) =>
+                        p.step < 1 ? (+v).toFixed(2) : String(+v);
+                    val.textContent = fmt(p.value);
+                    input.addEventListener("input", () => {
+                        val.textContent = fmt(input.value);
+                        inst.setParam(p.key, +input.value);
+                    });
+                    row.appendChild(lab);
+                    row.appendChild(input);
+                    row.appendChild(val);
+                    ui.controls.appendChild(row);
+                });
+
+                // pause / play
+                let running = true;
+                inst.start();
+                ui.pauseBtn.addEventListener("click", () => {
+                    running = !running;
+                    if (running) {
+                        inst.start();
+                        ui.pauseBtn.textContent = "Pause";
+                    } else {
+                        inst.stop();
+                        ui.pauseBtn.textContent = "Play";
+                    }
+                });
+
+                // resize on container changes
+                const ro = new ResizeObserver(() => inst.resize());
+                ro.observe(ui.canvas.parentElement);
+            }
+
+            // mount sequentially so layout settles between tiles
+            (async () => {
+                for (const m of MODULES) {
+                    await mount(m);
+                }
+            })();
+
+            window.addEventListener("resize", () => {
+                instances.forEach((it) => it.resize());
+            });
+        </script>
+    </body>
+</html>
