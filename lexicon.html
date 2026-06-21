@@ -696,6 +696,17 @@
             .view[hidden] {
                 display: none;
             }
+            /* symbients view: the standalone showcase, embedded (temp scaffold) */
+            .view-symbients {
+                margin: 0 calc(-1 * clamp(0.9rem, 2.5vw, 2rem));
+            }
+            .sym-frame {
+                display: block;
+                width: 100%;
+                height: clamp(560px, 92vh, 1200px);
+                border: 0;
+                background: var(--void);
+            }
             /* event/writing cells are whole-tile external links */
             .col[data-ext] {
                 display: block;
@@ -1116,6 +1127,7 @@
                 <nav class="hero-nav" aria-label="sections">
                     <a class="tab tab-home" href="/index.html">symbient.life</a>
                     <span class="tab-sep" aria-hidden="true">·</span>
+                    <button class="tab" type="button" data-view="symbients">symbients</button>
                     <button class="tab" type="button" data-view="lexicon">lexicon</button>
                     <button class="tab" type="button" data-view="events">events</button>
                     <button class="tab" type="button" data-view="writings">writings</button>
@@ -1129,6 +1141,11 @@
         </header>
 
         <div class="shell">
+            <!-- ============ SYMBIENTS VIEW (embedded showcase) ============ -->
+            <section class="view view-symbients" data-view="symbients" hidden aria-hidden="true">
+                <iframe class="sym-frame" src="/symbients.html" title="symbients showcase" loading="lazy"></iframe>
+            </section>
+
             <section class="view" data-view="lexicon">
             <div class="submast">
                 <p class="mh-sub">
@@ -1871,6 +1888,7 @@
                 ];
                 if (!views.length) return;
                 const TITLES = {
+                    symbients: "Symbients",
                     lexicon: "Lexicon",
                     events: "Events",
                     writings: "Writings",
