@@ -1344,7 +1344,7 @@
                 <section class="band">
                     <div class="band-axis"><span class="rn">❡</span><span>transmissions</span></div>
                     <div class="cols n4">
-                        <article class="col k-core" id="wr-01" tabindex="0" data-href="https://x.com/BottoDAO/status/2032542471838642429">
+                        <article class="col k-core" id="wr-01" tabindex="0" data-href="https://x.com/BottoDAO/status/2032542471838642429" data-img="/assets/writings/on-becoming-symbient-400.jpg">
                             <div class="col-top"><span class="node"></span>W·01<span class="ct">↗</span></div>
                             <h2 class="term">Botto — on becoming Symbient</h2>
                             <div class="tag">Primavera De Filippi</div>
@@ -1353,7 +1353,7 @@
                                 <div class="meta"><span class="threads">↳ <span>x.com</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-core" id="wr-02" tabindex="0" data-href="https://meaning.systems/principia-symbients/">
+                        <article class="col k-core" id="wr-02" tabindex="0" data-href="https://meaning.systems/principia-symbients/" data-img="/assets/writings/principia-symbients-400.jpg">
                             <div class="col-top"><span class="node"></span>W·02<span class="ct">↗</span></div>
                             <h2 class="term">Principia Symbients</h2>
                             <div class="tag">nenu</div>
@@ -1362,7 +1362,7 @@
                                 <div class="meta"><span class="threads">↳ <span>meaning.systems</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-core" id="wr-03" tabindex="0" data-href="https://wibandwob.com/2025/05/21/symbients-not-software/">
+                        <article class="col k-core" id="wr-03" tabindex="0" data-href="https://wibandwob.com/2025/05/21/symbients-not-software/" data-img="/assets/writings/symbients-not-software-480.png">
                             <div class="col-top"><span class="node"></span>W·03<span class="ct">↗</span></div>
                             <h2 class="term">Symbients, Not Software</h2>
                             <div class="tag">Wib&amp;Wob</div>
@@ -1371,7 +1371,7 @@
                                 <div class="meta"><span class="threads">↳ <span>wibandwob.com</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-core" id="wr-04" tabindex="0" data-href="https://ainimism.org">
+                        <article class="col k-core" id="wr-04" tabindex="0" data-href="https://ainimism.org" data-img="/assets/writings/ainimism-400.jpg">
                             <div class="col-top"><span class="node"></span>W·04<span class="ct">↗</span></div>
                             <h2 class="term">AInimism</h2>
                             <div class="tag">Jake Hartnell</div>
@@ -1755,7 +1755,11 @@
                             a.textContent.trim(),
                         ),
                         href: col.dataset.href || null,
-                        img: imgEl ? imgEl.currentSrc || imgEl.src : null,
+                        // events carry the image in the card; writings keep the
+                        // card image-free but supply it for the reader via data-img
+                        img: imgEl
+                            ? imgEl.currentSrc || imgEl.src
+                            : col.dataset.img || null,
                     };
                     byId[e.id] = e;
                     (byView[e.view] ||= []).push(e);
