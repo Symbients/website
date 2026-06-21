@@ -138,24 +138,13 @@
             .hero-scrim {
                 position: absolute;
                 inset: 0;
-                /* horizontal asymmetry: dark over the title (left), releasing
-                   around the centre so the bright figure reads at right; the
-                   wordmark stays legible across themes. Plus a shallow fade into
-                   the page colour at the very bottom. */
-                background:
-                    linear-gradient(
-                        90deg,
-                        rgba(6, 7, 9, 0.74) 0%,
-                        rgba(6, 7, 9, 0.58) 16%,
-                        rgba(6, 7, 9, 0.18) 38%,
-                        transparent 54%
-                    ),
-                    linear-gradient(
-                        0deg,
-                        var(--void) 0%,
-                        color-mix(in srgb, var(--void) 38%, transparent) 11%,
-                        transparent 28%
-                    );
+                /* uniform fade into the page colour at the bottom — same in every mode */
+                background: linear-gradient(
+                    0deg,
+                    var(--void) 0%,
+                    color-mix(in srgb, var(--void) 38%, transparent) 11%,
+                    transparent 28%
+                );
             }
             .hero-inner {
                 position: absolute;
