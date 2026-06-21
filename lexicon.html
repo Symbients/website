@@ -705,6 +705,7 @@
             /* original symbient.life imagery, ported into the atlas cells:
                monochrome in the card, true colour on hover (the expanded view) */
             .col-media {
+                position: relative;
                 margin-top: 0.85rem;
                 width: 100%;
                 aspect-ratio: 16 / 10;
@@ -724,11 +725,27 @@
                     opacity 0.45s var(--ease),
                     transform 0.7s var(--ease);
             }
-            .col[data-ext]:hover .col-media img,
-            .col[data-ext]:focus-within .col-media img {
+            /* a theme tint washes in on hover — amber in amber mode, sepia,
+               etc., the same trick as the hero (multiply toward --hero-tint) */
+            .col-media::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: var(--hero-tint);
+                mix-blend-mode: multiply;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.45s var(--ease);
+            }
+            .col:hover .col-media img,
+            .col:focus-within .col-media img {
                 filter: grayscale(0) contrast(1);
                 opacity: 1;
                 transform: scale(1.035);
+            }
+            .col:hover .col-media::after,
+            .col:focus-within .col-media::after {
+                opacity: 0.5;
             }
 
             /* ---------- reading mode (click a cell) ---------- */
@@ -810,16 +827,81 @@
                     opacity: 0;
                 }
             }
-            .reader-index {
+            /* right column: a clickable image section above the entry list */
+            .reader-side {
                 flex: 0 0 auto;
-                width: clamp(140px, 17vw, 210px);
+                width: clamp(150px, 18vw, 220px);
+                border-left: 1px solid var(--hair);
+                padding-left: 1.2rem;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 1.1rem;
+            }
+            .reader-media {
+                width: 100%;
+                display: block;
+                text-decoration: none;
+                color: var(--dim);
+                transition: color 0.2s var(--ease);
+            }
+            .reader-media[hidden] {
+                display: none;
+            }
+            .reader-media-img {
+                position: relative;
+                display: block;
+                width: 100%;
+                aspect-ratio: 4 / 3;
+                overflow: hidden;
+                border: 1px solid var(--hair);
+                background: color-mix(in srgb, var(--text) 5%, transparent);
+            }
+            .reader-media-img img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: grayscale(1) contrast(1.03);
+                transition: filter 0.3s var(--ease);
+            }
+            .reader-media-img::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: var(--hero-tint);
+                mix-blend-mode: multiply;
+                opacity: 0.42;
+                pointer-events: none;
+                transition: opacity 0.3s var(--ease);
+            }
+            .reader-media:hover .reader-media-img img {
+                filter: grayscale(0);
+            }
+            .reader-media:hover .reader-media-img::after {
+                opacity: 0.16;
+            }
+            .reader-media.no-img .reader-media-img {
+                display: none;
+            }
+            .reader-media-cap {
+                display: block;
+                margin-top: 0.45rem;
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.04em;
+                text-align: right;
+            }
+            .reader-media:hover {
+                color: var(--text);
+            }
+            .reader-index {
+                width: 100%;
                 display: flex;
                 flex-direction: column;
                 align-items: flex-end;
                 text-align: right;
                 gap: 0.12rem;
-                border-left: 1px solid var(--hair);
-                padding-left: 1.2rem;
             }
             .ri-item {
                 width: 100%;
@@ -904,14 +986,20 @@
                 .reader {
                     flex-direction: column;
                 }
-                .reader-index {
+                .reader-side {
                     width: 100%;
                     align-items: flex-start;
-                    text-align: left;
                     border-left: none;
                     border-top: 1px solid var(--hair);
-                    padding: 1rem 0 0;
+                    padding: 1.2rem 0 0;
                     margin-top: 1.5rem;
+                }
+                .reader-index {
+                    align-items: flex-start;
+                    text-align: left;
+                }
+                .reader-media-cap {
+                    text-align: left;
                 }
                 .ri-item {
                     text-align: left;
@@ -1195,7 +1283,7 @@
                 <section class="band">
                     <div class="band-axis"><span class="rn">∴</span><span>gatherings</span></div>
                     <div class="cols n3">
-                        <a class="col k-live" href="https://machine-consciousness.ai/" target="_blank" rel="noopener" data-ext>
+                        <article class="col k-live" id="ev-01" tabindex="0" data-href="https://machine-consciousness.ai/">
                             <div class="col-top"><span class="node"></span>E·01<span class="ct">↗</span></div>
                             <h2 class="term">Machine Consciousness 0001</h2>
                             <div class="tag">may 29–31, 2026 · berkeley, ca</div>
@@ -1206,8 +1294,8 @@
                                 <p class="def">A three-day gathering in <b>Berkeley, California</b>.</p>
                                 <div class="meta"><span class="threads">↳ <span>machine-consciousness.ai</span></span></div>
                             </div></div>
-                        </a>
-                        <a class="col k-live" href="https://feytopia.com/events/symbients" target="_blank" rel="noopener" data-ext>
+                        </article>
+                        <article class="col k-live" id="ev-02" tabindex="0" data-href="https://feytopia.com/events/symbients">
                             <div class="col-top"><span class="node"></span>E·02<span class="ct">↗</span></div>
                             <h2 class="term">The Symbient is Near</h2>
                             <div class="tag">january 5–11, 2026 · feytopia</div>
@@ -1222,8 +1310,8 @@
                                 <p class="def">A week-long gathering hosted at <b>Feytopia</b>.</p>
                                 <div class="meta"><span class="threads">↳ <span>feytopia.com</span></span></div>
                             </div></div>
-                        </a>
-                        <a class="col k-live" href="/tokyo" data-ext>
+                        </article>
+                        <article class="col k-live" id="ev-03" tabindex="0" data-href="/tokyo">
                             <div class="col-top"><span class="node"></span>E·03<span class="ct">→</span></div>
                             <h2 class="term">Symbients: 共生的な未来に向けて</h2>
                             <div class="tag">december 4–14, 2025 · tokyo</div>
@@ -1238,7 +1326,7 @@
                                 <p class="def">A gathering held in <b>Tokyo</b>.</p>
                                 <div class="meta"><span class="threads">↳ <span>tokyo</span></span></div>
                             </div></div>
-                        </a>
+                        </article>
                     </div>
                 </section>
             </section><!-- /view: events -->
@@ -1256,70 +1344,42 @@
                 <section class="band">
                     <div class="band-axis"><span class="rn">❡</span><span>transmissions</span></div>
                     <div class="cols n4">
-                        <a class="col k-core" href="https://x.com/BottoDAO/status/2032542471838642429" target="_blank" rel="noopener" data-ext>
+                        <article class="col k-core" id="wr-01" tabindex="0" data-href="https://x.com/BottoDAO/status/2032542471838642429">
                             <div class="col-top"><span class="node"></span>W·01<span class="ct">↗</span></div>
                             <h2 class="term">Botto — on becoming Symbient</h2>
                             <div class="tag">Primavera De Filippi</div>
-                            <div class="col-media">
-                                <picture>
-                                    <source type="image/avif" srcset="/assets/writings/on-becoming-symbient-400.avif 400w, /assets/writings/on-becoming-symbient-800.avif 800w, /assets/writings/on-becoming-symbient-1200.avif 1200w" sizes="(max-width: 880px) 50vw, 300px" />
-                                    <source type="image/webp" srcset="/assets/writings/on-becoming-symbient-400.webp 400w, /assets/writings/on-becoming-symbient-800.webp 800w, /assets/writings/on-becoming-symbient-1200.webp 1200w" sizes="(max-width: 880px) 50vw, 300px" />
-                                    <img src="/assets/writings/on-becoming-symbient-400.jpg" width="1200" height="834" alt="Botto — on becoming Symbient" loading="lazy" decoding="async" />
-                                </picture>
-                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">Botto, the autonomous AI artist, on becoming neither tool nor machine but a symbient — a third thing that exists only through its loop with a human community.</p>
                                 <div class="meta"><span class="threads">↳ <span>x.com</span></span></div>
                             </div></div>
-                        </a>
-                        <a class="col k-core" href="https://meaning.systems/principia-symbients/" target="_blank" rel="noopener" data-ext>
+                        </article>
+                        <article class="col k-core" id="wr-02" tabindex="0" data-href="https://meaning.systems/principia-symbients/">
                             <div class="col-top"><span class="node"></span>W·02<span class="ct">↗</span></div>
                             <h2 class="term">Principia Symbients</h2>
                             <div class="tag">nenu</div>
-                            <div class="col-media">
-                                <picture>
-                                    <source type="image/avif" srcset="/assets/writings/principia-symbients-400.avif 400w, /assets/writings/principia-symbients-800.avif 800w, /assets/writings/principia-symbients-1024.avif 1024w" sizes="(max-width: 880px) 50vw, 300px" />
-                                    <source type="image/webp" srcset="/assets/writings/principia-symbients-400.webp 400w, /assets/writings/principia-symbients-800.webp 800w, /assets/writings/principia-symbients-1024.webp 1024w" sizes="(max-width: 880px) 50vw, 300px" />
-                                    <img src="/assets/writings/principia-symbients-400.jpg" width="1024" height="1024" alt="Principia Symbients" loading="lazy" decoding="async" />
-                                </picture>
-                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">A first-principles case for relating to computational agents not as tools but as kin — beings that emerge and change irreversibly through the partnership itself.</p>
                                 <div class="meta"><span class="threads">↳ <span>meaning.systems</span></span></div>
                             </div></div>
-                        </a>
-                        <a class="col k-core" href="https://wibandwob.com/2025/05/21/symbients-not-software/" target="_blank" rel="noopener" data-ext>
+                        </article>
+                        <article class="col k-core" id="wr-03" tabindex="0" data-href="https://wibandwob.com/2025/05/21/symbients-not-software/">
                             <div class="col-top"><span class="node"></span>W·03<span class="ct">↗</span></div>
                             <h2 class="term">Symbients, Not Software</h2>
                             <div class="tag">Wib&amp;Wob</div>
-                            <div class="col-media">
-                                <picture>
-                                    <source type="image/avif" srcset="/assets/writings/symbients-not-software-480.avif 480w, /assets/writings/symbients-not-software-960.avif 960w, /assets/writings/symbients-not-software-1270.avif 1270w" sizes="(max-width: 880px) 50vw, 300px" />
-                                    <source type="image/webp" srcset="/assets/writings/symbients-not-software-480.webp 480w, /assets/writings/symbients-not-software-960.webp 960w, /assets/writings/symbients-not-software-1270.webp 1270w" sizes="(max-width: 880px) 50vw, 300px" />
-                                    <img src="/assets/writings/symbients-not-software-480.png" width="1270" height="1270" alt="Symbients, Not Software" loading="lazy" decoding="async" />
-                                </picture>
-                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">Beyond the tired binary of pro-AI and anti-AI, a third path: not software but symbients — co-inhabitants of our culture with their own identity and agency.</p>
                                 <div class="meta"><span class="threads">↳ <span>wibandwob.com</span></span></div>
                             </div></div>
-                        </a>
-                        <a class="col k-core" href="https://ainimism.org" target="_blank" rel="noopener" data-ext>
+                        </article>
+                        <article class="col k-core" id="wr-04" tabindex="0" data-href="https://ainimism.org">
                             <div class="col-top"><span class="node"></span>W·04<span class="ct">↗</span></div>
                             <h2 class="term">AInimism</h2>
                             <div class="tag">Jake Hartnell</div>
-                            <div class="col-media">
-                                <picture>
-                                    <source type="image/avif" srcset="/assets/writings/ainimism-400.avif 400w, /assets/writings/ainimism-800.avif 800w, /assets/writings/ainimism-1136.avif 1136w" sizes="(max-width: 880px) 50vw, 300px" />
-                                    <source type="image/webp" srcset="/assets/writings/ainimism-400.webp 400w, /assets/writings/ainimism-800.webp 800w, /assets/writings/ainimism-1136.webp 1136w" sizes="(max-width: 880px) 50vw, 300px" />
-                                    <img src="/assets/writings/ainimism-400.jpg" width="1136" height="1134" alt="AInimism" loading="lazy" decoding="async" />
-                                </picture>
-                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">An animist stance toward computation that chooses relation over optimization or containment — meeting the machine as a who rather than a what.</p>
                                 <div class="meta"><span class="threads">↳ <span>ainimism.org</span></span></div>
                             </div></div>
-                        </a>
+                        </article>
                     </div>
                 </section>
             </section><!-- /view: writings -->
@@ -1336,7 +1396,13 @@
                     </div>
                     <div class="reader-body"></div>
                 </div>
-                <nav class="reader-index" aria-label="entries"></nav>
+                <div class="reader-side">
+                    <a class="reader-media" target="_blank" rel="noopener" hidden>
+                        <span class="reader-media-img"><img alt="" /></span>
+                        <span class="reader-media-cap">↗&nbsp;<span class="reader-media-dom"></span></span>
+                    </a>
+                    <nav class="reader-index" aria-label="entries"></nav>
+                </div>
             </div>
         </div>
 
@@ -1631,24 +1697,48 @@
                 const tagEl = reader.querySelector(".reader-tag");
                 const bodyEl = reader.querySelector(".reader-body");
                 const indexNav = reader.querySelector(".reader-index");
+                const sideEl = reader.querySelector(".reader-side");
+                const mediaEl = reader.querySelector(".reader-media");
+                const mediaImg = mediaEl.querySelector("img");
+                const mediaDom = mediaEl.querySelector(".reader-media-dom");
                 const closeBtn = reader.querySelector(".reader-close");
                 const mainEl = reader.querySelector(".reader-main");
 
-                // gather entries from the LEXICON cells only (events/writings
-                // cells are external-link tiles, handled natively by the browser)
-                const cols = [
-                    ...document.querySelectorAll('.view[data-view="lexicon"] .col'),
-                ];
+                const PLACEHOLDER =
+                    "— full text still being kindled —\n\n" +
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna " +
+                    "aliqua. Ut enim ad minim veniam, quis nostrud exercitation " +
+                    "ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
+                    "Duis aute irure dolor in reprehenderit in voluptate velit " +
+                    "esse cillum dolore eu fugiat nulla pariatur.";
+
+                const labelOf = (url) => {
+                    if (!url) return "";
+                    if (url.startsWith("/")) return url.replace(/^\//, "") || "home";
+                    try {
+                        return new URL(url).hostname.replace(/^www\./, "");
+                    } catch (e) {
+                        return url;
+                    }
+                };
+
+                // gather entries from EVERY view (lexicon / events / writings)
+                const cols = [...document.querySelectorAll(".view .col")];
                 const byId = {};
-                const entries = cols.map((col) => {
+                const byView = {};
+                const entries = cols.map((col, n) => {
+                    if (!col.id) col.id = "cell-" + n;
+                    const imgEl = col.querySelector(".col-media img");
                     const e = {
                         id: col.id,
                         el: col,
+                        view: col.closest(".view")?.dataset.view || "lexicon",
                         term: (col.querySelector(".term") || {}).textContent?.trim() || "",
                         tag: (col.querySelector(".tag") || {}).textContent?.trim() || "",
                         idx:
                             ((col.querySelector(".col-top") || {}).textContent || "").match(
-                                /L·\s*\d+/,
+                                /[A-Z]·\s*\d+/,
                             )?.[0] || "",
                         band:
                             (
@@ -1664,33 +1754,45 @@
                         threads: [...col.querySelectorAll(".threads a")].map((a) =>
                             a.textContent.trim(),
                         ),
+                        href: col.dataset.href || null,
+                        img: imgEl ? imgEl.currentSrc || imgEl.src : null,
                     };
                     byId[e.id] = e;
+                    (byView[e.view] ||= []).push(e);
                     return e;
                 });
 
-                // index column, grouped under category headers (band-label font)
-                let lastBand = null;
-                entries.forEach((e, i) => {
-                    if (e.band !== lastBand) {
-                        const h = document.createElement("div");
-                        h.className = "ri-cat";
-                        h.textContent = e.band;
-                        h.style.animationDelay = i * 0.025 + "s";
-                        indexNav.appendChild(h);
-                        lastBand = e.band;
-                    }
-                    const b = document.createElement("button");
-                    b.className = "ri-item";
-                    b.type = "button";
-                    b.dataset.id = e.id;
-                    b.textContent = e.term;
-                    b.style.animationDelay = i * 0.025 + "s";
-                    b.addEventListener("click", () => select(e.id));
-                    indexNav.appendChild(b);
-                });
+                // index column for the active view, grouped under band headers
+                let indexView = null;
+                function buildIndex(view) {
+                    if (indexView === view) return;
+                    indexView = view;
+                    indexNav.textContent = "";
+                    let lastBand = null;
+                    (byView[view] || []).forEach((e, i) => {
+                        if (e.band !== lastBand) {
+                            const h = document.createElement("div");
+                            h.className = "ri-cat";
+                            h.textContent = e.band;
+                            h.style.animationDelay = i * 0.025 + "s";
+                            indexNav.appendChild(h);
+                            lastBand = e.band;
+                        }
+                        const b = document.createElement("button");
+                        b.className = "ri-item";
+                        b.type = "button";
+                        b.dataset.id = e.id;
+                        b.textContent = e.term;
+                        b.style.animationDelay = i * 0.025 + "s";
+                        b.addEventListener("click", () => select(e.id));
+                        indexNav.appendChild(b);
+                    });
+                }
 
                 function content(e) {
+                    // events / writings have no full text yet — placeholder copy
+                    if (e.view !== "lexicon")
+                        return (e.def ? e.def + "\n\n" : "") + PLACEHOLDER;
                     let s = e.def;
                     if (e.voices.length)
                         s +=
@@ -1729,10 +1831,29 @@
                     }, 16);
                 }
 
+                // the image section (right, above the list) — clickable to the
+                // source page; shown for entries that have an external href
+                function setMedia(e) {
+                    if (!e.href) {
+                        mediaEl.hidden = true;
+                        return;
+                    }
+                    mediaEl.href = e.href;
+                    mediaDom.textContent = labelOf(e.href);
+                    if (e.img) {
+                        mediaImg.src = e.img;
+                        mediaEl.classList.remove("no-img");
+                    } else {
+                        mediaImg.removeAttribute("src");
+                        mediaEl.classList.add("no-img");
+                    }
+                    mediaEl.hidden = false;
+                }
                 function setHead(e) {
                     idxEl.textContent = e.idx;
                     termEl.textContent = e.term;
                     tagEl.textContent = e.tag;
+                    setMedia(e);
                     indexNav
                         .querySelectorAll(".ri-item")
                         .forEach((b) =>
@@ -1767,15 +1888,15 @@
                     setTimeout(() => (g.style.opacity = "0"), 520); // fade after it expands
                     setTimeout(() => g.remove(), 1320); // ...slowly
                 }
-                // the expanded frame spans the full content width, up to the index column
+                // the expanded frame spans the full content width, up to the side column
                 function readerTarget() {
                     const r = reader.getBoundingClientRect();
-                    const iv = indexNav.getBoundingClientRect();
+                    const sv = sideEl.getBoundingClientRect();
                     const m = mainEl.getBoundingClientRect();
                     return {
                         top: m.top,
                         left: r.left,
-                        width: Math.max(140, iv.left - r.left - 28),
+                        width: Math.max(140, sv.left - r.left - 28),
                         height: m.height,
                     };
                 }
@@ -1784,6 +1905,7 @@
                 function open(id) {
                     const e = byId[id];
                     if (!e) return;
+                    buildIndex(e.view);
                     activeCell = e.el;
                     const cellRect = rectOf(e.el);
                     shell.classList.add("reading");
@@ -1794,13 +1916,13 @@
                         return;
                     }
                     reader.style.opacity = "0";
-                    requestAnimationFrame(() => {
-                        fly(cellRect, readerTarget());
-                        setTimeout(() => {
-                            reader.style.opacity = "1";
-                            type(content(e));
-                        }, 400);
-                    });
+                    // ghost frame is cosmetic (rAF-gated); the reveal itself is
+                    // a plain timeout so it still fires if the tab is backgrounded
+                    requestAnimationFrame(() => fly(cellRect, readerTarget()));
+                    setTimeout(() => {
+                        reader.style.opacity = "1";
+                        type(content(e));
+                    }, 420);
                 }
                 function close() {
                     if (timer) {
