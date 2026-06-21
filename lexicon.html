@@ -169,7 +169,7 @@
             .hero-title {
                 position: absolute;
                 left: clamp(0.9rem, 2.5vw, 2rem);
-                bottom: clamp(1rem, 3.5vh, 2.4rem);
+                bottom: clamp(2.9rem, 7.5vh, 4.6rem);
                 margin: 0;
                 font-family: var(--grotesk);
                 font-weight: 700;
@@ -180,6 +180,43 @@
                 text-shadow:
                     0 2px 44px rgba(0, 0, 0, 0.82),
                     0 1px 4px rgba(0, 0, 0, 0.6);
+            }
+            /* terminal line: a genetic algorithm swept by a block cursor */
+            .terminal {
+                position: absolute;
+                left: clamp(0.9rem, 2.5vw, 2rem);
+                right: clamp(0.9rem, 2.5vw, 2rem);
+                bottom: clamp(0.8rem, 2.4vh, 1.5rem);
+                padding: 0.34rem 0;
+                border-top: 1px solid
+                    color-mix(in srgb, var(--text) 38%, transparent);
+                border-bottom: 1px solid
+                    color-mix(in srgb, var(--text) 38%, transparent);
+                overflow: hidden;
+            }
+            .term-line {
+                font-family: var(--mono);
+                font-size: clamp(12px, 1vw, 15px);
+                line-height: 1.5;
+                color: var(--text);
+                white-space: nowrap;
+                letter-spacing: 0.02em;
+                text-shadow: 0 0 5px color-mix(in srgb, var(--void) 78%, transparent);
+            }
+            .term-prompt {
+                opacity: 0.5;
+            }
+            .term-sep {
+                opacity: 0.22;
+            }
+            .term-cell {
+                opacity: 0.92;
+            }
+            .term-cell.cursor {
+                background: var(--text);
+                color: var(--void);
+                opacity: 1;
+                text-shadow: none;
             }
             .submast {
                 display: flex;
@@ -630,6 +667,9 @@
             <div class="hero-inner">
                 <span class="hero-eyebrow">symbient.life · lexicon</span>
                 <h1 class="hero-title">Lexicon</h1>
+                <div class="terminal" aria-hidden="true">
+                    <div class="term-line"></div>
+                </div>
             </div>
         </header>
 
@@ -976,6 +1016,111 @@
                 }
                 onScroll();
                 window.addEventListener("scroll", onScroll, { passive: true });
+            })();
+
+            // ---- terminal: a genetic algorithm swept by a block cursor ----
+            // A single line of kaomoji genomes sits on the gradient under the
+            // title, framed by two rules. A reverse-video block cursor sweeps
+            // left→right; each step, the cell it just left is re-bred from its two
+            // neighbours (crossover + mutation) and kept if fitter — else
+            // sometimes anyway, for diversity. One full pass = one generation.
+            (function () {
+                const term = document.querySelector(".terminal");
+                const host = document.querySelector(".term-line");
+                if (!term || !host) return;
+                const reduce = matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+
+                // gene pools — wraps, ears/paws, eyes, mouths (symbient-inspired)
+                const WRAP = [
+                    ["₍", "₎"], ["꒰", "꒱"], ["(", ")"],
+                    ["⟨", "⟩"], ["⦅", "⦆"], ["", ""],
+                ];
+                const EAR = [
+                    ["ᐢ", "ᐢ"], ["ᐠ", "ᐟ"], ["/", "\\"], ["", ""], ["´", "`"],
+                ];
+                const EYE = ["•", ".", "･", "◉", "ᵔ", "°", "˘", "・", "^", "¬", "ↀ", "–", "ʘ"];
+                const MOU = ["‿", "ᴥ", "༝", "ꞈ", "ﻌ", "◡", "﹏", "ε", "‸", ".", "ω", "³", "⌓", "ᗢ"];
+
+                const ri = (n) => Math.floor(Math.random() * n);
+                const rnd = () => Math.random();
+                const randG = () => ({
+                    w: ri(WRAP.length), e: ri(EAR.length),
+                    l: ri(EYE.length), m: ri(MOU.length), r: ri(EYE.length),
+                });
+                const show = (g) =>
+                    WRAP[g.w][0] + EAR[g.e][0] + EYE[g.l] + MOU[g.m] +
+                    EYE[g.r] + EAR[g.e][1] + WRAP[g.w][1];
+                function fit(g) {
+                    let f = 1;
+                    if (g.l === g.r) f += 1.3; // symmetry is fitter
+                    if (WRAP[g.w][0] !== "") f += 0.35;
+                    if (EAR[g.e][0] !== "") f += 0.25;
+                    return f;
+                }
+                function mutate(g) {
+                    const h = { ...g };
+                    const sz = { w: WRAP.length, e: EAR.length, l: EYE.length, m: MOU.length, r: EYE.length };
+                    for (const k in sz) if (rnd() < 0.25) h[k] = ri(sz[k]);
+                    return h;
+                }
+                const cross = (a, b) => ({
+                    w: rnd() < 0.5 ? a.w : b.w,
+                    e: rnd() < 0.5 ? a.e : b.e,
+                    l: rnd() < 0.5 ? a.l : b.l,
+                    m: rnd() < 0.5 ? a.m : b.m,
+                    r: rnd() < 0.5 ? a.r : b.r,
+                });
+
+                let cells = [], cur = 0, gen = 1;
+                const count = () =>
+                    Math.max(5, Math.min(22, Math.floor((term.clientWidth - 78) / 90)));
+
+                function render() {
+                    host.textContent = "";
+                    const p = document.createElement("span");
+                    p.className = "term-prompt";
+                    p.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    host.appendChild(p);
+                    cells.forEach((g, i) => {
+                        const s = document.createElement("span");
+                        s.className = "term-cell" + (i === cur ? " cursor" : "");
+                        s.textContent = show(g);
+                        host.appendChild(s);
+                        if (i < cells.length - 1) {
+                            const sep = document.createElement("span");
+                            sep.className = "term-sep";
+                            sep.textContent = "  ";
+                            host.appendChild(sep);
+                        }
+                    });
+                }
+                function build() {
+                    const n = count();
+                    cells = [];
+                    for (let i = 0; i < n; i++) cells.push(randG());
+                    cur = 0;
+                    render();
+                }
+                function step() {
+                    const n = cells.length;
+                    const prev = cur;
+                    cur = (cur + 1) % n;
+                    if (cur === 0) gen++;
+                    // re-breed the cell the cursor just left, from its neighbours
+                    const child =
+                        rnd() < 0.7
+                            ? mutate(cross(cells[(prev - 1 + n) % n], cells[(prev + 1) % n]))
+                            : mutate(cells[prev]);
+                    if (fit(child) >= fit(cells[prev]) || rnd() < 0.35)
+                        cells[prev] = child;
+                    render();
+                }
+
+                build();
+                window.addEventListener("resize", build);
+                if (!reduce) setInterval(step, 280);
             })();
         </script>
     </body>
