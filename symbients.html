@@ -185,9 +185,12 @@
                 position: relative;
                 z-index: 2;
                 display: grid;
-                grid-template-columns: 1fr minmax(280px, 1.3fr) 1fr;
+                grid-template-columns: 1fr minmax(280px, 1.15fr) 1fr;
                 align-items: center;
-                gap: clamp(1rem, 4vw, 4rem);
+                /* wide channel between the columns and the centre so the wires
+                   get a long horizontal run — the curve / angle character of
+                   the organic vs synthetic sides needs distance to read */
+                gap: clamp(2.5rem, 9vw, 9rem);
             }
 
             /* ---- constituent columns (organic / synthetic) ---- */
