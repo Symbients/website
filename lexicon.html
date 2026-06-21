@@ -36,6 +36,7 @@
                 --amber: #9a6310;
                 --violet: #6b54d6;
                 --field-rgb: 88, 96, 78;
+                --hero-tint: #c4ad84;
             }
             html[data-theme="dark"] {
                 --void: #0a0b0c;
@@ -49,6 +50,7 @@
                 --amber: #c7a268;
                 --violet: #a392ef;
                 --field-rgb: 150, 178, 150;
+                --hero-tint: #2d4438;
             }
             html[data-theme="amber"] {
                 --void: #e9cf93;
@@ -62,6 +64,7 @@
                 --amber: #8a4e10;
                 --violet: #6a3fb0;
                 --field-rgb: 120, 82, 28;
+                --hero-tint: #8f5f1e;
             }
             * {
                 box-sizing: border-box;
@@ -134,6 +137,15 @@
                 object-position: center center;
                 filter: contrast(1.05);
             }
+            /* tint the Moreau toward the theme colour (metacogsec-style) */
+            .hero-tint {
+                position: absolute;
+                inset: 0;
+                background: var(--hero-tint);
+                mix-blend-mode: multiply;
+                opacity: 0.5;
+                pointer-events: none;
+            }
             /* fade the band into the page colour, top and bottom */
             .hero-scrim {
                 position: absolute;
@@ -164,7 +176,8 @@
                 font-size: 10px;
                 letter-spacing: 0.2em;
                 text-transform: uppercase;
-                color: rgba(238, 240, 234, 0.6);
+                color: color-mix(in srgb, var(--text) 68%, transparent);
+                text-shadow: 0 0 6px var(--void), 0 0 3px var(--void);
             }
             .hero-title {
                 position: absolute;
@@ -176,10 +189,7 @@
                 font-size: clamp(2.6rem, 7vw, 5.6rem);
                 letter-spacing: -0.05em;
                 line-height: 0.86;
-                color: #f0f1ec;
-                text-shadow:
-                    0 2px 44px rgba(0, 0, 0, 0.82),
-                    0 1px 4px rgba(0, 0, 0, 0.6);
+                color: var(--text);
             }
             /* terminal line: a genetic algorithm swept by a block cursor */
             .terminal {
@@ -663,6 +673,7 @@
                 src="/assets/test-moreau-band.png"
                 alt="Gustave Moreau, The Suitors — placeholder hero"
             />
+            <div class="hero-tint"></div>
             <div class="hero-scrim"></div>
             <div class="hero-inner">
                 <span class="hero-eyebrow">symbient.life · lexicon</span>
