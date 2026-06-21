@@ -170,9 +170,10 @@
                 z-index: 0;
                 opacity: 0.8;
                 pointer-events: none;
-                /* thin edge-fade only — stop the halo from eating the creature */
-                -webkit-mask-image: radial-gradient(closest-side, #000 92%, transparent 100%);
-                mask-image: radial-gradient(closest-side, #000 92%, transparent 100%);
+                /* farthest-corner so the box corners (head, tail) aren't
+                   clipped by an inscribed ellipse; just a soft edge feather */
+                -webkit-mask-image: radial-gradient(farthest-corner, #000 82%, transparent 100%);
+                mask-image: radial-gradient(farthest-corner, #000 82%, transparent 100%);
             }
             html[data-theme="dark"] .creature {
                 opacity: 1;
@@ -576,6 +577,10 @@
             .nav-back {
                 margin-right: 0.4rem;
             }
+            /* the lexicon jump sits just after prev/next */
+            .nav-lexicon {
+                margin-left: 0.4rem;
+            }
 
             /* =================================================================
                7. RESPONSIVE — collapse to a single column on narrow screens
@@ -672,6 +677,9 @@
                 <button id="prev" type="button">‹ prev</button>
                 <span class="nav-counter" id="counter"></span>
                 <button id="next" type="button">next ›</button>
+                <button id="to-lexicon" type="button" class="nav-lexicon">
+                    lexicon ↗
+                </button>
             </nav>
         </main>
 
@@ -1096,7 +1104,7 @@
             // the top directories one can navigate to. "symbient" enters the
             // showcase; the rest switch the embedding SPA's view.
             const DIRS = [
-                { label: "symbient", action: "show" },
+                { label: "see symbients", action: "show" },
                 { label: "lexicon", view: "lexicon" },
                 { label: "events", view: "events" },
                 { label: "writings", view: "writings" },
@@ -1151,6 +1159,10 @@
             document
                 .getElementById("back")
                 .addEventListener("click", () => enterDefine());
+            // jump straight to the lexicon view (in the embedding SPA)
+            document
+                .getElementById("to-lexicon")
+                .addEventListener("click", () => navigateParent("lexicon"));
 
             /* =============================================================
                NAV + RESIZE + THEME wiring
