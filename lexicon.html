@@ -122,7 +122,7 @@
             .hero {
                 position: relative;
                 width: 100%;
-                height: clamp(230px, 40vh, 400px);
+                height: clamp(260px, 46vh, 460px);
                 overflow: hidden;
             }
             .hero-img {
@@ -138,22 +138,20 @@
             .hero-scrim {
                 position: absolute;
                 inset: 0;
+                /* soft dark pocket behind the title (theme-independent, keeps the
+                   light wordmark legible on cream/amber) + bottom fade to page */
                 background:
+                    radial-gradient(
+                        78% 88% at 15% 104%,
+                        rgba(6, 7, 9, 0.62),
+                        rgba(6, 7, 9, 0.26) 42%,
+                        transparent 70%
+                    ),
                     linear-gradient(
                         0deg,
                         var(--void) 0%,
-                        color-mix(in srgb, var(--void) 35%, transparent) 24%,
-                        transparent 50%
-                    ),
-                    linear-gradient(
-                        180deg,
-                        color-mix(in srgb, var(--void) 70%, transparent) 0%,
-                        transparent 22%
-                    ),
-                    radial-gradient(
-                        135% 110% at 50% 45%,
-                        transparent 48%,
-                        color-mix(in srgb, var(--void) 55%, transparent) 100%
+                        color-mix(in srgb, var(--void) 45%, transparent) 20%,
+                        transparent 46%
                     );
             }
             .hero-inner {
@@ -179,12 +177,11 @@
             .hero-title {
                 position: absolute;
                 left: clamp(0.9rem, 2.5vw, 2rem);
-                top: 50%;
-                transform: translateY(-50%);
+                bottom: clamp(1rem, 3.5vh, 2.4rem);
                 margin: 0;
                 font-family: var(--grotesk);
                 font-weight: 700;
-                font-size: clamp(2.6rem, 7vw, 5.4rem);
+                font-size: clamp(2.6rem, 7vw, 5.6rem);
                 letter-spacing: -0.05em;
                 line-height: 0.86;
                 color: #f0f1ec;
