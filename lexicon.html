@@ -749,20 +749,18 @@
                 opacity: 0;
             }
 
-            /* ---------- tree view: a rotated L-system ascii sapling ----------
-               root anchored at the LEFT EDGE OF THE VIEWPORT (full-bleed),
-               branches fanning rightward to each hyperlink, leaf foliage
-               trailing to the right. Glyph field on a canvas + DOM labels. */
+            /* ---------- tree view: an upright L-system ascii sapling ----------
+               a trunk rises from the bottom to the first fork (symbient.life),
+               then branches fan upward to each hyperlink with leaf foliage at
+               the crown. Glyph field on a canvas + centred DOM labels. */
             .tree {
                 position: relative;
-                width: 100vw;
-                left: 50%;
-                right: 50%;
-                margin-left: -50vw;
-                margin-right: -50vw;
-                margin-top: 1.4rem;
-                margin-bottom: 3rem;
-                overflow: hidden;
+                margin: 1.4rem 0 3rem;
+                overflow-x: auto;
+            }
+            .tree-inner {
+                position: relative;
+                margin: 0 auto;
             }
             .tree-legend {
                 color: var(--faint);
@@ -786,7 +784,7 @@
                 cursor: pointer;
                 pointer-events: auto;
                 padding: 0 3px;
-                transform: translateY(-50%);
+                transform: translate(-50%, -50%);
                 border-bottom: 1px solid transparent;
                 background: color-mix(in srgb, var(--void) 74%, transparent);
                 transition:
@@ -820,7 +818,6 @@
             @keyframes tree-in {
                 from {
                     opacity: 0;
-                    transform: translateY(-50%) translateX(-8px);
                 }
             }
             @media (prefers-reduced-motion: reduce) {
@@ -2273,12 +2270,15 @@
                 // monospace glyph FIELD on a <canvas> (theme ink from --text);
                 // the clickable DOM labels ride at each branch tip.
                 host.textContent = "";
+                const inner = document.createElement("div");
+                inner.className = "tree-inner";
                 const cv = document.createElement("canvas");
                 cv.className = "tree-cv";
                 const layer = document.createElement("div");
                 layer.className = "tree-labels";
-                host.appendChild(cv);
-                host.appendChild(layer);
+                inner.appendChild(cv);
+                inner.appendChild(layer);
+                host.appendChild(inner);
                 const ctx = cv.getContext("2d");
 
                 const FS = 13;
@@ -2287,16 +2287,18 @@
                 const CW = ctx.measureText("M").width || FS * 0.6; // cell width px
                 const CH = Math.round(FS * 1.5); // cell height px (one glyph row)
 
-                // ---- tunable L-system constants (settled after iteration) ---
-                const FAN = 0.86; // half-angle of the root wedge (radians)
-                const SHRINK = 0.72; // segment length shrink per level
+                // ---- tunable L-system constants (upright sapling) ----------
+                const UP = -Math.PI / 2; // grow upward from the bottom
+                const FAN = 1.05; // half-angle of the crown (radians)
+                const SHRINK = 0.74; // segment length shrink per level
                 const VW = Math.max(
                     640,
                     document.documentElement.clientWidth || window.innerWidth,
                 );
-                const BASE = (VW / CW) * 0.29; // base segment length, in cells
-                const FOL = 9; // foliage reach (cells) right of a leaf
-                const JIT = 0.16; // seeded angular jitter amount
+                const BASE = (VW / CW) * 0.185; // base segment length, in cells
+                const TRUNK = 8; // trunk length (rows) below the first fork
+                const FOL = 5; // foliage reach (cells) around a leaf tip
+                const JIT = 0.2; // seeded angular jitter amount
 
                 // deterministic seeded RNG (mulberry32) — stable across reloads
                 let _s = 0x9e3779b9 >>> 0;
@@ -2367,23 +2369,27 @@
                         acc += span;
                     }
                 }
-                layoutWedge(root, 0, 0, -FAN, +FAN, BASE, 0, true);
+                layoutWedge(root, 0, 0, UP - FAN, UP + FAN, BASE, 0, true);
 
                 // ---- bounds (in cells) -> grid dimensions ------------------
-                let minY = 0,
-                    maxY = 0,
-                    maxX = 0;
+                // the crown spreads left & right above a bottom trunk; centre it
+                let minX = 0,
+                    maxX = 0,
+                    minY = 0,
+                    maxY = TRUNK;
                 (function bounds(node) {
-                    minY = Math.min(minY, node.y, node.ty);
-                    maxY = Math.max(maxY, node.y, node.ty);
-                    maxX = Math.max(maxX, node.tx + cwid(node.label) + FOL + 2);
+                    minY = Math.min(minY, node.ty);
+                    maxY = Math.max(maxY, node.ty);
+                    const hw = cwid(node.label) / 2 + 1;
+                    minX = Math.min(minX, node.tx - hw - FOL);
+                    maxX = Math.max(maxX, node.tx + hw + FOL);
                     (node.children || []).forEach(bounds);
                 })(root);
-                const PADX = 1,
+                const PADX = 2,
                     PADY = 2;
-                const OX = PADX; // x origin offset (root rides x=0 in viewport)
+                const OX = -minX + PADX; // shift so all columns are >= 0
                 const OY = -minY + PADY; // shift so all rows are >= 0
-                const COLS = Math.ceil(maxX) + PADX + 2;
+                const COLS = Math.ceil(maxX - minX) + PADX * 2;
                 const ROWS = Math.ceil(maxY - minY) + PADY * 2;
 
                 // ---- glyph field -------------------------------------------
@@ -2422,26 +2428,35 @@
                     const kids = node.children || [];
                     // segment from parent tip to this node's tip
                     if (node.depth > 0) segment(node.x, node.y, node.tx, node.ty);
-                    // '*' joint at the tip (a node), unless it's a leaf tip
-                    if (kids.length) put(node.tx, node.ty, "*");
-                    else {
-                        // hot tip + foliage thinning to the right of the leaf
-                        put(node.tx, node.ty, "*");
-                        const base = node.tx + cwid(node.label) + 1;
-                        const count = 5 + Math.floor(rng() * 5);
+                    put(node.tx, node.ty, "*"); // joint / tip
+                    if (!kids.length) {
+                        // leaf foliage: a cluster blooming outward along the
+                        // branch heading and spreading sideways around the tip
+                        const ux = Math.cos(node.ang),
+                            uy = Math.sin(node.ang) * ASP;
+                        const m = Math.hypot(ux, uy) || 1;
+                        const nx = ux / m,
+                            ny = uy / m; // heading unit
+                        const px = -ny,
+                            py = nx; // perpendicular
+                        const count = 7 + Math.floor(rng() * 6);
                         for (let i = 0; i < count; i++) {
                             const d = rng();
-                            const fx = base + d * FOL;
-                            const fr = node.ty + (rng() - 0.5) * 2 * (0.4 + d * 1.1);
+                            const along = d * FOL;
+                            const perp = (rng() - 0.5) * 2.6 * (0.4 + d);
+                            const fx = node.tx + nx * along + px * perp;
+                            const fy = node.ty + ny * along + py * perp;
                             const g =
-                                rng() < 0.12
+                                rng() < 0.13
                                     ? "@"
-                                    : FOLI[Math.floor(d * FOLI.length)];
-                            put(fx, fr, g);
+                                    : FOLI[Math.floor(rng() * FOLI.length)];
+                            put(fx, fy, g);
                         }
                     }
                     kids.forEach(paint);
                 }
+                // the trunk: a vertical stem from the first fork down to the base
+                segment(0, 0, 0, TRUNK);
                 paint(root);
 
                 // labels (DOM, clickable, theme-aware) overlaid at each tip
@@ -2453,7 +2468,7 @@
                         "tree-node" +
                         (isRoot ? " is-root is-static" : leaf ? " is-leaf" : " is-branch");
                     a.textContent = node.label;
-                    a.style.left = (node.tx + OX) * CW + "px";
+                    a.style.left = (node.tx + OX + 0.5) * CW + "px";
                     a.style.top = (node.ty + OY + 0.5) * CH + "px";
                     a.style.animationDelay = li++ * 0.02 + "s";
                     a.tabIndex = 0;
@@ -2482,6 +2497,7 @@
                     cv.style.height = H + "px";
                     layer.style.width = W + "px";
                     layer.style.height = H + "px";
+                    inner.style.width = W + "px";
                     const ink = hexRgb(
                         getComputedStyle(document.documentElement)
                             .getPropertyValue("--text")
