@@ -17,22 +17,51 @@
         />
         <style>
             :root {
-                --void: #0a0b0c;
-                --hair: rgba(196, 204, 192, 0.16);
-                --hair-2: rgba(196, 204, 192, 0.08);
-                --text: #c6ccc0;
-                --dim: #7e857a;
-                --faint: #515750;
-                --green: #8fc28f;
-                --blue: #86a0cf;
-                --amber: #c7a268;
-                --violet: #a392ef;
                 /* Empires DNA: Arial bold for structure, Open Sans for prose */
                 --grotesk: Arial, "Liberation Sans", "Helvetica Neue", Helvetica,
                     sans-serif;
                 --body: "Open Sans", Arial, sans-serif;
                 --mono: "Space Mono", ui-monospace, monospace;
                 --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+                /* ---- LIGHT (default), matching the broader panel ---- */
+                --void: #f4f0e7;
+                --text: #1f1c16;
+                --dim: #6c675c;
+                --faint: #a39c8d;
+                --hair: rgba(31, 28, 22, 0.18);
+                --hair-2: rgba(31, 28, 22, 0.09);
+                --green: #2f7d4a;
+                --blue: #3f63a8;
+                --amber: #9a6310;
+                --violet: #6b54d6;
+                --field-rgb: 88, 96, 78;
+            }
+            html[data-theme="dark"] {
+                --void: #0a0b0c;
+                --text: #c6ccc0;
+                --dim: #7e857a;
+                --faint: #515750;
+                --hair: rgba(196, 204, 192, 0.16);
+                --hair-2: rgba(196, 204, 192, 0.08);
+                --green: #8fc28f;
+                --blue: #86a0cf;
+                --amber: #c7a268;
+                --violet: #a392ef;
+                --field-rgb: 150, 178, 150;
+            }
+            html[data-theme="amber"] {
+                --void: #e9cf93;
+                --text: #2a1808;
+                --dim: #6b4a1c;
+                --faint: #9c7c3e;
+                --hair: rgba(42, 24, 8, 0.22);
+                --hair-2: rgba(42, 24, 8, 0.11);
+                --green: #3f6b22;
+                --blue: #2f5388;
+                --amber: #8a4e10;
+                --violet: #6a3fb0;
+                --field-rgb: 120, 82, 28;
             }
             * {
                 box-sizing: border-box;
@@ -93,8 +122,7 @@
             .hero {
                 position: relative;
                 width: 100%;
-                height: 100vh;
-                min-height: 480px;
+                height: clamp(230px, 40vh, 400px);
                 overflow: hidden;
             }
             .hero-img {
@@ -106,20 +134,26 @@
                 object-position: center center;
                 filter: contrast(1.05);
             }
+            /* fade the band into the page colour, top and bottom */
             .hero-scrim {
                 position: absolute;
                 inset: 0;
                 background:
                     linear-gradient(
                         0deg,
-                        rgba(10, 11, 12, 0.94) 0%,
-                        rgba(10, 11, 12, 0.3) 26%,
-                        transparent 55%
+                        var(--void) 0%,
+                        color-mix(in srgb, var(--void) 35%, transparent) 24%,
+                        transparent 50%
+                    ),
+                    linear-gradient(
+                        180deg,
+                        color-mix(in srgb, var(--void) 70%, transparent) 0%,
+                        transparent 22%
                     ),
                     radial-gradient(
-                        125% 95% at 50% 38%,
-                        transparent 52%,
-                        rgba(10, 11, 12, 0.6) 100%
+                        135% 110% at 50% 45%,
+                        transparent 48%,
+                        color-mix(in srgb, var(--void) 55%, transparent) 100%
                     );
             }
             .hero-inner {
@@ -134,38 +168,29 @@
             }
             .hero-eyebrow {
                 position: absolute;
-                top: 1.3rem;
+                top: 1.1rem;
                 left: clamp(0.9rem, 2.5vw, 2rem);
                 font-family: var(--mono);
                 font-size: 10px;
                 letter-spacing: 0.2em;
                 text-transform: uppercase;
-                color: var(--dim);
+                color: rgba(238, 240, 234, 0.6);
             }
             .hero-title {
                 position: absolute;
                 left: clamp(0.9rem, 2.5vw, 2rem);
-                bottom: clamp(1.3rem, 5vh, 3.4rem);
+                top: 50%;
+                transform: translateY(-50%);
                 margin: 0;
                 font-family: var(--grotesk);
                 font-weight: 700;
-                font-size: clamp(3rem, 11vw, 8rem);
+                font-size: clamp(2.6rem, 7vw, 5.4rem);
                 letter-spacing: -0.05em;
-                line-height: 0.84;
-                color: #eef0ea;
+                line-height: 0.86;
+                color: #f0f1ec;
                 text-shadow:
-                    0 2px 60px rgba(0, 0, 0, 0.85),
-                    0 1px 5px rgba(0, 0, 0, 0.55);
-            }
-            .hero-scrollcue {
-                position: absolute;
-                bottom: 1.3rem;
-                right: clamp(0.9rem, 2.5vw, 2rem);
-                font-family: var(--mono);
-                font-size: 10px;
-                letter-spacing: 0.16em;
-                text-transform: uppercase;
-                color: var(--faint);
+                    0 2px 44px rgba(0, 0, 0, 0.82),
+                    0 1px 4px rgba(0, 0, 0, 0.6);
             }
             .submast {
                 display: flex;
@@ -536,6 +561,39 @@
                 text-decoration: none;
             }
 
+            .theme-toggle {
+                position: fixed;
+                top: 0.9rem;
+                right: 0.9rem;
+                z-index: 6;
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: rgba(238, 240, 234, 0.7);
+                background: color-mix(in srgb, #0a0b0c 35%, transparent);
+                border: 1px solid rgba(238, 240, 234, 0.22);
+                padding: 0.4rem 0.65rem;
+                cursor: pointer;
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                transition: all 0.25s var(--ease);
+            }
+            .theme-toggle:hover {
+                color: #fff;
+                border-color: rgba(238, 240, 234, 0.5);
+            }
+            /* once past the hero band, the toggle adopts the page palette */
+            .theme-toggle.on-page {
+                color: var(--dim);
+                background: color-mix(in srgb, var(--void) 70%, transparent);
+                border-color: var(--hair);
+            }
+            .theme-toggle.on-page:hover {
+                color: var(--green);
+                border-color: var(--green);
+            }
+
             @media (prefers-reduced-motion: reduce) {
                 html {
                     scroll-behavior: auto;
@@ -546,22 +604,43 @@
                 }
             }
         </style>
+        <script>
+            // apply theme before first paint (no flash-of-theme)
+            (function () {
+                try {
+                    var k = "symbient-theme",
+                        themes = ["light", "dark", "amber"];
+                    var s = localStorage.getItem(k);
+                    var t =
+                        themes.indexOf(s) >= 0
+                            ? s
+                            : new Date().getHours() >= 18 ||
+                                new Date().getHours() < 6
+                              ? "dark"
+                              : "light";
+                    if (t !== "light")
+                        document.documentElement.setAttribute("data-theme", t);
+                } catch (e) {}
+            })();
+        </script>
     </head>
 
     <body>
         <canvas id="field"></canvas>
+        <button class="theme-toggle" type="button" aria-label="Switch theme">
+            ◐&nbsp;<span class="tt-label">dark</span>
+        </button>
 
         <header class="hero">
             <img
                 class="hero-img"
-                src="/assets/test-moreau-hero.png"
+                src="/assets/test-moreau-band.png"
                 alt="Gustave Moreau, The Suitors — placeholder hero"
             />
             <div class="hero-scrim"></div>
             <div class="hero-inner">
                 <span class="hero-eyebrow">symbient.life · lexicon</span>
                 <h1 class="hero-title">Lexicon</h1>
-                <span class="hero-scrollcue">↓ the atlas</span>
             </div>
         </header>
 
@@ -779,6 +858,18 @@
                 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
                 let w, h, dpr, bars = [], t = 0;
                 const rnd = (a, b) => a + Math.random() * (b - a);
+                let fieldRGB = "150,178,150";
+                function readField() {
+                    const v = getComputedStyle(document.documentElement)
+                        .getPropertyValue("--field-rgb")
+                        .trim();
+                    if (v) fieldRGB = v;
+                }
+                readField();
+                window.addEventListener("themechange", () => {
+                    readField();
+                    if (reduce) paint(false);
+                });
 
                 function build() {
                     bars = [];
@@ -818,7 +909,7 @@
                             ? b.base * (0.6 + 0.4 * Math.sin(b.ph + t))
                             : b.base * 0.85;
                         if (a <= 0.004) continue;
-                        ctx.strokeStyle = "rgba(150,178,150," + a + ")";
+                        ctx.strokeStyle = "rgba(" + fieldRGB + "," + a + ")";
                         ctx.lineWidth = b.w;
                         ctx.lineDashOffset = b.off - t * 3 * dpr; // very slow ordered drift
                         ctx.beginPath();
@@ -849,6 +940,53 @@
                         el.focus({ preventScroll: true });
                     });
                 });
+            })();
+
+            // ---- theme: light / dark / amber (matches the broader panel) ----
+            (function () {
+                const themes = ["light", "dark", "amber"];
+                const labels = { light: "light", dark: "dark", amber: "amber" };
+                const glyph = { light: "◑", dark: "◐", amber: "◓" };
+                const key = "symbient-theme";
+                const root = document.documentElement;
+                const btn = document.querySelector(".theme-toggle");
+                const lbl = btn && btn.querySelector(".tt-label");
+                const cur = () => root.getAttribute("data-theme") || "light";
+
+                function paintBtn() {
+                    const c = cur();
+                    if (lbl) lbl.textContent = labels[c];
+                    if (btn && btn.firstChild)
+                        btn.firstChild.textContent = glyph[c] + " ";
+                }
+                function apply(t) {
+                    if (t === "light") root.removeAttribute("data-theme");
+                    else root.setAttribute("data-theme", t);
+                    window.dispatchEvent(new Event("themechange"));
+                    paintBtn();
+                }
+                paintBtn();
+                if (btn) {
+                    btn.addEventListener("click", () => {
+                        const next =
+                            themes[(themes.indexOf(cur()) + 1) % themes.length];
+                        apply(next);
+                        try {
+                            localStorage.setItem(key, next);
+                        } catch (e) {}
+                    });
+                }
+                // toggle adopts the page palette once scrolled past the hero band
+                const hero = document.querySelector(".hero");
+                function onScroll() {
+                    if (!btn || !hero) return;
+                    btn.classList.toggle(
+                        "on-page",
+                        window.scrollY > hero.offsetHeight - 60,
+                    );
+                }
+                onScroll();
+                window.addEventListener("scroll", onScroll, { passive: true });
             })();
         </script>
     </body>
