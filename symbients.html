@@ -154,19 +154,23 @@
                 opacity: 0.74;
             }
 
-            /* the ascii Extitutional Creature — the define-mode backdrop */
+            /* the ascii Extitutional Creature — the define-mode backdrop.
+               The glyph field is landscape (≈477/446), so the box must carry
+               that aspect — the faggot familiar's tall portrait box stretches
+               and crops it vertically. */
             .creature {
                 position: absolute;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                width: min(580px, 72%);
-                height: 84%;
+                width: min(700px, 84vw);
+                aspect-ratio: 477 / 446;
+                height: auto;
                 z-index: 0;
                 opacity: 0.62;
                 pointer-events: none;
-                -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
-                mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+                -webkit-mask-image: radial-gradient(closest-side, #000 68%, transparent 100%);
+                mask-image: radial-gradient(closest-side, #000 68%, transparent 100%);
             }
             html[data-theme="dark"] .creature {
                 opacity: 0.82;

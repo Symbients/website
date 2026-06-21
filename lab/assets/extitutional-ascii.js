@@ -34,9 +34,9 @@ export const meta = {
         "the pale furry larva-familiar struck as living ascii — antennae curling up, dark oval eyes, a spiky segmented back and many little legs condensed from ink into glyphs, a hot @ burning in each eye.",
     params: [
         { key: "cols", label: "grid width", min: 60, max: 160, step: 2, value: 110 },
-        { key: "contrast", label: "ink contrast", min: 0.4, max: 2.5, step: 0.05, value: 1.35 },
-        { key: "threshold", label: "background cutoff", min: 0.04, max: 0.6, step: 0.01, value: 0.16 },
-        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 0.35 },
+        { key: "contrast", label: "ink contrast", min: 0.4, max: 2.5, step: 0.05, value: 2.5 },
+        { key: "threshold", label: "background cutoff", min: 0.04, max: 0.6, step: 0.01, value: 0.26 },
+        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 0.7 },
     ],
 };
 
