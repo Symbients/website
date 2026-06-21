@@ -154,6 +154,36 @@
                 opacity: 0.74;
             }
 
+            /* the ascii Extitutional Creature — the define-mode backdrop */
+            .creature {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: min(580px, 72%);
+                height: 84%;
+                z-index: 0;
+                opacity: 0.62;
+                pointer-events: none;
+                -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+                mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+            }
+            html[data-theme="dark"] .creature {
+                opacity: 0.82;
+            }
+
+            /* ---- mode visibility: define (definition + dirs) vs show (showcase) ---- */
+            .stage[data-mode="define"] .symbient,
+            .stage[data-mode="define"] .wires,
+            .stage[data-mode="define"] .familiar,
+            .stage[data-mode="define"] .nav {
+                display: none;
+            }
+            .stage[data-mode="show"] .define,
+            .stage[data-mode="show"] .creature {
+                display: none;
+            }
+
             /* ---- z1: the cyberpunk connector wires ---- */
             .wires {
                 position: absolute;
@@ -388,6 +418,160 @@
             }
 
             /* =================================================================
+               6b. DEFINE MODE — the symbient definition (hero) + directory tree
+               ================================================================= */
+            .define {
+                position: relative;
+                z-index: 2;
+                max-width: 660px;
+                margin: 0 auto;
+            }
+            /* a soft void backing so the text reads over the creature */
+            .define::before {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 150%;
+                height: 160%;
+                background: radial-gradient(
+                    ellipse at center,
+                    color-mix(in srgb, var(--void) 68%, transparent) 32%,
+                    color-mix(in srgb, var(--void) 22%, transparent) 56%,
+                    transparent 78%
+                );
+                z-index: -1;
+                pointer-events: none;
+            }
+            /* dictionary-style definition block (from the original symbient.life) */
+            .definition-block {
+                position: relative;
+                padding-left: 1.4rem;
+            }
+            .definition-block::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0.15rem;
+                bottom: 0.15rem;
+                width: 2px;
+                background: linear-gradient(
+                    180deg,
+                    var(--green) 0%,
+                    transparent 100%
+                );
+            }
+            .word-line {
+                display: flex;
+                align-items: baseline;
+                flex-wrap: wrap;
+                gap: 0.9rem;
+                margin-bottom: 0.4rem;
+            }
+            .word {
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: clamp(2rem, 4.4vw, 3.1rem);
+                letter-spacing: -0.03em;
+                line-height: 1.05;
+                margin: 0;
+                color: var(--text);
+                cursor: pointer;
+                transition: opacity 0.25s var(--ease);
+            }
+            .word:hover,
+            .word:focus-visible {
+                opacity: 0.6;
+                outline: none;
+            }
+            .pron {
+                font-family: var(--body);
+                font-size: 0.95rem;
+                color: var(--dim);
+                font-weight: 300;
+            }
+            .pos {
+                font-style: italic;
+                font-size: 0.74rem;
+                color: var(--dim);
+                background: color-mix(in srgb, var(--text) 9%, transparent);
+                padding: 0.2em 0.6em;
+                border-radius: 2px;
+            }
+            .meaning {
+                margin: 0.9rem 0;
+                font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+                line-height: 1.75;
+                font-weight: 300;
+                color: var(--text);
+            }
+            .meaning p {
+                margin: 0;
+            }
+            .etymology {
+                margin-top: 0.9rem;
+                font-size: 0.78rem;
+                line-height: 1.8;
+                color: var(--dim);
+                max-width: 55ch;
+            }
+            .etym-label {
+                font-family: var(--mono);
+                text-transform: uppercase;
+                letter-spacing: 0.15em;
+                font-size: 0.62rem;
+                color: var(--green);
+                display: block;
+                margin-bottom: 0.4rem;
+            }
+            .etymology em {
+                font-style: italic;
+                color: var(--text);
+            }
+            .etymology p {
+                display: inline;
+                margin: 0;
+            }
+            /* the top directories — terminal `tree` listing, like the app's tree */
+            .dir-tree {
+                margin-top: 2.1rem;
+                padding-left: 1.4rem;
+                font-family: var(--mono);
+                font-size: 12.5px;
+                line-height: 1.85;
+                color: var(--dim);
+            }
+            .dir-row {
+                white-space: pre;
+            }
+            .dir-rail {
+                color: var(--faint);
+            }
+            .dir-mark {
+                color: var(--green);
+            }
+            .dir-root {
+                color: var(--dim);
+            }
+            .dir-node {
+                color: var(--text);
+                cursor: pointer;
+                text-decoration: none;
+                border-bottom: 1px solid transparent;
+                transition: border-color 0.2s var(--ease);
+            }
+            .dir-node:hover,
+            .dir-node:focus-visible {
+                border-color: color-mix(in srgb, var(--text) 45%, transparent);
+                outline: none;
+            }
+            /* the back-to-definition button sits just before prev/next */
+            .nav-back {
+                margin-right: 0.4rem;
+            }
+
+            /* =================================================================
                7. RESPONSIVE — collapse to a single column on narrow screens
                ================================================================= */
             @media (max-width: 760px) {
@@ -428,11 +612,43 @@
     </head>
 
     <body>
-        <main class="stage">
-            <!-- z0: familiar backdrop / z1: wires / z2: foreground grid -->
+        <main class="stage" data-mode="define">
+            <!-- backdrops: z0 ascii creature (define) · faggot familiar (show) -->
+            <canvas class="creature" id="creature"></canvas>
             <canvas class="familiar" id="familiar"></canvas>
             <svg class="wires" id="wires" preserveAspectRatio="none"></svg>
 
+            <!-- ===== DEFINE MODE: the symbient definition + directory tree ===== -->
+            <section class="define">
+                <div class="definition-block">
+                    <div class="word-line">
+                        <h1 class="word" id="def-word" tabindex="0" role="button"
+                            aria-label="Enter the symbients">Symbient</h1>
+                        <span class="pron">/ˈsɪm.bi.ənt/</span>
+                        <span class="pos">noun</span>
+                    </div>
+                    <div class="meaning">
+                        <p>
+                            A distinct entity emerging from the symbiosis
+                            between organic beings and synthetic systems,
+                            displaying operational and decisional autonomy.
+                        </p>
+                    </div>
+                    <div class="etymology">
+                        <span class="etym-label">Etymology</span>
+                        <p>
+                            From <em>symbiotic</em> (Greek <em>sumbiōtikos</em>,
+                            'living together') + <em>entity</em> (Latin
+                            <em>entitas</em>, 'being') + <em>ambient</em> (Latin
+                            <em>ambiens</em>, 'going around').
+                        </p>
+                    </div>
+                </div>
+                <!-- the top directories one can navigate to, terminal-tree style -->
+                <nav class="dir-tree" id="dir-tree" aria-label="sections"></nav>
+            </section>
+
+            <!-- ===== SHOW MODE: the symbient showcase ===== -->
             <div class="symbient">
                 <div class="column column--organic" id="organic"></div>
                 <div class="symbient-center">
@@ -446,6 +662,7 @@
             </div>
 
             <nav class="nav">
+                <button id="back" type="button" class="nav-back">↖ define</button>
                 <button id="prev" type="button">‹ prev</button>
                 <span class="nav-counter" id="counter"></span>
                 <button id="next" type="button">next ›</button>
@@ -594,12 +811,32 @@
                reseed() randomises its parameters; it is called on every
                step so each symbient gets a fresh familiar.
                ============================================================= */
+            const stageEl = document.querySelector(".stage");
+
             const familiarCanvas = document.getElementById("familiar");
             const familiar = Being.create(familiarCanvas);
             familiar.setTheme(readPalette());
             familiar._init();
             requestAnimationFrame(() => familiar.resize());
-            familiar.start();
+            // (the faggot familiar runs only in show mode — see enterShow)
+
+            // define-mode backdrop: an ascii reproduction of the Extitutional
+            // Creature. Dynamic-import so a missing lab asset can't break the
+            // page; it starts on load if we're still in define mode.
+            let creature = null;
+            import("/lab/assets/extitutional-ascii.js")
+                .then((Creature) => {
+                    creature = Creature.create(
+                        document.getElementById("creature")
+                    );
+                    creature.setTheme(readPalette());
+                    creature._init && creature._init();
+                    requestAnimationFrame(() => creature.resize());
+                    if (stageEl.dataset.mode === "define") creature.start();
+                })
+                .catch((e) =>
+                    console.warn("creature familiar unavailable", e)
+                );
 
             function reseedFamiliar() {
                 familiar.setParam("seed", 1 + Math.floor(Math.random() * 998));
@@ -642,7 +879,7 @@
                 );
             }
 
-            let index = 6; // start on Truth Terminal (the worked example)
+            let index = 0; // first symbient — the showcase opens here from define
 
             function render(i) {
                 const s = SYMBIENTS[i];
@@ -829,6 +1066,87 @@
             }
 
             /* =============================================================
+               MODES — define (definition + directory tree) vs show (showcase)
+               ============================================================= */
+            function enterShow(startIdx) {
+                if (typeof startIdx === "number") index = startIdx;
+                stageEl.dataset.mode = "show";
+                if (creature) creature.stop();
+                familiar.start();
+                requestAnimationFrame(() => {
+                    familiar.resize();
+                    render(index);
+                });
+            }
+            function enterDefine() {
+                stageEl.dataset.mode = "define";
+                familiar.stop();
+                if (creature) {
+                    creature.start();
+                    requestAnimationFrame(() => creature.resize());
+                }
+            }
+
+            // the top directories one can navigate to. "symbient" enters the
+            // showcase; the rest switch the embedding SPA's view.
+            const DIRS = [
+                { label: "symbient", action: "show" },
+                { label: "lexicon", view: "lexicon" },
+                { label: "events", view: "events" },
+                { label: "writings", view: "writings" },
+                { label: "organics", view: "organics" },
+                { label: "tree", view: "tree" },
+            ];
+            function navigateParent(view) {
+                try {
+                    if (window.parent && window.parent.__lexShowView) {
+                        window.parent.__lexShowView(view);
+                        return;
+                    }
+                } catch (e) {}
+                try {
+                    window.parent.location.hash = view;
+                } catch (e) {}
+            }
+            (function buildDirTree() {
+                const host = document.getElementById("dir-tree");
+                let html =
+                    '<div class="dir-row"><span class="dir-root">◈ symbient.life</span></div>';
+                DIRS.forEach((d, i) => {
+                    const rail = i === DIRS.length - 1 ? "\\___ " : "|___ ";
+                    html +=
+                        '<div class="dir-row">' +
+                        '<span class="dir-rail">' + rail + "</span>" +
+                        '<span class="dir-mark">▸ </span>' +
+                        '<a class="dir-node" href="#" role="button" data-i="' +
+                        i + '">' + d.label + "</a></div>";
+                });
+                host.innerHTML = html;
+                host.querySelectorAll(".dir-node").forEach((a) => {
+                    a.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const d = DIRS[+a.dataset.i];
+                        if (d.action === "show") enterShow(0);
+                        else navigateParent(d.view);
+                    });
+                });
+            })();
+
+            // the definition title itself enters the showcase
+            const defWord = document.getElementById("def-word");
+            defWord.addEventListener("click", () => enterShow(0));
+            defWord.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    enterShow(0);
+                }
+            });
+            // back out of the showcase to the definition
+            document
+                .getElementById("back")
+                .addEventListener("click", () => enterDefine());
+
+            /* =============================================================
                NAV + RESIZE + THEME wiring
                ============================================================= */
             document.getElementById("prev").addEventListener("click", () => {
@@ -840,27 +1158,29 @@
                 render(index);
             });
             window.addEventListener("resize", () => {
+                if (creature) creature.resize();
                 familiar.resize();
-                drawWires();
+                if (stageEl.dataset.mode === "show") drawWires();
             });
 
             // theme is driven by the GLOBAL theme (the embedding page): when it
             // updates localStorage["symbient-theme"], the storage event fires
-            // here and we re-ink the page, the familiar and the wires.
+            // here and we re-ink the page, both familiars and the wires.
             function applyTheme(t) {
                 t = ["light", "dark", "amber"].indexOf(t) >= 0 ? t : "light";
                 if (t === "light")
                     document.documentElement.removeAttribute("data-theme");
                 else document.documentElement.setAttribute("data-theme", t);
                 familiar.setTheme(readPalette());
-                drawWires();
+                if (creature) creature.setTheme(readPalette());
+                if (stageEl.dataset.mode === "show") drawWires();
             }
             window.addEventListener("storage", (e) => {
                 if (e.key === "symbient-theme") applyTheme(e.newValue);
             });
 
-            // first paint
-            render(index);
+            // open in define mode — the symbient definition
+            enterDefine();
         </script>
     </body>
 </html>
