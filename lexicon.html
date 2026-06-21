@@ -138,20 +138,23 @@
             .hero-scrim {
                 position: absolute;
                 inset: 0;
-                /* soft dark pocket behind the title (theme-independent, keeps the
-                   light wordmark legible on cream/amber) + bottom fade to page */
+                /* horizontal asymmetry: dark over the title (left), releasing
+                   around the centre so the bright figure reads at right; the
+                   wordmark stays legible across themes. Plus a shallow fade into
+                   the page colour at the very bottom. */
                 background:
-                    radial-gradient(
-                        78% 88% at 15% 104%,
-                        rgba(6, 7, 9, 0.62),
-                        rgba(6, 7, 9, 0.26) 42%,
-                        transparent 70%
+                    linear-gradient(
+                        90deg,
+                        rgba(6, 7, 9, 0.74) 0%,
+                        rgba(6, 7, 9, 0.58) 16%,
+                        rgba(6, 7, 9, 0.18) 38%,
+                        transparent 54%
                     ),
                     linear-gradient(
                         0deg,
                         var(--void) 0%,
-                        color-mix(in srgb, var(--void) 45%, transparent) 20%,
-                        transparent 46%
+                        color-mix(in srgb, var(--void) 38%, transparent) 11%,
+                        transparent 28%
                     );
             }
             .hero-inner {
