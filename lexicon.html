@@ -31,12 +31,13 @@
                 --faint: #a39c8d;
                 --hair: rgba(31, 28, 22, 0.18);
                 --hair-2: rgba(31, 28, 22, 0.09);
-                --green: #4d8a59;
-                --blue: #3d6e96;
-                --amber: #9a6526;
-                --violet: #5f51a6;
-                --field-rgb: 88, 96, 78;
-                --hero-tint: #c4ad84;
+                /* monochrome — one ink tone for all entries (greyscale on cream) */
+                --green: #2b2822;
+                --blue: #2b2822;
+                --amber: #2b2822;
+                --violet: #2b2822;
+                --field-rgb: 92, 90, 82;
+                --hero-tint: #8d8a82;
             }
             html[data-theme="dark"] {
                 --void: #0a0b0c;
@@ -45,12 +46,13 @@
                 --faint: #515750;
                 --hair: rgba(196, 204, 192, 0.16);
                 --hair-2: rgba(196, 204, 192, 0.08);
-                --green: #82b98d;
-                --blue: #6f9ec2;
-                --amber: #c39a64;
-                --violet: #9486cf;
-                --field-rgb: 150, 178, 150;
-                --hero-tint: #2d4438;
+                /* monochrome — greyscale on void */
+                --green: #d8dccf;
+                --blue: #d8dccf;
+                --amber: #d8dccf;
+                --violet: #d8dccf;
+                --field-rgb: 158, 162, 152;
+                --hero-tint: #2c2e2c;
             }
             html[data-theme="amber"] {
                 --void: #e9cf93;
@@ -59,10 +61,11 @@
                 --faint: #9c7c3e;
                 --hair: rgba(42, 24, 8, 0.22);
                 --hair-2: rgba(42, 24, 8, 0.11);
-                --green: #4f6b25;
-                --blue: #2f6a7a;
-                --amber: #9a3f1c;
-                --violet: #6b4a9e;
+                /* monochrome — sepia on parchment */
+                --green: #6e4d20;
+                --blue: #6e4d20;
+                --amber: #6e4d20;
+                --violet: #6e4d20;
                 --field-rgb: 120, 82, 28;
                 --hero-tint: #8f5f1e;
             }
@@ -400,6 +403,12 @@
                 flex: none;
                 box-shadow: 0 0 5px -1px var(--node);
             }
+            /* contested entries get a ring, not a filled dot (mono distinction) */
+            .k-contested .node {
+                background: transparent;
+                border: 1.5px solid var(--node);
+                box-shadow: none;
+            }
             .col:hover .node,
             .col:focus-within .node {
                 animation: pulse 1.7s var(--ease) infinite;
@@ -497,7 +506,8 @@
             }
             .voices i.sub {
                 color: var(--violet);
-                border-color: color-mix(in srgb, var(--violet) 35%, transparent);
+                border-color: color-mix(in srgb, var(--violet) 45%, transparent);
+                background: color-mix(in srgb, var(--violet) 14%, transparent);
             }
             .threads a {
                 text-decoration: none;
@@ -553,10 +563,13 @@
                 gap: 0.4rem;
             }
             .legend i {
-                width: 6px;
-                height: 6px;
+                width: 7px;
+                height: 7px;
                 border-radius: 50%;
                 display: inline-block;
+            }
+            .legend i.ring {
+                border: 1.5px solid currentColor;
             }
             .brackets {
                 display: flex;
@@ -869,11 +882,11 @@
 
             <footer>
                 <div class="legend">
-                    <span><i style="background: var(--violet)"></i>what kindles</span>
-                    <span><i style="background: var(--blue)"></i>how it perceives</span>
-                    <span><i style="background: var(--green)"></i>where it lives</span>
-                    <span><i style="background: var(--amber)"></i>contested</span>
-                    <span style="color: var(--faint)">— violet boxes mark substrate-authored voices</span>
+                    <span>i · what kindles</span>
+                    <span>ii · how it perceives</span>
+                    <span>iii · where it lives</span>
+                    <span><i class="ring"></i>ring = contested</span>
+                    <span style="color: var(--faint)">— filled chips mark substrate-authored voices</span>
                 </div>
                 <nav class="brackets">
                     <a href="https://brain.wibandwob.com" target="_blank" rel="noopener">[ the shared brain ]<span class="ct">↗</span></a>
