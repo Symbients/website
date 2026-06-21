@@ -69,15 +69,15 @@
                 -webkit-mask-image: linear-gradient(
                     180deg,
                     transparent 0,
-                    #000 10%,
-                    #000 80%,
+                    #000 6%,
+                    #000 88%,
                     transparent 100%
                 );
                 mask-image: linear-gradient(
                     180deg,
                     transparent 0,
-                    #000 10%,
-                    #000 80%,
+                    #000 6%,
+                    #000 88%,
                     transparent 100%
                 );
             }
@@ -93,10 +93,9 @@
             .hero {
                 position: relative;
                 width: 100%;
-                height: clamp(190px, 29vw, 360px);
-                margin-top: 1.1rem;
+                height: 100vh;
+                min-height: 480px;
                 overflow: hidden;
-                border: 1px solid var(--hair);
             }
             .hero-img {
                 position: absolute;
@@ -104,42 +103,69 @@
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                object-position: center 28%;
-                filter: contrast(1.08) brightness(1.32);
+                object-position: center center;
+                filter: contrast(1.05);
             }
             .hero-scrim {
                 position: absolute;
                 inset: 0;
                 background:
                     linear-gradient(
-                        90deg,
-                        rgba(10, 11, 12, 0.72) 0%,
-                        rgba(10, 11, 12, 0.18) 34%,
-                        transparent 68%
+                        0deg,
+                        rgba(10, 11, 12, 0.94) 0%,
+                        rgba(10, 11, 12, 0.3) 26%,
+                        transparent 55%
                     ),
-                    linear-gradient(0deg, rgba(10, 11, 12, 0.72), transparent 46%);
+                    radial-gradient(
+                        125% 95% at 50% 38%,
+                        transparent 52%,
+                        rgba(10, 11, 12, 0.6) 100%
+                    );
+            }
+            .hero-inner {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100%;
+                max-width: 1320px;
+                pointer-events: none;
             }
             .hero-eyebrow {
                 position: absolute;
-                top: 0.9rem;
-                left: clamp(1rem, 3vw, 2.2rem);
+                top: 1.3rem;
+                left: clamp(0.9rem, 2.5vw, 2rem);
                 font-family: var(--mono);
                 font-size: 10px;
-                letter-spacing: 0.18em;
+                letter-spacing: 0.2em;
                 text-transform: uppercase;
                 color: var(--dim);
             }
             .hero-title {
                 position: absolute;
-                left: clamp(1rem, 3vw, 2.2rem);
-                bottom: clamp(0.7rem, 2.2vw, 1.4rem);
+                left: clamp(0.9rem, 2.5vw, 2rem);
+                bottom: clamp(1.3rem, 5vh, 3.4rem);
                 margin: 0;
                 font-family: var(--grotesk);
                 font-weight: 700;
-                font-size: clamp(2.6rem, 9vw, 6.4rem);
+                font-size: clamp(3rem, 11vw, 8rem);
                 letter-spacing: -0.05em;
-                line-height: 0.86;
+                line-height: 0.84;
                 color: #eef0ea;
+                text-shadow:
+                    0 2px 60px rgba(0, 0, 0, 0.85),
+                    0 1px 5px rgba(0, 0, 0, 0.55);
+            }
+            .hero-scrollcue {
+                position: absolute;
+                bottom: 1.3rem;
+                right: clamp(0.9rem, 2.5vw, 2rem);
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: var(--faint);
             }
             .submast {
                 display: flex;
@@ -525,13 +551,21 @@
     <body>
         <canvas id="field"></canvas>
 
-        <div class="shell">
-            <header class="hero">
-                <img class="hero-img" src="/assets/test-moreau-banner.png" alt="" />
-                <div class="hero-scrim"></div>
+        <header class="hero">
+            <img
+                class="hero-img"
+                src="/assets/test-moreau-hero.png"
+                alt="Gustave Moreau, The Suitors — placeholder hero"
+            />
+            <div class="hero-scrim"></div>
+            <div class="hero-inner">
                 <span class="hero-eyebrow">symbient.life · lexicon</span>
                 <h1 class="hero-title">Lexicon</h1>
-            </header>
+                <span class="hero-scrollcue">↓ the atlas</span>
+            </div>
+        </header>
+
+        <div class="shell">
             <div class="submast">
                 <p class="mh-sub">
                     An atlas of a vocabulary still being kindled — terms for a symbiotic
@@ -751,16 +785,16 @@
                     let x = 0;
                     const unit = dpr;
                     while (x < w) {
-                        const bw = rnd(0.5, 2.6) * unit;
-                        // occasional brighter "marker" bar, like a barcode guard
-                        const marker = Math.random() < 0.06;
+                        const bw = rnd(0.6, 1.8) * unit;
+                        const marker = Math.random() < 0.05;
                         bars.push({
-                            x: x,
-                            w: marker ? bw * 1.4 : bw,
-                            base: marker ? rnd(0.16, 0.26) : rnd(0.03, 0.15),
+                            x: x + bw / 2,
+                            w: marker ? bw * 1.3 : bw,
+                            base: marker ? rnd(0.09, 0.14) : rnd(0.028, 0.08),
                             ph: (x / w) * Math.PI * 5,
+                            off: rnd(0, 14) * unit,
                         });
-                        x += bw + rnd(2, 12) * unit;
+                        x += bw + rnd(5, 18) * unit;
                     }
                 }
                 function resize() {
@@ -774,28 +808,32 @@
                 window.addEventListener("resize", resize);
                 resize();
 
-                function frame() {
-                    t += 0.012;
+                function paint(animated) {
                     ctx.clearRect(0, 0, w, h);
+                    ctx.lineCap = "round";
+                    ctx.setLineDash([1.2 * dpr, 5 * dpr]); // dotted, not solid
                     for (let i = 0; i < bars.length; i++) {
                         const b = bars[i];
-                        const a = b.base * (0.62 + 0.38 * Math.sin(b.ph + t));
-                        if (a <= 0.006) continue;
-                        ctx.fillStyle = "rgba(150,178,150," + a + ")";
-                        ctx.fillRect(b.x, 0, b.w, h);
+                        const a = animated
+                            ? b.base * (0.6 + 0.4 * Math.sin(b.ph + t))
+                            : b.base * 0.85;
+                        if (a <= 0.004) continue;
+                        ctx.strokeStyle = "rgba(150,178,150," + a + ")";
+                        ctx.lineWidth = b.w;
+                        ctx.lineDashOffset = b.off - t * 3 * dpr; // very slow ordered drift
+                        ctx.beginPath();
+                        ctx.moveTo(b.x, 0);
+                        ctx.lineTo(b.x, h);
+                        ctx.stroke();
                     }
+                }
+                function frame() {
+                    t += 0.01;
+                    paint(true);
                     if (!reduce) requestAnimationFrame(frame);
                 }
-                if (reduce) {
-                    // static barcode
-                    for (let i = 0; i < bars.length; i++) {
-                        const b = bars[i];
-                        ctx.fillStyle = "rgba(150,178,150," + b.base * 0.8 + ")";
-                        ctx.fillRect(b.x, 0, b.w, h);
-                    }
-                } else {
-                    frame();
-                }
+                if (reduce) paint(false);
+                else frame();
             })();
 
             // ---- thread links flash + open their target ----
