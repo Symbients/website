@@ -146,12 +146,13 @@
                 z-index: 0;
                 opacity: 0.5;
                 pointer-events: none;
-                -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
-                mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+                /* thin edge-fade only — keep most of the being visible */
+                -webkit-mask-image: radial-gradient(closest-side, #000 88%, transparent 100%);
+                mask-image: radial-gradient(closest-side, #000 88%, transparent 100%);
             }
             /* the ascii familiar reads darker on the void in dark mode — lift it */
             html[data-theme="dark"] .familiar {
-                opacity: 0.74;
+                opacity: 0.92;
             }
 
             /* the ascii Extitutional Creature — the define-mode backdrop.
@@ -169,11 +170,12 @@
                 z-index: 0;
                 opacity: 0.8;
                 pointer-events: none;
-                -webkit-mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
-                mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
+                /* thin edge-fade only — stop the halo from eating the creature */
+                -webkit-mask-image: radial-gradient(closest-side, #000 92%, transparent 100%);
+                mask-image: radial-gradient(closest-side, #000 92%, transparent 100%);
             }
             html[data-theme="dark"] .creature {
-                opacity: 0.95;
+                opacity: 1;
             }
 
             /* ---- mode visibility: define (definition + dirs) vs show (showcase) ---- */
