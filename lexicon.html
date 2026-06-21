@@ -749,6 +749,65 @@
                 opacity: 0;
             }
 
+            /* ---------- tree view: the site as a living `tree` listing ---------- */
+            .tree {
+                font-family: var(--mono);
+                font-size: clamp(12px, 1.05vw, 14px);
+                line-height: 1.7;
+                padding: 1.6rem 0 3rem;
+                color: var(--text);
+            }
+            .tree-legend {
+                color: var(--faint);
+            }
+            .tree-row {
+                white-space: pre;
+                animation: tree-in 0.5s var(--ease) both;
+            }
+            @keyframes tree-in {
+                from {
+                    opacity: 0;
+                    transform: translateX(-8px);
+                }
+            }
+            .tree-rail {
+                color: var(--faint);
+            }
+            .tree-mark {
+                color: var(--dim);
+            }
+            .tree-mark.hot {
+                color: var(--green);
+            }
+            .tree-node {
+                color: var(--text);
+                cursor: pointer;
+                text-decoration: none;
+                outline: none;
+                border-bottom: 1px solid transparent;
+                transition:
+                    color 0.2s var(--ease),
+                    border-color 0.2s var(--ease);
+            }
+            .tree-node.is-branch {
+                font-weight: 700;
+                letter-spacing: -0.01em;
+            }
+            .tree-node:hover,
+            .tree-node:focus {
+                color: var(--green);
+                border-bottom-color: color-mix(
+                    in srgb,
+                    var(--green) 45%,
+                    transparent
+                );
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .tree-row {
+                    animation: none;
+                }
+            }
+
             /* ---------- reading mode (click a cell) ---------- */
             .col {
                 cursor: pointer;
@@ -1060,6 +1119,7 @@
                     <button class="tab" type="button" data-view="lexicon">lexicon</button>
                     <button class="tab" type="button" data-view="events">events</button>
                     <button class="tab" type="button" data-view="writings">writings</button>
+                    <button class="tab" type="button" data-view="tree">tree</button>
                 </nav>
                 <div class="terminal" aria-hidden="true">
                     <div class="term-line"></div>
@@ -1385,6 +1445,19 @@
                 </section>
             </section><!-- /view: writings -->
 
+            <!-- ============ TREE VIEW ============ -->
+            <section class="view" data-view="tree" hidden aria-hidden="true">
+                <div class="submast">
+                    <p class="mh-sub">
+                        The whole lexicon as one tree — every term, gathering and
+                        transmission grown from a single root. Click a leaf to open
+                        it, a branch to walk into its section.
+                    </p>
+                    <div class="mh-right">site map · <span class="tree-legend">@ leaf · ▸ branch</span></div>
+                </div>
+                <div class="tree" id="site-tree" role="tree"></div>
+            </section><!-- /view: tree -->
+
             <div class="reader" aria-hidden="true">
                 <button class="reader-close" type="button" aria-label="Collapse">
                     collapse&nbsp;▴
@@ -1652,6 +1725,7 @@
                     lexicon: "Lexicon",
                     events: "Events",
                     writings: "Writings",
+                    tree: "Tree",
                 };
                 const valid = (n) => views.some((v) => v.dataset.view === n);
 
@@ -1683,6 +1757,9 @@
                 });
                 const initial = location.hash.slice(1);
                 show(valid(initial) ? initial : "lexicon", false);
+
+                // expose for the tree view (jump to a view / card)
+                window.__lexShowView = show;
             })();
 
             // ---- reading mode: click a cell -> border flies open, content types ----
@@ -1969,6 +2046,118 @@
                 document.addEventListener("keydown", (ev) => {
                     if (ev.key === "Escape" && shell.classList.contains("reading"))
                         close();
+                });
+
+                // expose for the tree view: open a card by id
+                window.__lexOpen = open;
+            })();
+
+            // ---- tree view: the whole lexicon as a living `tree` listing ----
+            // Built from THIS page's own views/bands/cards; clicking a leaf
+            // jumps to its view and expands the card, a branch jumps to the view.
+            (function () {
+                const host = document.getElementById("site-tree");
+                if (!host) return;
+
+                // assemble the hierarchy from the SPA's own content
+                const views = [
+                    ...document.querySelectorAll('.shell .view[data-view]'),
+                ].filter((v) => v.dataset.view !== "tree");
+                const root = { label: "the lexicon", children: [] };
+                views.forEach((view) => {
+                    const vName = view.dataset.view;
+                    const vNode = { label: vName, goto: vName, children: [] };
+                    const bands = [...view.querySelectorAll(".band")];
+                    const cardNode = (col) => ({
+                        label: (col.querySelector(".term") || {}).textContent.trim(),
+                        open: col.id,
+                    });
+                    if (bands.length > 1) {
+                        bands.forEach((band) => {
+                            const bn = {
+                                label: (
+                                    band.querySelector(".band-axis span:not(.rn)") || {}
+                                ).textContent.trim(),
+                                goto: vName,
+                                children: [...band.querySelectorAll(".col")].map(cardNode),
+                            };
+                            vNode.children.push(bn);
+                        });
+                    } else {
+                        view.querySelectorAll(".col").forEach((c) =>
+                            vNode.children.push(cardNode(c)),
+                        );
+                    }
+                    root.children.push(vNode);
+                });
+
+                // render rows with sapling connectors (| \ _ rails, hot @ tips)
+                const frag = document.createDocumentFragment();
+                let n = 0;
+                function walk(node, prefix, isLast, isRoot) {
+                    const leaf = !node.children || !node.children.length;
+                    const row = document.createElement("div");
+                    row.className = "tree-row";
+                    row.style.animationDelay = n++ * 0.02 + "s";
+                    let html = "";
+                    if (!isRoot)
+                        html +=
+                            '<span class="tree-rail">' +
+                            (prefix + (isLast ? "\\___ " : "|___ ")) +
+                            "</span>";
+                    html +=
+                        '<span class="tree-mark' +
+                        (leaf ? " hot" : "") +
+                        '">' +
+                        (leaf ? "@" : isRoot ? "◈" : "▸") +
+                        " </span>";
+                    const cls =
+                        "tree-node" + (leaf ? " is-leaf" : " is-branch");
+                    const attr = node.open
+                        ? ' data-open="' + node.open + '"'
+                        : node.goto
+                          ? ' data-goto="' + node.goto + '"'
+                          : "";
+                    html +=
+                        "<span class=\"" + cls + '"' + attr + ' tabindex="0">' +
+                        node.label +
+                        "</span>";
+                    row.innerHTML = html;
+                    frag.appendChild(row);
+                    const kids = node.children || [];
+                    const cp = isRoot
+                        ? ""
+                        : prefix + (isLast ? "     " : "|    ");
+                    kids.forEach((k, i) =>
+                        walk(k, cp, i === kids.length - 1, false),
+                    );
+                }
+                walk(root, "", true, true);
+                host.appendChild(frag);
+
+                // wire clicks: leaf -> open card in its view; branch -> show view
+                function act(el) {
+                    const id = el.dataset.open;
+                    if (id) {
+                        const card = document.getElementById(id);
+                        const view = card && card.closest(".view")?.dataset.view;
+                        if (view && window.__lexShowView) window.__lexShowView(view);
+                        if (window.__lexOpen) window.__lexOpen(id);
+                    } else if (el.dataset.goto && window.__lexShowView) {
+                        window.__lexShowView(el.dataset.goto);
+                    }
+                }
+                host.addEventListener("click", (ev) => {
+                    const el = ev.target.closest(".tree-node");
+                    if (el) act(el);
+                });
+                host.addEventListener("keydown", (ev) => {
+                    if (ev.key !== "Enter") return;
+                    const el = ev.target.closest(".tree-node");
+                    if (el) {
+                        ev.preventDefault();
+                        act(el);
+                    }
                 });
             })();
         </script>
