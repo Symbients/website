@@ -749,11 +749,20 @@
                 opacity: 0;
             }
 
-            /* ---------- tree view: a sideways ascii sapling (root left) ---------- */
+            /* ---------- tree view: a rotated L-system ascii sapling ----------
+               root anchored at the LEFT EDGE OF THE VIEWPORT (full-bleed),
+               branches fanning rightward to each hyperlink, leaf foliage
+               trailing to the right. Glyph field on a canvas + DOM labels. */
             .tree {
                 position: relative;
-                margin: 1.4rem 0 3rem;
-                overflow-x: auto;
+                width: 100vw;
+                left: 50%;
+                right: 50%;
+                margin-left: -50vw;
+                margin-right: -50vw;
+                margin-top: 1.4rem;
+                margin-bottom: 3rem;
+                overflow: hidden;
             }
             .tree-legend {
                 color: var(--faint);
@@ -776,9 +785,10 @@
                 text-decoration: none;
                 cursor: pointer;
                 pointer-events: auto;
-                padding: 0 2px;
+                padding: 0 3px;
+                transform: translateY(-50%);
                 border-bottom: 1px solid transparent;
-                background: color-mix(in srgb, var(--void) 68%, transparent);
+                background: color-mix(in srgb, var(--void) 74%, transparent);
                 transition:
                     color 0.2s var(--ease),
                     border-color 0.2s var(--ease);
@@ -787,12 +797,19 @@
             .tree-node.is-root {
                 color: var(--dim);
             }
+            .tree-node.is-branch {
+                color: var(--text);
+            }
+            .tree-node.is-leaf {
+                color: var(--dim);
+            }
             .tree-node.is-static {
                 cursor: default;
             }
             .tree-node:not(.is-static):hover,
             .tree-node:not(.is-static):focus {
                 color: var(--green);
+                background: color-mix(in srgb, var(--void) 88%, transparent);
                 border-bottom-color: color-mix(
                     in srgb,
                     var(--green) 45%,
@@ -803,7 +820,7 @@
             @keyframes tree-in {
                 from {
                     opacity: 0;
-                    transform: translateX(-6px);
+                    transform: translateY(-50%) translateX(-8px);
                 }
             }
             @media (prefers-reduced-motion: reduce) {
@@ -2095,10 +2112,14 @@
                     root.children.push(vNode);
                 });
 
-                // ---- render as a SIDEWAYS ascii sapling --------------------
-                // root anchored at the far left; branches sprawl rightward to
-                // each hyperlink (the structure); leaf foliage extends to the
-                // right of the labels. Same glyph set as the ascii sapling.
+                // ---- render as a ROTATED L-SYSTEM ascii sapling ------------
+                // The hierarchy seeds the sapling's recursive branch growth,
+                // rotated to grow rightward: root at the viewport's left edge,
+                // each node = one branch segment, children fan out by a radial
+                // wedge proportional to their leaf-count, length shrinking each
+                // level. Branches + '*' joints + leaf foliage are stamped into a
+                // monospace glyph FIELD on a <canvas> (theme ink from --text);
+                // the clickable DOM labels ride at each branch tip.
                 host.textContent = "";
                 const cv = document.createElement("canvas");
                 cv.className = "tree-cv";
@@ -2109,117 +2130,180 @@
                 const ctx = cv.getContext("2d");
 
                 const FS = 13;
-                const LH = Math.round(FS * 1.62);
                 const MONO = FS + 'px "Space Mono", ui-monospace, monospace';
                 ctx.font = MONO;
-                const CWp = ctx.measureText("M").width || FS * 0.6;
-                const GAP = 5,
-                    FOL = 8,
-                    LEAFSP = 1.55;
+                const CW = ctx.measureText("M").width || FS * 0.6; // cell width px
+                const CH = Math.round(FS * 1.5); // cell height px (one glyph row)
 
-                // cell width of a label (CJK counts double)
+                // ---- tunable L-system constants (settled after iteration) ---
+                const FAN = 0.86; // half-angle of the root wedge (radians)
+                const SHRINK = 0.72; // segment length shrink per level
+                const VW = Math.max(
+                    640,
+                    document.documentElement.clientWidth || window.innerWidth,
+                );
+                const BASE = (VW / CW) * 0.29; // base segment length, in cells
+                const FOL = 9; // foliage reach (cells) right of a leaf
+                const JIT = 0.16; // seeded angular jitter amount
+
+                // deterministic seeded RNG (mulberry32) — stable across reloads
+                let _s = 0x9e3779b9 >>> 0;
+                const rng = () => {
+                    _s |= 0;
+                    _s = (_s + 0x6d2b79f5) | 0;
+                    let t = Math.imul(_s ^ (_s >>> 15), 1 | _s);
+                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                };
+                const jitter = (depth) => (rng() - 0.5) * JIT * Math.pow(0.9, depth);
+
+                // cell width of a label (CJK counts as 2 cells)
                 const cwid = (s) => {
                     let n = 0;
                     for (const ch of s) n += ch.codePointAt(0) > 0x2e7f ? 2 : 1;
                     return n;
                 };
 
-                // layout: x in cells (grows by parent label width), row by leaves
-                let leafRow = 1,
-                    maxCol = 1;
-                function layout(node, x) {
-                    node.x = x;
+                // memoize subtree leaf counts (drives wedge allocation)
+                function leaves(node) {
                     const kids = node.children || [];
-                    if (!kids.length) {
-                        node.row = leafRow;
-                        node.leaf = true;
-                        leafRow += LEAFSP;
-                        maxCol = Math.max(maxCol, x + cwid(node.label) + FOL);
-                        return;
-                    }
-                    maxCol = Math.max(maxCol, x + cwid(node.label));
-                    const cx = x + cwid(node.label) + GAP;
-                    kids.forEach((k) => layout(k, cx));
-                    node.row = (kids[0].row + kids[kids.length - 1].row) / 2;
+                    if (!kids.length) return (node._lv = 1);
+                    let n = 0;
+                    for (const k of kids) n += leaves(k);
+                    return (node._lv = n);
                 }
-                layout(root, 1);
-                const COLS = Math.ceil(maxCol) + 2;
-                const ROWS = Math.ceil(leafRow) + 1;
+                leaves(root);
 
-                // glyph field stamped with branches + joints + foliage
+                // ---- polar layout: tips in CELL space ----------------------
+                // x grows rightward, y is the row axis. A cell is CW wide / CH
+                // tall, so the vertical leg of polar growth is scaled by CW/CH
+                // (ASP<1, compressing rows) to keep angles visually true once
+                // stamped into the square glyph grid — the tree reads wider than
+                // tall. The ROOT sits at the origin (0,0) with no segment of its
+                // own; its children fan out from there across the full wedge, so
+                // the root label rides at x≈0 and the trunk grows rightward.
+                const ASP = CW / CH;
+                function layoutWedge(node, x, y, a0, a1, len, depth, isRoot) {
+                    let ex = x,
+                        ey = y,
+                        ang = (a0 + a1) / 2;
+                    if (!isRoot) {
+                        ang += jitter(depth);
+                        ex = x + Math.cos(ang) * len;
+                        ey = y + Math.sin(ang) * len * ASP;
+                    }
+                    node.x = x;
+                    node.y = y; // segment start (parent tip)
+                    node.tx = ex;
+                    node.ty = ey; // this node's tip (where its label sits)
+                    node.ang = ang;
+                    node.depth = depth;
+                    const kids = node.children || [];
+                    let acc = a0;
+                    for (const k of kids) {
+                        const span = ((a1 - a0) * k._lv) / node._lv;
+                        layoutWedge(
+                            k,
+                            ex,
+                            ey,
+                            acc,
+                            acc + span,
+                            len * SHRINK,
+                            depth + 1,
+                            false,
+                        );
+                        acc += span;
+                    }
+                }
+                layoutWedge(root, 0, 0, -FAN, +FAN, BASE, 0, true);
+
+                // ---- bounds (in cells) -> grid dimensions ------------------
+                let minY = 0,
+                    maxY = 0,
+                    maxX = 0;
+                (function bounds(node) {
+                    minY = Math.min(minY, node.y, node.ty);
+                    maxY = Math.max(maxY, node.y, node.ty);
+                    maxX = Math.max(maxX, node.tx + cwid(node.label) + FOL + 2);
+                    (node.children || []).forEach(bounds);
+                })(root);
+                const PADX = 1,
+                    PADY = 2;
+                const OX = PADX; // x origin offset (root rides x=0 in viewport)
+                const OY = -minY + PADY; // shift so all rows are >= 0
+                const COLS = Math.ceil(maxX) + PADX + 2;
+                const ROWS = Math.ceil(maxY - minY) + PADY * 2;
+
+                // ---- glyph field -------------------------------------------
                 const field = new Array(COLS * ROWS).fill("");
+                const prio = { _: 0, "|": 1, "/": 2, "\\": 2, "*": 3, "@": 4 };
                 const put = (c, r, g) => {
-                    c = Math.round(c);
-                    r = Math.round(r);
+                    c = Math.round(c + OX);
+                    r = Math.round(r + OY);
                     if (c < 0 || r < 0 || c >= COLS || r >= ROWS) return;
-                    if (!field[r * COLS + c] || g === "@" || g === "*")
-                        field[r * COLS + c] = g;
+                    const i = r * COLS + c;
+                    const cur = field[i];
+                    if (!cur || (prio[g] ?? 2.5) >= (prio[cur] ?? 2.5)) field[i] = g;
                 };
+                // glyph by slope in CELL space (y down). Matches tree-ascii.js.
                 const dirG = (dx, dy) =>
-                    Math.abs(dy) < 0.4
+                    Math.abs(dy) < 0.35
                         ? "_"
-                        : Math.abs(dx) < 0.4
+                        : Math.abs(dx) < 0.35
                           ? "|"
                           : dy < 0
                             ? "/"
                             : "\\";
-                function branch(x0, r0, x1, r1) {
+                // walk a segment, stamping the slope glyph (Bresenham-ish)
+                function segment(x0, y0, x1, y1) {
                     const dx = x1 - x0,
-                        dy = r1 - r0;
-                    const steps = Math.max(
-                        2,
-                        Math.round((Math.abs(dx) + Math.abs(dy)) * 1.3),
-                    );
+                        dy = y1 - y0;
                     const g = dirG(dx, dy);
+                    const steps = Math.max(1, Math.round(Math.hypot(dx, dy) * 1.4));
                     for (let s = 0; s <= steps; s++) {
                         const t = s / steps;
-                        const bow = Math.sin(t * Math.PI) * 0.4;
-                        put(x0 + dx * t, r0 + dy * t + (dy >= 0 ? -bow : bow), g);
+                        put(x0 + dx * t, y0 + dy * t, g);
                     }
                 }
                 const FOLI = ["*", "#", "%", "+", "=", "-", ":"];
-                const rr = (a, b) => a + Math.random() * (b - a);
-                function paintTree(node, isRoot) {
+                function paint(node) {
                     const kids = node.children || [];
-                    const ax = node.x + cwid(node.label); // right edge of label
-                    if (!isRoot) put(node.x - 1, node.row, "*"); // joint at label
-                    if (!kids.length) {
-                        // foliage extending right of the leaf label
-                        const base = ax + 1;
-                        const count = 6 + Math.floor(Math.random() * 6);
+                    // segment from parent tip to this node's tip
+                    if (node.depth > 0) segment(node.x, node.y, node.tx, node.ty);
+                    // '*' joint at the tip (a node), unless it's a leaf tip
+                    if (kids.length) put(node.tx, node.ty, "*");
+                    else {
+                        // hot tip + foliage thinning to the right of the leaf
+                        put(node.tx, node.ty, "*");
+                        const base = node.tx + cwid(node.label) + 1;
+                        const count = 5 + Math.floor(rng() * 5);
                         for (let i = 0; i < count; i++) {
-                            const d = Math.random();
+                            const d = rng();
                             const fx = base + d * FOL;
-                            const fr = node.row + rr(-1.5, 1.5) * (0.5 + d);
+                            const fr = node.ty + (rng() - 0.5) * 2 * (0.4 + d * 1.1);
                             const g =
-                                Math.random() < 0.13
+                                rng() < 0.12
                                     ? "@"
                                     : FOLI[Math.floor(d * FOLI.length)];
                             put(fx, fr, g);
                         }
-                        return;
                     }
-                    put(ax + 1, node.row, "*"); // the split joint
-                    kids.forEach((k) => branch(ax + 1, node.row, k.x - 1, k.row));
-                    kids.forEach((k) => paintTree(k, false));
+                    kids.forEach(paint);
                 }
-                for (let c = 0; c < root.x; c++) put(c, root.row, "_"); // trunk
-                paintTree(root, true);
+                paint(root);
 
-                // labels (DOM, clickable, theme-aware) overlaid on the grid
+                // labels (DOM, clickable, theme-aware) overlaid at each tip
                 let li = 0;
                 (function place(node, isRoot) {
                     const leaf = !(node.children && node.children.length);
                     const a = document.createElement("a");
                     a.className =
                         "tree-node" +
-                        (leaf ? " is-leaf" : " is-branch") +
-                        (isRoot ? " is-root" : "");
+                        (isRoot ? " is-root is-static" : leaf ? " is-leaf" : " is-branch");
                     a.textContent = node.label;
-                    a.style.left = node.x * CWp + "px";
-                    a.style.top = node.row * LH + "px";
-                    a.style.lineHeight = LH + "px";
-                    a.style.animationDelay = li++ * 0.025 + "s";
+                    a.style.left = (node.tx + OX) * CW + "px";
+                    a.style.top = (node.ty + OY + 0.5) * CH + "px";
+                    a.style.animationDelay = li++ * 0.02 + "s";
                     a.tabIndex = 0;
                     if (node.open) a.dataset.open = node.open;
                     else if (node.goto) a.dataset.goto = node.goto;
@@ -2238,8 +2322,8 @@
                 };
                 function render() {
                     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-                    const W = COLS * CWp,
-                        H = ROWS * LH;
+                    const W = COLS * CW,
+                        H = ROWS * CH;
                     cv.width = W * dpr;
                     cv.height = H * dpr;
                     cv.style.width = W + "px";
@@ -2264,12 +2348,12 @@
                                 g === "@"
                                     ? 1
                                     : g === "*"
-                                      ? 0.9
+                                      ? 0.88
                                       : g === "_" || g === "|"
-                                        ? 0.45
-                                        : 0.72;
+                                        ? 0.42
+                                        : 0.66;
                             ctx.fillStyle = "rgba(" + ink + "," + al + ")";
-                            ctx.fillText(g, (c + 0.5) * CWp, (r + 0.5) * LH);
+                            ctx.fillText(g, (c + 0.5) * CW, (r + 0.5) * CH);
                         }
                 }
                 render();
