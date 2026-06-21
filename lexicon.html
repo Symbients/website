@@ -1641,10 +1641,13 @@
                                 <div class="meta"><span class="threads">↳ <span>crosslucid.zone</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-12" tabindex="0" data-href="https://aurecevettier.com/">
+                        <article class="col k-live" id="org-12" tabindex="0" data-href="https://www.aurecevettier.com/">
                             <div class="col-top"><span class="node"></span>O·12<span class="ct">↗</span></div>
                             <h2 class="term">Aurece Vettier</h2>
                             <div class="tag">Paul Mouginot · latent-space botanicals</div>
+                            <div class="col-media">
+                                <img src="/assets/artists/aurece-vettier.webp" alt="Aurece Vettier" loading="lazy" decoding="async" />
+                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">Aurece Vettier is the artistic practice of Paul Mouginot, mining the latent spaces of machine-learning models for imaginary botanicals, poems and forms — then materialising those hallucinations as sculptures and herbaria, folding algorithmic dreaming back into the natural world.</p>
                                 <div class="meta"><span class="threads">↳ <span>aurecevettier.com</span></span></div>
@@ -2033,6 +2036,9 @@
                     if (heroTitle && TITLES[name])
                         heroTitle.textContent = TITLES[name];
                     if (shell) shell.classList.remove("reading"); // leave reading on nav
+                    // re-shuffle the organics grid on every visit (not just load)
+                    if (name === "organics" && window.__lexReshuffleOrganics)
+                        window.__lexReshuffleOrganics();
                     if (push && location.hash.slice(1) !== name)
                         history.replaceState(null, "", "#" + name);
                     window.scrollTo({ top: 0, behavior: "auto" });
@@ -2161,6 +2167,28 @@
                         indexNav.appendChild(b);
                     });
                 }
+
+                // organics: reorder the grid into a fresh random order, and keep
+                // the reader's organics index in sync. Called once for the initial
+                // order and again every time the organics view is shown.
+                function shuffleOrganics() {
+                    const grid = document.querySelector(
+                        '.view[data-view="organics"] .cols',
+                    );
+                    if (!grid) return;
+                    const cards = [...grid.querySelectorAll(":scope > .col")];
+                    for (let i = cards.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [cards[i], cards[j]] = [cards[j], cards[i]];
+                    }
+                    cards.forEach((c) => grid.appendChild(c)); // re-append shuffled
+                    byView["organics"] = cards
+                        .map((c) => byId[c.id])
+                        .filter(Boolean);
+                    if (indexView === "organics") indexView = null; // rebuild next open
+                }
+                window.__lexReshuffleOrganics = shuffleOrganics;
+                shuffleOrganics(); // initial random order
 
                 function content(e) {
                     // events / writings have no full text yet — placeholder copy
