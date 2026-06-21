@@ -719,21 +719,22 @@
                 height: 100%;
                 object-fit: cover;
                 filter: grayscale(1) contrast(1.04);
-                opacity: 0.82;
+                opacity: 0.9;
                 transition:
                     filter 0.45s var(--ease),
                     opacity 0.45s var(--ease),
                     transform 0.7s var(--ease);
             }
-            /* a theme tint washes in on hover — amber in amber mode, sepia,
-               etc., the same trick as the hero (multiply toward --hero-tint) */
+            /* theme-tinted at rest (amber in amber mode, etc. — the hero trick:
+               multiply toward --hero-tint); the tint lifts and true colour
+               returns on hover */
             .col-media::after {
                 content: "";
                 position: absolute;
                 inset: 0;
                 background: var(--hero-tint);
                 mix-blend-mode: multiply;
-                opacity: 0;
+                opacity: 0.5;
                 pointer-events: none;
                 transition: opacity 0.45s var(--ease);
             }
@@ -745,7 +746,7 @@
             }
             .col:hover .col-media::after,
             .col:focus-within .col-media::after {
-                opacity: 0.5;
+                opacity: 0;
             }
 
             /* ---------- reading mode (click a cell) ---------- */
@@ -871,7 +872,7 @@
                 inset: 0;
                 background: var(--hero-tint);
                 mix-blend-mode: multiply;
-                opacity: 0.42;
+                opacity: 0.5;
                 pointer-events: none;
                 transition: opacity 0.3s var(--ease);
             }
@@ -879,7 +880,7 @@
                 filter: grayscale(0);
             }
             .reader-media:hover .reader-media-img::after {
-                opacity: 0.16;
+                opacity: 0;
             }
             .reader-media.no-img .reader-media-img {
                 display: none;
