@@ -783,10 +783,16 @@
                 text-decoration: none;
                 cursor: pointer;
                 pointer-events: auto;
-                padding: 0 3px;
+                padding: 1px 5px;
                 transform: translate(-50%, -50%);
                 border-bottom: 1px solid transparent;
-                background: color-mix(in srgb, var(--void) 74%, transparent);
+                border-radius: 2px;
+                /* a strong --void plate punches each hyperlink through the
+                   surrounding fractal foliage; the soft halo feathers the
+                   plate edge so labels read clearly without looking boxed */
+                background: color-mix(in srgb, var(--void) 94%, transparent);
+                box-shadow: 0 0 6px 4px
+                    color-mix(in srgb, var(--void) 88%, transparent);
                 transition:
                     color 0.2s var(--ease),
                     border-color 0.2s var(--ease);
@@ -2297,8 +2303,26 @@
                 );
                 const BASE = (VW / CW) * 0.185; // base segment length, in cells
                 const TRUNK = 8; // trunk length (rows) below the first fork
-                const FOL = 5; // foliage reach (cells) around a leaf tip
-                const JIT = 0.2; // seeded angular jitter amount
+                const JIT = 0.07; // seeded angular jitter (small -> algorithmic)
+
+                // ---- decorative foliage (a recursive sapling crown beyond
+                //      every hyperlink leaf) — the ASCII-Sapling grow() made
+                //      literal: split into 2 (sometimes 3) fine twigs at
+                //      ±FOL_ANGLE, ×FOL_SHRINK, for FOL_GEN generations, ending
+                //      each twig in a hot @ tip. This is the dense fine-twig
+                //      crown halo (Anima); it is NOT random glyph scatter. -----
+                const FOL_GEN = 4; // generations of decorative branching
+                const FOL_LEN = 5.0; // first decorative segment length (cells)
+                const FOL_ANGLE = 0.72; // split half-angle (radians, ~41deg) —
+                //   wide so each fork's two twigs clearly diverge (no parallel
+                //   hatching) at the coarse glyph resolution
+                const FOL_SHRINK = 0.66; // twig length shrink per generation
+                const FOL_JIT = 0.09; // tiny per-twig angular jitter
+                const FOL_LIFT = 0.85; // bias the crown upward (rounded fan)
+                const FOL_ASP = 0.82; // crown row-compression (near-square so
+                //   twigs keep angular variety / \ | instead of flat hatching)
+                const FOL_BONUS = 0; // p(extra central twig) — 0 keeps it clean
+                const ROOTS = true; // mirror a fine fractal root system below
 
                 // deterministic seeded RNG (mulberry32) — stable across reloads
                 let _s = 0x9e3779b9 >>> 0;
@@ -2371,18 +2395,98 @@
                 }
                 layoutWedge(root, 0, 0, UP - FAN, UP + FAN, BASE, 0, true);
 
+                // ---- decorative foliage: recursive twig segments ------------
+                // For every hyperlink leaf we keep growing the sapling: split
+                // into two (sometimes three) fine twigs at ±FOL_ANGLE, ×shrink,
+                // for FOL_GEN generations, ending each in an @ tip. Generated
+                // ONCE here (consuming the seeded RNG deterministically) into a
+                // flat list of {x0,y0,x1,y1,tip} segments so bounds() can size
+                // the grid before paint() stamps them. The vertical leg uses a
+                // near-square FOL_ASP (not the trunk's strong ASP) so twigs keep
+                // their / \ | angular variety instead of collapsing to flat
+                // hatching — the crown is a true rounded fractal, not a fan.
+                const FOLI_SEGS = [];
+                function growFoliage(x, y, dir, len, gen) {
+                    if (gen > FOL_GEN || len < 0.7) {
+                        FOLI_SEGS.push({ x0: x, y0: y, tip: true });
+                        return;
+                    }
+                    const nx = x + Math.cos(dir) * len;
+                    const ny = y + Math.sin(dir) * len * FOL_ASP;
+                    FOLI_SEGS.push({ x0: x, y0: y, x1: nx, y1: ny, tip: false });
+                    const jL = (rng() - 0.5) * FOL_JIT;
+                    const jR = (rng() - 0.5) * FOL_JIT;
+                    const cl = len * FOL_SHRINK;
+                    growFoliage(nx, ny, dir - FOL_ANGLE + jL, cl, gen + 1);
+                    growFoliage(nx, ny, dir + FOL_ANGLE + jR, cl, gen + 1);
+                    // a sparse central twig thickens the crown without a blob
+                    if (gen < FOL_GEN - 1 && FOL_BONUS && rng() < FOL_BONUS)
+                        growFoliage(
+                            nx,
+                            ny,
+                            dir + (rng() - 0.5) * FOL_ANGLE,
+                            cl * 0.82,
+                            gen + 2,
+                        );
+                }
+                // seed one crown per leaf, aimed along the branch heading but
+                // lifted toward the canopy (UP) so twigs frame the label. The
+                // crown origin is pushed a little along UP (clear of the label
+                // row) so the fan blooms ABOVE the hyperlink instead of over it.
+                const FOL_OFF = 3.6; // rows the crown starts above the tip
+                const FOL_GAP = 1.6; // rows left clear above the label (so the
+                //   stalk + crown never draw through the hyperlink's own row)
+                (function seedFoliage(node) {
+                    const kids = node.children || [];
+                    if (!kids.length) {
+                        let dir = node.depth > 0 ? node.ang : UP;
+                        dir = dir * (1 - FOL_LIFT) + UP * FOL_LIFT;
+                        const bx = node.tx + Math.cos(UP) * FOL_GAP;
+                        const by = node.ty + Math.sin(UP) * FOL_GAP * FOL_ASP;
+                        const sx = node.tx + Math.cos(UP) * FOL_OFF;
+                        const sy = node.ty + Math.sin(UP) * FOL_OFF * FOL_ASP;
+                        // a short stalk rising from just ABOVE the label to the
+                        // crown origin (the label row itself is left untouched)
+                        FOLI_SEGS.push({ x0: bx, y0: by, x1: sx, y1: sy });
+                        node._folStart = FOLI_SEGS.length;
+                        growFoliage(sx, sy, dir, FOL_LEN, 0);
+                        node._folEnd = FOLI_SEGS.length;
+                    } else kids.forEach(seedFoliage);
+                })(root);
+
+                // a smaller mirrored root system below the trunk base
+                const ROOT_SEGS = [];
+                if (ROOTS) {
+                    const RS = FOLI_SEGS; // reuse generator via swap
+                    const save = FOLI_SEGS.length;
+                    // grow downward (DOWN = +PI/2) from the trunk base, shorter
+                    growFoliage(0, TRUNK, Math.PI / 2, FOL_LEN * 1.15, 1);
+                    for (let i = save; i < FOLI_SEGS.length; i++)
+                        ROOT_SEGS.push(FOLI_SEGS[i]);
+                    FOLI_SEGS.length = save; // detach roots from crown list
+                    void RS;
+                }
+
                 // ---- bounds (in cells) -> grid dimensions ------------------
                 // the crown spreads left & right above a bottom trunk; centre it
                 let minX = 0,
                     maxX = 0,
                     minY = 0,
                     maxY = TRUNK;
+                const growBounds = (px) => {
+                    minX = Math.min(minX, px.x0, px.x1 ?? px.x0);
+                    maxX = Math.max(maxX, px.x0, px.x1 ?? px.x0);
+                    minY = Math.min(minY, px.y0, px.y1 ?? px.y0);
+                    maxY = Math.max(maxY, px.y0, px.y1 ?? px.y0);
+                };
+                FOLI_SEGS.forEach(growBounds);
+                ROOT_SEGS.forEach(growBounds);
                 (function bounds(node) {
                     minY = Math.min(minY, node.ty);
                     maxY = Math.max(maxY, node.ty);
                     const hw = cwid(node.label) / 2 + 1;
-                    minX = Math.min(minX, node.tx - hw - FOL);
-                    maxX = Math.max(maxX, node.tx + hw + FOL);
+                    minX = Math.min(minX, node.tx - hw);
+                    maxX = Math.max(maxX, node.tx + hw);
                     (node.children || []).forEach(bounds);
                 })(root);
                 const PADX = 2,
@@ -2417,47 +2521,42 @@
                     const dx = x1 - x0,
                         dy = y1 - y0;
                     const g = dirG(dx, dy);
-                    const steps = Math.max(1, Math.round(Math.hypot(dx, dy) * 1.4));
+                    const steps = Math.max(1, Math.round(Math.hypot(dx, dy)));
                     for (let s = 0; s <= steps; s++) {
                         const t = s / steps;
                         put(x0 + dx * t, y0 + dy * t, g);
                     }
                 }
-                const FOLI = ["*", "#", "%", "+", "=", "-", ":"];
+                // stamp a list of decorative twig segments (uniform slope
+                // glyphs; @ at the growing tips) — no random glyph scatter.
+                // Tips fill empty cells only, so the fine twig LINES stay
+                // legible instead of being carpeted by hot @s.
+                function stampFoliage(segs) {
+                    for (const s of segs) {
+                        if (!s.tip) segment(s.x0, s.y0, s.x1, s.y1);
+                    }
+                    for (const s of segs) {
+                        if (!s.tip) continue;
+                        const c = Math.round(s.x0 + OX),
+                            r = Math.round(s.y0 + OY);
+                        if (c < 0 || r < 0 || c >= COLS || r >= ROWS) continue;
+                        if (!field[r * COLS + c]) field[r * COLS + c] = "@";
+                    }
+                }
                 function paint(node) {
                     const kids = node.children || [];
                     // segment from parent tip to this node's tip
                     if (node.depth > 0) segment(node.x, node.y, node.tx, node.ty);
-                    put(node.tx, node.ty, "*"); // joint / tip
-                    if (!kids.length) {
-                        // leaf foliage: a cluster blooming outward along the
-                        // branch heading and spreading sideways around the tip
-                        const ux = Math.cos(node.ang),
-                            uy = Math.sin(node.ang) * ASP;
-                        const m = Math.hypot(ux, uy) || 1;
-                        const nx = ux / m,
-                            ny = uy / m; // heading unit
-                        const px = -ny,
-                            py = nx; // perpendicular
-                        const count = 7 + Math.floor(rng() * 6);
-                        for (let i = 0; i < count; i++) {
-                            const d = rng();
-                            const along = d * FOL;
-                            const perp = (rng() - 0.5) * 2.6 * (0.4 + d);
-                            const fx = node.tx + nx * along + px * perp;
-                            const fy = node.ty + ny * along + py * perp;
-                            const g =
-                                rng() < 0.13
-                                    ? "@"
-                                    : FOLI[Math.floor(rng() * FOLI.length)];
-                            put(fx, fy, g);
-                        }
-                    }
+                    put(node.tx, node.ty, "*"); // structural joint / tip
                     kids.forEach(paint);
                 }
                 // the trunk: a vertical stem from the first fork down to the base
                 segment(0, 0, 0, TRUNK);
                 paint(root);
+                // the dense fine-twig crown beyond every hyperlink leaf,
+                // and (optionally) the mirrored root system below the trunk
+                stampFoliage(FOLI_SEGS);
+                stampFoliage(ROOT_SEGS);
 
                 // labels (DOM, clickable, theme-aware) overlaid at each tip
                 let li = 0;
