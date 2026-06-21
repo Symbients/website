@@ -58,6 +58,7 @@
                 --hair: rgba(31, 28, 22, 0.18);
                 --hair-2: rgba(31, 28, 22, 0.09);
                 --green: #2b2822;
+                --hero-tint: #8d8a82;
             }
             html[data-theme="dark"] {
                 --void: #0a0b0c;
@@ -67,6 +68,7 @@
                 --hair: rgba(196, 204, 192, 0.16);
                 --hair-2: rgba(196, 204, 192, 0.08);
                 --green: #d8dccf;
+                --hero-tint: #2c2e2c;
             }
             html[data-theme="amber"] {
                 --void: #e9cf93;
@@ -76,6 +78,7 @@
                 --hair: rgba(42, 24, 8, 0.22);
                 --hair-2: rgba(42, 24, 8, 0.11);
                 --green: #6e4d20;
+                --hero-tint: #8f5f1e;
             }
 
             /* =================================================================
@@ -288,6 +291,45 @@
                 margin-top: 0.5rem;
                 text-transform: lowercase;
             }
+            /* the symbient's own image, under the subtitle — theme-tinted at
+               rest (--hero-tint multiply over greyscale), true colour on hover */
+            .symbient-portrait {
+                position: relative;
+                width: clamp(120px, 15vw, 180px);
+                aspect-ratio: 1 / 1;
+                margin: 1.1rem auto 0;
+                overflow: hidden;
+                border: 1px solid var(--hair);
+                background: color-mix(in srgb, var(--text) 5%, transparent);
+            }
+            .symbient-portrait img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: grayscale(1) contrast(1.04);
+                opacity: 0.92;
+                transition:
+                    filter 0.45s var(--ease),
+                    opacity 0.45s var(--ease);
+            }
+            .symbient-portrait::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: var(--hero-tint);
+                mix-blend-mode: multiply;
+                opacity: 0.5;
+                pointer-events: none;
+                transition: opacity 0.45s var(--ease);
+            }
+            .symbient-portrait:hover img {
+                filter: grayscale(0) contrast(1);
+                opacity: 1;
+            }
+            .symbient-portrait:hover::after {
+                opacity: 0;
+            }
             .symbient-desc {
                 font-size: clamp(12px, 1vw, 13.5px);
                 line-height: 1.7;
@@ -374,8 +416,6 @@
     </head>
 
     <body>
-        <button class="theme-toggle" type="button">◐ theme</button>
-
         <main class="stage">
             <!-- z0: familiar backdrop / z1: wires / z2: foreground grid -->
             <canvas class="familiar" id="familiar"></canvas>
@@ -387,6 +427,7 @@
                     <div class="symbient-eyebrow">symbient</div>
                     <h1 class="symbient-name" id="symbient-name"></h1>
                     <div class="symbient-cat" id="symbient-cat"></div>
+                    <div class="symbient-portrait" id="symbient-portrait"></div>
                     <p class="symbient-desc" id="symbient-desc"></p>
                 </div>
                 <div class="column column--synthetic" id="synthetic"></div>
@@ -558,9 +599,23 @@
             /* =============================================================
                RENDER — paint the current symbient into the DOM.
                ============================================================= */
+            // the symbient's own image (registry portraits), keyed by name
+            const IMAGES = {
+                "Plantoid": "/assets/symbients/plantoid-480.jpg",
+                "S.A.N": "/assets/symbients/SAN-480.jpg",
+                "Wib & Wob": "/assets/symbients/wibwob-480.png",
+                "terra0": "/assets/symbients/terra0-480.jpeg",
+                "Plantbot": "/assets/symbients/plantbot_cg-480.jpg",
+                "Botto": "/assets/symbients/botto-400.jpg",
+                "Truth Terminal": "/assets/symbients/truth_terminal_self_portrait-480.jpeg",
+                "pneumOS": "/assets/symbients/pneumos-480.jpg",
+                "Solienne": "/assets/artists/solienne.jpg",
+            };
+
             const els = {
                 name: document.getElementById("symbient-name"),
                 cat: document.getElementById("symbient-cat"),
+                portrait: document.getElementById("symbient-portrait"),
                 desc: document.getElementById("symbient-desc"),
                 organic: document.getElementById("organic"),
                 synthetic: document.getElementById("synthetic"),
@@ -581,6 +636,11 @@
                 const s = SYMBIENTS[i];
                 els.name.textContent = s.name;
                 els.cat.textContent = s.cat;
+                const src = IMAGES[s.name];
+                els.portrait.innerHTML = src
+                    ? '<img src="' + src + '" alt="' + s.name + '" loading="lazy" decoding="async" />'
+                    : "";
+                els.portrait.style.display = src ? "" : "none";
                 els.desc.textContent = s.desc;
                 els.organic.innerHTML =
                     '<div class="column-head">organic</div>' +
@@ -702,19 +762,19 @@
                 drawWires();
             });
 
-            const THEMES = ["light", "dark", "amber"];
-            document.querySelector(".theme-toggle").addEventListener("click", () => {
-                const cur =
-                    document.documentElement.getAttribute("data-theme") || "light";
-                const next = THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length];
-                if (next === "light")
+            // theme is driven by the GLOBAL theme (the embedding page): when it
+            // updates localStorage["symbient-theme"], the storage event fires
+            // here and we re-ink the page, the familiar and the wires.
+            function applyTheme(t) {
+                t = ["light", "dark", "amber"].indexOf(t) >= 0 ? t : "light";
+                if (t === "light")
                     document.documentElement.removeAttribute("data-theme");
-                else document.documentElement.setAttribute("data-theme", next);
-                try {
-                    localStorage.setItem("symbient-theme", next);
-                } catch (e) {}
+                else document.documentElement.setAttribute("data-theme", t);
                 familiar.setTheme(readPalette());
                 drawWires();
+            }
+            window.addEventListener("storage", (e) => {
+                if (e.key === "symbient-theme") applyTheme(e.newValue);
             });
 
             // first paint

@@ -696,7 +696,9 @@
             .view[hidden] {
                 display: none;
             }
-            /* symbients view: the standalone showcase, embedded (temp scaffold) */
+            /* symbients view: the standalone showcase, embedded. On this view
+               only, hide the hero (title / nav / terminal) and let the familiar
+               + text overlay run full-page, bordering over the hero. */
             .view-symbients {
                 margin: 0 calc(-1 * clamp(0.9rem, 2.5vw, 2rem));
             }
@@ -706,6 +708,15 @@
                 height: clamp(560px, 92vh, 1200px);
                 border: 0;
                 background: var(--void);
+            }
+            body:has(.view[data-view="symbients"]:not([hidden])) .hero {
+                display: none;
+            }
+            body:has(.view[data-view="symbients"]:not([hidden])) .shell {
+                padding-bottom: 0;
+            }
+            body:has(.view[data-view="symbients"]:not([hidden])) .sym-frame {
+                height: 100vh;
             }
             /* event/writing cells are whole-tile external links */
             .col[data-ext] {
