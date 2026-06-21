@@ -219,13 +219,11 @@
             .term-prompt {
                 opacity: 0.5;
             }
-            .term-sep {
-                opacity: 0.22;
+            .term-ch {
+                opacity: 0.9;
+                white-space: pre;
             }
-            .term-cell {
-                opacity: 0.92;
-            }
-            .term-cell.cursor {
+            .term-ch.cursor {
                 background: var(--text);
                 color: var(--void);
                 opacity: 1;
@@ -1047,12 +1045,13 @@
                 window.addEventListener("scroll", onScroll, { passive: true });
             })();
 
-            // ---- terminal: a genetic algorithm swept by a block cursor ----
-            // A single line of kaomoji genomes sits on the gradient under the
-            // title, framed by two rules. A reverse-video block cursor sweeps
-            // left→right; each step, the cell it just left is re-bred from its two
-            // neighbours (crossover + mutation) and kept if fitter — else
-            // sometimes anyway, for diversity. One full pass = one generation.
+            // ---- terminal: a character-level genetic model swept by a block cursor ----
+            // The line is a positional grammar of char-slots per face — wrapL ·
+            // earL · eyeL · mouth · eyeR · earR · wrapR · sep. A block cursor steps
+            // one CHARACTER at a time; the char it just left may mutate within its
+            // slot's alphabet, and the right-side slots tend to mirror the left, so
+            // symmetric kaomojis crystallise out of the character stream — like a
+            // char-RNN learning the grammar. One full pass = one generation.
             (function () {
                 const term = document.querySelector(".terminal");
                 const host = document.querySelector(".term-line");
@@ -1061,95 +1060,79 @@
                     "(prefers-reduced-motion: reduce)",
                 ).matches;
 
-                // gene pools — wraps, ears/paws, eyes, mouths (symbient-inspired)
-                const WRAP = [
-                    ["₍", "₎"], ["꒰", "꒱"], ["(", ")"],
-                    ["⟨", "⟩"], ["⦅", "⦆"], ["", ""],
-                ];
-                const EAR = [
-                    ["ᐢ", "ᐢ"], ["ᐠ", "ᐟ"], ["/", "\\"], ["", ""], ["´", "`"],
-                ];
-                const EYE = ["•", ".", "･", "◉", "ᵔ", "°", "˘", "・", "^", "¬", "ↀ", "–", "ʘ"];
-                const MOU = ["‿", "ᴥ", "༝", "ꞈ", "ﻌ", "◡", "﹏", "ε", "‸", ".", "ω", "³", "⌓", "ᗢ"];
+                // per-slot alphabets (positional grammar); " " = part absent
+                const WRAP_L = ["₍", "꒰", "(", "⟨", "⦅", " "];
+                const WRAP_R = ["₎", "꒱", ")", "⟩", "⦆", " "]; // paired by index
+                const EAR_L  = ["ᐢ", "ᐠ", "/", "´", " "];
+                const EAR_R  = ["ᐢ", "ᐟ", "\\", "`", " "]; // paired by index
+                const EYE    = ["•", ".", "･", "◉", "ᵔ", "°", "˘", "・", "^", "¬", "ↀ", "ʘ"];
+                const MOU    = ["‿", "ᴥ", "༝", "ꞈ", "ﻌ", "◡", "﹏", "ε", "‸", ".", "ω", "³", "⌓", "ᗢ"];
+                const SLOTS  = 8; // wrapL, earL, eyeL, mouth, eyeR, earR, wrapR, sep
+                const FREE   = [WRAP_L, EAR_L, EYE, MOU]; // slots 0–3 drift freely
 
                 const ri = (n) => Math.floor(Math.random() * n);
                 const rnd = () => Math.random();
-                const randG = () => ({
-                    w: ri(WRAP.length), e: ri(EAR.length),
-                    l: ri(EYE.length), m: ri(MOU.length), r: ri(EYE.length),
-                });
-                const show = (g) =>
-                    WRAP[g.w][0] + EAR[g.e][0] + EYE[g.l] + MOU[g.m] +
-                    EYE[g.r] + EAR[g.e][1] + WRAP[g.w][1];
-                function fit(g) {
-                    let f = 1;
-                    if (g.l === g.r) f += 1.3; // symmetry is fitter
-                    if (WRAP[g.w][0] !== "") f += 0.35;
-                    if (EAR[g.e][0] !== "") f += 0.25;
-                    return f;
-                }
-                function mutate(g) {
-                    const h = { ...g };
-                    const sz = { w: WRAP.length, e: EAR.length, l: EYE.length, m: MOU.length, r: EYE.length };
-                    for (const k in sz) if (rnd() < 0.25) h[k] = ri(sz[k]);
-                    return h;
-                }
-                const cross = (a, b) => ({
-                    w: rnd() < 0.5 ? a.w : b.w,
-                    e: rnd() < 0.5 ? a.e : b.e,
-                    l: rnd() < 0.5 ? a.l : b.l,
-                    m: rnd() < 0.5 ? a.m : b.m,
-                    r: rnd() < 0.5 ? a.r : b.r,
-                });
+                const pick = (a) => a[ri(a.length)];
+                const idxOf = (a, v) => { const i = a.indexOf(v); return i < 0 ? 0 : i; };
 
-                let cells = [], cur = 0, gen = 1;
-                const count = () =>
-                    Math.max(5, Math.min(22, Math.floor((term.clientWidth - 78) / 90)));
+                let chars = [], spans = [], cur = 0, gen = 1, prompt;
 
-                function render() {
+                // a fresh glyph for slot `pos` of the unit starting at index `u`
+                function evolveChar(pos, u) {
+                    if (pos === 7) return " ";                         // separator
+                    if (pos === 4) return rnd() < 0.66 ? chars[u + 2] : pick(EYE); // eyeR ← eyeL
+                    if (pos === 5) return rnd() < 0.6 ? EAR_R[idxOf(EAR_L, chars[u + 1])] : pick(EAR_R);
+                    if (pos === 6) return rnd() < 0.72 ? WRAP_R[idxOf(WRAP_L, chars[u])] : pick(WRAP_R);
+                    return pick(FREE[pos]);                            // wrapL, earL, eyeL, mouth
+                }
+
+                const units = () =>
+                    Math.max(4, Math.min(16, Math.floor((term.clientWidth - 86) / 66)));
+
+                function build() {
+                    const n = units() * SLOTS;
+                    chars = [];
+                    for (let i = 0; i < n; i++)
+                        chars.push(evolveChar(i % SLOTS, i - (i % SLOTS)));
+                    cur = 0;
                     host.textContent = "";
-                    const p = document.createElement("span");
-                    p.className = "term-prompt";
-                    p.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
-                    host.appendChild(p);
-                    cells.forEach((g, i) => {
+                    prompt = document.createElement("span");
+                    prompt.className = "term-prompt";
+                    prompt.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    host.appendChild(prompt);
+                    spans = chars.map((c, i) => {
                         const s = document.createElement("span");
-                        s.className = "term-cell" + (i === cur ? " cursor" : "");
-                        s.textContent = show(g);
+                        s.className = "term-ch" + (i === cur ? " cursor" : "");
+                        s.textContent = c;
                         host.appendChild(s);
-                        if (i < cells.length - 1) {
-                            const sep = document.createElement("span");
-                            sep.className = "term-sep";
-                            sep.textContent = "  ";
-                            host.appendChild(sep);
-                        }
+                        return s;
                     });
                 }
-                function build() {
-                    const n = count();
-                    cells = [];
-                    for (let i = 0; i < n; i++) cells.push(randG());
-                    cur = 0;
-                    render();
-                }
+
                 function step() {
-                    const n = cells.length;
+                    const n = chars.length;
                     const prev = cur;
+                    spans[prev].classList.remove("cursor");
                     cur = (cur + 1) % n;
-                    if (cur === 0) gen++;
-                    // re-breed the cell the cursor just left, from its neighbours
-                    const child =
-                        rnd() < 0.7
-                            ? mutate(cross(cells[(prev - 1 + n) % n], cells[(prev + 1) % n]))
-                            : mutate(cells[prev]);
-                    if (fit(child) >= fit(cells[prev]) || rnd() < 0.35)
-                        cells[prev] = child;
-                    render();
+                    if (cur === 0) {
+                        gen++;
+                        prompt.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    }
+                    // the char the cursor just left may mutate within its slot
+                    if (rnd() < 0.45) {
+                        const pos = prev % SLOTS;
+                        const nc = evolveChar(pos, prev - pos);
+                        if (nc !== chars[prev]) {
+                            chars[prev] = nc;
+                            spans[prev].textContent = nc;
+                        }
+                    }
+                    spans[cur].classList.add("cursor");
                 }
 
                 build();
                 window.addEventListener("resize", build);
-                if (!reduce) setInterval(step, 280);
+                if (!reduce) setInterval(step, 92);
             })();
         </script>
     </body>
