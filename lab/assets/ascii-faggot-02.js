@@ -30,6 +30,10 @@ export const meta = {
 };
 
 const RAMP = " .:-=+*#%"; // symdome's tonal ramp; '@' is the hot accent
+// Monospace cells are taller than wide; map ~CELL_AR image-rows per image-col
+// so the (portrait) plate isn't squashed wide in the glyph grid. ROWS is
+// derived from the source aspect (h/w) × CELL_AR, exactly like ascii-faggot-03.
+const CELL_AR = 0.5;
 
 export function create(canvas) {
     const stage = new Stage2D(canvas);
@@ -42,9 +46,10 @@ export function create(canvas) {
     let palette = null;
     let params = Object.fromEntries(meta.params.map((p) => [p.key, p.value]));
 
-    // offscreen glyph raster (value 0..1) + hot flags
+    // offscreen glyph raster (value 0..1) + hot flags. ROWS follows the portrait
+    // source aspect (fall back to the plate's ~665x1024 ratio until decoded).
     let COLS = params.cols | 0;
-    let ROWS = Math.round(COLS * 1.0);
+    let ROWS = Math.round(COLS * (1024 / 665) * CELL_AR);
     let field, hot;
 
     // Source-image luminance buffer (small offscreen canvas). Read once on load
@@ -117,13 +122,12 @@ export function create(canvas) {
     }
 
     function aspectRows() {
-        // Preserve source aspect ratio: with square-ish glyph cells the grid
-        // rows follow the image's height/width. Account for the glyph cell
-        // being taller than wide (monospace ~0.6 advance) so the picture isn't
-        // vertically squashed: ROWS = COLS * (h/w) * cellAspect.
+        // Preserve the portrait source aspect: ROWS = COLS * (h/w) * CELL_AR.
+        // The CELL_AR factor accounts for monospace cells being taller than wide,
+        // so each glyph maps to a roughly square screen patch and the tall plate
+        // stays tall instead of being squashed. (Mirrors ascii-faggot-03.)
         const imgAR = lumW && lumH ? lumH / lumW : 1024 / 665; // h/w
-        const CELL_W_OVER_H = 0.52; // glyph advance / line height (approx)
-        return Math.max(20, Math.round(COLS * imgAR * CELL_W_OVER_H));
+        return Math.max(20, Math.round(COLS * imgAR * CELL_AR));
     }
 
     function allocGrid() {
@@ -133,10 +137,9 @@ export function create(canvas) {
         hot = new Uint8Array(COLS * ROWS);
     }
 
-    // Resample the luminance buffer into the COLS×ROWS glyph field. The image
-    // already fills the grid (ROWS derived from its aspect), so there is no
-    // letterboxing needed when COLS drives ROWS — but if the derived ROWS would
-    // exceed a sane max we center/letterbox the image inside the grid.
+    // Resample the luminance buffer into the COLS×ROWS glyph field. The portrait
+    // image is fit into the grid preserving aspect and centered (letterboxed);
+    // the slack cells stay empty (white page), so the plate reads tall, not wide.
     function rebuild() {
         allocGrid();
         if (!imgLoaded || !lum) return; // render blank until loaded
@@ -146,18 +149,23 @@ export function create(canvas) {
         const gamma = params.gamma;
 
         // Fit the image into the grid preserving aspect, centered (letterbox).
-        const imgAR = lumW / lumH; // w/h
-        const gridAR = COLS / (ROWS / 0.52); // grid w/h in image-pixel terms (undo cell aspect)
+        // Work in glyph-cell units, undoing the cell aspect so the comparison is
+        // in true on-screen proportions: the grid's screen aspect is
+        // COLS / (ROWS * CELL_AR), the image's is lumW / lumH. (Mirrors
+        // ascii-faggot-03's centered fit.)
+        const imgAR = lumW / lumH; // w/h (≈0.65 for the portrait plate)
+        const gridAR = COLS / (ROWS * CELL_AR); // grid w/h in true screen terms
         let drawCols, drawRows, offX, offY;
         if (imgAR >= gridAR) {
-            // image is wider than grid -> fit width
+            // image is wider than the grid -> fit width, letterbox top/bottom
             drawCols = COLS;
-            drawRows = Math.round((COLS / imgAR) * 0.52);
+            drawRows = Math.round((COLS / imgAR) * CELL_AR);
             offX = 0;
             offY = Math.floor((ROWS - drawRows) / 2);
         } else {
+            // image is taller than the grid -> fit height, letterbox left/right
             drawRows = ROWS;
-            drawCols = Math.round((ROWS / 0.52) * imgAR);
+            drawCols = Math.round((ROWS * CELL_AR) * imgAR);
             offY = 0;
             offX = Math.floor((COLS - drawCols) / 2);
         }
