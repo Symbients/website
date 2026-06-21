@@ -339,19 +339,20 @@
                rest (--hero-tint multiply over greyscale), true colour on hover */
             .symbient-portrait {
                 position: relative;
-                width: 170px;
-                height: 170px;
+                width: 188px;
+                height: 188px;
                 margin: 1.1rem auto 0;
+            }
+            /* the image is inset, leaving a gutter where the ascii frame lives */
+            .portrait-link {
+                position: absolute;
+                inset: 11px;
+                display: block;
                 overflow: hidden;
                 background: color-mix(in srgb, var(--text) 5%, transparent);
-                /* the organic / synthetic divide, carried by the form: a single
-                   rounded (organic) top-left corner and a 45°-edged (synthetic)
-                   bottom-right corner; top-right + bottom-left stay square */
-                clip-path: path(
-                    "M 22 0 L 170 0 L 170 148 L 148 170 L 0 170 L 0 22 Q 0 0 22 0 Z"
-                );
+                z-index: 1;
             }
-            .symbient-portrait img {
+            .portrait-link img {
                 display: block;
                 width: 100%;
                 height: 100%;
@@ -362,7 +363,8 @@
                     filter 0.45s var(--ease),
                     opacity 0.45s var(--ease);
             }
-            .symbient-portrait::after {
+            /* theme tint over the image only (the frame gutter stays clear) */
+            .portrait-link::after {
                 content: "";
                 position: absolute;
                 inset: 0;
@@ -372,12 +374,21 @@
                 pointer-events: none;
                 transition: opacity 0.45s var(--ease);
             }
-            .symbient-portrait:hover img {
+            .symbient-portrait:hover .portrait-link img {
                 filter: grayscale(0) contrast(1);
                 opacity: 1;
             }
-            .symbient-portrait:hover::after {
+            .symbient-portrait:hover .portrait-link::after {
                 opacity: 0;
+            }
+            /* the animated ascii border, drawn right at the image boundary */
+            .portrait-frame {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 2;
             }
             .symbient-desc {
                 font-size: clamp(12px, 1vw, 13.5px);
@@ -407,11 +418,14 @@
                 letter-spacing: inherit;
                 text-transform: uppercase;
                 color: var(--dim);
-                background: none;
+                /* opaque so the familiar behind doesn't muddy the label */
+                background: var(--void);
                 border: 1px solid var(--hair);
                 padding: 0.5rem 0.9rem;
                 cursor: pointer;
-                transition: all 0.25s var(--ease);
+                transition:
+                    color 0.25s var(--ease),
+                    border-color 0.25s var(--ease);
             }
             .nav button:hover {
                 color: var(--text);
@@ -422,6 +436,9 @@
                 letter-spacing: 0.16em;
                 min-width: 5ch;
                 text-align: center;
+                /* opaque backing too, so the count stays legible */
+                background: var(--void);
+                padding: 0.5rem 0.3rem;
             }
 
             /* =================================================================
@@ -689,7 +706,12 @@
                     <div class="symbient-eyebrow">symbient</div>
                     <h1 class="symbient-name" id="symbient-name"></h1>
                     <div class="symbient-cat" id="symbient-cat"></div>
-                    <div class="symbient-portrait" id="symbient-portrait"></div>
+                    <div class="symbient-portrait" id="symbient-portrait">
+                        <a class="portrait-link" id="portrait-link" target="_blank" rel="noopener noreferrer">
+                            <img id="portrait-img" alt="" decoding="async" />
+                        </a>
+                        <canvas class="portrait-frame" id="portrait-frame" aria-hidden="true"></canvas>
+                    </div>
                     <p class="symbient-desc" id="symbient-desc"></p>
                 </div>
                 <div class="column column--synthetic" id="synthetic"></div>
@@ -898,6 +920,23 @@
                 "Solienne": "/assets/artists/solienne.jpg",
             };
 
+            // the symbient's own site — the portrait links out, like the
+            // original symbient.life cards.
+            const HREFS = {
+                "Plantoid": "https://plantoid.org/",
+                "S.A.N": "https://www.goodbyemonkey.com/",
+                "Wib & Wob": "https://wibandwob.com/",
+                "terra0": "https://terra0.org/",
+                "Plantbot": "https://alternativemachine.co.jp/project/plantbot/",
+                "Botto": "https://botto.com/",
+                "Truth Terminal": "https://x.com/truth_terminal",
+                "pneumOS": "https://www.he-r.it/project/pneumos/",
+                "Solienne": "https://www.solienne.ai/",
+            };
+
+            const portraitLink = document.getElementById("portrait-link");
+            const portraitImg = document.getElementById("portrait-img");
+
             const els = {
                 name: document.getElementById("symbient-name"),
                 cat: document.getElementById("symbient-cat"),
@@ -907,6 +946,95 @@
                 synthetic: document.getElementById("synthetic"),
                 counter: document.getElementById("counter"),
             };
+
+            /* =============================================================
+               PORTRAIT FRAME — an animated ascii border drawn right at the
+               image boundary, in the familiars' glyph vocabulary: always
+               evolving, theme-aware (ink-on-void with hot @ accents).
+               ============================================================= */
+            const frameCanvas = document.getElementById("portrait-frame");
+            const frameCtx = frameCanvas.getContext("2d");
+            const FRAME_RAMP = " .:-=+*#%";
+            let frameInk = "198,204,192";
+            let frameHot = "120,160,120";
+            function hexToRGB(hex) {
+                hex = (hex || "").trim().replace("#", "");
+                if (hex.length === 3)
+                    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+                if (hex.length !== 6) return null;
+                return (
+                    parseInt(hex.slice(0, 2), 16) + "," +
+                    parseInt(hex.slice(2, 4), 16) + "," +
+                    parseInt(hex.slice(4, 6), 16)
+                );
+            }
+            function readFrameColors() {
+                const cs = getComputedStyle(document.documentElement);
+                frameInk = hexToRGB(cs.getPropertyValue("--text")) || frameInk;
+                frameHot = hexToRGB(cs.getPropertyValue("--green")) || frameHot;
+            }
+            let frameT = 0, frameLast = 0;
+            function drawFrame(now) {
+                requestAnimationFrame(drawFrame);
+                if (stageEl.dataset.mode !== "show") return; // animate in show mode only
+                const W = frameCanvas.clientWidth, H = frameCanvas.clientHeight;
+                if (!W || !H) return;
+                const dt = frameLast ? Math.min((now - frameLast) / 1000, 0.05) : 0;
+                frameLast = now;
+                frameT += dt;
+                const t = frameT;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                if (frameCanvas.width !== W * dpr || frameCanvas.height !== H * dpr) {
+                    frameCanvas.width = W * dpr;
+                    frameCanvas.height = H * dpr;
+                }
+                const cols = Math.max(8, Math.round(W / 9));
+                const rows = Math.max(8, Math.round(H / 9));
+                const cw = frameCanvas.width / cols, ch = frameCanvas.height / rows;
+                const fs = Math.min(cw, ch) * 1.05;
+                frameCtx.clearRect(0, 0, frameCanvas.width, frameCanvas.height);
+                frameCtx.font =
+                    fs.toFixed(1) + 'px "Space Mono", ui-monospace, monospace';
+                frameCtx.textAlign = "center";
+                frameCtx.textBaseline = "middle";
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        // outer ring only — the border, right at the boundary
+                        if (r !== 0 && r !== rows - 1 && c !== 0 && c !== cols - 1)
+                            continue;
+                        let v =
+                            0.5 +
+                            0.5 *
+                                Math.sin(
+                                    t * 1.5 + c * 0.6 + r * 0.7 +
+                                    1.6 * Math.sin(t * 0.5 + (c + r) * 0.25)
+                                );
+                        v = 0.18 + v * 0.82; // keep the frame continuous (min '.')
+                        let glyph, rgb, alpha;
+                        if (v > 0.92) {
+                            glyph = "@";
+                            rgb = frameHot;
+                            alpha = 0.95;
+                        } else {
+                            const idx = Math.max(
+                                1,
+                                Math.min(
+                                    FRAME_RAMP.length - 1,
+                                    Math.round(v * (FRAME_RAMP.length - 1))
+                                )
+                            );
+                            glyph = FRAME_RAMP[idx];
+                            rgb = frameInk;
+                            alpha = 0.38 + 0.55 * v;
+                        }
+                        frameCtx.fillStyle =
+                            "rgba(" + rgb + "," + alpha.toFixed(3) + ")";
+                        frameCtx.fillText(glyph, (c + 0.5) * cw, (r + 0.5) * ch);
+                    }
+                }
+            }
+            readFrameColors();
+            requestAnimationFrame(drawFrame);
 
             function cardHTML(c) {
                 return (
@@ -923,10 +1051,22 @@
                 els.name.textContent = s.name;
                 els.cat.textContent = s.cat;
                 const src = IMAGES[s.name];
-                els.portrait.innerHTML = src
-                    ? '<img src="' + src + '" alt="' + s.name + '" loading="lazy" decoding="async" />'
-                    : "";
-                els.portrait.style.display = src ? "" : "none";
+                const href = HREFS[s.name];
+                if (src) {
+                    portraitImg.src = src;
+                    portraitImg.alt = s.name;
+                    if (href) {
+                        portraitLink.href = href;
+                        portraitLink.style.pointerEvents = "";
+                        portraitLink.removeAttribute("aria-disabled");
+                    } else {
+                        portraitLink.removeAttribute("href");
+                        portraitLink.style.pointerEvents = "none";
+                    }
+                    els.portrait.style.display = "";
+                } else {
+                    els.portrait.style.display = "none";
+                }
                 els.desc.textContent = s.desc;
                 els.organic.innerHTML =
                     '<div class="column-head">organic</div>' +
@@ -1279,6 +1419,7 @@
                 else document.documentElement.setAttribute("data-theme", t);
                 familiar.setTheme(readPalette());
                 if (creature) creature.setTheme(readPalette());
+                readFrameColors();
                 if (stageEl.dataset.mode === "show") drawWires();
             }
             window.addEventListener("storage", (e) => {
