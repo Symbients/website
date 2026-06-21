@@ -813,6 +813,29 @@
                     transparent
                 );
             }
+            /* tiny L-system sprout trailing each leaf (decorative twig) */
+            .tree-sprout {
+                display: inline-block;
+                vertical-align: middle;
+                margin-left: 0.5ch;
+                overflow: visible;
+                color: var(--text);
+                opacity: 0.6;
+                transition: opacity 0.2s var(--ease);
+            }
+            .tree-sprout line {
+                stroke: currentColor;
+                stroke-width: 0.9;
+                stroke-linecap: round;
+                fill: none;
+            }
+            .tree-sprout .sprout-tip {
+                fill: var(--green);
+                stroke: none;
+            }
+            .tree-row:hover .tree-sprout {
+                opacity: 0.85;
+            }
             @media (prefers-reduced-motion: reduce) {
                 .tree-row {
                     animation: none;
@@ -2261,6 +2284,86 @@
                     root.children.push(vNode);
                 });
 
+                // ---- tiny L-system sprout trailing each leaf ----
+                // A short stem that forks a couple of generations into a few
+                // @-tipped twiglets, drawn with the sapling glyph vocabulary
+                // (/ \ | _ @) as a small inline SVG. Deterministic per leaf
+                // (seed derived from the label) so it's stable across reloads;
+                // inked with the label's --text via currentColor, so it
+                // re-inks with the theme. Decorative only — the leaf <a> stays
+                // clickable; the SVG is inert (pointer-events:none).
+                const SPROUT = {
+                    depth: 3, // L-system recursion depth (decorative twig, 2–3)
+                    len: 7, // first segment length (SVG units)
+                    shrink: 0.66, // child length multiplier per generation
+                    angle: 34, // split half-angle in degrees
+                    jitter: 0.35, // jitter as a fraction of the split angle
+                    w: 46, // SVG viewport width
+                    h: 22, // SVG viewport height
+                };
+                // mulberry32 — small deterministic PRNG, seeded per leaf
+                function rngFor(str) {
+                    let h = 2166136261 >>> 0;
+                    for (let i = 0; i < str.length; i++) {
+                        h ^= str.charCodeAt(i);
+                        h = Math.imul(h, 16777619) >>> 0;
+                    }
+                    let a = h >>> 0;
+                    return function () {
+                        a |= 0;
+                        a = (a + 0x6d2b79f5) | 0;
+                        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                    };
+                }
+                // build a tiny fractal sprout as an inline SVG string
+                function sproutSVG(label) {
+                    const rng = rngFor("sprout:" + label);
+                    const ang = (SPROUT.angle * Math.PI) / 180;
+                    const segs = []; // {x1,y1,x2,y2}
+                    const tips = []; // {x,y}
+                    // start at the left-middle, growing to the RIGHT
+                    const x0 = 1,
+                        y0 = SPROUT.h / 2;
+                    function grow(x, y, dir, len, depth) {
+                        if (depth >= SPROUT.depth || len < 1.2) {
+                            tips.push({ x, y });
+                            return;
+                        }
+                        const nx = x + Math.cos(dir) * len;
+                        const ny = y + Math.sin(dir) * len;
+                        segs.push({ x1: x, y1: y, x2: nx, y2: ny });
+                        const jL = (rng() - 0.5) * ang * SPROUT.jitter;
+                        const jR = (rng() - 0.5) * ang * SPROUT.jitter;
+                        const cl = len * SPROUT.shrink;
+                        grow(nx, ny, dir - ang + jL, cl, depth + 1);
+                        grow(nx, ny, dir + ang + jR, cl, depth + 1);
+                    }
+                    grow(x0, y0, 0, SPROUT.len, 0); // dir 0 = straight right
+                    let body = "";
+                    segs.forEach((s) => {
+                        body +=
+                            '<line x1="' + s.x1.toFixed(1) +
+                            '" y1="' + s.y1.toFixed(1) +
+                            '" x2="' + s.x2.toFixed(1) +
+                            '" y2="' + s.y2.toFixed(1) + '"/>';
+                    });
+                    tips.forEach((p) => {
+                        body +=
+                            '<circle class="sprout-tip" cx="' + p.x.toFixed(1) +
+                            '" cy="' + p.y.toFixed(1) + '" r="1.1"/>';
+                    });
+                    return (
+                        '<svg class="tree-sprout" width="' + SPROUT.w +
+                        '" height="' + SPROUT.h +
+                        '" viewBox="0 0 ' + SPROUT.w + " " + SPROUT.h +
+                        '" aria-hidden="true" focusable="false">' +
+                        body +
+                        "</svg>"
+                    );
+                }
+
                 // render rows with sapling connectors (| \ _ rails, hot @ tips)
                 const frag = document.createDocumentFragment();
                 let n = 0;
@@ -2292,6 +2395,8 @@
                         "<span class=\"" + cls + '"' + attr + ' tabindex="0">' +
                         node.label +
                         "</span>";
+                    // each leaf trails its own tiny L-system sprout
+                    if (leaf) html += sproutSVG(node.label);
                     row.innerHTML = html;
                     frag.appendChild(row);
                     const kids = node.children || [];
