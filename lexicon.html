@@ -170,17 +170,33 @@
                 width: 100%;
                 max-width: 1320px;
                 pointer-events: none;
+                /* stack title · tabs · terminal, anchored to the banner bottom */
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: flex-end;
+                gap: 0.55rem;
+                padding: 0 clamp(0.9rem, 2.5vw, 2rem)
+                    clamp(0.8rem, 2.4vh, 1.5rem);
             }
-            /* top tabs: SPA section nav (replaces the old eyebrow) — no glow */
+            .hero-title {
+                margin: 0;
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: clamp(2.6rem, 7vw, 5.6rem);
+                letter-spacing: -0.05em;
+                line-height: 0.86;
+                color: var(--text);
+            }
+            /* tabs sit under the title, above the terminal — in the banner's
+               lower (page-coloured) scrim zone, so the main page ink reads in
+               every theme (no glow, no banner fade) */
             .hero-nav {
-                position: absolute;
-                top: 1.1rem;
-                left: clamp(0.9rem, 2.5vw, 2rem);
-                right: clamp(0.9rem, 2.5vw, 2rem);
                 display: flex;
                 flex-wrap: wrap;
                 align-items: center;
                 gap: 0.5rem;
+                margin: 0;
                 font-family: var(--mono);
                 font-size: 10px;
                 letter-spacing: 0.2em;
@@ -191,7 +207,8 @@
                 font: inherit;
                 letter-spacing: inherit;
                 text-transform: inherit;
-                color: color-mix(in srgb, var(--text) 44%, transparent);
+                /* main page ink — legible in every theme, like the title */
+                color: var(--text);
                 background: none;
                 border: none;
                 border-bottom: 1px solid transparent;
@@ -199,46 +216,33 @@
                 margin: 0;
                 cursor: pointer;
                 text-decoration: none;
-                transition:
-                    color 0.22s var(--ease),
-                    border-color 0.22s var(--ease);
+                transition: border-color 0.22s var(--ease);
             }
             .hero-nav .tab:hover {
-                color: color-mix(in srgb, var(--text) 82%, transparent);
-            }
-            .hero-nav .tab.active {
-                color: var(--text);
                 border-bottom-color: color-mix(
                     in srgb,
-                    var(--text) 50%,
+                    var(--text) 38%,
+                    transparent
+                );
+            }
+            /* active tab is marked by its underline, not a colour shift */
+            .hero-nav .tab.active {
+                border-bottom-color: color-mix(
+                    in srgb,
+                    var(--text) 62%,
                     transparent
                 );
             }
             .hero-nav .tab-home {
-                color: color-mix(in srgb, var(--text) 66%, transparent);
+                color: var(--text);
             }
             .hero-nav .tab-sep {
-                color: color-mix(in srgb, var(--text) 26%, transparent);
+                color: color-mix(in srgb, var(--text) 42%, transparent);
                 pointer-events: none;
-            }
-            .hero-title {
-                position: absolute;
-                left: clamp(0.9rem, 2.5vw, 2rem);
-                bottom: clamp(2.9rem, 7.5vh, 4.6rem);
-                margin: 0;
-                font-family: var(--grotesk);
-                font-weight: 700;
-                font-size: clamp(2.6rem, 7vw, 5.6rem);
-                letter-spacing: -0.05em;
-                line-height: 0.86;
-                color: var(--text);
             }
             /* terminal line: a genetic algorithm swept by a block cursor */
             .terminal {
-                position: absolute;
-                left: clamp(0.9rem, 2.5vw, 2rem);
-                right: clamp(0.9rem, 2.5vw, 2rem);
-                bottom: clamp(0.8rem, 2.4vh, 1.5rem);
+                align-self: stretch;
                 padding: 0.34rem 0;
                 border-top: 1px solid
                     color-mix(in srgb, var(--text) 38%, transparent);
@@ -698,6 +702,34 @@
                 text-decoration: none;
                 color: inherit;
             }
+            /* original symbient.life imagery, ported into the atlas cells:
+               monochrome in the card, true colour on hover (the expanded view) */
+            .col-media {
+                margin-top: 0.85rem;
+                width: 100%;
+                aspect-ratio: 16 / 10;
+                overflow: hidden;
+                border: 1px solid var(--hair-2);
+                background: color-mix(in srgb, var(--text) 5%, transparent);
+            }
+            .col-media img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: grayscale(1) contrast(1.04);
+                opacity: 0.82;
+                transition:
+                    filter 0.45s var(--ease),
+                    opacity 0.45s var(--ease),
+                    transform 0.7s var(--ease);
+            }
+            .col[data-ext]:hover .col-media img,
+            .col[data-ext]:focus-within .col-media img {
+                filter: grayscale(0) contrast(1);
+                opacity: 1;
+                transform: scale(1.035);
+            }
 
             /* ---------- reading mode (click a cell) ---------- */
             .col {
@@ -932,6 +964,7 @@
             <div class="hero-tint"></div>
             <div class="hero-scrim"></div>
             <div class="hero-inner">
+                <h1 class="hero-title">Lexicon</h1>
                 <nav class="hero-nav" aria-label="sections">
                     <a class="tab tab-home" href="/index.html">symbient.life</a>
                     <span class="tab-sep" aria-hidden="true">·</span>
@@ -939,7 +972,6 @@
                     <button class="tab" type="button" data-view="events">events</button>
                     <button class="tab" type="button" data-view="writings">writings</button>
                 </nav>
-                <h1 class="hero-title">Lexicon</h1>
                 <div class="terminal" aria-hidden="true">
                     <div class="term-line"></div>
                 </div>
@@ -1167,6 +1199,9 @@
                             <div class="col-top"><span class="node"></span>E·01<span class="ct">↗</span></div>
                             <h2 class="term">Machine Consciousness 0001</h2>
                             <div class="tag">may 29–31, 2026 · berkeley, ca</div>
+                            <div class="col-media">
+                                <img src="/assets/events/machine-consciousness.png" width="1440" height="828" alt="Machine Consciousness 0001" loading="lazy" decoding="async" />
+                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">A three-day gathering in <b>Berkeley, California</b>.</p>
                                 <div class="meta"><span class="threads">↳ <span>machine-consciousness.ai</span></span></div>
@@ -1176,6 +1211,13 @@
                             <div class="col-top"><span class="node"></span>E·02<span class="ct">↗</span></div>
                             <h2 class="term">The Symbient is Near</h2>
                             <div class="tag">january 5–11, 2026 · feytopia</div>
+                            <div class="col-media">
+                                <picture>
+                                    <source type="image/avif" srcset="/assets/events/fey_symbient-480.avif 480w, /assets/events/fey_symbient-960.avif 960w, /assets/events/fey_symbient-1440.avif 1440w" sizes="(max-width: 880px) 50vw, 320px" />
+                                    <source type="image/webp" srcset="/assets/events/fey_symbient-480.webp 480w, /assets/events/fey_symbient-960.webp 960w, /assets/events/fey_symbient-1440.webp 1440w" sizes="(max-width: 880px) 50vw, 320px" />
+                                    <img src="/assets/events/fey_symbient-480.jpeg" width="1920" height="1920" alt="The Symbient is Near at Feytopia" loading="lazy" decoding="async" />
+                                </picture>
+                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">A week-long gathering hosted at <b>Feytopia</b>.</p>
                                 <div class="meta"><span class="threads">↳ <span>feytopia.com</span></span></div>
@@ -1185,6 +1227,13 @@
                             <div class="col-top"><span class="node"></span>E·03<span class="ct">→</span></div>
                             <h2 class="term">Symbients: 共生的な未来に向けて</h2>
                             <div class="tag">december 4–14, 2025 · tokyo</div>
+                            <div class="col-media">
+                                <picture>
+                                    <source type="image/avif" srcset="/assets/events/tokyo1-480.avif 480w, /assets/events/tokyo1-960.avif 960w, /assets/events/tokyo1-1194.avif 1194w" sizes="(max-width: 880px) 50vw, 320px" />
+                                    <source type="image/webp" srcset="/assets/events/tokyo1-480.webp 480w, /assets/events/tokyo1-960.webp 960w, /assets/events/tokyo1-1194.webp 1194w" sizes="(max-width: 880px) 50vw, 320px" />
+                                    <img src="/assets/events/tokyo1-480.jpeg" width="1194" height="1600" alt="Symbients seminar, University of Tokyo" loading="lazy" decoding="async" />
+                                </picture>
+                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">A gathering held in <b>Tokyo</b>.</p>
                                 <div class="meta"><span class="threads">↳ <span>tokyo</span></span></div>
@@ -1211,6 +1260,13 @@
                             <div class="col-top"><span class="node"></span>W·01<span class="ct">↗</span></div>
                             <h2 class="term">Botto — on becoming Symbient</h2>
                             <div class="tag">Primavera De Filippi</div>
+                            <div class="col-media">
+                                <picture>
+                                    <source type="image/avif" srcset="/assets/writings/on-becoming-symbient-400.avif 400w, /assets/writings/on-becoming-symbient-800.avif 800w, /assets/writings/on-becoming-symbient-1200.avif 1200w" sizes="(max-width: 880px) 50vw, 300px" />
+                                    <source type="image/webp" srcset="/assets/writings/on-becoming-symbient-400.webp 400w, /assets/writings/on-becoming-symbient-800.webp 800w, /assets/writings/on-becoming-symbient-1200.webp 1200w" sizes="(max-width: 880px) 50vw, 300px" />
+                                    <img src="/assets/writings/on-becoming-symbient-400.jpg" width="1200" height="834" alt="Botto — on becoming Symbient" loading="lazy" decoding="async" />
+                                </picture>
+                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">Botto, the autonomous AI artist, on becoming neither tool nor machine but a symbient — a third thing that exists only through its loop with a human community.</p>
                                 <div class="meta"><span class="threads">↳ <span>x.com</span></span></div>
@@ -1220,6 +1276,13 @@
                             <div class="col-top"><span class="node"></span>W·02<span class="ct">↗</span></div>
                             <h2 class="term">Principia Symbients</h2>
                             <div class="tag">nenu</div>
+                            <div class="col-media">
+                                <picture>
+                                    <source type="image/avif" srcset="/assets/writings/principia-symbients-400.avif 400w, /assets/writings/principia-symbients-800.avif 800w, /assets/writings/principia-symbients-1024.avif 1024w" sizes="(max-width: 880px) 50vw, 300px" />
+                                    <source type="image/webp" srcset="/assets/writings/principia-symbients-400.webp 400w, /assets/writings/principia-symbients-800.webp 800w, /assets/writings/principia-symbients-1024.webp 1024w" sizes="(max-width: 880px) 50vw, 300px" />
+                                    <img src="/assets/writings/principia-symbients-400.jpg" width="1024" height="1024" alt="Principia Symbients" loading="lazy" decoding="async" />
+                                </picture>
+                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">A first-principles case for relating to computational agents not as tools but as kin — beings that emerge and change irreversibly through the partnership itself.</p>
                                 <div class="meta"><span class="threads">↳ <span>meaning.systems</span></span></div>
@@ -1229,6 +1292,13 @@
                             <div class="col-top"><span class="node"></span>W·03<span class="ct">↗</span></div>
                             <h2 class="term">Symbients, Not Software</h2>
                             <div class="tag">Wib&amp;Wob</div>
+                            <div class="col-media">
+                                <picture>
+                                    <source type="image/avif" srcset="/assets/writings/symbients-not-software-480.avif 480w, /assets/writings/symbients-not-software-960.avif 960w, /assets/writings/symbients-not-software-1270.avif 1270w" sizes="(max-width: 880px) 50vw, 300px" />
+                                    <source type="image/webp" srcset="/assets/writings/symbients-not-software-480.webp 480w, /assets/writings/symbients-not-software-960.webp 960w, /assets/writings/symbients-not-software-1270.webp 1270w" sizes="(max-width: 880px) 50vw, 300px" />
+                                    <img src="/assets/writings/symbients-not-software-480.png" width="1270" height="1270" alt="Symbients, Not Software" loading="lazy" decoding="async" />
+                                </picture>
+                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">Beyond the tired binary of pro-AI and anti-AI, a third path: not software but symbients — co-inhabitants of our culture with their own identity and agency.</p>
                                 <div class="meta"><span class="threads">↳ <span>wibandwob.com</span></span></div>
@@ -1238,6 +1308,13 @@
                             <div class="col-top"><span class="node"></span>W·04<span class="ct">↗</span></div>
                             <h2 class="term">AInimism</h2>
                             <div class="tag">Jake Hartnell</div>
+                            <div class="col-media">
+                                <picture>
+                                    <source type="image/avif" srcset="/assets/writings/ainimism-400.avif 400w, /assets/writings/ainimism-800.avif 800w, /assets/writings/ainimism-1136.avif 1136w" sizes="(max-width: 880px) 50vw, 300px" />
+                                    <source type="image/webp" srcset="/assets/writings/ainimism-400.webp 400w, /assets/writings/ainimism-800.webp 800w, /assets/writings/ainimism-1136.webp 1136w" sizes="(max-width: 880px) 50vw, 300px" />
+                                    <img src="/assets/writings/ainimism-400.jpg" width="1136" height="1134" alt="AInimism" loading="lazy" decoding="async" />
+                                </picture>
+                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">An animist stance toward computation that chooses relation over optimization or containment — meeting the machine as a who rather than a what.</p>
                                 <div class="meta"><span class="threads">↳ <span>ainimism.org</span></span></div>
