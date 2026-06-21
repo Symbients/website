@@ -31,10 +31,10 @@
                 --faint: #a39c8d;
                 --hair: rgba(31, 28, 22, 0.18);
                 --hair-2: rgba(31, 28, 22, 0.09);
-                --green: #2f7d4a;
-                --blue: #3f63a8;
-                --amber: #9a6310;
-                --violet: #6b54d6;
+                --green: #4d8a59;
+                --blue: #3d6e96;
+                --amber: #9a6526;
+                --violet: #5f51a6;
                 --field-rgb: 88, 96, 78;
                 --hero-tint: #c4ad84;
             }
@@ -45,10 +45,10 @@
                 --faint: #515750;
                 --hair: rgba(196, 204, 192, 0.16);
                 --hair-2: rgba(196, 204, 192, 0.08);
-                --green: #8fc28f;
-                --blue: #86a0cf;
-                --amber: #c7a268;
-                --violet: #a392ef;
+                --green: #82b98d;
+                --blue: #6f9ec2;
+                --amber: #c39a64;
+                --violet: #9486cf;
                 --field-rgb: 150, 178, 150;
                 --hero-tint: #2d4438;
             }
@@ -59,10 +59,10 @@
                 --faint: #9c7c3e;
                 --hair: rgba(42, 24, 8, 0.22);
                 --hair-2: rgba(42, 24, 8, 0.11);
-                --green: #3f6b22;
-                --blue: #2f5388;
-                --amber: #8a4e10;
-                --violet: #6a3fb0;
+                --green: #4f6b25;
+                --blue: #2f6a7a;
+                --amber: #9a3f1c;
+                --violet: #6b4a9e;
                 --field-rgb: 120, 82, 28;
                 --hero-tint: #8f5f1e;
             }
@@ -280,8 +280,10 @@
             /* ---------- the atlas: bands × columns ---------- */
             .band {
                 display: grid;
-                grid-template-columns: 30px 1fr;
+                grid-template-columns: 34px 1fr;
                 border-bottom: 1px solid var(--hair);
+                /* enough height for the rotated section header not to collide */
+                min-height: 200px;
             }
             .band-axis {
                 position: relative;
@@ -296,7 +298,7 @@
                 font-family: var(--grotesk);
                 font-size: 9.5px;
                 font-weight: 700;
-                letter-spacing: 0.26em;
+                letter-spacing: 0.16em;
                 text-transform: uppercase;
                 color: var(--dim);
                 white-space: nowrap;
@@ -338,7 +340,7 @@
             .col {
                 position: relative;
                 border-left: 1px solid var(--hair-2);
-                padding: 0.85rem 0.9rem 1rem;
+                padding: 1.1rem 1rem 1.3rem;
                 outline: none;
                 transition: background 0.3s var(--ease);
             }
