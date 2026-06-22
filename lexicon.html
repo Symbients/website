@@ -1510,9 +1510,9 @@
                     <!-- N·01 — Alternative Intelligence -->
                     <article class="nar-cell">
                         <div class="nar-kicker">N·01</div>
-                        <div class="nar-art">
+                        <div class="nar-art nar-art-void">
                             <canvas class="nar-ascii" aria-hidden="true"></canvas>
-                            <img class="nar-fallback" src="/assets/TechnologyPlusHumans.png" alt="Technology augmenting itself through humans" loading="lazy" decoding="async" />
+                            <div class="nar-fallback nar-fallback-void" aria-hidden="true"></div>
                         </div>
                         <h2 class="nar-head">Alternative Intelligence</h2>
                         <div class="nar-body">
@@ -1575,8 +1575,8 @@
                      in the layout of the original symbient.life narrative. The
                      live .nar-art canvas is relocated here while open. -->
                 <div class="narr-reader" aria-live="polite">
-                    <button class="narr-close" type="button" aria-label="Back to the four movements">
-                        ◂&nbsp;the four movements
+                    <button class="narr-close" type="button" aria-label="Collapse">
+                        collapse&nbsp;▴
                     </button>
                     <div class="narr-reader-inner">
                         <div class="narr-reader-text">
@@ -3045,6 +3045,17 @@
                     live.forEach(({ inst }) => inst.resize && inst.resize());
                 }
 
+                // the first movement (Alternative Intelligence) shows a randomly
+                // seeded faggot-familiar — a fresh one on every visit to the view.
+                let familiar = null;
+                function reseedFamiliar(inst) {
+                    if (!inst || !inst.setParam) return;
+                    inst.setParam("seed", 1 + Math.floor(Math.random() * 998));
+                    inst.setParam("limbs", 2 + Math.floor(Math.random() * 5));
+                    inst.setParam("mix", Math.random());
+                    inst.setParam("symmetry", 0.55 + Math.random() * 0.45);
+                }
+
                 /* ---- expand: each movement opens a two-column reading view ----
                    The cell's live .nar-art (or its raster fallback) is relocated
                    into the reader's right column; the full prose sits on the left
@@ -3059,6 +3070,28 @@
                 const prevBtn = view.querySelector(".narr-prev");
                 const nextBtn = view.querySelector(".narr-next");
 
+                const reduce = matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+                const rectOf = (el) => el.getBoundingClientRect();
+                // expand/collapse ghost — the same fly the lexicon reader uses
+                function fly(from, to) {
+                    const g = document.createElement("div");
+                    g.className = "cell-ghost";
+                    g.style.top = from.top + "px";
+                    g.style.left = from.left + "px";
+                    g.style.width = from.width + "px";
+                    g.style.height = from.height + "px";
+                    document.body.appendChild(g);
+                    g.getBoundingClientRect(); // reflow so the transition runs
+                    g.style.top = to.top + "px";
+                    g.style.left = to.left + "px";
+                    g.style.width = to.width + "px";
+                    g.style.height = to.height + "px";
+                    setTimeout(() => (g.style.opacity = "0"), 520);
+                    setTimeout(() => g.remove(), 1320);
+                }
+
                 let openIdx = -1;
                 let anchor = null; // { cell, headEl, art } — to put the art back
 
@@ -3070,6 +3103,12 @@
                 function openReader(i) {
                     if (!readerEl || i < 0 || i >= cells.length) return;
                     if (openIdx === i) return;
+                    // entering from the grid (vs. prev/next within the reader)
+                    const entering = openIdx < 0;
+                    const from =
+                        entering && !reduce && isVisible()
+                            ? rectOf(cells[i])
+                            : null;
                     restoreArt(); // return any currently-open art first
                     const cell = cells[i];
                     const art = cell.querySelector(".nar-art");
@@ -3094,16 +3133,34 @@
                             rec.inst.resize && rec.inst.resize();
                             rec.inst.start && rec.inst.start();
                         });
+                    // expand animation (lexicon-style ghost), only on entry
+                    if (from) {
+                        readerEl.style.opacity = "0";
+                        const to = rectOf(readerEl);
+                        requestAnimationFrame(() => fly(from, to));
+                        setTimeout(() => {
+                            readerEl.style.opacity = "1";
+                        }, 420);
+                    } else {
+                        readerEl.style.opacity = "1";
+                    }
                     if (closeBtnEl) closeBtnEl.focus();
                 }
                 function closeReader() {
                     if (openIdx < 0) return;
                     const was = openIdx;
+                    const from =
+                        reduce || !isVisible() ? null : rectOf(readerEl);
                     restoreArt();
-                    view.classList.remove("reading");
+                    view.classList.remove("reading"); // grid shown again
                     openIdx = -1;
-                    if (isVisible()) requestAnimationFrame(startAll);
                     const c = cells[was];
+                    if (from && c) {
+                        const to = rectOf(c);
+                        readerEl.style.opacity = "";
+                        requestAnimationFrame(() => fly(from, to));
+                    }
+                    if (isVisible()) requestAnimationFrame(startAll);
                     if (c) c.focus();
                 }
                 function go(delta) {
@@ -3144,7 +3201,7 @@
 
                 /* ---- lab assets per cell (graceful; the reader works without) ---- */
                 const MODULES = [
-                    "/lab/assets/alt-intelligence-ascii.js",
+                    "/lab/assets/being-composer.js",
                     "/lab/assets/symbiogenesis-ascii.js",
                     "/lab/assets/symbiosis-ascii.js",
                     "/lab/assets/galaxy-ascii.js",
@@ -3169,6 +3226,10 @@
                                 const inst = mod.create(canvas);
                                 inst.setTheme(readPalette());
                                 inst._init && inst._init();
+                                if (i === 0) {
+                                    familiar = inst;
+                                    reseedFamiliar(inst); // a random familiar
+                                }
                                 live.push({ inst, art, i });
                                 art.classList.add("is-live"); // hides fallback
                                 // start if visible and not hidden behind the reader
@@ -3191,7 +3252,10 @@
                 // run canvases only while visible; reset the reader when hidden
                 const obs = new MutationObserver(() => {
                     if (isVisible()) {
-                        if (openIdx < 0) requestAnimationFrame(startAll);
+                        if (openIdx < 0) {
+                            if (familiar) reseedFamiliar(familiar); // fresh each visit
+                            requestAnimationFrame(startAll);
+                        }
                     } else {
                         if (openIdx >= 0) closeReader();
                         stopAll();
