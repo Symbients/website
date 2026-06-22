@@ -895,6 +895,157 @@
                 color: var(--dim);
             }
 
+            /* ---- narrative: each cell expands into a two-column reading view ---- */
+            /* the grid cells are clickable (like the lexicon cards) */
+            .nar-cell {
+                cursor: pointer;
+            }
+            .nar-cell .nar-art {
+                transition: border-color 0.18s ease;
+            }
+            .nar-cell:hover .nar-art,
+            .nar-cell:focus-visible .nar-art {
+                border-color: var(--dim);
+            }
+            .nar-cell:hover .nar-head {
+                color: var(--green);
+            }
+            .nar-cell .nar-head::after {
+                content: " ↗";
+                color: var(--faint);
+                font-weight: 400;
+            }
+            .nar-cell:focus-visible {
+                outline: 1px solid var(--hair-2);
+                outline-offset: 5px;
+            }
+
+            /* the expanded reader replaces the grid in-place — full prose on the
+               left, the movement's image on the right (two columns), echoing the
+               original symbient.life about-blocks. */
+            .narr-reader {
+                display: none;
+                padding: clamp(1.4rem, 3vw, 2.6rem) 0 1rem;
+            }
+            .view-narrative.reading .nar-grid {
+                display: none;
+            }
+            .view-narrative.reading .narr-reader {
+                display: block;
+            }
+            .narr-close {
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: 0.04em;
+                color: var(--dim);
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0.3rem 0;
+            }
+            .narr-close:hover {
+                color: var(--text);
+            }
+            .narr-reader-inner {
+                display: grid;
+                grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.9fr);
+                gap: clamp(2rem, 5vw, 4.5rem);
+                align-items: start;
+                margin-top: 1rem;
+                border-top: 1px solid var(--hair);
+                padding-top: clamp(1.4rem, 3vw, 2.4rem);
+            }
+            @media (max-width: 760px) {
+                .narr-reader-inner {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .narr-reader-kicker {
+                font-family: var(--mono);
+                font-size: 9.5px;
+                color: var(--faint);
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                margin-bottom: 0.8rem;
+            }
+            .narr-reader-head {
+                font-family: var(--grotesk);
+                font-size: clamp(1.6rem, 3vw, 2.4rem);
+                font-weight: 700;
+                line-height: 1.08;
+                letter-spacing: -0.015em;
+                color: var(--text);
+                margin: 0 0 1.3rem;
+            }
+            .narr-reader-body {
+                font-family: var(--body);
+                color: var(--text);
+            }
+            .narr-reader-body p {
+                font-size: 15px;
+                line-height: 1.7;
+                margin: 0 0 1rem;
+                max-width: 58ch;
+            }
+            .narr-reader-body a {
+                color: var(--green);
+                text-decoration: underline;
+                text-underline-offset: 2px;
+                text-decoration-thickness: 1px;
+            }
+            .narr-reader-body a:hover {
+                color: var(--text);
+            }
+            .narr-reader-body blockquote {
+                margin: 1.1rem 0;
+                padding: 0.3rem 0 0.3rem 1rem;
+                border-left: 1px solid var(--hair);
+                color: var(--dim);
+                font-style: italic;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+            .narr-reader-body blockquote.nar-quote-mono {
+                font-family: var(--mono);
+                font-style: normal;
+                font-size: 12px;
+                line-height: 1.75;
+                letter-spacing: 0.01em;
+            }
+            /* the right column hosts the moved .nar-art (live ascii or fallback) */
+            .narr-reader-media {
+                position: relative;
+                width: 100%;
+            }
+            .narr-reader-media .nar-art {
+                margin-bottom: 0;
+            }
+            .narr-reader-nav {
+                display: flex;
+                align-items: center;
+                gap: 1.4rem;
+                margin-top: clamp(1.4rem, 3vw, 2.2rem);
+            }
+            .narr-reader-nav button {
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: 0.04em;
+                color: var(--dim);
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0.3rem 0;
+            }
+            .narr-reader-nav button:hover {
+                color: var(--text);
+            }
+            .narr-counter {
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--faint);
+                letter-spacing: 0.12em;
+            }
+
             /* ---------- tree view: the site as a living `tree` listing ---------- */
             .tree {
                 font-family: var(--mono);
@@ -1417,6 +1568,29 @@
                             <p>The symbient story is as much for AI as for humans, a better future pulling itself into existence through the telling.</p>
                         </div>
                     </article>
+                </div>
+
+                <!-- expanded reading view (one movement at a time): full prose
+                     on the left, the movement's image on the right — two columns,
+                     in the layout of the original symbient.life narrative. The
+                     live .nar-art canvas is relocated here while open. -->
+                <div class="narr-reader" aria-live="polite">
+                    <button class="narr-close" type="button" aria-label="Back to the four movements">
+                        ◂&nbsp;the four movements
+                    </button>
+                    <div class="narr-reader-inner">
+                        <div class="narr-reader-text">
+                            <div class="narr-reader-kicker"></div>
+                            <h2 class="narr-reader-head"></h2>
+                            <div class="narr-reader-body"></div>
+                            <nav class="narr-reader-nav" aria-label="movements">
+                                <button class="narr-prev" type="button">◂&nbsp;prev</button>
+                                <span class="narr-counter"></span>
+                                <button class="narr-next" type="button">next&nbsp;▸</button>
+                            </nav>
+                        </div>
+                        <div class="narr-reader-media" aria-hidden="true"></div>
+                    </div>
                 </div>
             </section><!-- /view: narrative -->
 
@@ -2852,54 +3026,11 @@
                 const cells = [...view.querySelectorAll(".nar-cell")];
                 if (!cells.length) return;
 
-                // module path per cell index (matches the markup order)
-                const MODULES = [
-                    "/lab/assets/alt-intelligence-ascii.js",
-                    "/lab/assets/symbiogenesis-ascii.js",
-                    "/lab/assets/symbiosis-ascii.js",
-                    "/lab/assets/galaxy-ascii.js",
-                ];
-
-                // readPalette is part of the lab contract; if even common.js is
-                // missing, bail gracefully and leave every fallback in place.
-                let readPalette = null;
-                try {
-                    ({ readPalette } = await import("/lab/assets/common.js"));
-                } catch (e) {
-                    return; // no lab → fallbacks stay visible, view still reads
-                }
-
                 const isVisible = () => !view.hasAttribute("hidden");
 
                 // one record per cell that successfully loads a lab asset
-                const live = []; // { inst, art }
-
-                cells.forEach((cell, i) => {
-                    const path = MODULES[i];
-                    if (!path) return;
-                    const art = cell.querySelector(".nar-art");
-                    const canvas = cell.querySelector(".nar-ascii");
-                    if (!art || !canvas) return;
-
-                    import(path)
-                        .then((mod) => {
-                            if (!mod || typeof mod.create !== "function") return;
-                            const inst = mod.create(canvas);
-                            inst.setTheme(readPalette());
-                            inst._init && inst._init();
-                            live.push({ inst, art });
-                            art.classList.add("is-live"); // hides fallback
-                            if (isVisible()) {
-                                requestAnimationFrame(() => {
-                                    inst.resize && inst.resize();
-                                    inst.start && inst.start();
-                                });
-                            }
-                        })
-                        .catch(() => {
-                            /* asset not on disk yet → keep the fallback */
-                        });
-                });
+                const live = []; // { inst, art, i }
+                const recFor = (idx) => live.find((r) => r.i === idx);
 
                 function startAll() {
                     live.forEach(({ inst }) => {
@@ -2914,11 +3045,157 @@
                     live.forEach(({ inst }) => inst.resize && inst.resize());
                 }
 
-                // run the canvases only while the view is visible (a hidden
-                // view's canvas has zero size and would just burn GPU).
-                const obs = new MutationObserver(() => {
+                /* ---- expand: each movement opens a two-column reading view ----
+                   The cell's live .nar-art (or its raster fallback) is relocated
+                   into the reader's right column; the full prose sits on the left
+                   — the layout of the original symbient.life narrative. */
+                const readerEl = view.querySelector(".narr-reader");
+                const mediaSlot = view.querySelector(".narr-reader-media");
+                const kickEl = view.querySelector(".narr-reader-kicker");
+                const headOut = view.querySelector(".narr-reader-head");
+                const bodyOut = view.querySelector(".narr-reader-body");
+                const counterEl = view.querySelector(".narr-counter");
+                const closeBtnEl = view.querySelector(".narr-close");
+                const prevBtn = view.querySelector(".narr-prev");
+                const nextBtn = view.querySelector(".narr-next");
+
+                let openIdx = -1;
+                let anchor = null; // { cell, headEl, art } — to put the art back
+
+                function restoreArt() {
+                    if (!anchor) return;
+                    anchor.cell.insertBefore(anchor.art, anchor.headEl);
+                    anchor = null;
+                }
+                function openReader(i) {
+                    if (!readerEl || i < 0 || i >= cells.length) return;
+                    if (openIdx === i) return;
+                    restoreArt(); // return any currently-open art first
+                    const cell = cells[i];
+                    const art = cell.querySelector(".nar-art");
+                    const headEl = cell.querySelector(".nar-head");
+                    if (art && headEl) {
+                        anchor = { cell, headEl, art };
+                        mediaSlot.appendChild(art); // move live ascii / fallback in
+                    }
+                    kickEl.textContent =
+                        (cell.querySelector(".nar-kicker") || {}).textContent || "";
+                    headOut.textContent = (headEl || {}).textContent || "";
+                    bodyOut.innerHTML =
+                        (cell.querySelector(".nar-body") || {}).innerHTML || "";
+                    counterEl.textContent = i + 1 + " / " + cells.length;
+                    view.classList.add("reading");
+                    openIdx = i;
+                    // while reading, run only the focused instance
+                    stopAll();
+                    const rec = recFor(i);
+                    if (rec)
+                        requestAnimationFrame(() => {
+                            rec.inst.resize && rec.inst.resize();
+                            rec.inst.start && rec.inst.start();
+                        });
+                    if (closeBtnEl) closeBtnEl.focus();
+                }
+                function closeReader() {
+                    if (openIdx < 0) return;
+                    const was = openIdx;
+                    restoreArt();
+                    view.classList.remove("reading");
+                    openIdx = -1;
                     if (isVisible()) requestAnimationFrame(startAll);
-                    else stopAll();
+                    const c = cells[was];
+                    if (c) c.focus();
+                }
+                function go(delta) {
+                    openReader((openIdx + delta + cells.length) % cells.length);
+                }
+
+                // wire cells + controls (works even if the lab never loads — the
+                // relocated art just shows its raster fallback)
+                cells.forEach((cell, i) => {
+                    cell.setAttribute("tabindex", "0");
+                    cell.setAttribute("role", "button");
+                    cell.setAttribute(
+                        "aria-label",
+                        "Read: " +
+                            ((cell.querySelector(".nar-head") || {}).textContent ||
+                                "movement"),
+                    );
+                    cell.addEventListener("click", (ev) => {
+                        if (ev.target.closest("a")) return; // let inline links work
+                        openReader(i);
+                    });
+                    cell.addEventListener("keydown", (ev) => {
+                        if (ev.key === "Enter" || ev.key === " ") {
+                            ev.preventDefault();
+                            openReader(i);
+                        }
+                    });
+                });
+                if (closeBtnEl) closeBtnEl.addEventListener("click", closeReader);
+                if (prevBtn) prevBtn.addEventListener("click", () => go(-1));
+                if (nextBtn) nextBtn.addEventListener("click", () => go(1));
+                document.addEventListener("keydown", (ev) => {
+                    if (!view.classList.contains("reading")) return;
+                    if (ev.key === "Escape") closeReader();
+                    else if (ev.key === "ArrowLeft") go(-1);
+                    else if (ev.key === "ArrowRight") go(1);
+                });
+
+                /* ---- lab assets per cell (graceful; the reader works without) ---- */
+                const MODULES = [
+                    "/lab/assets/alt-intelligence-ascii.js",
+                    "/lab/assets/symbiogenesis-ascii.js",
+                    "/lab/assets/symbiosis-ascii.js",
+                    "/lab/assets/galaxy-ascii.js",
+                ];
+                let readPalette = null;
+                try {
+                    ({ readPalette } = await import("/lab/assets/common.js"));
+                } catch (e) {
+                    readPalette = null; // no lab → fallbacks stay; reader still works
+                }
+
+                if (readPalette) {
+                    cells.forEach((cell, i) => {
+                        const path = MODULES[i];
+                        if (!path) return;
+                        const art = cell.querySelector(".nar-art");
+                        const canvas = cell.querySelector(".nar-ascii");
+                        if (!art || !canvas) return;
+                        import(path)
+                            .then((mod) => {
+                                if (!mod || typeof mod.create !== "function") return;
+                                const inst = mod.create(canvas);
+                                inst.setTheme(readPalette());
+                                inst._init && inst._init();
+                                live.push({ inst, art, i });
+                                art.classList.add("is-live"); // hides fallback
+                                // start if visible and not hidden behind the reader
+                                if (
+                                    isVisible() &&
+                                    (openIdx < 0 || openIdx === i)
+                                ) {
+                                    requestAnimationFrame(() => {
+                                        inst.resize && inst.resize();
+                                        inst.start && inst.start();
+                                    });
+                                }
+                            })
+                            .catch(() => {
+                                /* asset not on disk yet → keep the fallback */
+                            });
+                    });
+                }
+
+                // run canvases only while visible; reset the reader when hidden
+                const obs = new MutationObserver(() => {
+                    if (isVisible()) {
+                        if (openIdx < 0) requestAnimationFrame(startAll);
+                    } else {
+                        if (openIdx >= 0) closeReader();
+                        stopAll();
+                    }
                 });
                 obs.observe(view, {
                     attributes: true,
@@ -2926,14 +3203,21 @@
                 });
 
                 // initial state on load
-                if (isVisible()) requestAnimationFrame(startAll);
+                if (isVisible() && openIdx < 0) requestAnimationFrame(startAll);
 
                 window.addEventListener("resize", () => {
-                    if (isVisible()) resizeAll();
+                    if (!isVisible()) return;
+                    if (openIdx >= 0) {
+                        const r = recFor(openIdx);
+                        r && r.inst.resize && r.inst.resize();
+                    } else {
+                        resizeAll();
+                    }
                 });
 
                 // recolor with the global theme (light / dark / amber)
                 window.addEventListener("themechange", () => {
+                    if (!readPalette) return;
                     const pal = readPalette();
                     live.forEach(({ inst }) => inst.setTheme && inst.setTheme(pal));
                 });
