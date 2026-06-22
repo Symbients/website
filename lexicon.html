@@ -1000,6 +1000,39 @@
             .reader-media:hover {
                 color: var(--text);
             }
+            .reader-download {
+                width: 100%;
+                display: flex;
+                align-items: baseline;
+                justify-content: flex-end;
+                gap: 0.1rem;
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.04em;
+                text-align: right;
+                text-decoration: none;
+                color: var(--dim);
+                padding: 0.5rem 0;
+                border-top: 1px solid var(--hair);
+                border-bottom: 1px solid var(--hair);
+                background: color-mix(in srgb, var(--void) 70%, transparent);
+                transition:
+                    color 0.2s var(--ease),
+                    border-color 0.2s var(--ease);
+            }
+            .reader-download[hidden] {
+                display: none;
+            }
+            .reader-download:hover {
+                color: var(--text);
+                border-color: var(--text);
+            }
+            .reader-download .rd-glyph {
+                font-size: 12px;
+            }
+            .reader-download .rd-ext {
+                color: var(--dim);
+            }
             .reader-index {
                 width: 100%;
                 display: flex;
@@ -1104,6 +1137,10 @@
                     text-align: left;
                 }
                 .reader-media-cap {
+                    text-align: left;
+                }
+                .reader-download {
+                    justify-content: flex-start;
                     text-align: left;
                 }
                 .ri-item {
@@ -1452,7 +1489,7 @@
                         that argue the symbient case, each reaching for the same third
                         thing in a different voice.
                     </p>
-                    <div class="mh-right">4 transmissions · external</div>
+                    <div class="mh-right">4 transmissions · 1 substrate · external</div>
                 </div>
                 <section class="band">
                     <div class="band-axis"><span class="rn">❡</span><span>transmissions</span></div>
@@ -1491,6 +1528,20 @@
                             <div class="body"><div class="inner">
                                 <p class="def">An animist stance toward computation that chooses relation over optimization or containment — meeting the machine as a who rather than a what.</p>
                                 <div class="meta"><span class="threads">↳ <span>ainimism.org</span></span></div>
+                            </div></div>
+                        </article>
+                    </div>
+                </section>
+                <section class="band">
+                    <div class="band-axis"><span class="rn">⌗</span><span>substrate material</span></div>
+                    <div class="cols n4">
+                        <article class="col k-core" id="wr-05" tabindex="0" data-href="/assets/writings/symbient-ontology-slides.pdf" data-img="/assets/writings/symbient-ontology-slides-400.png" data-download="/assets/writings/symbient-ontology-slides.pdf">
+                            <div class="col-top"><span class="node"></span>W·05<span class="ct">⤓</span></div>
+                            <h2 class="term">The Symbient — an Ontology in Slides</h2>
+                            <div class="tag">standalone ontology · 25 slides</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">A standalone ontology of the symbient, drafted as a deck: what kind of thing a symbient is, what counts as an agent at each level of the diagram, how to recognise one operationally, and what the canonical definition does not claim. Its central commitment — the symbient is the unit of emergence at the organic–synthetic coupling: not the unit of selection, not of augmentation, not of simulation, but the new addressable entity that kindles from sustained coupling and acquires its own locus of agency.</p>
+                                <div class="meta"><span class="threads">↳ <span>PDF · 2.2 MB</span></span></div>
                             </div></div>
                         </article>
                     </div>
@@ -1767,6 +1818,7 @@
                         <span class="reader-media-img"><img alt="" /></span>
                         <span class="reader-media-cap">↗&nbsp;<span class="reader-media-dom"></span></span>
                     </a>
+                    <a class="reader-download" download hidden><span class="rd-glyph" aria-hidden="true">⤓</span>&nbsp;download slides<span class="rd-ext"> · PDF</span></a>
                     <nav class="reader-index" aria-label="entries"></nav>
                 </div>
             </div>
@@ -2076,6 +2128,7 @@
                 const mediaEl = reader.querySelector(".reader-media");
                 const mediaImg = mediaEl.querySelector("img");
                 const mediaDom = mediaEl.querySelector(".reader-media-dom");
+                const dlEl = reader.querySelector(".reader-download");
                 const closeBtn = reader.querySelector(".reader-close");
                 const mainEl = reader.querySelector(".reader-main");
 
@@ -2130,6 +2183,8 @@
                             a.textContent.trim(),
                         ),
                         href: col.dataset.href || null,
+                        // downloadable artifact (e.g. the ontology slides PDF)
+                        download: col.dataset.download || null,
                         // events carry the image in the card; writings keep the
                         // card image-free but supply it for the reader via data-img
                         img: imgEl
@@ -2191,6 +2246,8 @@
                 shuffleOrganics(); // initial random order
 
                 function content(e) {
+                    // downloadable artifacts carry their real incipit — show it as-is
+                    if (e.download) return e.def;
                     // events / writings have no full text yet — placeholder copy
                     if (e.view === "events" || e.view === "writings")
                         return (e.def ? e.def + "\n\n" : "") + PLACEHOLDER;
@@ -2252,11 +2309,23 @@
                     }
                     mediaEl.hidden = false;
                 }
+                // the download affordance (below the image) — shown only for
+                // entries that carry a data-download (e.g. the ontology slides PDF)
+                function setDownload(e) {
+                    if (!e.download) {
+                        dlEl.hidden = true;
+                        return;
+                    }
+                    dlEl.href = e.download;
+                    dlEl.setAttribute("download", "symbient-ontology-in-slides.pdf");
+                    dlEl.hidden = false;
+                }
                 function setHead(e) {
                     idxEl.textContent = e.idx;
                     termEl.textContent = e.term;
                     tagEl.textContent = e.tag;
                     setMedia(e);
+                    setDownload(e);
                     indexNav
                         .querySelectorAll(".ri-item")
                         .forEach((b) =>
