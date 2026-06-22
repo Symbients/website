@@ -36,10 +36,10 @@ export const meta = {
     evokes:
         "a skeletal machine hand and a human hand meeting to make a heart, struck as living ascii — crisp pen outlines and bony joints condensed from ink into glyphs, a hot @ burning in the darkest strokes.",
     params: [
-        { key: "cols", label: "grid width", min: 60, max: 160, step: 2, value: 110 },
-        { key: "contrast", label: "ink contrast", min: 0.4, max: 2.5, step: 0.05, value: 1.9 },
-        { key: "threshold", label: "background cutoff", min: 0.04, max: 0.6, step: 0.01, value: 0.2 },
-        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 0.7 },
+        { key: "cols", label: "grid width", min: 60, max: 160, step: 2, value: 122 },
+        { key: "contrast", label: "ink contrast", min: 0.4, max: 2.5, step: 0.05, value: 2.5 },
+        { key: "threshold", label: "background cutoff", min: 0.04, max: 0.6, step: 0.01, value: 0.11 },
+        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 1.0 },
     ],
 };
 

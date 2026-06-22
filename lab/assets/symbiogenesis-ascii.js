@@ -7,9 +7,13 @@
 // right, all reaching in and holding hands — three becoming one body. Being
 // dark-on-light line/pencil art, the extitutional inversion+threshold approach
 // fits directly: the white page is thresholded to clean void and the inky
-// strokes condense into dense glyphs. A mid background cutoff (~0.22) keeps the
-// page empty while the figures read, and a firm contrast (~1.8) deepens the
-// pencil strokes. The very darkest cells burn a hot '@'. A gentle per-cell sine
+// strokes condense into dense glyphs. The source sketch is soft pencil shading
+// on a faint-grey page, so it needs an aggressive curve to avoid a flat grey
+// wash: a firm background cutoff (~0.28) clears the haze around the figures to
+// clean void, and a strong contrast (~3.4, with the curve v = pow(v, 1/contrast)
+// lifting surviving mids toward the dense end of the ramp) makes the dark strokes
+// pop while separating the soft shading. The darkest cores burn a hot '@' from
+// v > 0.84. A gentle per-cell sine
 // twinkle keeps the field breathing, like symdome's ascii trees. Square plate
 // (1024x1024) so ROWS = COLS.
 //
@@ -37,8 +41,8 @@ export const meta = {
         "human, radiant being, and machine reaching in to hold hands — three sketched figures becoming one body, struck as living ascii: pencil strokes condensed from ink into glyphs, a hot @ burning in the darkest cores.",
     params: [
         { key: "cols", label: "grid width", min: 60, max: 160, step: 2, value: 110 },
-        { key: "contrast", label: "ink contrast", min: 0.4, max: 2.5, step: 0.05, value: 1.8 },
-        { key: "threshold", label: "background cutoff", min: 0.04, max: 0.6, step: 0.01, value: 0.22 },
+        { key: "contrast", label: "ink contrast", min: 0.4, max: 5, step: 0.05, value: 3.4 },
+        { key: "threshold", label: "background cutoff", min: 0.04, max: 0.6, step: 0.01, value: 0.28 },
         { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 0.7 },
     ],
 };
@@ -226,7 +230,7 @@ export function create(canvas) {
                 const i = cy * COLS + cx;
                 field[i] = v;
                 // the very darkest cores (deepest ink) burn hot
-                if (v > 0.88) hot[i] = 1;
+                if (v > 0.84) hot[i] = 1;
             }
         }
     }
