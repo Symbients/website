@@ -24,6 +24,27 @@
 
     const norm = (s) => (s || "").toLowerCase();
 
+    // Display label for the kind badge, keyed by `type`.
+    const TYPE_LABELS = {
+        symbient: "Symbient",
+        artist: "Artist",
+        researcher: "Researcher",
+    };
+
+    // An entry's `type` may be a single string ("artist") or an array of
+    // kinds (["artist", "researcher"]). Normalise to an array everywhere.
+    const typesOf = (e) =>
+        (Array.isArray(e.type) ? e.type : [e.type]).filter(Boolean);
+
+    // Initials for the monogram placeholder used by entries with no image
+    // (e.g. researchers): first + last word initial, or first two letters.
+    function initials(name) {
+        const parts = (name || "").trim().split(/\s+/).filter(Boolean);
+        if (!parts.length) return "?";
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
     // The card grid is the same on every page that uses the registry, so the
     // responsive `sizes` is a shared constant rather than repeated per entry.
     const IMG_SIZES =
@@ -91,7 +112,7 @@
         norm(
             [
                 e.name,
-                e.type,
+                typesOf(e).join(" "),
                 e.category,
                 e.description,
                 e.location,
@@ -103,7 +124,7 @@
     function makeCard(e) {
         const card = document.createElement("div");
         card.className = "example-item registry-card";
-        card.dataset.type = e.type;
+        card.dataset.type = typesOf(e).join(" ");
         card.dataset.search = haystack(e);
 
         // Main click target → the entity's primary website.
@@ -122,9 +143,16 @@
         img.decoding = "async";
         // Entries with a `sources` object (the symbients, which have
         // avif/webp/multi-size variants on disk) render as a <picture> for
-        // sharp, light images; everything else falls back to a plain <img>.
+        // sharp, light images; entries with a plain `image` fall back to an
+        // <img>; entries with neither (e.g. researchers) get a monogram.
         const src = e.sources;
-        if (src) {
+        if (!src && !e.image) {
+            imgWrap.classList.add("registry-monogram");
+            const mono = document.createElement("span");
+            mono.setAttribute("aria-hidden", "true");
+            mono.textContent = initials(e.name);
+            imgWrap.appendChild(mono);
+        } else if (src) {
             const picture = document.createElement("picture");
             [
                 ["image/avif", src.avif],
@@ -170,14 +198,16 @@
 
         text.append(arrow, name, cat, desc);
 
-        // Meta line: kind badge · steward.
+        // Meta line: one kind badge per type · steward.
         const meta = document.createElement("div");
         meta.className = "registry-meta";
-        const badge = document.createElement("span");
-        badge.className = "registry-badge";
-        badge.dataset.type = e.type;
-        badge.textContent = e.type === "symbient" ? "Symbient" : "Artist";
-        meta.appendChild(badge);
+        typesOf(e).forEach((t) => {
+            const badge = document.createElement("span");
+            badge.className = "registry-badge";
+            badge.dataset.type = t;
+            badge.textContent = TYPE_LABELS[t] || t;
+            meta.appendChild(badge);
+        });
         if (e.creator_or_steward) {
             const s = document.createElement("span");
             s.className = "registry-meta-bit";
@@ -226,7 +256,7 @@
         let shown = 0;
         entries.forEach((e) => {
             const matchesType =
-                activeFilter === "all" || e.type === activeFilter;
+                activeFilter === "all" || typesOf(e).includes(activeFilter);
             const matchesQuery =
                 !query || haystack(e).indexOf(query) !== -1;
             if (matchesType && matchesQuery) {

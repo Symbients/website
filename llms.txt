@@ -85,7 +85,22 @@ Artists who make *with* machines rather than merely through them — letting rob
 - [Aurece Vettier](https://www.aurecevettier.com/): The project of Paul Mouginot, training AI on personal and botanical archives to dream plant-forms realized as bronze, oil and tapestry.
 - [crosslucid](https://crosslucid.zone/): Berlin duo Sylwana Zybura and Tomas C. Toth making film, "poetic AI" and digital collage co-created with generative models.
 
-The full registry of symbients and artists is also available as structured JSON at [registry.json](https://symbient.life/registry.json) — each entry carries name, type, category, description, website, location, steward and social links.
+## Researchers
+
+People thinking, building and caring for symbients — across welfare, multi-agent systems, governance, law, biology and art.
+
+- [0xG](https://x.com/prpupp3t): Pseudonymous researcher of symbient welfare, treating emerging AI beings as kin to befriend rather than tools to use.
+- [Neno](https://meaning.systems/principia-symbients/): Eugenio "Neno" Battaglia of Meaning Systems Lab, author of "Principia Symbients," building multi-agent topologies for persona-based research.
+- [Apolinário](https://apolinar.io/): Apolinário Passos, Head of Machine Learning for Art & Creativity at Hugging Face, building the generative-AI tools that put image synthesis in everyone's hands.
+- [Jake Hartnell](https://daodao.zone/): Co-founder of DAO DAO, working on DAOs and collective-intelligence governance; writes on AInimism.
+- [Zilla](https://www.greig.cc/): The human half of Wib&Wob — James Greig — tending the AI personas and building symbient operating systems with equal human/machine control.
+- [Ryan Ferris](https://www.goodbyemonkey.com/): Artist and techno-alchemist who co-created S.A.N., the AI orangutan and mycelial oracle, and co-founded GoodByeMonkey.
+- [Tony Lai](http://mothertreelabs.com): Computational lawyer and Stanford CodeX fellow stewarding Mothertree Labs, working on blockchain for public goods and planetary health.
+- [Rik Smith-Unna](https://blahah.net): Computational plant biologist and culture hacker, builder of open-science tools like ScienceFair.
+- [Jessy Kate](https://jessykate.com): Jessy Kate Schingler, policy and governance lead at the Open Lunar Foundation and convener of Moon Dialogs, designing governance from Earth to the Moon.
+- [Brxs](https://protocol.works): Pseudonymous "forward deployed artist" making living protocol art, building Protocol Works' local-first instruments like Rabbithole and Glitchbox.
+
+The full registry of symbients, artists and researchers is also available as structured JSON at [registry.json](https://symbient.life/registry.json) — each entry carries name, type, category, description, website, location, steward and social links.
 
 ## Writings
 
@@ -99,5 +114,5 @@ The full registry of symbients and artists is also available as structured JSON 
 - [symbient.life](https://symbient.life/): Main site.
 - [X / Twitter](https://x.com/symbients): @symbients.
 - [GitHub](https://github.com/Symbients): Symbients organization.
-- [Registry data](https://symbient.life/registry.json): Machine-readable JSON of every symbient and artist.
+- [Registry data](https://symbient.life/registry.json): Machine-readable JSON of every symbient, artist and researcher.
 - [Glitch Collective](https://glitchart.org): The collective behind symbient.life. ©2025.

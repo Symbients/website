@@ -1858,6 +1858,29 @@ html[data-theme="dark"] .event-card {
     color: var(--text-secondary);
 }
 
+/* Monogram fallback for entries with no image (e.g. researchers). Fills the
+   same 4/3 box as a real photo so the grid stays even. */
+.example-image.registry-monogram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            var(--accent-muted),
+            transparent 70%
+        ),
+        var(--cream-dark);
+}
+
+.registry-monogram span {
+    font-family: "Space Mono", monospace;
+    font-size: clamp(2.25rem, 6vw, 3.25rem);
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    opacity: 0.9;
+}
+
 .registry-badge {
     font-family: "Space Mono", monospace;
     font-size: 0.62rem;
