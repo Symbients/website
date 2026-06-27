@@ -925,7 +925,9 @@
                original symbient.life about-blocks. */
             .narr-reader {
                 display: none;
-                padding: clamp(1.4rem, 3vw, 2.6rem) 0 1rem;
+                position: relative;
+                padding: 3.2rem 0 2.5rem;
+                transition: opacity 0.35s var(--ease);
             }
             .view-narrative.reading .nar-grid {
                 display: none;
@@ -934,26 +936,29 @@
                 display: block;
             }
             .narr-close {
+                position: absolute;
+                top: 0;
+                left: 0;
                 font-family: var(--mono);
-                font-size: 11px;
-                letter-spacing: 0.04em;
+                font-size: 10px;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
                 color: var(--dim);
                 background: none;
-                border: none;
+                border: 1px solid var(--hair);
+                padding: 0.4rem 0.7rem;
                 cursor: pointer;
-                padding: 0.3rem 0;
+                transition: all 0.2s var(--ease);
             }
             .narr-close:hover {
                 color: var(--text);
+                border-color: var(--text);
             }
             .narr-reader-inner {
                 display: grid;
                 grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.9fr);
                 gap: clamp(2rem, 5vw, 4.5rem);
                 align-items: start;
-                margin-top: 1rem;
-                border-top: 1px solid var(--hair);
-                padding-top: clamp(1.4rem, 3vw, 2.4rem);
             }
             @media (max-width: 760px) {
                 .narr-reader-inner {

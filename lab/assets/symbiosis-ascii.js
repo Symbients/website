@@ -37,19 +37,19 @@ export const meta = {
         "a skeletal machine hand and a human hand meeting to make a heart, struck as living ascii — crisp pen outlines and bony joints condensed from ink into glyphs, a hot @ burning in the darkest strokes.",
     params: [
         { key: "cols", label: "grid width", min: 60, max: 160, step: 2, value: 122 },
-        { key: "contrast", label: "ink contrast", min: 0.4, max: 2.5, step: 0.05, value: 2.5 },
+        { key: "contrast", label: "ink contrast", min: 0.4, max: 3.0, step: 0.05, value: 2.6 },
         { key: "threshold", label: "background cutoff", min: 0.04, max: 0.6, step: 0.01, value: 0.11 },
-        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 1.0 },
+        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 0.35 },
     ],
 };
 
 const RAMP = " .:-=+*#%"; // symdome's tonal ramp; '@' is the hot accent
-// This asset paints the glyph texture so it FILLS the COLS×ROWS canvas (the
-// plane is the whole stage), so each glyph cell maps to a near-square screen
-// patch. To keep the landscape plate at its true ≈1402/1122 (1.25) aspect we
-// take ROWS = COLS × (h/w) directly (CELL_AR = 1) — the image then fills the
-// grid by width with no squashing, instead of collapsing into a narrow strip.
-const CELL_AR = 1.0;
+// The glyph texture FILLS the whole 4:3 stage. To keep the plate undistorted we
+// size the grid to the live CANVAS aspect (so each cell is a SQUARE on-screen
+// patch, CELL_AR = 1) and LETTERBOX the source rectangle inside it at its true
+// ≈1.25 aspect — the slack cells stay blank (padding rows/cols), so a circle
+// stays a circle in any container instead of stretching to fill the frame.
+const CELL_AR = 1.0; // target on-screen cell aspect (w/h); 1 = square cells
 
 export function create(canvas) {
     const stage = new Stage2D(canvas);
@@ -138,18 +138,19 @@ export function create(canvas) {
         }
     }
 
-    function aspectRows() {
-        // Preserve the source aspect: ROWS = COLS * (h/w) * CELL_AR. The CELL_AR
-        // factor accounts for monospace cells being taller than wide, so each
-        // glyph maps to a roughly square screen patch and the hands keep their
-        // landscape proportions instead of being stretched.
-        const imgAR = lumW && lumH ? lumH / lumW : SRC_H / SRC_W; // h/w
-        return Math.max(20, Math.round(COLS * imgAR * CELL_AR));
+    function canvasRows() {
+        // Size the glyph grid to the live CANVAS aspect (NOT the source aspect)
+        // so each cell maps to a SQUARE on-screen patch: ROWS = CELL_AR * COLS *
+        // H/W. The real image is then letterboxed inside this grid in rebuild(),
+        // leaving blank padding rows/cols so nothing is ever stretched.
+        const W = stage.width, H = stage.height;
+        const screenAR = (W && H) ? W / H : SRC_W / SRC_H; // w/h
+        return Math.max(20, Math.round((CELL_AR * COLS) / screenAR));
     }
 
     function allocGrid() {
         COLS = params.cols | 0;
-        ROWS = aspectRows();
+        ROWS = canvasRows();
         field = new Float32Array(COLS * ROWS);
         hot = new Uint8Array(COLS * ROWS);
     }
@@ -167,22 +168,24 @@ export function create(canvas) {
         const contrast = params.contrast;
 
         // Fit the image into the grid preserving aspect, centered (letterbox).
-        // Work in glyph-cell units, undoing the cell aspect so the comparison is
-        // in true on-screen proportions: the grid's screen aspect is
-        // COLS / (ROWS * CELL_AR), the image's is lumW / lumH.
-        const imgAR = lumW / lumH; // w/h (≈1.25 landscape)
-        const gridAR = COLS / (ROWS * CELL_AR); // grid w/h in true screen terms
+        // The grid is sized to the live CANVAS aspect (square on-screen cells),
+        // so the grid's screen aspect is simply W/H. Place the source rectangle
+        // inside it at its TRUE aspect; the slack cells stay blank (padding
+        // rows/cols) so the content is never stretched, in any container.
+        const W = stage.width, H = stage.height;
+        const screenAR = (W && H) ? W / H : (COLS / Math.max(1, ROWS));
+        const imgAR = lumW / lumH; // source w/h (≈1.25 landscape)
         let drawCols, drawRows, offX, offY;
-        if (imgAR >= gridAR) {
-            // image is wider than the grid -> fit width, letterbox top/bottom
+        if (imgAR >= screenAR) {
+            // image wider than the frame -> fit width, blank rows top/bottom
             drawCols = COLS;
-            drawRows = Math.round((COLS / imgAR) * CELL_AR);
+            drawRows = Math.round((ROWS * screenAR) / imgAR);
             offX = 0;
             offY = Math.floor((ROWS - drawRows) / 2);
         } else {
-            // image is taller than the grid -> fit height, letterbox left/right
+            // image taller/narrower than the frame -> fit height, blank cols L/R
             drawRows = ROWS;
-            drawCols = Math.round((ROWS * CELL_AR) * imgAR);
+            drawCols = Math.round((COLS * imgAR) / screenAR);
             offY = 0;
             offX = Math.floor((COLS - drawCols) / 2);
         }
@@ -227,7 +230,7 @@ export function create(canvas) {
                 const i = cy * COLS + cx;
                 field[i] = v;
                 // the very darkest cores (deepest ink) burn hot
-                if (v > 0.88) hot[i] = 1;
+                if (v > 0.85) hot[i] = 1;
             }
         }
     }
@@ -264,8 +267,9 @@ export function create(canvas) {
                 const i = cy * COLS + cx;
                 let v = field[i];
                 if (v <= 0.001) continue;
-                // twinkle: per-cell phase, symdome-style sine
-                const tw1 = 0.85 + tw * 0.4 * Math.sin(t * 1.5 + cx * 0.7 + cy * 0.9);
+                // twinkle: a subtle per-cell shimmer that never dims far below
+                // full strength, so glyphs hold bold instead of flickering faint.
+                const tw1 = 1 - tw * 0.12 * (0.5 + 0.5 * Math.sin(t * 1.5 + cx * 0.7 + cy * 0.9));
                 v = Math.min(1, v * tw1);
 
                 // hot '@' on the densest cores (deepest ink), gently pulsing
@@ -281,7 +285,8 @@ export function create(canvas) {
                     );
                     glyph = RAMP[idx];
                     if (glyph === " ") continue;
-                    alpha = 0.5 + 0.5 * v;
+                    // high opacity floor so even mid-tone glyphs read strongly
+                    alpha = 0.78 + 0.22 * v;
                 }
                 tctx.fillStyle = `rgba(${inkRGB},${alpha.toFixed(3)})`;
                 tctx.fillText(glyph, (cx + 0.5) * cw, (cy + 0.5) * ch);
@@ -310,7 +315,10 @@ export function create(canvas) {
                 rebuild();
             }
         },
-        resize: () => stage.resize(),
+        resize: () => {
+            stage.resize();
+            rebuild(); // re-derive ROWS from the new canvas aspect, re-letterbox
+        },
         dispose: () => {
             stage.dispose();
             tex.dispose();

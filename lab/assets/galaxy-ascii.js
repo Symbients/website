@@ -29,15 +29,18 @@ export const meta = {
         { key: "cols", label: "grid width", min: 60, max: 180, step: 2, value: 120 },
         { key: "arms", label: "arms", min: 2, max: 3, step: 1, value: 2 },
         { key: "spin", label: "spin", min: 0, max: 0.3, step: 0.005, value: 0.05 },
-        { key: "density", label: "density", min: 0, max: 1, step: 0.01, value: 0.6 },
-        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 0.6 },
+        { key: "density", label: "density", min: 0, max: 1, step: 0.01, value: 0.75 },
+        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 0.45 },
     ],
 };
 
 const RAMP = " .:-=+*#%"; // symdome's tonal ramp; '@' is the hot accent
-// Square field: a galaxy is round, so the glyph grid is square and ROWS = COLS.
-// CELL_AR keeps each glyph cell mapping to a roughly square screen patch.
-const CELL_AR = 1.0;
+// The glyph texture FILLS the whole 4:3 stage. To keep the galaxy ROUND we size
+// the grid to the live CANVAS aspect (so each cell is a SQUARE on-screen patch,
+// CELL_AR = 1) and draw the disc as a true circle fit to the SHORTER (vertical)
+// dimension — blank padding cols left/right — instead of stretching a square
+// grid to fill 4:3 (which turned the disc into an ellipse).
+const CELL_AR = 1.0; // target on-screen cell aspect (w/h); 1 = square cells
 
 export function create(canvas) {
     const stage = new Stage2D(canvas);
@@ -77,7 +80,12 @@ export function create(canvas) {
 
     function allocGrid() {
         COLS = params.cols | 0;
-        ROWS = COLS; // round galaxy -> square grid
+        // Size the grid to the live CANVAS aspect so each cell is a SQUARE
+        // on-screen patch; the round galaxy is then drawn as a true circle fit
+        // to the shorter dimension, centered, with blank padding cols L/R.
+        const W = stage.width, H = stage.height;
+        const screenAR = (W && H) ? W / H : (4 / 3); // w/h
+        ROWS = Math.max(20, Math.round((CELL_AR * COLS) / screenAR));
         field = new Float32Array(COLS * ROWS);
     }
 
@@ -124,10 +132,13 @@ export function create(canvas) {
         const tw = params.twinkle;
         const cx = (COLS - 1) / 2;
         const cy = (ROWS - 1) / 2;
-        // map normalized radius 1.0 to ~46% of the grid half-width so the disc
-        // sits inside the frame with a little margin.
-        const scaleX = COLS * 0.46;
-        const scaleY = ROWS * 0.46;
+        // EQUAL scales (in cells) so the disc reads as a true circle on the
+        // square on-screen cells. Fit normalized radius 1.0 to ~46% of the
+        // SHORTER (vertical) dimension so the round galaxy sits inside the frame
+        // with blank padding cols left/right rather than stretching to 4:3.
+        const disc = Math.min(COLS, ROWS) * 0.46;
+        const scaleX = disc;
+        const scaleY = disc;
 
         // faint dust haze — a smooth radial glow, brightest at the core.
         for (let gy = 0; gy < ROWS; gy++) {
@@ -137,7 +148,7 @@ export function create(canvas) {
                 const nx = (gx - cx) / scaleX;
                 const rr = nx * nx + ny * ny;
                 // gentle haze that fades out past the disc edge
-                const haze = 0.16 * Math.exp(-rr * 2.2);
+                const haze = 0.2 * Math.exp(-rr * 2.0);
                 field[row + gx] += haze;
             }
         }
@@ -151,8 +162,9 @@ export function create(canvas) {
             const gx = Math.round(cx + px * scaleX);
             const gy = Math.round(cy + py * scaleY);
             if (gx < 0 || gy < 0 || gx >= COLS || gy >= ROWS) continue;
-            // per-star twinkle
-            const tw1 = 1 - tw * 0.5 * (0.5 + 0.5 * Math.sin(t * 2.2 + st.ph));
+            // per-star twinkle — a gentle shimmer that never dims far, so the
+            // stars hold bright instead of flickering toward grey.
+            const tw1 = 1 - tw * 0.22 * (0.5 + 0.5 * Math.sin(t * 2.2 + st.ph));
             field[gy * COLS + gx] += st.b * tw1;
         }
 
@@ -200,7 +212,7 @@ export function create(canvas) {
                 // hot '@' on the brightest cores (the burning galactic heart)
                 let glyph;
                 let alpha;
-                if (v > 0.92) {
+                if (v > 0.85) {
                     glyph = "@";
                     alpha = 0.92 + 0.08 * Math.sin(t * 4 + i);
                 } else {
@@ -210,7 +222,8 @@ export function create(canvas) {
                     );
                     glyph = RAMP[idx];
                     if (glyph === " ") continue;
-                    alpha = 0.5 + 0.5 * v;
+                    // high opacity floor so even faint stars/haze read strongly
+                    alpha = 0.72 + 0.28 * v;
                 }
                 tctx.fillStyle = `rgba(${inkRGB},${alpha.toFixed(3)})`;
                 tctx.fillText(glyph, (cx + 0.5) * cw, (cy + 0.5) * ch);
@@ -242,7 +255,10 @@ export function create(canvas) {
                 buildStars();
             }
         },
-        resize: () => stage.resize(),
+        resize: () => {
+            stage.resize();
+            allocGrid(); // re-derive ROWS from the new canvas aspect (stars reused)
+        },
         dispose: () => {
             stage.dispose();
             tex.dispose();

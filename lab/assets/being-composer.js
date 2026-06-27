@@ -47,7 +47,9 @@ export function create(canvas) {
     // chars[i] >= 0 overrides the ramp glyph (used for the @ hot eyes/tips);
     // hot[i] marks cores that flicker the hot '@'.
     let COLS = params.cols | 0;
-    let ROWS = Math.round(COLS * 1.28); // portrait — beings stand upright
+    // Grid sized to the live canvas aspect (set in allocGrid); the upright being
+    // is drawn in a centered portrait box inside it, letterboxed with blank cols.
+    let ROWS = Math.round(COLS * 0.75);
     let field, chars, hot;
 
     // glyph texture canvas
@@ -64,7 +66,13 @@ export function create(canvas) {
 
     function allocGrid() {
         COLS = Math.max(20, params.cols | 0);
-        ROWS = Math.max(24, Math.round(COLS * 1.28));
+        // Size the grid to the live CANVAS aspect so each cell is a SQUARE
+        // on-screen patch (no horizontal stretch). The upright portrait being is
+        // laid out in a centered box inside this grid, with blank padding cols
+        // left/right — so the figure keeps true proportions in any container.
+        const W = stage.width, H = stage.height;
+        const screenAR = (W && H) ? W / H : (4 / 3); // w/h
+        ROWS = Math.max(24, Math.round(COLS / screenAR));
         field = new Float32Array(COLS * ROWS);
         chars = new Int16Array(COLS * ROWS).fill(-1);
         hot = new Uint8Array(COLS * ROWS);
@@ -78,8 +86,9 @@ export function create(canvas) {
     // -----------------------------------------------------------------------
     function dab(x, y, val, rad) {
         // brush radius governs stroke weight; we add a touch so even a rad~0.7
-        // hairline paints a solid core cell rather than a faint speck.
-        const r = rad + 0.55;
+        // hairline paints a solid core cell rather than a faint speck. A slightly
+        // fatter add gives the strokes bolder, heavier ink weight.
+        const r = rad + 0.7;
         const x0 = Math.max(0, Math.floor(x - r));
         const x1 = Math.min(COLS - 1, Math.ceil(x + r));
         const y0 = Math.max(0, Math.floor(y - r));
@@ -356,9 +365,14 @@ export function create(canvas) {
         const mix = params.mix;
         const nLimbs = params.limbs | 0;
 
-        const CX = COLS / 2; // central axis
-        const unit = COLS * 0.5; // overall size unit
-        const val = 0.9;
+        const CX = COLS / 2; // central axis (being centered in the frame)
+        // The being is an upright PORTRAIT figure of aspect ≈ 1 : 1.28. Base the
+        // size unit on a portrait box that fills the grid HEIGHT, so the figure
+        // keeps true proportions and is letterboxed with blank side columns
+        // rather than stretched to the (now landscape) grid width.
+        const boxW = ROWS / 1.28; // portrait box width (true being aspect)
+        const unit = boxW * 0.5; // overall size unit (was COLS * 0.5)
+        const val = 0.96; // bolder base ink so the being reads strongly
 
         // --- skeleton key points (figural proportions, y grows downward) -----
         const headY = ROWS * (0.16 + rng() * 0.04);
@@ -522,7 +536,7 @@ export function create(canvas) {
                 // Tonal shaping: lift mid densities toward the top of the ramp
                 // so stroke cores read as stark Faggots ink (#%) and only the
                 // brush fringe stays in the light " .:-=" tones.
-                let vv = Math.pow(clamp(v, 0, 1), 0.7);
+                let vv = Math.pow(clamp(v, 0, 1), 0.62);
                 // per-cell twinkle (symdome-style sine) — biased to ADD light so
                 // solid ink never blinks to grey; plus the global breath swell.
                 const tw1 = 1 + tw * 0.18 * Math.sin(t * 1.5 + cx * 0.7 + cy * 0.9);
@@ -542,7 +556,8 @@ export function create(canvas) {
                     const idx = Math.max(0, Math.min(last, Math.round(vv * last)));
                     glyph = RAMP[idx];
                     if (glyph === " ") continue;
-                    alpha = 0.55 + 0.45 * vv;
+                    // high opacity floor so even the lighter ramp tones read bold
+                    alpha = 0.8 + 0.2 * vv;
                 }
                 tctx.fillStyle = `rgba(${inkRGB},${alpha.toFixed(3)})`;
                 tctx.fillText(glyph, (cx + 0.5) * cw, (cy + 0.5) * ch);
@@ -570,7 +585,10 @@ export function create(canvas) {
             params[k] = v;
             if (STRUCTURAL.has(k)) buildBeing();
         },
-        resize: () => stage.resize(),
+        resize: () => {
+            stage.resize();
+            buildBeing(); // re-derive ROWS from the new canvas aspect, re-lay-out
+        },
         dispose: () => {
             stage.dispose();
             tex.dispose();
