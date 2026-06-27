@@ -36,6 +36,19 @@
                 /* height of the frozen hero — drives scroll padding + scroll-margin */
                 --hero-h: clamp(260px, 46vh, 460px);
 
+                /* ---- fluid type scale (mobile → desktop, from first principles) ----
+                   clamp(min, min_rem + slope*vw, max): the min governs phones, the
+                   max caps on wide desktop, the vw term interpolates between. Used
+                   site-wide so every size is responsive with no per-breakpoint px.
+                   Verify ports at ~375 / ~768 / ~1280+ (see responsive.html). */
+                --fs-hero: clamp(2rem, 1rem + 5vw, 5.4rem); /* masthead title */
+                --fs-h2: clamp(1.5rem, 0.9rem + 3vw, 3.3rem); /* section headings */
+                --fs-h3: clamp(1.1rem, 0.8rem + 1.4vw, 1.8rem);
+                --fs-body: clamp(0.9rem, 0.82rem + 0.4vw, 1rem);
+                --fs-small: clamp(0.75rem, 0.7rem + 0.2vw, 0.85rem);
+                --fs-mono: clamp(0.62rem, 0.5rem + 0.32vw, 0.72rem); /* mono nav / labels */
+                --fs-term: clamp(0.72rem, 0.62rem + 0.4vw, 0.94rem);
+
                 /* ---- LIGHT (default), matching the broader panel ---- */
                 --void: #f4f0e7;
                 --text: #1f1c16;
@@ -227,7 +240,7 @@
                 margin: 0;
                 font-family: var(--grotesk);
                 font-weight: 700;
-                font-size: clamp(2.6rem, 7vw, 5.6rem);
+                font-size: var(--fs-hero);
                 letter-spacing: -0.05em;
                 line-height: 0.86;
                 color: var(--text);
@@ -242,7 +255,7 @@
                 gap: 0.5rem;
                 margin: 0;
                 font-family: var(--mono);
-                font-size: 10px;
+                font-size: var(--fs-mono);
                 letter-spacing: 0.2em;
                 text-transform: uppercase;
                 pointer-events: auto;
@@ -296,7 +309,7 @@
             }
             .term-line {
                 font-family: var(--mono);
-                font-size: clamp(12px, 1vw, 15px);
+                font-size: var(--fs-term);
                 line-height: 1.5;
                 color: var(--text);
                 white-space: nowrap;
@@ -365,17 +378,39 @@
                 margin: 0 0 0.5rem;
                 font-family: var(--grotesk);
                 font-weight: 700;
-                font-size: clamp(1.8rem, 5vw, 3.4rem);
+                font-size: var(--fs-h2);
                 letter-spacing: -0.04em;
                 line-height: 0.92;
                 color: var(--text);
             }
             .port-status {
                 font-family: var(--mono);
-                font-size: 10px;
+                font-size: var(--fs-mono);
                 letter-spacing: 0.2em;
                 text-transform: uppercase;
                 color: var(--faint);
+            }
+
+            /* ---- responsive: phones (≤640) get a shorter hero + tighter nav ---- */
+            @media (max-width: 640px) {
+                :root {
+                    --hero-h: clamp(200px, 42vh, 300px);
+                }
+                .hero-inner {
+                    gap: 0.4rem;
+                    padding-bottom: clamp(0.7rem, 2vh, 1.2rem);
+                }
+                .site-nav {
+                    gap: 0.3rem 0.5rem;
+                    letter-spacing: 0.12em;
+                }
+                .port-section {
+                    padding: clamp(1.6rem, 6vh, 3rem) clamp(0.85rem, 4vw, 1.4rem);
+                    min-height: 68vh;
+                }
+                .port-section:nth-child(even) {
+                    min-height: 68vh;
+                }
             }
 
             @media (prefers-reduced-motion: reduce) {
@@ -420,7 +455,7 @@
             <div class="hero-tint"></div>
             <div class="hero-scrim"></div>
             <div class="hero-inner">
-                <h1 class="hero-title">Lexicon</h1>
+                <h1 class="hero-title">Symbients</h1>
                 <nav class="site-nav" aria-label="sections">
                     <a class="tab tab-home" href="/index.html">symbient.life</a>
                     <span class="tab-sep" aria-hidden="true">·</span>
@@ -502,7 +537,19 @@
                 ];
                 if (!links.length || !sections.length) return;
 
-                const inView = new Set();
+                // masthead title tracks the section in view (replaces the old
+                // per-view TITLES map that the SPA set on show()).
+                const TITLES = {
+                    "sec-symbients": "Symbients",
+                    "sec-narrative": "Narrative",
+                    "sec-lexicon": "Lexicon",
+                    "sec-events": "Events",
+                    "sec-writings": "Writings",
+                    "sec-organics": "Organics",
+                    "sec-tree": "Tree",
+                };
+                const titleEl = document.querySelector(".hero-title");
+                let curId = null;
                 function setActive(id) {
                     links.forEach((a) =>
                         a.classList.toggle(
@@ -510,35 +557,66 @@
                             a.getAttribute("href") === "#" + id,
                         ),
                     );
+                    if (id !== curId) {
+                        curId = id;
+                        if (titleEl && TITLES[id]) {
+                            titleEl.textContent = TITLES[id];
+                            document.title = "symbient.life — " + TITLES[id];
+                        }
+                    }
                 }
 
                 let io;
+                // active = the section currently under the frozen hero: the
+                // last one (in DOM order) whose top has scrolled above the band
+                // reference line. Deterministic — avoids the edge-touch case
+                // where an adjacent section sharing the band boundary wins.
+                function pick() {
+                    const bandTop = hero.getBoundingClientRect().height + 2;
+                    let active = sections[0];
+                    for (const s of sections) {
+                        if (s.getBoundingClientRect().top <= bandTop) active = s;
+                        else break;
+                    }
+                    // at the very bottom of the page the last section is current
+                    // even if it never reached the hero line (a short last
+                    // section with no content below it can't scroll up that far)
+                    const atBottom =
+                        window.innerHeight + window.scrollY >=
+                        document.documentElement.scrollHeight - 2;
+                    if (atBottom) active = sections[sections.length - 1];
+                    if (active) setActive(active.id);
+                }
                 function build() {
                     if (io) io.disconnect();
                     const headH = Math.round(
                         hero.getBoundingClientRect().height,
                     );
-                    io = new IntersectionObserver(
-                        (entries) => {
-                            entries.forEach((e) => {
-                                if (e.isIntersecting) inView.add(e.target.id);
-                                else inView.delete(e.target.id);
-                            });
-                            // topmost section in the active band wins the underline
-                            const first = sections.find((s) =>
-                                inView.has(s.id),
-                            );
-                            if (first) setActive(first.id);
-                        },
-                        {
-                            // active band = just below the frozen hero
-                            rootMargin: "-" + headH + "px 0px -55% 0px",
-                            threshold: 0,
-                        },
-                    );
+                    // IO just wakes pick() when a section crosses the band just
+                    // below the frozen hero; pick() recomputes from live rects.
+                    io = new IntersectionObserver(pick, {
+                        rootMargin: "-" + headH + "px 0px -55% 0px",
+                        threshold: 0,
+                    });
                     sections.forEach((s) => io.observe(s));
+                    pick();
                 }
                 build();
+                // also recompute on scroll (rAF-throttled) so the title tracks
+                // smoothly within a tall section and even when IO is throttled
+                let ticking = false;
+                window.addEventListener(
+                    "scroll",
+                    () => {
+                        if (ticking) return;
+                        ticking = true;
+                        requestAnimationFrame(() => {
+                            ticking = false;
+                            pick();
+                        });
+                    },
+                    { passive: true },
+                );
                 let rt;
                 window.addEventListener("resize", () => {
                     clearTimeout(rt);

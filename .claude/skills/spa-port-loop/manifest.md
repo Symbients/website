@@ -23,9 +23,10 @@ The manifest table is ordered by section number, but the loop may pick by this
 suggested order as long as `blocked_by` is satisfied (chrome first; tree last).
 
 ## Carry-over follow-ups (non-blocking, revisit during/after the noted section)
-- **tree (#7)**: re-verify scroll-spy once tree has real content — currently the thin tree placeholder rests short of the hero offset, so organics stays `.active` at the very bottom. Should self-resolve when tree is tall enough to reach the 460 offset.
-- **hero**: v1 freezes the full ~46vh hero (`--hero-h: clamp(260px,46vh,460px)`); a compact fixed bar is a later refinement (harmonize phase).
+- **tree (#7)**: scroll-spy now handled via a bottom-of-page guard in `pick()` (last section reads active even when it can't scroll to the hero line); re-confirm once tree has real content.
+- **hero**: v1 freezes the full hero (`--hero-h: clamp(260px,46vh,460px)`, ↓ to `clamp(200px,42vh,300px)` ≤640px); a compact fixed bar is a later refinement (harmonize phase).
 
 ## Log
 - (init) manifest created; skills authored; scaffold not yet built.
-- (iter 0) chrome/shell ported into `spa.html` by porter subagent; independent reviewer → PASS. Theme/field/terminal IIFEs verbatim; fixed hero + anchor-scroll + scroll-spy working; lexicon.html/symbients.html untouched. Next actionable: #2 narrative (validates the scoped-reader pattern).
+- (iter 0) chrome/shell ported into `spa.html` by porter subagent; independent reviewer → PASS. Theme/field/terminal IIFEs verbatim; fixed hero + anchor-scroll + scroll-spy working; lexicon.html/symbients.html untouched.
+- (chrome polish) masthead title now tracks the section in view (no more static "Lexicon"); scroll-spy `pick()` made deterministic + bottom-of-page guard. Added a fluid type scale (`--fs-*`) + a ≤640px breakpoint → typography is responsive. Created `responsive.html` dev harness (mobile/tablet/desktop iframes). Skills updated: mobile-responsive is now IN SCOPE and the reviewer validates all three resolutions. Next actionable: #2 narrative.

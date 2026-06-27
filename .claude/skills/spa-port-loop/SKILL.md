@@ -59,14 +59,25 @@ For the one section under review, in `spa.html`, compared to its source view:
    stays visible and scrollable — NOT a whole-page takeover); prev/next, index,
    typing effect, fly/ghost animation, keyboard (Esc closes), external links open,
    downloads download, organics reshuffle on enter, lab-asset canvases run.
-3. **Scroll/nav** — the section has `id="sec-<name>"` with `scroll-margin-top`;
-   the nav link scrolls to it; scroll-spy marks it active; no view is `[hidden]`.
+3. **Scroll/nav + title** — the section has `id="sec-<name>"` with
+   `scroll-margin-top`; the nav link scrolls to it; scroll-spy marks it active;
+   the **masthead hero title changes to this section's name** when it's in view
+   (NOT a static "Lexicon"); no view is `[hidden]`.
 4. **Styling/theme** — styles match the source look; uses existing tokens; works
    in light/dark/amber; no hard-coded colors; layout not broken by the fixed hero.
-5. **Integrity** — inline scripts parse (`node --check`); no console errors at
+5. **Responsive — MANDATORY, validate at all three resolutions.** Open
+   `responsive.html` (the harness embeds the page in real-viewport iframes at
+   **mobile ~375 / tablet ~768 / desktop ~1280+**) and verify the section at each:
+   type is fluid (uses the `--fs-*` clamp tokens, no fixed-px fonts, readable on a
+   phone, not gigantic on desktop); multi-column layouts collapse/stack on narrow
+   screens; the section-scoped reader's two columns stack on mobile; nothing
+   overflows horizontally (no page h-scroll); tap targets are usable. A section
+   **does not pass** unless it passes mobile AND tablet AND desktop — provide a
+   screenshot (the harness view is ideal) or measured evidence per breakpoint.
+6. **Integrity** — inline scripts parse (`node --check`); no console errors at
    runtime; `lexicon.html`/`symbients.html`/other sections untouched and unbroken.
-6. **Scope** — deferred items (mobile, harmonization) are left as TODO notes, not
-   half-done. Flag any regression vs the source.
+7. **Scope** — genuinely-deferred items (cross-section harmonization, registry
+   merge) are left as TODO notes, not half-done. Flag any regression vs the source.
 
 Verdict MUST be backed by evidence (element counts, a screenshot, console output,
 or specific line refs) — not "looks fine."

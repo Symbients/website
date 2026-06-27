@@ -57,9 +57,16 @@ html[data-theme]                      ← theme bootstrap inline script (ported 
 - Nav items are anchor links `<a href="#sec-narrative">` (or buttons calling
   `el.scrollIntoView()`). Replace the old `show(name)`/`[hidden]` switch entirely
   — no view is hidden anymore; nav just scrolls.
-- **Scroll-spy**: an `IntersectionObserver` marks the nav link `.active` for the
-  section currently in view (replaces the old `.tab.active` logic). Optional but
-  expected for parity with the old underline.
+- **Scroll-spy + masthead title**: the nav link `.active` underline AND the hero
+  title both track the section currently in view (the title replaces the old
+  per-view `TITLES` map; "Symbients", "Narrative", … per section). Implemented in
+  `spa.html`: an `IntersectionObserver` wakes a `pick()` that, from live rects,
+  chooses the **last section whose top has crossed the band line just below the
+  hero** (deterministic — avoids an adjacent section sharing the boundary
+  winning), with a **bottom-of-page guard** so the short last section ("tree")
+  reads as current. Also recompute on a rAF-throttled `scroll` listener so the
+  title tracks smoothly even when the IO is throttled (e.g. unfocused tab). The
+  hero title must NEVER be a static "Lexicon" — it reflects the active section.
 - Keep `#sec-<name>` anchors stable — the tree section and any deep links use them.
 
 ### Section-scoped reader rule (the core conversion)
@@ -90,11 +97,37 @@ whole page. In the new layout each section owns its own reader:
   a scroll-to helper). The tree's leaf clicks become: scroll to `#sec-<view>` then
   open the target card's scoped reader.
 
+## Responsive — mobile-first, from first principles (IN SCOPE for v1)
+Every section must read and work at phone, tablet, and desktop widths. This is
+part of "done" and the reviewer validates all three (see `responsive.html`).
+
+- **Fluid type, no fixed px.** Use the fluid type scale defined in `:root`
+  (`--fs-hero --fs-h2 --fs-h3 --fs-body --fs-small --fs-mono --fs-term`), each a
+  `clamp(min, min_rem + slope*vw, max)`: the **min governs phones**, the max caps
+  on wide desktop, the vw term interpolates. Add scale steps if a section needs a
+  size not covered — never hard-code a `px` font-size. Hero/section titles, nav,
+  body, kickers, mono labels all use the tokens.
+- **Breakpoints**: design mobile-first, then layer `@media (min-width: …)` or cap
+  with `@media (max-width: 640px)`. Reference widths to verify: **~375 (mobile),
+  ~768 (tablet), ~1280+ (desktop)**. The chrome already shrinks `--hero-h` and
+  tightens the nav under `max-width: 640px` — follow that pattern per section.
+- **Layout reflow**: multi-column grids (lexicon bands, narrative 4-up,
+  symbients 3-col, organics) must collapse to fewer columns / single column on
+  narrow screens; the section-scoped reader's two-column (text + media) layout
+  must stack on mobile; nav wraps or scrolls; nothing overflows horizontally
+  (no h-scroll on the page itself). Use `minmax()`, `auto-fit`/`auto-fill`,
+  `flex-wrap`, and `clamp()` padding/gaps.
+- **Touch + density**: tap targets comfortable on mobile; line-length capped with
+  `max-width: …ch` so prose stays readable on wide desktop.
+- **Test, don't guess**: open `responsive.html` (the dev harness) — it embeds the
+  page in real-viewport iframes at mobile/tablet/desktop side by side. A section
+  is not done until it looks right in all three.
+
 ## CSS / JS conventions (match the codebase)
 - One inline `<style>` in `spa.html`. Port each section's CSS verbatim where it
   still applies; only adjust the reading-state selectors (shell-wide → section-
-  scoped) and add the scroll/anchor rules. Reuse existing tokens — no new color
-  literals.
+  scoped), the fixed `px` font-sizes (→ fluid tokens), and add the scroll/anchor
+  rules. Reuse existing tokens — no new color literals.
 - JS as small guarded IIFEs (per the repo convention: `querySelector` guard that
   bails if absent). One IIFE per concern (field, nav scroll-spy, each section's
   reader, tree). Narrative + symbients keep their `<script type="module">` for lab
@@ -103,10 +136,13 @@ whole page. In the new layout each section owns its own reader:
 
 ## Definition of done (per section) — see spa-port-loop for the reviewer checklist
 A section is "ported" when its markup, styles, behaviors, assets, and reader work
-inside `spa.html` in the scroll layout, scoped to the section, with theming intact
-and no console errors — matching the source view's content and behavior.
+inside `spa.html` in the scroll layout, scoped to the section, with theming intact,
+**responsive at mobile/tablet/desktop (fluid type, reflowed layout)**, the masthead
+title tracking it on scroll, and no console errors — matching the source view's
+content and behavior.
 
 ## Deferred (do NOT do in v1)
-Mobile/responsive layout, cross-section visual harmonization, merging the
-symbients.html hard-coded data with `registry.json`, deleting old files. Leave
-TODO notes instead.
+Cross-section visual harmonization, merging the symbients.html hard-coded data
+with `registry.json`, deleting old files. (Mobile/responsive is NO LONGER
+deferred — it is now in scope and validated by the reviewer.) Leave TODO notes
+for anything genuinely out of scope.

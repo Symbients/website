@@ -1,0 +1,159 @@
+<!doctype html>
+<!--
+    responsive.html — DEV TEST HARNESS (not part of the shipped site).
+    Embeds a target page (default /spa.html) in fixed-size iframes at mobile /
+    tablet / desktop viewport widths so responsive type + layout can be reviewed
+    side by side in one screenshot. Each iframe is a real viewport of the given
+    size, so the embedded page's media queries / vw units respond exactly as on
+    a device of that width. Used by the spa-port review loop to validate that a
+    section passes at all three resolutions.
+-->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>responsive harness · symbient.life</title>
+        <style>
+            :root {
+                --bg: #15161a;
+                --panel: #1d1f24;
+                --ink: #d7dae0;
+                --dim: #888f9a;
+                --line: #34373f;
+                --accent: #9fb0c4;
+                --mono: "Space Mono", ui-monospace, SFMono-Regular, monospace;
+            }
+            * { box-sizing: border-box; }
+            html, body { margin: 0; height: 100%; }
+            body {
+                background: var(--bg);
+                color: var(--ink);
+                font-family: var(--mono);
+                font-size: 13px;
+            }
+            .bar {
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.6rem 1rem;
+                padding: 0.7rem 1rem;
+                background: var(--panel);
+                border-bottom: 1px solid var(--line);
+            }
+            .bar strong { font-weight: 700; letter-spacing: 0.04em; }
+            .bar label { color: var(--dim); }
+            .bar input[type="text"] {
+                font: inherit;
+                background: #0f1013;
+                color: var(--ink);
+                border: 1px solid var(--line);
+                border-radius: 4px;
+                padding: 0.32rem 0.5rem;
+                width: 320px;
+                max-width: 60vw;
+            }
+            .bar button {
+                font: inherit;
+                background: #0f1013;
+                color: var(--ink);
+                border: 1px solid var(--line);
+                border-radius: 4px;
+                padding: 0.32rem 0.7rem;
+                cursor: pointer;
+            }
+            .bar button:hover { border-color: var(--accent); color: var(--accent); }
+            .bar .spacer { flex: 1 1 auto; }
+            .bar .hint { color: var(--dim); font-size: 11px; }
+
+            .stage {
+                display: flex;
+                align-items: flex-start;
+                gap: 2rem;
+                padding: 1.6rem;
+                overflow-x: auto;
+                min-height: calc(100% - 52px);
+            }
+            .device { flex: 0 0 auto; }
+            .device .cap {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                gap: 1rem;
+                margin: 0 0 0.5rem;
+                color: var(--dim);
+            }
+            .device .cap b { color: var(--ink); font-weight: 700; letter-spacing: 0.05em; }
+            .device .cap span { font-size: 11px; }
+            .device iframe {
+                display: block;
+                background: #000;
+                border: 1px solid var(--line);
+                border-radius: 6px;
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="bar">
+            <strong>responsive harness</strong>
+            <label for="url">page</label>
+            <input id="url" type="text" value="/spa.html" spellcheck="false" />
+            <button data-set="/spa.html">spa.html</button>
+            <button data-set="/lexicon.html">lexicon.html</button>
+            <button id="reload">↻ reload all</button>
+            <span class="spacer"></span>
+            <span class="hint">each frame is a real viewport of the labelled width — media queries respond as on a device</span>
+        </div>
+        <div class="stage" id="stage"></div>
+
+        <script>
+            (function () {
+                // device viewports to test (width × height, CSS px)
+                const DEVICES = [
+                    { name: "mobile", w: 375, h: 720 },
+                    { name: "tablet", w: 768, h: 940 },
+                    { name: "desktop", w: 1280, h: 820 },
+                ];
+                const stage = document.getElementById("stage");
+                const urlInput = document.getElementById("url");
+
+                function render() {
+                    const src = urlInput.value.trim() || "/spa.html";
+                    stage.innerHTML = "";
+                    DEVICES.forEach((d) => {
+                        const wrap = document.createElement("div");
+                        wrap.className = "device";
+                        const cap = document.createElement("div");
+                        cap.className = "cap";
+                        cap.innerHTML =
+                            "<b>" + d.name + "</b><span>" + d.w + " × " + d.h + "</span>";
+                        const fr = document.createElement("iframe");
+                        fr.width = d.w;
+                        fr.height = d.h;
+                        // cache-bust so a reload always pulls the latest file
+                        fr.src = src + (src.includes("?") ? "&" : "?") + "_t=" + Date.now();
+                        fr.loading = "eager";
+                        wrap.appendChild(cap);
+                        wrap.appendChild(fr);
+                        stage.appendChild(wrap);
+                    });
+                }
+
+                document.getElementById("reload").addEventListener("click", render);
+                urlInput.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") render();
+                });
+                document.querySelectorAll(".bar button[data-set]").forEach((b) => {
+                    b.addEventListener("click", () => {
+                        urlInput.value = b.dataset.set;
+                        render();
+                    });
+                });
+                render();
+            })();
+        </script>
+    </body>
+</html>
