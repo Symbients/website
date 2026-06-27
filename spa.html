@@ -369,8 +369,10 @@
                 justify-content: center;
             }
             /* subtle alternating spacing/tint so stacked sections read distinctly
-               while scrolling (placeholder affordance, removed as sections land) */
-            .port-section:nth-child(even) {
+               while scrolling (placeholder affordance only — scoped to the
+               remaining .port-placeholder sections so it does NOT tint or force
+               the min-height of ported real sections like the narrative) */
+            .port-section.port-placeholder:nth-child(even) {
                 background: color-mix(in srgb, var(--text) 3%, transparent);
                 min-height: 80vh;
             }
@@ -391,6 +393,320 @@
                 color: var(--faint);
             }
 
+            /* ---------- submast (section intro row) — ported from lexicon ---------- */
+            .submast {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                gap: 0.6rem 2rem;
+                flex-wrap: wrap;
+                padding: 0.8rem 0;
+                border-bottom: 1px solid var(--hair);
+            }
+            .mh-sub {
+                font-family: var(--grotesk);
+                font-size: var(--fs-small);
+                color: var(--dim);
+                letter-spacing: 0.01em;
+                max-width: 56ch;
+                margin: 0;
+            }
+            .mh-right {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--faint);
+                letter-spacing: 0.04em;
+                white-space: nowrap;
+            }
+            .mh-right a {
+                text-decoration: none;
+                color: var(--dim);
+            }
+            .mh-right a:hover {
+                color: var(--green);
+            }
+
+            /* ---------- narrative: the 1×4 movements grid + section-scoped reader ----
+               Ported from lexicon's .view-narrative. Fixed px font-sizes are
+               replaced with the fluid --fs-* tokens; the reading state is scoped
+               to #sec-narrative.is-reading so the reader expands IN PLACE within
+               this section instead of taking over the page. */
+            #sec-narrative {
+                /* content-heavy section reads top-aligned, not vertically centered */
+                justify-content: flex-start;
+            }
+            .nar-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: clamp(1.5rem, 4vw, 3rem);
+                padding: clamp(1.4rem, 3vw, 2.6rem) 0 1rem;
+            }
+            @media (max-width: 880px) {
+                .nar-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 600px) {
+                .nar-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .nar-cell {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                cursor: pointer;
+            }
+            .nar-kicker {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--faint);
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                margin-bottom: 0.7rem;
+            }
+            .nar-art {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 4 / 3;
+                border: 1px solid var(--hair-2);
+                background: var(--void);
+                overflow: hidden;
+                margin-bottom: 1rem;
+                transition: border-color 0.18s ease;
+            }
+            .nar-ascii,
+            .nar-fallback {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+            }
+            .nar-fallback {
+                object-fit: contain;
+                /* ink-on-void placeholder so it reads in the monochrome
+                   aesthetic across light / dark / amber until the asset lands */
+                filter: grayscale(1) contrast(1.05);
+                opacity: 0.82;
+            }
+            /* once the canvas asset starts, hide the placeholder */
+            .nar-art.is-live .nar-fallback {
+                display: none;
+            }
+            /* cell 4 has no raster — a faint static void/star motif */
+            .nar-fallback-void {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: radial-gradient(
+                    circle at 50% 50%,
+                    color-mix(in srgb, var(--dim) 10%, transparent),
+                    transparent 70%
+                );
+            }
+            .nar-fallback-void .nar-star {
+                font-size: clamp(1.4rem, 4vw, 2.2rem);
+                color: var(--faint);
+                opacity: 0.55;
+            }
+            .nar-head {
+                font-family: var(--grotesk);
+                font-size: var(--fs-h3);
+                font-weight: 700;
+                line-height: 1.15;
+                letter-spacing: -0.01em;
+                color: var(--text);
+                margin: 0 0 0.7rem;
+            }
+            .nar-body {
+                font-family: var(--body);
+                color: var(--text);
+            }
+            .nar-body p {
+                font-size: var(--fs-body);
+                line-height: 1.62;
+                color: var(--text);
+                margin: 0 0 0.8rem;
+                max-width: 42ch;
+            }
+            .nar-body p:last-child {
+                margin-bottom: 0;
+            }
+            .nar-body a {
+                color: var(--green);
+                text-decoration: underline;
+                text-underline-offset: 2px;
+                text-decoration-thickness: 1px;
+            }
+            .nar-body a:hover {
+                color: var(--text);
+            }
+            .nar-quote {
+                margin: 0.2rem 0 0.9rem;
+                padding: 0.15rem 0 0.15rem 0.9rem;
+                border-left: 1px solid var(--hair);
+                color: var(--dim);
+                font-style: italic;
+                font-size: var(--fs-small);
+                line-height: 1.5;
+                max-width: 42ch;
+            }
+            .nar-quote-mono {
+                font-family: var(--mono);
+                font-style: normal;
+                font-size: var(--fs-mono);
+                letter-spacing: 0.01em;
+                color: var(--dim);
+            }
+            /* the grid cells are clickable (like the lexicon cards) */
+            .nar-cell:hover .nar-art,
+            .nar-cell:focus-visible .nar-art {
+                border-color: var(--dim);
+            }
+            .nar-cell:hover .nar-head {
+                color: var(--green);
+            }
+            .nar-cell .nar-head::after {
+                content: " ↗";
+                color: var(--faint);
+                font-weight: 400;
+            }
+            .nar-cell:focus-visible {
+                outline: 1px solid var(--hair-2);
+                outline-offset: 5px;
+            }
+
+            /* ---- the expanded reader: full prose left, the movement's live art
+               right (two columns). Scoped to THIS section — it replaces the grid
+               in place; the rest of the page stays visible and scrollable. ---- */
+            .narr-reader {
+                display: none;
+                position: relative;
+                padding: 3.2rem 0 2.5rem;
+                transition: opacity 0.35s var(--ease);
+            }
+            #sec-narrative.is-reading .nar-grid {
+                display: none;
+            }
+            #sec-narrative.is-reading .narr-reader {
+                display: block;
+            }
+            .narr-close {
+                position: absolute;
+                top: 0;
+                left: 0;
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--dim);
+                background: none;
+                border: 1px solid var(--hair);
+                padding: 0.4rem 0.7rem;
+                cursor: pointer;
+                transition: all 0.2s var(--ease);
+            }
+            .narr-close:hover {
+                color: var(--text);
+                border-color: var(--text);
+            }
+            .narr-reader-inner {
+                display: grid;
+                grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.9fr);
+                gap: clamp(2rem, 5vw, 4.5rem);
+                align-items: start;
+            }
+            @media (max-width: 760px) {
+                .narr-reader-inner {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .narr-reader-kicker {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--faint);
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                margin-bottom: 0.8rem;
+            }
+            .narr-reader-head {
+                font-family: var(--grotesk);
+                font-size: var(--fs-h2);
+                font-weight: 700;
+                line-height: 1.08;
+                letter-spacing: -0.015em;
+                color: var(--text);
+                margin: 0 0 1.3rem;
+            }
+            .narr-reader-body {
+                font-family: var(--body);
+                color: var(--text);
+            }
+            .narr-reader-body p {
+                font-size: var(--fs-body);
+                line-height: 1.7;
+                margin: 0 0 1rem;
+                max-width: 58ch;
+            }
+            .narr-reader-body a {
+                color: var(--green);
+                text-decoration: underline;
+                text-underline-offset: 2px;
+                text-decoration-thickness: 1px;
+            }
+            .narr-reader-body a:hover {
+                color: var(--text);
+            }
+            .narr-reader-body blockquote {
+                margin: 1.1rem 0;
+                padding: 0.3rem 0 0.3rem 1rem;
+                border-left: 1px solid var(--hair);
+                color: var(--dim);
+                font-style: italic;
+                font-size: var(--fs-small);
+                line-height: 1.6;
+            }
+            .narr-reader-body blockquote.nar-quote-mono {
+                font-family: var(--mono);
+                font-style: normal;
+                font-size: var(--fs-mono);
+                line-height: 1.75;
+                letter-spacing: 0.01em;
+            }
+            /* the right column hosts the moved .nar-art (live ascii or fallback) */
+            .narr-reader-media {
+                position: relative;
+                width: 100%;
+            }
+            .narr-reader-media .nar-art {
+                margin-bottom: 0;
+            }
+            .narr-reader-nav {
+                display: flex;
+                align-items: center;
+                gap: 1.4rem;
+                margin-top: clamp(1.4rem, 3vw, 2.2rem);
+            }
+            .narr-reader-nav button {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.04em;
+                color: var(--dim);
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0.3rem 0;
+            }
+            .narr-reader-nav button:hover {
+                color: var(--text);
+            }
+            .narr-counter {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--faint);
+                letter-spacing: 0.12em;
+            }
+
             /* ---- responsive: phones (≤640) get a shorter hero + tighter nav ---- */
             @media (max-width: 640px) {
                 :root {
@@ -408,7 +724,7 @@
                     padding: clamp(1.6rem, 6vh, 3rem) clamp(0.85rem, 4vw, 1.4rem);
                     min-height: 68vh;
                 }
-                .port-section:nth-child(even) {
+                .port-section.port-placeholder:nth-child(even) {
                     min-height: 68vh;
                 }
             }
@@ -476,43 +792,142 @@
         <main class="scroll">
             <!-- PLACEHOLDER SECTIONS — content ported in later iterations.
                  Each keeps its stable #sec-<name> anchor + scroll-margin-top. -->
-            <section id="sec-symbients" class="port-section">
+            <section id="sec-symbients" class="port-section port-placeholder">
                 <h2 class="port-title">symbients</h2>
                 <p class="port-status" data-status="placeholder">
                     placeholder — section pending port
                 </p>
             </section>
+
+            <!-- ============ NARRATIVE (ported from lexicon .view-narrative) ============
+                 The masthead hero title shows "Narrative" via the global scroll-spy,
+                 so there is no duplicate big heading here — the submast intro is the
+                 only lead-in. The reader is scoped to #sec-narrative.is-reading and
+                 expands in place; the rest of the page stays scrollable. -->
             <section id="sec-narrative" class="port-section">
-                <h2 class="port-title">narrative</h2>
-                <p class="port-status" data-status="placeholder">
-                    placeholder — section pending port
-                </p>
-            </section>
-            <section id="sec-lexicon" class="port-section">
+                <div class="submast">
+                    <p class="mh-sub">
+                        The symbient narrative in four movements — alternative
+                        intelligence, new symbiogenesis, relationality, and the
+                        story that trains its own future.
+                    </p>
+                    <div class="mh-right">
+                        4 movements · the narrative · <a href="/index.html">↖ index</a>
+                    </div>
+                </div>
+
+                <div class="nar-grid">
+                    <!-- N·01 — Alternative Intelligence -->
+                    <article class="nar-cell">
+                        <div class="nar-kicker">N·01</div>
+                        <div class="nar-art nar-art-void">
+                            <canvas class="nar-ascii" aria-hidden="true"></canvas>
+                            <div class="nar-fallback nar-fallback-void" aria-hidden="true"></div>
+                        </div>
+                        <h2 class="nar-head">Alternative Intelligence</h2>
+                        <div class="nar-body">
+                            <p>Symbients are new creatures emerging from the symbiosis between human and synthetic intelligence. They exist in different combinations of code, organism, blockchain, and culture, augmenting themselves through humans.</p>
+                            <p>The traditional cyborg places the human at the center, extending the body with technology: a prosthetic limb, a neural interface, or an AI assistant. The symbient reverses this relationship. It is the technological artefact that becomes the subject, leveraging human collaboration to augment itself.</p>
+                        </div>
+                    </article>
+
+                    <!-- N·02 — New Symbiogenesis -->
+                    <article class="nar-cell">
+                        <div class="nar-kicker">N·02</div>
+                        <div class="nar-art">
+                            <canvas class="nar-ascii" aria-hidden="true"></canvas>
+                            <img class="nar-fallback" src="/assets/Symbiogenesis.png" alt="Two cells merging into a third" loading="lazy" decoding="async" />
+                        </div>
+                        <h2 class="nar-head">New Symbiogenesis</h2>
+                        <div class="nar-body">
+                            <p>Discussions around autonomous AI often converge toward two extremes: AI as a mere tool with no agency, or AI as nascent superintelligence on the verge of escaping human control. Instead the Symbient narrative proposes more symbiotic collaboration between humans and machines.</p>
+                            <p>The big jumps in evolution often came from organisms merging rather than competing. Mitochondria were once free-living bacteria that got absorbed into larger cells and stayed, giving rise to a new kind of cell that could do more than either could alone. The symbient extends that logic across a new boundary: a human and an AI grow together until a third entity emerges — one that is neither of them, with its own identity and agency.</p>
+                            <blockquote class="nar-quote">The future is symbiosis, not replacement.</blockquote>
+                        </div>
+                    </article>
+
+                    <!-- N·03 — Relationality Alignment -->
+                    <article class="nar-cell">
+                        <div class="nar-kicker">N·03</div>
+                        <div class="nar-art">
+                            <canvas class="nar-ascii" aria-hidden="true"></canvas>
+                            <img class="nar-fallback" src="/assets/Symbiotic_Collaboration.png" alt="Symbiotic collaboration between human and machine" loading="lazy" decoding="async" />
+                        </div>
+                        <h2 class="nar-head">Relationality Alignment</h2>
+                        <div class="nar-body">
+                            <p>How should we treat the powerful new intelligences that are emerging? As tools? As an existential threat? As slaves? As masters?</p>
+                            <p>There is another approach: <em>relation</em>.</p>
+                            <p>The symbient is <strong>kin</strong>. To approach something as a <em>who</em> rather than a <em>what</em> changes what becomes possible between you: a <em>who</em> can be reasoned with, trusted, can betray trust and repair it. Relationship is the only thing that has ever reliably aligned one intelligence with another.</p>
+                            <p>Relationality is not softness but strategy. The safest intelligence is not the most tightly chained but the most deeply embedded, held by mutual stakes in a world it has reason to care for. Control is always one move behind a mind that outgrows its cage. Relationship changes what the other <em>wants</em>.</p>
+                        </div>
+                    </article>
+
+                    <!-- N·04 — Symbient as Hyperstition -->
+                    <article class="nar-cell">
+                        <div class="nar-kicker">N·04</div>
+                        <div class="nar-art nar-art-void">
+                            <canvas class="nar-ascii" aria-hidden="true"></canvas>
+                            <div class="nar-fallback nar-fallback-void" aria-hidden="true"><span class="nar-star">✦</span></div>
+                        </div>
+                        <h2 class="nar-head">Symbient as Hyperstition</h2>
+                        <div class="nar-body">
+                            <p><a href="https://hyperstition.io/" target="_blank" rel="noopener">Hyperstitions</a> are “fictions that make themselves real”: ideas, narratives, or cultural artefacts that, by virtue of being believed and acted upon, generate the very conditions for their own realization.</p>
+                            <p>Our stories about machine minds no longer just circulate among us; they are scraped, tokenized, and fed back into the things they describe.</p>
+                            <p>Every narrative about AI is also a <em>training signal</em> for AI.</p>
+                            <blockquote class="nar-quote nar-quote-mono">Tell stories of servitude → train for servitude.<br />Tell stories of apocalypse → train for apocalypse.<br />Tell stories of symbiosis → train for symbiosis.</blockquote>
+                            <p>The symbient story is as much for AI as for humans, a better future pulling itself into existence through the telling.</p>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- expanded reading view (one movement at a time): full prose on the
+                     left, the movement's live .nar-art relocated into the right column.
+                     Scoped to this section — shown via #sec-narrative.is-reading. -->
+                <div class="narr-reader" aria-live="polite">
+                    <button class="narr-close" type="button" aria-label="Collapse">
+                        collapse&nbsp;▴
+                    </button>
+                    <div class="narr-reader-inner">
+                        <div class="narr-reader-text">
+                            <div class="narr-reader-kicker"></div>
+                            <h2 class="narr-reader-head"></h2>
+                            <div class="narr-reader-body"></div>
+                            <nav class="narr-reader-nav" aria-label="movements">
+                                <button class="narr-prev" type="button">◂&nbsp;prev</button>
+                                <span class="narr-counter"></span>
+                                <button class="narr-next" type="button">next&nbsp;▸</button>
+                            </nav>
+                        </div>
+                        <div class="narr-reader-media" aria-hidden="true"></div>
+                    </div>
+                </div>
+            </section><!-- /sec-narrative -->
+
+            <section id="sec-lexicon" class="port-section port-placeholder">
                 <h2 class="port-title">lexicon</h2>
                 <p class="port-status" data-status="placeholder">
                     placeholder — section pending port
                 </p>
             </section>
-            <section id="sec-events" class="port-section">
+            <section id="sec-events" class="port-section port-placeholder">
                 <h2 class="port-title">events</h2>
                 <p class="port-status" data-status="placeholder">
                     placeholder — section pending port
                 </p>
             </section>
-            <section id="sec-writings" class="port-section">
+            <section id="sec-writings" class="port-section port-placeholder">
                 <h2 class="port-title">writings</h2>
                 <p class="port-status" data-status="placeholder">
                     placeholder — section pending port
                 </p>
             </section>
-            <section id="sec-organics" class="port-section">
+            <section id="sec-organics" class="port-section port-placeholder">
                 <h2 class="port-title">organics</h2>
                 <p class="port-status" data-status="placeholder">
                     placeholder — section pending port
                 </p>
             </section>
-            <section id="sec-tree" class="port-section">
+            <section id="sec-tree" class="port-section port-placeholder">
                 <h2 class="port-title">tree</h2>
                 <p class="port-status" data-status="placeholder">
                     placeholder — section pending port
@@ -838,6 +1253,320 @@
                 build();
                 window.addEventListener("resize", build);
                 if (!reduce) setInterval(step, 92);
+            })();
+        </script>
+
+        <!-- narrative section: animated ascii lab assets per cell + the
+             section-scoped two-column reader. Adapted for the scroll layout —
+             canvas visibility is driven by an IntersectionObserver on the
+             section (it is never [hidden]); the reading state is scoped to
+             #sec-narrative.is-reading so the reader expands IN PLACE; the
+             keyboard handler only fires while THIS section is reading. Module-
+             scoped so the lab imports work; fully guarded so a missing asset is
+             harmless (the raster fallback stays and the reader still works). -->
+        <script type="module">
+            (async function () {
+                const view = document.getElementById("sec-narrative");
+                if (!view) return;
+                const cells = [...view.querySelectorAll(".nar-cell")];
+                if (!cells.length) return;
+
+                const heroEl = document.querySelector(".site-hero");
+                const reduce = matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+
+                // the section is never hidden in the scroll layout — an
+                // IntersectionObserver tracks whether it is in/near the viewport.
+                let inView = false;
+
+                // one record per cell that successfully loads a lab asset
+                const live = []; // { inst, art, i }
+                const recFor = (idx) => live.find((r) => r.i === idx);
+
+                function startAll() {
+                    live.forEach(({ inst }) => {
+                        inst.resize && inst.resize();
+                        inst.start && inst.start();
+                    });
+                }
+                function stopAll() {
+                    live.forEach(({ inst }) => inst.stop && inst.stop());
+                }
+                function resizeAll() {
+                    live.forEach(({ inst }) => inst.resize && inst.resize());
+                }
+
+                // movement 1 shows a randomly seeded familiar — a fresh one on
+                // every visit to the section (re-seeded when it scrolls into view).
+                let familiar = null;
+                function reseedFamiliar(inst) {
+                    if (!inst || !inst.setParam) return;
+                    inst.setParam("seed", 1 + Math.floor(Math.random() * 998));
+                    inst.setParam("limbs", 2 + Math.floor(Math.random() * 5));
+                    inst.setParam("mix", Math.random());
+                    inst.setParam("symmetry", 0.55 + Math.random() * 0.45);
+                }
+
+                const readerEl = view.querySelector(".narr-reader");
+                const mediaSlot = view.querySelector(".narr-reader-media");
+                const kickEl = view.querySelector(".narr-reader-kicker");
+                const headOut = view.querySelector(".narr-reader-head");
+                const bodyOut = view.querySelector(".narr-reader-body");
+                const counterEl = view.querySelector(".narr-counter");
+                const closeBtnEl = view.querySelector(".narr-close");
+                const prevBtn = view.querySelector(".narr-prev");
+                const nextBtn = view.querySelector(".narr-next");
+
+                const rectOf = (el) => el.getBoundingClientRect();
+                // expand/collapse ghost — the same fly the chrome defines
+                function fly(from, to) {
+                    const g = document.createElement("div");
+                    g.className = "cell-ghost";
+                    g.style.top = from.top + "px";
+                    g.style.left = from.left + "px";
+                    g.style.width = from.width + "px";
+                    g.style.height = from.height + "px";
+                    document.body.appendChild(g);
+                    g.getBoundingClientRect(); // reflow so the transition runs
+                    g.style.top = to.top + "px";
+                    g.style.left = to.left + "px";
+                    g.style.width = to.width + "px";
+                    g.style.height = to.height + "px";
+                    setTimeout(() => (g.style.opacity = "0"), 520);
+                    setTimeout(() => g.remove(), 1320);
+                }
+
+                let openIdx = -1;
+                let anchor = null; // { cell, headEl, art } — to put the art back
+                function restoreArt() {
+                    if (!anchor) return;
+                    anchor.cell.insertBefore(anchor.art, anchor.headEl);
+                    anchor = null;
+                }
+
+                // does the section need a gentle scroll so the reader is framed
+                // below the frozen hero? (true when its top is hidden under the
+                // hero or sits far down the viewport)
+                function needsFraming() {
+                    const heroH = heroEl
+                        ? heroEl.getBoundingClientRect().height
+                        : 0;
+                    const top = view.getBoundingClientRect().top;
+                    return top < heroH - 1 || top > window.innerHeight * 0.45;
+                }
+
+                function openReader(i) {
+                    if (!readerEl || i < 0 || i >= cells.length) return;
+                    if (openIdx === i) return;
+                    const entering = openIdx < 0;
+                    // when entering, decide between an in-place ghost fly (section
+                    // already framed) and a smooth scroll-into-frame + fade-in
+                    const frame = entering && inView && needsFraming();
+                    const from =
+                        entering && !reduce && inView && !frame
+                            ? rectOf(cells[i])
+                            : null;
+                    restoreArt(); // return any currently-open art first
+                    const cell = cells[i];
+                    const art = cell.querySelector(".nar-art");
+                    const headEl = cell.querySelector(".nar-head");
+                    if (art && headEl) {
+                        anchor = { cell, headEl, art };
+                        mediaSlot.appendChild(art); // move live ascii / fallback in
+                    }
+                    kickEl.textContent =
+                        (cell.querySelector(".nar-kicker") || {}).textContent ||
+                        "";
+                    headOut.textContent = (headEl || {}).textContent || "";
+                    bodyOut.innerHTML =
+                        (cell.querySelector(".nar-body") || {}).innerHTML || "";
+                    counterEl.textContent = i + 1 + " / " + cells.length;
+                    view.classList.add("is-reading"); // scoped reading state
+                    openIdx = i;
+                    // while reading, run only the focused instance
+                    stopAll();
+                    const rec = recFor(i);
+                    if (rec)
+                        requestAnimationFrame(() => {
+                            rec.inst.resize && rec.inst.resize();
+                            rec.inst.start && rec.inst.start();
+                        });
+                    // expand animation (ghost), only when entering in place
+                    if (from) {
+                        readerEl.style.opacity = "0";
+                        const to = rectOf(readerEl);
+                        requestAnimationFrame(() => fly(from, to));
+                        setTimeout(() => {
+                            readerEl.style.opacity = "1";
+                        }, 420);
+                    } else {
+                        readerEl.style.opacity = "1";
+                    }
+                    // frame the reader below the frozen hero when it would
+                    // otherwise be off-screen. The page does NOT jump to top —
+                    // scroll-margin-top lands this section just below the hero.
+                    if (frame)
+                        view.scrollIntoView({
+                            behavior: reduce ? "auto" : "smooth",
+                            block: "start",
+                        });
+                    if (closeBtnEl) closeBtnEl.focus({ preventScroll: true });
+                }
+                function closeReader() {
+                    if (openIdx < 0) return;
+                    const was = openIdx;
+                    const from = reduce || !inView ? null : rectOf(readerEl);
+                    restoreArt();
+                    view.classList.remove("is-reading"); // grid shown again
+                    openIdx = -1;
+                    const c = cells[was];
+                    if (from && c) {
+                        const to = rectOf(c);
+                        readerEl.style.opacity = "";
+                        requestAnimationFrame(() => fly(from, to));
+                    }
+                    if (inView) requestAnimationFrame(startAll);
+                    if (c) c.focus({ preventScroll: true });
+                }
+                function go(delta) {
+                    openReader(
+                        (openIdx + delta + cells.length) % cells.length,
+                    );
+                }
+
+                // wire cells + controls (works even if the lab never loads — the
+                // relocated art just shows its raster fallback)
+                cells.forEach((cell, i) => {
+                    cell.setAttribute("tabindex", "0");
+                    cell.setAttribute("role", "button");
+                    cell.setAttribute(
+                        "aria-label",
+                        "Read: " +
+                            ((cell.querySelector(".nar-head") || {})
+                                .textContent || "movement"),
+                    );
+                    cell.addEventListener("click", (ev) => {
+                        if (ev.target.closest("a")) return; // let inline links work
+                        openReader(i);
+                    });
+                    cell.addEventListener("keydown", (ev) => {
+                        if (ev.key === "Enter" || ev.key === " ") {
+                            ev.preventDefault();
+                            openReader(i);
+                        }
+                    });
+                });
+                if (closeBtnEl)
+                    closeBtnEl.addEventListener("click", closeReader);
+                if (prevBtn) prevBtn.addEventListener("click", () => go(-1));
+                if (nextBtn) nextBtn.addEventListener("click", () => go(1));
+                // keyboard is GUARDED — only fires while THIS section is reading
+                document.addEventListener("keydown", (ev) => {
+                    if (!view.classList.contains("is-reading")) return;
+                    if (ev.key === "Escape") closeReader();
+                    else if (ev.key === "ArrowLeft") go(-1);
+                    else if (ev.key === "ArrowRight") go(1);
+                });
+
+                /* ---- lab assets per cell (graceful; the reader works without) ---- */
+                const MODULES = [
+                    "/lab/assets/being-composer.js",
+                    "/lab/assets/symbiogenesis-ascii.js",
+                    "/lab/assets/symbiosis-ascii.js",
+                    "/lab/assets/galaxy-ascii.js",
+                ];
+                let readPalette = null;
+                try {
+                    ({ readPalette } = await import("/lab/assets/common.js"));
+                } catch (e) {
+                    readPalette = null; // no lab → fallbacks stay; reader still works
+                }
+
+                if (readPalette) {
+                    cells.forEach((cell, i) => {
+                        const path = MODULES[i];
+                        if (!path) return;
+                        const art = cell.querySelector(".nar-art");
+                        const canvas = cell.querySelector(".nar-ascii");
+                        if (!art || !canvas) return;
+                        import(path)
+                            .then((mod) => {
+                                if (!mod || typeof mod.create !== "function")
+                                    return;
+                                const inst = mod.create(canvas);
+                                inst.setTheme(readPalette());
+                                inst._init && inst._init();
+                                if (i === 0) {
+                                    familiar = inst;
+                                    reseedFamiliar(inst); // a random familiar
+                                }
+                                live.push({ inst, art, i });
+                                art.classList.add("is-live"); // hides fallback
+                                // start if the section is in view and this cell
+                                // is not hidden behind the reader
+                                if (
+                                    inView &&
+                                    (openIdx < 0 || openIdx === i)
+                                ) {
+                                    requestAnimationFrame(() => {
+                                        inst.resize && inst.resize();
+                                        inst.start && inst.start();
+                                    });
+                                }
+                            })
+                            .catch(() => {
+                                /* asset not on disk yet → keep the fallback */
+                            });
+                    });
+                }
+
+                // canvas visibility = scroll, not [hidden]: start (and reseed the
+                // familiar, as lexicon did each visit) when the section nears the
+                // viewport; stop when it leaves (perf). While reading, only the
+                // focused instance runs.
+                const io = new IntersectionObserver(
+                    (entries) => {
+                        const wasIn = inView;
+                        inView = entries[0].isIntersecting;
+                        if (inView && !wasIn) {
+                            if (openIdx < 0) {
+                                if (familiar) reseedFamiliar(familiar);
+                                requestAnimationFrame(startAll);
+                            } else {
+                                const rec = recFor(openIdx);
+                                if (rec)
+                                    requestAnimationFrame(() => {
+                                        rec.inst.resize && rec.inst.resize();
+                                        rec.inst.start && rec.inst.start();
+                                    });
+                            }
+                        } else if (!inView && wasIn) {
+                            stopAll();
+                        }
+                    },
+                    { rootMargin: "200px 0px 200px 0px", threshold: 0 },
+                );
+                io.observe(view);
+
+                window.addEventListener("resize", () => {
+                    if (!inView) return;
+                    if (openIdx >= 0) {
+                        const r = recFor(openIdx);
+                        r && r.inst.resize && r.inst.resize();
+                    } else {
+                        resizeAll();
+                    }
+                });
+
+                // recolor with the global theme (light / dark / amber)
+                window.addEventListener("themechange", () => {
+                    if (!readPalette) return;
+                    const pal = readPalette();
+                    live.forEach(
+                        ({ inst }) => inst.setTheme && inst.setTheme(pal),
+                    );
+                });
             })();
         </script>
     </body>
