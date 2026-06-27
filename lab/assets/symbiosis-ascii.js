@@ -39,7 +39,7 @@ export const meta = {
         { key: "cols", label: "grid width", min: 60, max: 160, step: 2, value: 122 },
         { key: "contrast", label: "ink contrast", min: 0.4, max: 3.0, step: 0.05, value: 2.6 },
         { key: "threshold", label: "background cutoff", min: 0.04, max: 0.6, step: 0.01, value: 0.11 },
-        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 0.35 },
+        { key: "twinkle", label: "twinkle", min: 0, max: 1, step: 0.01, value: 0.8 },
     ],
 };
 
@@ -243,9 +243,16 @@ export function create(canvas) {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const W = stage.width;
         const H = stage.height;
-        if (tcanvas.width !== W * dpr || tcanvas.height !== H * dpr) {
-            tcanvas.width = Math.max(2, W * dpr);
-            tcanvas.height = Math.max(2, H * dpr);
+        // Supersample the glyph texture so each cell keeps ~9 texels even when
+        // the canvas is shown large (e.g. the narrative reader) — sizing it to
+        // bare canvas px gives only ~5 texels/glyph there, so characters blur
+        // into coarse dots. Floor at COLS*9; the GPU downsamples (LinearFilter).
+        const ss = Math.max(1, (COLS * 9) / Math.max(1, W * dpr));
+        const TW = Math.max(2, Math.round(W * dpr * ss));
+        const TH = Math.max(2, Math.round(H * dpr * ss));
+        if (tcanvas.width !== TW || tcanvas.height !== TH) {
+            tcanvas.width = TW;
+            tcanvas.height = TH;
         }
         const cw = tcanvas.width / COLS;
         const ch = tcanvas.height / ROWS;
@@ -269,7 +276,7 @@ export function create(canvas) {
                 if (v <= 0.001) continue;
                 // twinkle: a subtle per-cell shimmer that never dims far below
                 // full strength, so glyphs hold bold instead of flickering faint.
-                const tw1 = 1 - tw * 0.12 * (0.5 + 0.5 * Math.sin(t * 1.5 + cx * 0.7 + cy * 0.9));
+                const tw1 = 1 - tw * 0.22 * (0.5 + 0.5 * Math.sin(t * 1.5 + cx * 0.7 + cy * 0.9));
                 v = Math.min(1, v * tw1);
 
                 // hot '@' on the densest cores (deepest ink), gently pulsing

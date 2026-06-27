@@ -192,6 +192,17 @@ export class Stage2D {
         this._last = performance.now();
         const loop = (now) => {
             if (!this._running) return;
+            // Self-heal: keep the drawing buffer matched to the displayed size.
+            // The canvas can be relocated/resized between explicit resize() calls
+            // (e.g. moved into the narrative reader); without this the buffer
+            // stays at the old size and the canvas renders blurry/low-res.
+            const cw = this.canvas.clientWidth;
+            const ch = this.canvas.clientHeight;
+            if (cw && ch && (cw !== this._cw || ch !== this._ch)) {
+                this._cw = cw;
+                this._ch = ch;
+                this.resize();
+            }
             const dt = Math.min((now - this._last) / 1000, 0.05);
             this._last = now;
             this.time += dt;

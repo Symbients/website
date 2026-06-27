@@ -505,9 +505,16 @@ export function create(canvas) {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const W = stage.width;
         const H = stage.height;
-        if (tcanvas.width !== W * dpr || tcanvas.height !== H * dpr) {
-            tcanvas.width = Math.max(2, W * dpr);
-            tcanvas.height = Math.max(2, H * dpr);
+        // Supersample the glyph texture so each cell keeps ~9 texels even when
+        // the canvas is shown large (e.g. the narrative reader) — sizing it to
+        // bare canvas px gives only ~5 texels/glyph there, so characters blur
+        // into coarse dots. Floor at COLS*9; the GPU downsamples (LinearFilter).
+        const ss = Math.max(1, (COLS * 9) / Math.max(1, W * dpr));
+        const TW = Math.max(2, Math.round(W * dpr * ss));
+        const TH = Math.max(2, Math.round(H * dpr * ss));
+        if (tcanvas.width !== TW || tcanvas.height !== TH) {
+            tcanvas.width = TW;
+            tcanvas.height = TH;
         }
         const cw = tcanvas.width / COLS;
         const ch = tcanvas.height / ROWS;
