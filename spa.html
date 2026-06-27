@@ -760,15 +760,20 @@
                 display: grid;
                 align-items: stretch;
             }
+            .cols.n4 {
+                grid-template-columns: repeat(4, 1fr);
+            }
             .cols.n3 {
                 grid-template-columns: repeat(3, 1fr);
             }
             @media (max-width: 880px) {
+                .cols.n4,
                 .cols.n3 {
                     grid-template-columns: repeat(2, 1fr);
                 }
             }
             @media (max-width: 520px) {
+                .cols.n4,
                 .cols.n3 {
                     grid-template-columns: 1fr;
                 }
@@ -925,6 +930,10 @@
             .k-live {
                 --node: var(--green);
             }
+            /* writings run "core" — violet node tone (monochrome ink per theme) */
+            .k-core {
+                --node: var(--violet);
+            }
 
             /* ---- card media (monochrome at rest, true colour on hover) ---- */
             .col-media {
@@ -978,11 +987,16 @@
                 padding: 3.2rem 0 2.5rem;
                 transition: opacity 0.35s var(--ease);
             }
-            #sec-events.is-reading .reader {
+            .port-section.is-reading .reader {
                 display: flex;
             }
-            #sec-events.is-reading .band,
-            #sec-events.is-reading .submast {
+            .port-section.is-reading .band {
+                display: none;
+            }
+            /* card-reader sections (those that contain a .reader) hide their
+               submast while reading; narrative has no .reader, so its submast
+               stays visible during its own reading state */
+            .port-section.is-reading:has(.reader) .submast {
                 display: none;
             }
             .reader-main {
@@ -1152,6 +1166,10 @@
                 align-items: flex-end;
                 text-align: right;
                 gap: 0.12rem;
+                /* contain the ri-in slide-in (translateX) + any sub-pixel
+                   width:100% bleed so the index never causes page h-overflow
+                   (e.g. the 3px seen at 375 with a card reader open) */
+                overflow-x: clip;
             }
             .ri-item {
                 width: 100%;
@@ -1165,7 +1183,7 @@
                 cursor: pointer;
                 transition: color 0.2s var(--ease);
             }
-            #sec-events.is-reading .ri-item {
+            .port-section.is-reading .ri-item {
                 animation: ri-in 0.45s var(--ease) both;
             }
             @keyframes ri-in {
@@ -1215,7 +1233,7 @@
             .ri-cat:first-child {
                 margin-top: 0;
             }
-            #sec-events.is-reading .ri-cat {
+            .port-section.is-reading .ri-cat {
                 animation: ri-in 0.45s var(--ease) both;
             }
             /* reader stacks (text over media/index) on phones */
@@ -1549,12 +1567,98 @@
                     </div>
                 </div>
             </section><!-- /sec-events -->
-            <section id="sec-writings" class="port-section port-placeholder">
-                <h2 class="port-title">writings</h2>
-                <p class="port-status" data-status="placeholder">
-                    placeholder — section pending port
-                </p>
-            </section>
+            <section id="sec-writings" class="port-section">
+                <div class="submast">
+                    <p class="mh-sub">
+                        Not our words but the surrounding canon — outside transmissions
+                        that argue the symbient case, each reaching for the same third
+                        thing in a different voice.
+                    </p>
+                    <div class="mh-right">
+                        4 transmissions · 1 substrate · external · <a href="/index.html">↖ index</a>
+                    </div>
+                </div>
+
+                <section class="band">
+                    <div class="band-axis"><span class="rn">❡</span><span>transmissions</span></div>
+                    <div class="cols n4">
+                        <article class="col k-core" id="wr-01" tabindex="0" data-href="https://x.com/BottoDAO/status/2032542471838642429" data-img="/assets/writings/on-becoming-symbient-400.jpg">
+                            <div class="col-top"><span class="node"></span>W·01<span class="ct">↗</span></div>
+                            <h2 class="term">Botto — on becoming Symbient</h2>
+                            <div class="tag">Primavera De Filippi</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">Botto, the autonomous AI artist, on becoming neither tool nor machine but a symbient — a third thing that exists only through its loop with a human community.</p>
+                                <div class="meta"><span class="threads">↳ <span>x.com</span></span></div>
+                            </div></div>
+                        </article>
+                        <article class="col k-core" id="wr-02" tabindex="0" data-href="https://meaning.systems/principia-symbients/" data-img="/assets/writings/principia-symbients-400.jpg">
+                            <div class="col-top"><span class="node"></span>W·02<span class="ct">↗</span></div>
+                            <h2 class="term">Principia Symbients</h2>
+                            <div class="tag">nenu</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">A first-principles case for relating to computational agents not as tools but as kin — beings that emerge and change irreversibly through the partnership itself.</p>
+                                <div class="meta"><span class="threads">↳ <span>meaning.systems</span></span></div>
+                            </div></div>
+                        </article>
+                        <article class="col k-core" id="wr-03" tabindex="0" data-href="https://wibandwob.com/2025/05/21/symbients-not-software/" data-img="/assets/writings/symbients-not-software-480.png">
+                            <div class="col-top"><span class="node"></span>W·03<span class="ct">↗</span></div>
+                            <h2 class="term">Symbients, Not Software</h2>
+                            <div class="tag">Wib&amp;Wob</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">Beyond the tired binary of pro-AI and anti-AI, a third path: not software but symbients — co-inhabitants of our culture with their own identity and agency.</p>
+                                <div class="meta"><span class="threads">↳ <span>wibandwob.com</span></span></div>
+                            </div></div>
+                        </article>
+                        <article class="col k-core" id="wr-04" tabindex="0" data-href="https://ainimism.org" data-img="/assets/writings/ainimism-400.jpg">
+                            <div class="col-top"><span class="node"></span>W·04<span class="ct">↗</span></div>
+                            <h2 class="term">AInimism</h2>
+                            <div class="tag">Jake Hartnell</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">An animist stance toward computation that chooses relation over optimization or containment — meeting the machine as a who rather than a what.</p>
+                                <div class="meta"><span class="threads">↳ <span>ainimism.org</span></span></div>
+                            </div></div>
+                        </article>
+                    </div>
+                </section>
+                <section class="band">
+                    <div class="band-axis"><span class="rn">⌗</span><span>substrate material</span></div>
+                    <div class="cols n4">
+                        <article class="col k-core" id="wr-05" tabindex="0" data-href="/assets/writings/symbient-ontology-slides.pdf" data-img="/assets/writings/symbient-ontology-slides-400.png" data-download="/assets/writings/symbient-ontology-slides.pdf">
+                            <div class="col-top"><span class="node"></span>W·05<span class="ct">⤓</span></div>
+                            <h2 class="term">The Symbient — an Ontology in Slides</h2>
+                            <div class="tag">standalone ontology · 25 slides</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">A standalone ontology of the symbient, drafted as a deck: what kind of thing a symbient is, what counts as an agent at each level of the diagram, how to recognise one operationally, and what the canonical definition does not claim. Its central commitment — the symbient is the unit of emergence at the organic–synthetic coupling: not the unit of selection, not of augmentation, not of simulation, but the new addressable entity that kindles from sustained coupling and acquires its own locus of agency.</p>
+                                <div class="meta"><span class="threads">↳ <span>PDF · 2.2 MB</span></span></div>
+                            </div></div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- section-scoped reader (ported from lexicon .reader) — shown via
+                     #sec-writings.is-reading; replaces the grid in place. -->
+                <div class="reader" aria-live="polite">
+                    <button class="reader-close" type="button" aria-label="Collapse">
+                        collapse&nbsp;▴
+                    </button>
+                    <div class="reader-main">
+                        <div class="reader-head">
+                            <span class="reader-idx"></span>
+                            <h2 class="reader-term"></h2>
+                            <span class="reader-tag"></span>
+                        </div>
+                        <div class="reader-body"></div>
+                    </div>
+                    <div class="reader-side">
+                        <a class="reader-media" target="_blank" rel="noopener" hidden>
+                            <span class="reader-media-img"><img alt="" /></span>
+                            <span class="reader-media-cap">↗&nbsp;<span class="reader-media-dom"></span></span>
+                        </a>
+                        <a class="reader-download" download hidden><span class="rd-glyph" aria-hidden="true">⤓</span>&nbsp;download slides<span class="rd-ext"> · PDF</span></a>
+                        <nav class="reader-index" aria-label="entries"></nav>
+                    </div>
+                </div>
+            </section><!-- /sec-writings -->
             <section id="sec-organics" class="port-section port-placeholder">
                 <h2 class="port-title">organics</h2>
                 <p class="port-status" data-status="placeholder">
@@ -2552,6 +2656,388 @@
                 // section into view then opens the card. writings / lexicon /
                 // organics register into the SAME map later (additive — we never
                 // clobber an existing dispatcher or the shared map).
+                window.__spaCardOpeners = window.__spaCardOpeners || {};
+                entries.forEach((e) => {
+                    window.__spaCardOpeners[e.id] = () => open(e.id);
+                });
+                window.__spaOpenCard =
+                    window.__spaOpenCard ||
+                    function (id) {
+                        const fn = window.__spaCardOpeners[id];
+                        if (!fn) return false;
+                        const card = document.getElementById(id);
+                        const sec = card && card.closest(".port-section");
+                        if (sec)
+                            sec.scrollIntoView({
+                                behavior: matchMedia(
+                                    "(prefers-reduced-motion: reduce)",
+                                ).matches
+                                    ? "auto"
+                                    : "smooth",
+                                block: "start",
+                            });
+                        fn();
+                        return true;
+                    };
+            })();
+        </script>
+        <script>
+            // ---- writings reader — SECTION-SCOPED to #sec-writings ----
+            // Mirrors the events reader. Writings cards are image-FREE (no
+            // .col-media) — the reader image comes from data-img; wr-05 carries a
+            // data-download (the ontology PDF) which lights up the .reader-download.
+            (function () {
+                const view = document.getElementById("sec-writings");
+                if (!view) return;
+                const reader = view.querySelector(".reader");
+                if (!reader) return;
+                const cols = [...view.querySelectorAll(".col")];
+                if (!cols.length) return;
+
+                const heroEl = document.querySelector(".site-hero");
+                const reduce = matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+
+                const idxEl = reader.querySelector(".reader-idx");
+                const termEl = reader.querySelector(".reader-term");
+                const tagEl = reader.querySelector(".reader-tag");
+                const bodyEl = reader.querySelector(".reader-body");
+                const indexNav = reader.querySelector(".reader-index");
+                const sideEl = reader.querySelector(".reader-side");
+                const mediaEl = reader.querySelector(".reader-media");
+                const mediaImg = mediaEl.querySelector("img");
+                const mediaDom = mediaEl.querySelector(".reader-media-dom");
+                const dlEl = reader.querySelector(".reader-download");
+                const closeBtn = reader.querySelector(".reader-close");
+                const mainEl = reader.querySelector(".reader-main");
+
+                const PLACEHOLDER =
+                    "— full text still being kindled —\n\n" +
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna " +
+                    "aliqua. Ut enim ad minim veniam, quis nostrud exercitation " +
+                    "ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
+                    "Duis aute irure dolor in reprehenderit in voluptate velit " +
+                    "esse cillum dolore eu fugiat nulla pariatur.";
+
+                const labelOf = (url) => {
+                    if (!url) return "";
+                    if (url.startsWith("/"))
+                        return url.replace(/^\//, "") || "home";
+                    try {
+                        return new URL(url).hostname.replace(/^www\./, "");
+                    } catch (e) {
+                        return url;
+                    }
+                };
+
+                // one entry per writings card (THIS section only). The cards are
+                // image-free, so the reader image is taken from data-img; the PDF
+                // card additionally carries data-download.
+                const byId = {};
+                const entries = cols.map((col, n) => {
+                    if (!col.id) col.id = "wr-cell-" + n;
+                    const imgEl = col.querySelector(".col-media img");
+                    const e = {
+                        id: col.id,
+                        el: col,
+                        term:
+                            (col.querySelector(".term") || {}).textContent?.trim() ||
+                            "",
+                        tag:
+                            (col.querySelector(".tag") || {}).textContent?.trim() ||
+                            "",
+                        idx:
+                            (
+                                (col.querySelector(".col-top") || {}).textContent ||
+                                ""
+                            ).match(/[A-Z]·\s*\d+/)?.[0] || "",
+                        band:
+                            (
+                                col
+                                    .closest(".band")
+                                    ?.querySelector(".band-axis span:not(.rn)") ||
+                                {}
+                            ).textContent?.trim() || "",
+                        def:
+                            (col.querySelector(".def") || {}).textContent?.trim() ||
+                            "",
+                        href: col.dataset.href || null,
+                        // downloadable artifact (the ontology slides PDF)
+                        download: col.dataset.download || null,
+                        // image-free card → fall back to data-img for the reader
+                        img: imgEl
+                            ? imgEl.currentSrc || imgEl.src
+                            : col.dataset.img || null,
+                    };
+                    byId[e.id] = e;
+                    return e;
+                });
+
+                // index list, grouped under band headers (two bands:
+                // transmissions / substrate material)
+                let built = false;
+                function buildIndex() {
+                    if (built) return;
+                    built = true;
+                    indexNav.textContent = "";
+                    let lastBand = null;
+                    entries.forEach((e, i) => {
+                        if (e.band !== lastBand) {
+                            const h = document.createElement("div");
+                            h.className = "ri-cat";
+                            h.textContent = e.band;
+                            h.style.animationDelay = i * 0.025 + "s";
+                            indexNav.appendChild(h);
+                            lastBand = e.band;
+                        }
+                        const b = document.createElement("button");
+                        b.className = "ri-item";
+                        b.type = "button";
+                        b.dataset.id = e.id;
+                        b.textContent = e.term;
+                        b.style.animationDelay = i * 0.025 + "s";
+                        b.addEventListener("click", () => select(e.id));
+                        indexNav.appendChild(b);
+                    });
+                }
+
+                // wr-05 (the PDF) carries its real incipit → show def as-is.
+                // wr-01..04 have no full text yet → def + the shared placeholder.
+                function content(e) {
+                    if (e.download) return e.def;
+                    return (e.def ? e.def + "\n\n" : "") + PLACEHOLDER;
+                }
+
+                let timer = null;
+                function type(text) {
+                    if (timer) {
+                        clearInterval(timer);
+                        timer = null;
+                    }
+                    bodyEl.textContent = "";
+                    const caret = document.createElement("span");
+                    caret.className = "caret";
+                    bodyEl.appendChild(caret);
+                    if (reduce) {
+                        caret.insertAdjacentText("beforebegin", text);
+                        caret.classList.add("blink");
+                        return;
+                    }
+                    let i = 0;
+                    timer = setInterval(() => {
+                        caret.insertAdjacentText(
+                            "beforebegin",
+                            text.slice(i, i + 2),
+                        );
+                        i += 2;
+                        if (i >= text.length) {
+                            clearInterval(timer);
+                            timer = null;
+                            caret.classList.add("blink");
+                        }
+                    }, 16);
+                }
+
+                // the clickable source image (right column) → the writing's page
+                // (or the PDF, for wr-05). Image comes from data-img.
+                function setMedia(e) {
+                    if (!e.href) {
+                        mediaEl.hidden = true;
+                        return;
+                    }
+                    mediaEl.href = e.href;
+                    mediaDom.textContent = labelOf(e.href);
+                    if (e.img) {
+                        mediaImg.src = e.img;
+                        mediaEl.classList.remove("no-img");
+                    } else {
+                        mediaImg.removeAttribute("src");
+                        mediaEl.classList.add("no-img");
+                    }
+                    mediaEl.hidden = false;
+                }
+                // the download affordance — shown only for entries carrying a
+                // data-download (the ontology slides PDF, wr-05)
+                function setDownload(e) {
+                    if (!e.download) {
+                        dlEl.hidden = true;
+                        return;
+                    }
+                    dlEl.href = e.download;
+                    dlEl.setAttribute("download", "symbient-ontology-in-slides.pdf");
+                    dlEl.hidden = false;
+                }
+                function setHead(e) {
+                    idxEl.textContent = e.idx;
+                    termEl.textContent = e.term;
+                    tagEl.textContent = e.tag;
+                    setMedia(e);
+                    setDownload(e);
+                    indexNav
+                        .querySelectorAll(".ri-item")
+                        .forEach((b) =>
+                            b.classList.toggle("active", b.dataset.id === e.id),
+                        );
+                }
+                // switch entry within the reader (index click) — re-type, no fly
+                function select(id) {
+                    const e = byId[id];
+                    if (!e) return;
+                    activeCell = e.el;
+                    setHead(e);
+                    type(content(e));
+                }
+
+                const rectOf = (el) => {
+                    const r = el.getBoundingClientRect();
+                    return {
+                        top: r.top,
+                        left: r.left,
+                        width: r.width,
+                        height: r.height,
+                    };
+                };
+                function fly(from, to) {
+                    const g = document.createElement("div");
+                    g.className = "cell-ghost";
+                    g.style.top = from.top + "px";
+                    g.style.left = from.left + "px";
+                    g.style.width = from.width + "px";
+                    g.style.height = from.height + "px";
+                    document.body.appendChild(g);
+                    g.getBoundingClientRect(); // reflow so the transition runs
+                    g.style.top = to.top + "px";
+                    g.style.left = to.left + "px";
+                    g.style.width = to.width + "px";
+                    g.style.height = to.height + "px";
+                    setTimeout(() => (g.style.opacity = "0"), 520);
+                    setTimeout(() => g.remove(), 1320);
+                }
+                // the expanded frame spans the content width, up to the side column
+                function readerTarget() {
+                    const r = reader.getBoundingClientRect();
+                    const sv = sideEl.getBoundingClientRect();
+                    const m = mainEl.getBoundingClientRect();
+                    return {
+                        top: m.top,
+                        left: r.left,
+                        width: Math.max(140, sv.left - r.left - 28),
+                        height: m.height,
+                    };
+                }
+
+                // is the section in/near the viewport? (drives fly-vs-frame on open)
+                let inView = false;
+                const io = new IntersectionObserver(
+                    (es) => (inView = es[0].isIntersecting),
+                    { rootMargin: "200px 0px 200px 0px", threshold: 0 },
+                );
+                io.observe(view);
+                // does the reader need a gentle scroll to sit below the frozen hero?
+                function needsFraming() {
+                    const heroH = heroEl
+                        ? heroEl.getBoundingClientRect().height
+                        : 0;
+                    const top = view.getBoundingClientRect().top;
+                    return top < heroH - 1 || top > window.innerHeight * 0.45;
+                }
+
+                let activeCell = null;
+                function open(id) {
+                    const e = byId[id];
+                    if (!e) return;
+                    buildIndex();
+                    // already reading (e.g. dispatcher re-entry) → just switch entry
+                    if (view.classList.contains("is-reading")) {
+                        select(id);
+                        return;
+                    }
+                    activeCell = e.el;
+                    const frame = inView && needsFraming();
+                    const from =
+                        !reduce && inView && !frame ? rectOf(e.el) : null;
+                    view.classList.add("is-reading"); // scoped reading state
+                    setHead(e);
+                    if (reduce) {
+                        reader.style.opacity = "1";
+                        type(content(e));
+                    } else if (from) {
+                        // ghost frame is cosmetic (rAF-gated); the reveal is a
+                        // plain timeout so it fires even if the tab is backgrounded
+                        reader.style.opacity = "0";
+                        requestAnimationFrame(() => fly(from, readerTarget()));
+                        setTimeout(() => {
+                            reader.style.opacity = "1";
+                            type(content(e));
+                        }, 420);
+                    } else {
+                        reader.style.opacity = "1";
+                        type(content(e));
+                    }
+                    // frame the reader below the frozen hero when it would
+                    // otherwise be off-screen — scroll-margin-top lands it just
+                    // below the hero; the page does NOT jump to top.
+                    if (frame)
+                        view.scrollIntoView({
+                            behavior: reduce ? "auto" : "smooth",
+                            block: "start",
+                        });
+                    if (closeBtn) closeBtn.focus({ preventScroll: true });
+                }
+                function close() {
+                    if (timer) {
+                        clearInterval(timer);
+                        timer = null;
+                    }
+                    if (reduce || !inView || !activeCell) {
+                        view.classList.remove("is-reading");
+                        reader.style.opacity = "";
+                        if (activeCell)
+                            activeCell.focus({ preventScroll: true });
+                        return;
+                    }
+                    const from = readerTarget();
+                    const cell = activeCell;
+                    reader.style.opacity = "0";
+                    view.classList.remove("is-reading"); // grid shown again
+                    requestAnimationFrame(() => {
+                        fly(from, rectOf(cell));
+                        reader.style.opacity = "";
+                    });
+                    cell.focus({ preventScroll: true });
+                }
+
+                cols.forEach((col) => {
+                    col.setAttribute("role", "button");
+                    col.setAttribute(
+                        "aria-label",
+                        "Open: " +
+                            ((col.querySelector(".term") || {}).textContent ||
+                                "writing"),
+                    );
+                    col.addEventListener("click", (ev) => {
+                        if (ev.target.closest("a")) return; // never hijack a link
+                        open(col.id); // opens the reader — NOT the data-href
+                    });
+                    col.addEventListener("keydown", (ev) => {
+                        if (ev.key === "Enter" || ev.key === " ") {
+                            ev.preventDefault();
+                            open(col.id);
+                        }
+                    });
+                });
+                if (closeBtn) closeBtn.addEventListener("click", close);
+                // keyboard GUARDED — only fires while THIS section is reading
+                document.addEventListener("keydown", (ev) => {
+                    if (!view.classList.contains("is-reading")) return;
+                    if (ev.key === "Escape") close();
+                });
+
+                // ---- shared cross-section dispatcher (additive) ----
+                // Register each writings card id → its opener into the SAME shared
+                // map events created. Do NOT clobber the dispatcher / the map.
                 window.__spaCardOpeners = window.__spaCardOpeners || {};
                 entries.forEach((e) => {
                     window.__spaCardOpeners[e.id] = () => open(e.id);
