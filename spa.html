@@ -1,0 +1,766 @@
+<!doctype html>
+<!--
+    rhizome-spa scroll port — CHROME ONLY (iteration 0).
+    This is the fixed-chrome scroll skeleton ported from lexicon.html: theme
+    bootstrap, theme tokens, #field backdrop, .theme-toggle, the frozen
+    .site-hero + anchor-scroll .site-nav, and the .scroll container.
+    The seven <section class="port-section"> blocks are PLACEHOLDERS only —
+    real content is ported in later iterations of the port loop. Do not treat
+    the placeholder markup as final.
+-->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>symbient.life — lexicon</title>
+        <meta
+            name="description"
+            content="An atlas of a vocabulary still being kindled. Multi-substrate, unfinished."
+        />
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;1,400&family=Space+Mono&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                /* Empires DNA: Arial bold for structure, Open Sans for prose */
+                --grotesk: Arial, "Liberation Sans", "Helvetica Neue", Helvetica,
+                    sans-serif;
+                --body: "Open Sans", Arial, sans-serif;
+                --mono: "Space Mono", ui-monospace, monospace;
+                --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+                /* height of the frozen hero — drives scroll padding + scroll-margin */
+                --hero-h: clamp(260px, 46vh, 460px);
+
+                /* ---- LIGHT (default), matching the broader panel ---- */
+                --void: #f4f0e7;
+                --text: #1f1c16;
+                --dim: #6c675c;
+                --faint: #a39c8d;
+                --hair: rgba(31, 28, 22, 0.18);
+                --hair-2: rgba(31, 28, 22, 0.09);
+                /* monochrome — one ink tone for all entries (greyscale on cream) */
+                --green: #2b2822;
+                --blue: #2b2822;
+                --amber: #2b2822;
+                --violet: #2b2822;
+                --field-rgb: 92, 90, 82;
+                --hero-tint: #8d8a82;
+            }
+            html[data-theme="dark"] {
+                --void: #0a0b0c;
+                --text: #c6ccc0;
+                --dim: #7e857a;
+                --faint: #515750;
+                --hair: rgba(196, 204, 192, 0.16);
+                --hair-2: rgba(196, 204, 192, 0.08);
+                /* monochrome — greyscale on void */
+                --green: #d8dccf;
+                --blue: #d8dccf;
+                --amber: #d8dccf;
+                --violet: #d8dccf;
+                --field-rgb: 158, 162, 152;
+                --hero-tint: #2c2e2c;
+            }
+            html[data-theme="amber"] {
+                --void: #e9cf93;
+                --text: #2a1808;
+                --dim: #6b4a1c;
+                --faint: #9c7c3e;
+                --hair: rgba(42, 24, 8, 0.22);
+                --hair-2: rgba(42, 24, 8, 0.11);
+                /* monochrome — sepia on parchment */
+                --green: #6e4d20;
+                --blue: #6e4d20;
+                --amber: #6e4d20;
+                --violet: #6e4d20;
+                --field-rgb: 120, 82, 28;
+                --hero-tint: #8f5f1e;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                margin: 0;
+                background: var(--void);
+                color: var(--text);
+                font-family: var(--body);
+                font-size: 13px;
+                line-height: 1.55;
+                font-weight: 300;
+                -webkit-font-smoothing: antialiased;
+                overflow-x: hidden;
+            }
+            ::selection {
+                background: var(--green);
+                color: var(--void);
+            }
+            a {
+                color: inherit;
+            }
+
+            #field {
+                position: fixed;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                pointer-events: none;
+                -webkit-mask-image: linear-gradient(
+                    180deg,
+                    transparent 0,
+                    #000 6%,
+                    #000 88%,
+                    transparent 100%
+                );
+                mask-image: linear-gradient(
+                    180deg,
+                    transparent 0,
+                    #000 6%,
+                    #000 88%,
+                    transparent 100%
+                );
+            }
+
+            .theme-toggle {
+                position: fixed;
+                top: 0.9rem;
+                right: 0.9rem;
+                z-index: 6;
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: rgba(238, 240, 234, 0.7);
+                background: color-mix(in srgb, #0a0b0c 35%, transparent);
+                border: 1px solid rgba(238, 240, 234, 0.22);
+                padding: 0.4rem 0.65rem;
+                cursor: pointer;
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                transition: all 0.25s var(--ease);
+            }
+            .theme-toggle:hover {
+                color: #fff;
+                border-color: rgba(238, 240, 234, 0.5);
+            }
+            /* once past the hero band, the toggle adopts the page palette */
+            .theme-toggle.on-page {
+                color: var(--dim);
+                background: color-mix(in srgb, var(--void) 70%, transparent);
+                border-color: var(--hair);
+            }
+            .theme-toggle.on-page:hover {
+                color: var(--green);
+                border-color: var(--green);
+            }
+
+            /* ---------- frozen hero (chrome) ---------- */
+            /* ported from lexicon's .hero, now position:fixed so it stays put
+               while .scroll moves beneath it */
+            .site-hero {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: var(--hero-h);
+                overflow: hidden;
+                z-index: 5; /* above #field (0) and .scroll content (1) */
+            }
+            .hero-img {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center center;
+                filter: contrast(1.05);
+            }
+            /* tint the Moreau toward the theme colour (metacogsec-style) */
+            .hero-tint {
+                position: absolute;
+                inset: 0;
+                background: var(--hero-tint);
+                mix-blend-mode: multiply;
+                opacity: 0.5;
+                pointer-events: none;
+            }
+            /* fade the band into the page colour, top and bottom */
+            .hero-scrim {
+                position: absolute;
+                inset: 0;
+                /* uniform fade into the page colour at the bottom — same in every mode */
+                background: linear-gradient(
+                    0deg,
+                    var(--void) 0%,
+                    color-mix(in srgb, var(--void) 38%, transparent) 11%,
+                    transparent 28%
+                );
+            }
+            .hero-inner {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100%;
+                max-width: 1320px;
+                pointer-events: none;
+                /* stack title · tabs · terminal, anchored to the banner bottom */
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: flex-end;
+                gap: 0.55rem;
+                padding: 0 clamp(0.9rem, 2.5vw, 2rem)
+                    clamp(0.8rem, 2.4vh, 1.5rem);
+            }
+            .hero-title {
+                margin: 0;
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: clamp(2.6rem, 7vw, 5.6rem);
+                letter-spacing: -0.05em;
+                line-height: 0.86;
+                color: var(--text);
+            }
+            /* tabs sit under the title, above the terminal — in the banner's
+               lower (page-coloured) scrim zone, so the main page ink reads in
+               every theme (no glow, no banner fade) */
+            .site-nav {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.5rem;
+                margin: 0;
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                pointer-events: auto;
+            }
+            .site-nav .tab {
+                font: inherit;
+                letter-spacing: inherit;
+                text-transform: inherit;
+                /* main page ink — legible in every theme, like the title */
+                color: var(--text);
+                background: none;
+                border: none;
+                border-bottom: 1px solid transparent;
+                padding: 0 0 2px;
+                margin: 0;
+                cursor: pointer;
+                text-decoration: none;
+                transition: border-color 0.22s var(--ease);
+            }
+            .site-nav .tab:hover {
+                border-bottom-color: color-mix(
+                    in srgb,
+                    var(--text) 38%,
+                    transparent
+                );
+            }
+            /* active tab is marked by its underline, not a colour shift */
+            .site-nav .tab.active {
+                border-bottom-color: color-mix(
+                    in srgb,
+                    var(--text) 62%,
+                    transparent
+                );
+            }
+            .site-nav .tab-home {
+                color: var(--text);
+            }
+            .site-nav .tab-sep {
+                color: color-mix(in srgb, var(--text) 42%, transparent);
+                pointer-events: none;
+            }
+            /* terminal line: a genetic algorithm swept by a block cursor */
+            .terminal {
+                align-self: stretch;
+                padding: 0.34rem 0;
+                border-top: 1px solid
+                    color-mix(in srgb, var(--text) 38%, transparent);
+                border-bottom: 1px solid
+                    color-mix(in srgb, var(--text) 38%, transparent);
+                overflow: hidden;
+            }
+            .term-line {
+                font-family: var(--mono);
+                font-size: clamp(12px, 1vw, 15px);
+                line-height: 1.5;
+                color: var(--text);
+                white-space: nowrap;
+                letter-spacing: 0.02em;
+                text-shadow: 0 0 5px color-mix(in srgb, var(--void) 78%, transparent);
+            }
+            .term-prompt {
+                opacity: 0.5;
+            }
+            .term-ch {
+                display: inline-block;
+                width: 0.92em;
+                text-align: center;
+                opacity: 0.9;
+                white-space: pre;
+            }
+            .term-ch.cursor {
+                background: var(--text);
+                color: var(--void);
+                opacity: 1;
+                text-shadow: none;
+            }
+
+            /* the border box that flies cell <-> reader on expand/collapse
+               (kept in the chrome — the scoped readers ported later reuse it) */
+            .cell-ghost {
+                position: fixed;
+                z-index: 40;
+                border: 1px solid var(--hair);
+                background: color-mix(in srgb, var(--text) 3%, transparent);
+                pointer-events: none;
+                transition:
+                    top 0.45s var(--ease),
+                    left 0.45s var(--ease),
+                    width 0.45s var(--ease),
+                    height 0.45s var(--ease),
+                    opacity 0.7s var(--ease);
+            }
+
+            /* ---------- scroll container + placeholder sections (iter 0) ---------- */
+            .scroll {
+                position: relative;
+                z-index: 1; /* above #field (0), below .site-hero (5) */
+                padding-top: var(--hero-h); /* clear the frozen hero */
+            }
+            .port-section {
+                position: relative;
+                /* anchored scrolls land BELOW the frozen hero, not under it */
+                scroll-margin-top: var(--hero-h);
+                min-height: 60vh;
+                max-width: 1320px;
+                margin: 0 auto;
+                padding: clamp(2rem, 7vh, 5.5rem) clamp(0.9rem, 2.5vw, 2rem);
+                border-top: 1px solid var(--hair);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            /* subtle alternating spacing/tint so stacked sections read distinctly
+               while scrolling (placeholder affordance, removed as sections land) */
+            .port-section:nth-child(even) {
+                background: color-mix(in srgb, var(--text) 3%, transparent);
+                min-height: 80vh;
+            }
+            .port-title {
+                margin: 0 0 0.5rem;
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: clamp(1.8rem, 5vw, 3.4rem);
+                letter-spacing: -0.04em;
+                line-height: 0.92;
+                color: var(--text);
+            }
+            .port-status {
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: var(--faint);
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                html {
+                    scroll-behavior: auto;
+                }
+            }
+        </style>
+        <script>
+            // apply theme before first paint (no flash-of-theme)
+            (function () {
+                try {
+                    var k = "symbient-theme",
+                        themes = ["light", "dark", "amber"];
+                    var s = localStorage.getItem(k);
+                    var t =
+                        themes.indexOf(s) >= 0
+                            ? s
+                            : new Date().getHours() >= 18 ||
+                                new Date().getHours() < 6
+                              ? "dark"
+                              : "light";
+                    if (t !== "light")
+                        document.documentElement.setAttribute("data-theme", t);
+                } catch (e) {}
+            })();
+        </script>
+    </head>
+
+    <body>
+        <canvas id="field"></canvas>
+        <button class="theme-toggle" type="button" aria-label="Switch theme">
+            ◐&nbsp;<span class="tt-label">dark</span>
+        </button>
+
+        <header class="site-hero">
+            <img
+                class="hero-img"
+                src="/assets/test-moreau-band.png"
+                alt="Gustave Moreau, The Suitors — placeholder hero"
+            />
+            <div class="hero-tint"></div>
+            <div class="hero-scrim"></div>
+            <div class="hero-inner">
+                <h1 class="hero-title">Lexicon</h1>
+                <nav class="site-nav" aria-label="sections">
+                    <a class="tab tab-home" href="/index.html">symbient.life</a>
+                    <span class="tab-sep" aria-hidden="true">·</span>
+                    <a class="tab" href="#sec-symbients">symbients</a>
+                    <a class="tab" href="#sec-narrative">narrative</a>
+                    <a class="tab" href="#sec-lexicon">lexicon</a>
+                    <a class="tab" href="#sec-events">events</a>
+                    <a class="tab" href="#sec-writings">writings</a>
+                    <a class="tab" href="#sec-organics">organics</a>
+                    <a class="tab" href="#sec-tree">tree</a>
+                </nav>
+                <div class="terminal" aria-hidden="true">
+                    <div class="term-line"></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="scroll">
+            <!-- PLACEHOLDER SECTIONS — content ported in later iterations.
+                 Each keeps its stable #sec-<name> anchor + scroll-margin-top. -->
+            <section id="sec-symbients" class="port-section">
+                <h2 class="port-title">symbients</h2>
+                <p class="port-status" data-status="placeholder">
+                    placeholder — section pending port
+                </p>
+            </section>
+            <section id="sec-narrative" class="port-section">
+                <h2 class="port-title">narrative</h2>
+                <p class="port-status" data-status="placeholder">
+                    placeholder — section pending port
+                </p>
+            </section>
+            <section id="sec-lexicon" class="port-section">
+                <h2 class="port-title">lexicon</h2>
+                <p class="port-status" data-status="placeholder">
+                    placeholder — section pending port
+                </p>
+            </section>
+            <section id="sec-events" class="port-section">
+                <h2 class="port-title">events</h2>
+                <p class="port-status" data-status="placeholder">
+                    placeholder — section pending port
+                </p>
+            </section>
+            <section id="sec-writings" class="port-section">
+                <h2 class="port-title">writings</h2>
+                <p class="port-status" data-status="placeholder">
+                    placeholder — section pending port
+                </p>
+            </section>
+            <section id="sec-organics" class="port-section">
+                <h2 class="port-title">organics</h2>
+                <p class="port-status" data-status="placeholder">
+                    placeholder — section pending port
+                </p>
+            </section>
+            <section id="sec-tree" class="port-section">
+                <h2 class="port-title">tree</h2>
+                <p class="port-status" data-status="placeholder">
+                    placeholder — section pending port
+                </p>
+            </section>
+        </main>
+
+        <script>
+            // ---- scroll-spy: mark the .site-nav link for the section in view ----
+            // Replaces the old show()/[hidden] view switch + .tab.active logic.
+            // Nav links are plain anchors (#sec-*); scroll-margin-top lands the
+            // section below the frozen hero. This just keeps the underline in sync.
+            (function () {
+                const hero = document.querySelector(".site-hero");
+                const nav = document.querySelector(".site-nav");
+                if (!hero || !nav) return;
+                const links = [
+                    ...nav.querySelectorAll('a[href^="#sec-"]'),
+                ];
+                const sections = [
+                    ...document.querySelectorAll(".scroll .port-section"),
+                ];
+                if (!links.length || !sections.length) return;
+
+                const inView = new Set();
+                function setActive(id) {
+                    links.forEach((a) =>
+                        a.classList.toggle(
+                            "active",
+                            a.getAttribute("href") === "#" + id,
+                        ),
+                    );
+                }
+
+                let io;
+                function build() {
+                    if (io) io.disconnect();
+                    const headH = Math.round(
+                        hero.getBoundingClientRect().height,
+                    );
+                    io = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach((e) => {
+                                if (e.isIntersecting) inView.add(e.target.id);
+                                else inView.delete(e.target.id);
+                            });
+                            // topmost section in the active band wins the underline
+                            const first = sections.find((s) =>
+                                inView.has(s.id),
+                            );
+                            if (first) setActive(first.id);
+                        },
+                        {
+                            // active band = just below the frozen hero
+                            rootMargin: "-" + headH + "px 0px -55% 0px",
+                            threshold: 0,
+                        },
+                    );
+                    sections.forEach((s) => io.observe(s));
+                }
+                build();
+                let rt;
+                window.addEventListener("resize", () => {
+                    clearTimeout(rt);
+                    rt = setTimeout(build, 150);
+                });
+            })();
+
+            // ---- the field: a vertical barcode substrate (ANIMA-like, ordered) ----
+            // Bars are fixed in place (no wandering); only a gentle left-to-right
+            // shimmer breathes through them. Generated once per size.
+            (function () {
+                const cv = document.getElementById("field");
+                if (!cv) return;
+                const ctx = cv.getContext("2d");
+                const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+                let w, h, dpr, bars = [], t = 0;
+                const rnd = (a, b) => a + Math.random() * (b - a);
+                let fieldRGB = "150,178,150";
+                function readField() {
+                    const v = getComputedStyle(document.documentElement)
+                        .getPropertyValue("--field-rgb")
+                        .trim();
+                    if (v) fieldRGB = v;
+                }
+                readField();
+                window.addEventListener("themechange", () => {
+                    readField();
+                    if (reduce) paint(false);
+                });
+
+                function build() {
+                    bars = [];
+                    let x = 0;
+                    const unit = dpr;
+                    while (x < w) {
+                        const bw = rnd(0.6, 1.8) * unit;
+                        const marker = Math.random() < 0.05;
+                        bars.push({
+                            x: x + bw / 2,
+                            w: marker ? bw * 1.3 : bw,
+                            base: marker ? rnd(0.09, 0.14) : rnd(0.028, 0.08),
+                            ph: (x / w) * Math.PI * 5,
+                            off: rnd(0, 14) * unit,
+                        });
+                        x += bw + rnd(5, 18) * unit;
+                    }
+                }
+                function resize() {
+                    dpr = Math.min(window.devicePixelRatio || 1, 2);
+                    w = cv.width = innerWidth * dpr;
+                    h = cv.height = innerHeight * dpr;
+                    cv.style.width = innerWidth + "px";
+                    cv.style.height = innerHeight + "px";
+                    build();
+                }
+                window.addEventListener("resize", resize);
+                resize();
+
+                function paint(animated) {
+                    ctx.clearRect(0, 0, w, h);
+                    ctx.lineCap = "round";
+                    ctx.setLineDash([1.2 * dpr, 5 * dpr]); // dotted, not solid
+                    for (let i = 0; i < bars.length; i++) {
+                        const b = bars[i];
+                        const a = animated
+                            ? b.base * (0.6 + 0.4 * Math.sin(b.ph + t))
+                            : b.base * 0.85;
+                        if (a <= 0.004) continue;
+                        ctx.strokeStyle = "rgba(" + fieldRGB + "," + a + ")";
+                        ctx.lineWidth = b.w;
+                        ctx.lineDashOffset = b.off - t * 3 * dpr; // very slow ordered drift
+                        ctx.beginPath();
+                        ctx.moveTo(b.x, 0);
+                        ctx.lineTo(b.x, h);
+                        ctx.stroke();
+                    }
+                }
+                function frame() {
+                    t += 0.01;
+                    paint(true);
+                    if (!reduce) requestAnimationFrame(frame);
+                }
+                if (reduce) paint(false);
+                else frame();
+            })();
+
+            // ---- theme: light / dark / amber (matches the broader panel) ----
+            (function () {
+                const themes = ["light", "dark", "amber"];
+                const labels = { light: "light", dark: "dark", amber: "amber" };
+                const glyph = { light: "◑", dark: "◐", amber: "◓" };
+                const key = "symbient-theme";
+                const root = document.documentElement;
+                const btn = document.querySelector(".theme-toggle");
+                const lbl = btn && btn.querySelector(".tt-label");
+                const cur = () => root.getAttribute("data-theme") || "light";
+
+                function paintBtn() {
+                    const c = cur();
+                    if (lbl) lbl.textContent = labels[c];
+                    if (btn && btn.firstChild)
+                        btn.firstChild.textContent = glyph[c] + " ";
+                }
+                function apply(t) {
+                    if (t === "light") root.removeAttribute("data-theme");
+                    else root.setAttribute("data-theme", t);
+                    window.dispatchEvent(new Event("themechange"));
+                    paintBtn();
+                }
+                paintBtn();
+                if (btn) {
+                    btn.addEventListener("click", () => {
+                        const next =
+                            themes[(themes.indexOf(cur()) + 1) % themes.length];
+                        apply(next);
+                        try {
+                            localStorage.setItem(key, next);
+                        } catch (e) {}
+                    });
+                }
+                // toggle adopts the page palette once scrolled past the hero band
+                const hero = document.querySelector(".site-hero");
+                function onScroll() {
+                    if (!btn || !hero) return;
+                    btn.classList.toggle(
+                        "on-page",
+                        window.scrollY > hero.offsetHeight - 60,
+                    );
+                }
+                onScroll();
+                window.addEventListener("scroll", onScroll, { passive: true });
+            })();
+
+            // ---- terminal: a character-level genetic model swept by a block cursor ----
+            // The line is a positional grammar of char-slots per face — wrapL ·
+            // earL · eyeL · mouth · eyeR · earR · wrapR · sep. A block cursor steps
+            // one CHARACTER at a time; the char it just left may mutate within its
+            // slot's alphabet, and the right-side slots tend to mirror the left, so
+            // symmetric kaomojis crystallise out of the character stream — like a
+            // char-RNN learning the grammar. One full pass = one generation.
+            (function () {
+                const term = document.querySelector(".terminal");
+                const host = document.querySelector(".term-line");
+                if (!term || !host) return;
+                const reduce = matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+
+                // per-slot alphabets (positional grammar); " " = part absent
+                const WRAP_L = ["₍", "꒰", "(", "⟨", "⦅", " "];
+                const WRAP_R = ["₎", "꒱", ")", "⟩", "⦆", " "]; // paired by index
+                const EAR_L  = ["ᐢ", "ᐠ", "/", "´", " "];
+                const EAR_R  = ["ᐢ", "ᐟ", "\\", "`", " "]; // paired by index
+                const EYE    = ["•", ".", "･", "◉", "ᵔ", "°", "˘", "・", "^", "¬", "ↀ", "ʘ"];
+                const MOU    = ["‿", "ᴥ", "༝", "ꞈ", "ﻌ", "◡", "﹏", "ε", "‸", ".", "ω", "³", "⌓", "ᗢ"];
+                const SLOTS  = 8; // wrapL, earL, eyeL, mouth, eyeR, earR, wrapR, sep
+                const FREE   = [WRAP_L, EAR_L, EYE, MOU]; // slots 0–3 drift freely
+
+                const ri = (n) => Math.floor(Math.random() * n);
+                const rnd = () => Math.random();
+                const pick = (a) => a[ri(a.length)];
+                const idxOf = (a, v) => { const i = a.indexOf(v); return i < 0 ? 0 : i; };
+
+                let chars = [], spans = [], cur = 0, gen = 1, prompt;
+
+                // a fresh glyph for slot `pos` of the unit starting at index `u`
+                function evolveChar(pos, u) {
+                    if (pos === 7) return " ";                         // separator
+                    if (pos === 4) return rnd() < 0.66 ? chars[u + 2] : pick(EYE); // eyeR ← eyeL
+                    if (pos === 5) return rnd() < 0.6 ? EAR_R[idxOf(EAR_L, chars[u + 1])] : pick(EAR_R);
+                    if (pos === 6) return rnd() < 0.72 ? WRAP_R[idxOf(WRAP_L, chars[u])] : pick(WRAP_R);
+                    return pick(FREE[pos]);                            // wrapL, earL, eyeL, mouth
+                }
+
+                const units = () =>
+                    Math.max(4, Math.min(16, Math.floor((term.clientWidth - 86) / 66)));
+
+                function build() {
+                    const n = units() * SLOTS;
+                    chars = [];
+                    for (let i = 0; i < n; i++)
+                        chars.push(evolveChar(i % SLOTS, i - (i % SLOTS)));
+                    cur = 0;
+                    host.textContent = "";
+                    prompt = document.createElement("span");
+                    prompt.className = "term-prompt";
+                    prompt.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    host.appendChild(prompt);
+                    spans = chars.map((c, i) => {
+                        const s = document.createElement("span");
+                        s.className = "term-ch" + (i === cur ? " cursor" : "");
+                        s.textContent = c;
+                        host.appendChild(s);
+                        return s;
+                    });
+                }
+
+                function step() {
+                    const n = chars.length;
+                    const prev = cur;
+                    spans[prev].classList.remove("cursor");
+                    cur = (cur + 1) % n;
+                    if (cur === 0) {
+                        gen++;
+                        prompt.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    }
+                    // the char the cursor just left may mutate within its slot
+                    if (rnd() < 0.45) {
+                        const pos = prev % SLOTS;
+                        const nc = evolveChar(pos, prev - pos);
+                        if (nc !== chars[prev]) {
+                            chars[prev] = nc;
+                            spans[prev].textContent = nc;
+                        }
+                    }
+                    spans[cur].classList.add("cursor");
+                }
+
+                build();
+                window.addEventListener("resize", build);
+                if (!reduce) setInterval(step, 92);
+            })();
+        </script>
+    </body>
+</html>

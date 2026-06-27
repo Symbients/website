@@ -7,7 +7,7 @@ topmost actionable row. Statuses: `todo` · `in-progress` · `changes-requested`
 
 | # | section | target id | source | status | blocked_by | notes / reviewer verdict |
 |---|---------|-----------|--------|--------|------------|--------------------------|
-| 0 | chrome / shell | (whole `spa.html` frame) | lexicon.html theme bootstrap + tokens + `#field` + `.hero`/`.hero-nav` + theme-toggle; nav becomes anchor-scroll + scroll-spy; `main.scroll` container | todo | — | foundation; must be `done` before any content section |
+| 0 | chrome / shell | (whole `spa.html` frame) | lexicon.html theme bootstrap + tokens + `#field` + `.hero`/`.hero-nav` + theme-toggle; nav becomes anchor-scroll + scroll-spy; `main.scroll` container | done | — | **PASS** (reviewed). spa.html created (~766 lines): fixed `.site-hero` z5, `.scroll` padding-top `--hero-h`, 7 `#sec-*` placeholders w/ `scroll-margin-top`, scroll-spy IO, ported field/terminal/theme IIFEs verbatim. Sections land at 460=heroH. |
 | 1 | symbients (landing) | `#sec-symbients` | symbients.html (define: extitutional creature + dir-tree; show: next/prev symbients, familiar, wires, portrait) — currently iframed at lexicon.html 1497–1499 | todo | 0 | biggest; "harmonize later". v1 may keep define/show modes inside the section |
 | 2 | narrative | `#sec-narrative` | lexicon.html 1502–1600 + module 3024–3293 | todo | 0 | EASIEST: reader already section-scoped; do this first after chrome to validate the pattern |
 | 3 | lexicon | `#sec-lexicon` | lexicon.html 1602–1805 + reader IIFE 2498–2827 | todo | 0 | convert shell-wide reader → section-scoped; carries the footer/colophon |
@@ -22,5 +22,10 @@ topmost actionable row. Statuses: `todo` · `in-progress` · `changes-requested`
 The manifest table is ordered by section number, but the loop may pick by this
 suggested order as long as `blocked_by` is satisfied (chrome first; tree last).
 
+## Carry-over follow-ups (non-blocking, revisit during/after the noted section)
+- **tree (#7)**: re-verify scroll-spy once tree has real content — currently the thin tree placeholder rests short of the hero offset, so organics stays `.active` at the very bottom. Should self-resolve when tree is tall enough to reach the 460 offset.
+- **hero**: v1 freezes the full ~46vh hero (`--hero-h: clamp(260px,46vh,460px)`); a compact fixed bar is a later refinement (harmonize phase).
+
 ## Log
 - (init) manifest created; skills authored; scaffold not yet built.
+- (iter 0) chrome/shell ported into `spa.html` by porter subagent; independent reviewer → PASS. Theme/field/terminal IIFEs verbatim; fixed hero + anchor-scroll + scroll-spy working; lexicon.html/symbients.html untouched. Next actionable: #2 narrative (validates the scoped-reader pattern).
