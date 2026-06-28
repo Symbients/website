@@ -513,31 +513,95 @@
                 height: 100%;
             }
             .nar-fallback {
-                object-fit: contain;
-                /* ink-on-void placeholder so it reads in the monochrome
-                   aesthetic across light / dark / amber until the asset lands */
-                filter: grayscale(1) contrast(1.05);
-                opacity: 0.82;
-            }
-            /* once the canvas asset starts, hide the placeholder */
-            .nar-art.is-live .nar-fallback {
-                display: none;
-            }
-            /* cell 4 has no raster — a faint static void/star motif */
-            .nar-fallback-void {
+                /* image-free loader: centers the pulsing ascii diamond so
+                   nothing flashes before the ascii-art canvas initializes */
                 display: flex;
                 align-items: center;
                 justify-content: center;
+            }
+            /* once the canvas asset starts, hide the placeholder loader */
+            .nar-art.is-live .nar-fallback {
+                display: none;
+            }
+            /* all four cells share one image-free motif — a faint void wash
+               behind the pulsing ascii-diamond loader */
+            .nar-fallback-void {
                 background: radial-gradient(
                     circle at 50% 50%,
                     color-mix(in srgb, var(--dim) 10%, transparent),
                     transparent 70%
                 );
             }
-            .nar-fallback-void .nar-star {
-                font-size: clamp(1.4rem, 4vw, 2.2rem);
+            /* ---- pulsing ascii-diamond loader ----
+               A mono diamond with two concentric echoes that scale up and
+               fade out (an outward pulse) — reads as a "loading" shimmer
+               until .nar-art.is-live hides the whole .nar-fallback. Pure
+               glyphs + theme tokens, so it re-inks with light / dark / amber. */
+            .nar-loader {
+                position: relative;
+                display: grid;
+                place-items: center;
+                width: clamp(1.6rem, 4.5vw, 2.6rem);
+                height: clamp(1.6rem, 4.5vw, 2.6rem);
+                font-family: var(--mono);
+                line-height: 1;
+            }
+            .nar-loader-glyph,
+            .nar-loader-echo {
+                grid-area: 1 / 1; /* stack every glyph on the same centre */
+                font-size: clamp(1.1rem, 3.4vw, 1.9rem);
+                line-height: 1;
+            }
+            .nar-loader-glyph {
+                color: var(--dim);
+                opacity: 0.7;
+                animation: nar-diamond-core 2.4s ease-in-out infinite;
+            }
+            .nar-loader-echo {
                 color: var(--faint);
-                opacity: 0.55;
+                opacity: 0;
+                transform: scale(0.6);
+                animation: nar-diamond-pulse 2.4s ease-out infinite;
+            }
+            .nar-loader-echo:nth-child(2) {
+                /* second echo offset half a cycle → continuous outward pulse */
+                animation-delay: 1.2s;
+            }
+            @keyframes nar-diamond-pulse {
+                0% {
+                    opacity: 0.5;
+                    transform: scale(0.6);
+                }
+                70% {
+                    opacity: 0;
+                    transform: scale(2.2);
+                }
+                100% {
+                    opacity: 0;
+                    transform: scale(2.2);
+                }
+            }
+            @keyframes nar-diamond-core {
+                0%,
+                100% {
+                    opacity: 0.32;
+                }
+                50% {
+                    opacity: 0.78;
+                }
+            }
+            /* reduced motion: no pulse — a single static diamond */
+            @media (prefers-reduced-motion: reduce) {
+                .nar-loader-glyph,
+                .nar-loader-echo {
+                    animation: none;
+                }
+                .nar-loader-echo {
+                    opacity: 0;
+                }
+                .nar-loader-glyph {
+                    opacity: 0.6;
+                }
             }
             .nar-head {
                 font-family: var(--grotesk);
@@ -2255,7 +2319,13 @@
                         <div class="nar-kicker">N·01</div>
                         <div class="nar-art nar-art-void">
                             <canvas class="nar-ascii" aria-hidden="true"></canvas>
-                            <div class="nar-fallback nar-fallback-void" aria-hidden="true"></div>
+                            <div class="nar-fallback nar-fallback-void" aria-hidden="true">
+                                <span class="nar-loader">
+                                    <span class="nar-loader-echo">◇</span>
+                                    <span class="nar-loader-echo">◇</span>
+                                    <span class="nar-loader-glyph">◆</span>
+                                </span>
+                            </div>
                         </div>
                         <h2 class="nar-head">Alternative Intelligence</h2>
                         <div class="nar-body">
@@ -2267,9 +2337,15 @@
                     <!-- N·02 — New Symbiogenesis -->
                     <article class="nar-cell">
                         <div class="nar-kicker">N·02</div>
-                        <div class="nar-art">
+                        <div class="nar-art nar-art-void">
                             <canvas class="nar-ascii" aria-hidden="true"></canvas>
-                            <img class="nar-fallback" src="/assets/Symbiogenesis.png" alt="Two cells merging into a third" loading="lazy" decoding="async" />
+                            <div class="nar-fallback nar-fallback-void" aria-hidden="true">
+                                <span class="nar-loader">
+                                    <span class="nar-loader-echo">◇</span>
+                                    <span class="nar-loader-echo">◇</span>
+                                    <span class="nar-loader-glyph">◆</span>
+                                </span>
+                            </div>
                         </div>
                         <h2 class="nar-head">New Symbiogenesis</h2>
                         <div class="nar-body">
@@ -2282,9 +2358,15 @@
                     <!-- N·03 — Relationality Alignment -->
                     <article class="nar-cell">
                         <div class="nar-kicker">N·03</div>
-                        <div class="nar-art">
+                        <div class="nar-art nar-art-void">
                             <canvas class="nar-ascii" aria-hidden="true"></canvas>
-                            <img class="nar-fallback" src="/assets/Symbiotic_Collaboration.png" alt="Symbiotic collaboration between human and machine" loading="lazy" decoding="async" />
+                            <div class="nar-fallback nar-fallback-void" aria-hidden="true">
+                                <span class="nar-loader">
+                                    <span class="nar-loader-echo">◇</span>
+                                    <span class="nar-loader-echo">◇</span>
+                                    <span class="nar-loader-glyph">◆</span>
+                                </span>
+                            </div>
                         </div>
                         <h2 class="nar-head">Relationality Alignment</h2>
                         <div class="nar-body">
@@ -2300,7 +2382,13 @@
                         <div class="nar-kicker">N·04</div>
                         <div class="nar-art nar-art-void">
                             <canvas class="nar-ascii" aria-hidden="true"></canvas>
-                            <div class="nar-fallback nar-fallback-void" aria-hidden="true"><span class="nar-star">✦</span></div>
+                            <div class="nar-fallback nar-fallback-void" aria-hidden="true">
+                                <span class="nar-loader">
+                                    <span class="nar-loader-echo">◇</span>
+                                    <span class="nar-loader-echo">◇</span>
+                                    <span class="nar-loader-glyph">◆</span>
+                                </span>
+                            </div>
                         </div>
                         <h2 class="nar-head">Symbient as Hyperstition</h2>
                         <div class="nar-body">
