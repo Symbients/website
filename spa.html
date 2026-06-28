@@ -379,15 +379,17 @@
             .sec-rule {
                 display: flex;
                 align-items: center;
-                gap: 0.85rem;
+                gap: 1rem;
                 margin: 0 0 clamp(1.3rem, 3vh, 2.3rem);
                 position: relative;
                 z-index: 3; /* above section backdrops (creature/familiar/field) */
             }
             .sec-rule-name {
                 font-family: var(--mono);
-                font-size: var(--fs-mono);
-                letter-spacing: 0.2em;
+                /* bold + ~2x the mono label size — a strong wayfinding title */
+                font-size: clamp(1.05rem, 0.8rem + 1.1vw, 1.5rem);
+                font-weight: 700;
+                letter-spacing: 0.1em;
                 text-transform: uppercase;
                 color: var(--dim);
                 white-space: nowrap;
@@ -398,31 +400,6 @@
                 height: 0;
                 border-top: 1px solid var(--hair);
             }
-            /* subtle alternating spacing/tint so stacked sections read distinctly
-               while scrolling (placeholder affordance only — scoped to the
-               remaining .port-placeholder sections so it does NOT tint or force
-               the min-height of ported real sections like the narrative) */
-            .port-section.port-placeholder:nth-child(even) {
-                background: color-mix(in srgb, var(--text) 3%, transparent);
-                min-height: 80vh;
-            }
-            .port-title {
-                margin: 0 0 0.5rem;
-                font-family: var(--grotesk);
-                font-weight: 700;
-                font-size: var(--fs-h2);
-                letter-spacing: -0.04em;
-                line-height: 0.92;
-                color: var(--text);
-            }
-            .port-status {
-                font-family: var(--mono);
-                font-size: var(--fs-mono);
-                letter-spacing: 0.2em;
-                text-transform: uppercase;
-                color: var(--faint);
-            }
-
             /* ---------- submast (section intro row) — ported from lexicon ---------- */
             .submast {
                 display: flex;
@@ -1559,11 +1536,9 @@
                     letter-spacing: 0.12em;
                 }
                 .port-section {
-                    padding: clamp(1.6rem, 6vh, 3rem) clamp(0.85rem, 4vw, 1.4rem);
-                    min-height: 68vh;
-                }
-                .port-section.port-placeholder:nth-child(even) {
-                    min-height: 68vh;
+                    /* tighter, content-sized vertical rhythm on phones (the old
+                       min-height:68vh forced tall sections + oversized gaps) */
+                    padding: clamp(1.3rem, 4vh, 2.4rem) clamp(0.85rem, 4vw, 1.4rem);
                 }
             }
 
@@ -2151,6 +2126,79 @@
             @media (prefers-reduced-motion: reduce) {
                 .tree-row {
                     animation: none;
+                }
+            }
+
+            /* ===================================================================
+               MOBILE IN-PLACE EXPAND (≤520px, where every grid is 1 column)
+               On phones the section-scoped reader takeover is replaced by an
+               in-place expand: tapping a card grows the cell and reveals its
+               body + the affordances the reader adds (source/download/image),
+               keeping the page scrollable. One expansion per section (enforced
+               in JS). Narrative is intentionally NOT included (its cells show
+               the full text+art already on mobile). Wired in the mobile-expand
+               IIFE near </body>.
+               =================================================================== */
+            .col-xtra {
+                display: none;
+            }
+            @media (max-width: 520px) {
+                /* the toggle (.is-expanded) is authoritative on mobile: neutralize
+                   the hover/focus auto-reveal so tapping toggles, not just focus */
+                .col:hover .body,
+                .col:focus .body,
+                .col:focus-within .body {
+                    grid-template-rows: 0fr;
+                    opacity: 0;
+                }
+                /* reveal via display:block — the 0fr→1fr grid trick used for the
+                   desktop hover reveal resolves to 0 in this nested 1-col context,
+                   so override the grid and let the body size to its content */
+                .col.is-expanded .body {
+                    display: block;
+                    opacity: 1;
+                    transition: opacity 0.3s var(--ease);
+                }
+                .col.is-expanded .inner {
+                    overflow: visible;
+                }
+                /* a quiet "tap to expand" affordance + expanded emphasis */
+                .col {
+                    cursor: pointer;
+                }
+                .col.is-expanded {
+                    border-color: var(--green);
+                }
+                /* the extra affordances the reader adds, rendered inline on expand
+                   (source link, download, and an image for image-less cards) */
+                .col-xtra {
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    gap: 0.7rem 1.3rem;
+                    margin-top: 1rem;
+                }
+                .col-xtra-img {
+                    width: 100%;
+                    max-width: 260px;
+                    aspect-ratio: 16 / 10;
+                    object-fit: cover;
+                    filter: grayscale(1) contrast(1.05);
+                    opacity: 0.9;
+                }
+                .col-xtra-link,
+                .col-xtra-dl {
+                    font-family: var(--mono);
+                    font-size: var(--fs-mono);
+                    letter-spacing: 0.04em;
+                    color: var(--dim);
+                    text-decoration: none;
+                    border-bottom: 1px solid var(--hair);
+                    padding-bottom: 1px;
+                }
+                .col-xtra-link:active,
+                .col-xtra-dl:active {
+                    color: var(--green);
                 }
             }
         </style>
@@ -6404,6 +6452,137 @@
                         rec.inst.setTheme(pal);
                         if (reduce) renderStatic(rec.inst);
                     });
+                });
+            })();
+        </script>
+        <script>
+            // ---- mobile in-place expand (≤520px) ----
+            // On phones (where every grid is 1 column) the section-scoped reader
+            // takeover is replaced by an in-place expand: a capture-phase listener
+            // intercepts card taps BEFORE each section reader's own handler, so the
+            // reader never opens; instead the tapped card toggles .is-expanded
+            // (one per section) which reveals its .body + a small ".col-xtra" row
+            // of the affordances the reader adds (source link / download / image).
+            // Narrative is excluded (its cells already show the full text + art on
+            // mobile). Desktop is untouched — the matchMedia gate bails there.
+            (function () {
+                const scroll = document.querySelector("main.scroll");
+                if (!scroll) return;
+                const MOBILE = window.matchMedia("(max-width: 520px)");
+
+                const labelOf = (u) => {
+                    if (!u) return "";
+                    if (u.startsWith("/")) return u.replace(/^\//, "") || "home";
+                    try {
+                        return new URL(u).hostname.replace(/^www\./, "");
+                    } catch (e) {
+                        return u;
+                    }
+                };
+
+                // collapse every other expanded card in this section (one per section)
+                function collapseSiblings(sec, keep) {
+                    sec.querySelectorAll(".col.is-expanded").forEach((c) => {
+                        if (c !== keep) c.classList.remove("is-expanded");
+                    });
+                }
+
+                // build (once) the inline affordances expanded mode adds, from the
+                // card's data-* attrs: an image for image-less cards, a source link,
+                // and a download. Lives inside .body .inner so it's hidden when the
+                // body is collapsed.
+                function ensureExtra(col) {
+                    const inner = col.querySelector(".body .inner");
+                    if (!inner || inner.querySelector(":scope > .col-xtra")) return;
+                    const href = col.dataset.href || "";
+                    const dl = col.dataset.download || "";
+                    const img = col.dataset.img || "";
+                    const hasMedia = !!col.querySelector(".col-media");
+                    if (!href && !dl && !(img && !hasMedia)) return;
+                    const x = document.createElement("div");
+                    x.className = "col-xtra";
+                    if (img && !hasMedia) {
+                        const im = document.createElement("img");
+                        im.className = "col-xtra-img";
+                        im.src = img;
+                        im.loading = "lazy";
+                        im.decoding = "async";
+                        im.alt = "";
+                        x.appendChild(im);
+                    }
+                    // show the source link unless it's the same file as the
+                    // download (avoids a redundant, ugly path link on the PDF card)
+                    if (href && href !== dl) {
+                        const a = document.createElement("a");
+                        a.className = "col-xtra-link";
+                        a.href = href;
+                        if (/^https?:/.test(href)) {
+                            a.target = "_blank";
+                            a.rel = "noopener";
+                        }
+                        a.textContent = "↗ " + labelOf(href);
+                        x.appendChild(a);
+                    }
+                    if (dl) {
+                        const a = document.createElement("a");
+                        a.className = "col-xtra-dl";
+                        a.href = dl;
+                        a.setAttribute("download", "");
+                        a.textContent = "⤓ download";
+                        x.appendChild(a);
+                    }
+                    inner.appendChild(x);
+                }
+
+                function toggle(col, sec) {
+                    const willExpand = !col.classList.contains("is-expanded");
+                    collapseSiblings(sec, col);
+                    if (willExpand) {
+                        ensureExtra(col);
+                        col.classList.add("is-expanded");
+                    } else {
+                        col.classList.remove("is-expanded");
+                    }
+                }
+
+                // capture phase: runs BEFORE the section readers' bubble-phase
+                // handlers, so stopImmediatePropagation blocks the reader takeover
+                function intercept(ev) {
+                    if (!MOBILE.matches) return; // desktop → readers handle it
+                    const sec = ev.target.closest(".port-section");
+                    if (!sec) return;
+                    // narrative: in-place expand disabled (full content already shown)
+                    if (sec.id === "sec-narrative") {
+                        if (ev.target.closest(".nar-cell")) {
+                            ev.stopImmediatePropagation();
+                            if (ev.type === "click") ev.preventDefault();
+                        }
+                        return;
+                    }
+                    const col = ev.target.closest(".col");
+                    if (!col || !sec.contains(col)) return;
+                    // let real links inside the card navigate (source/download/thread),
+                    // but still block the reader from opening
+                    const link = ev.target.closest("a[href]");
+                    if (link) {
+                        ev.stopImmediatePropagation();
+                        return;
+                    }
+                    if (ev.type === "keydown" && ev.key !== "Enter" && ev.key !== " ")
+                        return;
+                    ev.stopImmediatePropagation();
+                    ev.preventDefault();
+                    toggle(col, sec);
+                }
+                scroll.addEventListener("click", intercept, true);
+                scroll.addEventListener("keydown", intercept, true);
+
+                // leaving mobile → clear inline-expanded state (reader resumes)
+                MOBILE.addEventListener("change", (e) => {
+                    if (!e.matches)
+                        document
+                            .querySelectorAll(".col.is-expanded")
+                            .forEach((c) => c.classList.remove("is-expanded"));
                 });
             })();
         </script>
