@@ -1947,6 +1947,94 @@
                     scroll-behavior: auto;
                 }
             }
+
+            /* ---------- #sec-tree : the whole site as one living tree ----------
+               Ported from lexicon.html's tree view. Text listing built from the
+               page's own sections/bands/cards (rails | \ _, marks ◈/▸/@, a tiny
+               fractal SVG sprout trailing each leaf). Fluid mono + theme tokens;
+               the sprout inks via currentColor so it re-tints with the theme. The
+               container scrolls horizontally so deep rows never overflow the page. */
+            .tree {
+                font-family: var(--mono);
+                font-size: var(--fs-small);
+                line-height: 1.7;
+                padding: 1.6rem 0 3rem;
+                color: var(--text);
+                overflow-x: auto;
+            }
+            .tree-legend {
+                color: var(--faint);
+            }
+            .tree-row {
+                white-space: pre;
+                animation: tree-in 0.5s var(--ease) both;
+            }
+            @keyframes tree-in {
+                from {
+                    opacity: 0;
+                    transform: translateX(-8px);
+                }
+            }
+            .tree-rail {
+                color: var(--faint);
+            }
+            .tree-mark {
+                color: var(--dim);
+            }
+            .tree-mark.hot {
+                color: var(--green);
+            }
+            .tree-node {
+                color: var(--text);
+                cursor: pointer;
+                text-decoration: none;
+                outline: none;
+                border-bottom: 1px solid transparent;
+                transition:
+                    color 0.2s var(--ease),
+                    border-color 0.2s var(--ease);
+            }
+            .tree-node.is-branch {
+                font-weight: 700;
+                letter-spacing: -0.01em;
+            }
+            .tree-node:hover,
+            .tree-node:focus {
+                color: var(--green);
+                border-bottom-color: color-mix(
+                    in srgb,
+                    var(--green) 45%,
+                    transparent
+                );
+            }
+            /* tiny L-system sprout trailing each leaf (decorative twig) */
+            .tree-sprout {
+                display: inline-block;
+                vertical-align: middle;
+                margin-left: 0.5ch;
+                overflow: visible;
+                color: var(--text);
+                opacity: 0.6;
+                transition: opacity 0.2s var(--ease);
+            }
+            .tree-sprout line {
+                stroke: currentColor;
+                stroke-width: 0.9;
+                stroke-linecap: round;
+                fill: none;
+            }
+            .tree-sprout .sprout-tip {
+                fill: var(--green);
+                stroke: none;
+            }
+            .tree-row:hover .tree-sprout {
+                opacity: 0.85;
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .tree-row {
+                    animation: none;
+                }
+            }
         </style>
         <script>
             // apply theme before first paint (no flash-of-theme)
@@ -2885,12 +2973,17 @@
                     </div>
                 </div>
             </section><!-- /sec-organics -->
-            <section id="sec-tree" class="port-section port-placeholder">
-                <h2 class="port-title">tree</h2>
-                <p class="port-status" data-status="placeholder">
-                    placeholder — section pending port
-                </p>
-            </section>
+            <section id="sec-tree" class="port-section">
+                <div class="submast">
+                    <p class="mh-sub">
+                        The whole lexicon as one tree — every term, gathering and
+                        transmission grown from a single root. Click a leaf to open
+                        it, a branch to walk into its section.
+                    </p>
+                    <div class="mh-right">site map · <span class="tree-legend">@ leaf · ▸ branch</span> · <a href="/index.html">↖ index</a></div>
+                </div>
+                <div class="tree" id="site-tree" role="tree"></div>
+            </section><!-- /sec-tree -->
         </main>
 
         <script>
@@ -5806,6 +5899,206 @@
                         fn();
                         return true;
                     };
+            })();
+
+            // ---- tree section: the whole site as one living `tree` listing ----
+            // Built from THIS page's own port-sections/bands/cards; clicking a
+            // leaf opens its card (via the shared cross-section dispatcher
+            // window.__spaOpenCard, populated by the card-section IIFEs above)
+            // and a branch scrolls to its section. Mirrors the lexicon SPA's
+            // tree, re-pointed at spa.html's vertical-scroll model. Placed after
+            // the card IIFEs so the dispatcher exists; clicks fire post-load.
+            (function () {
+                const host = document.getElementById("site-tree");
+                if (!host) return;
+
+                // assemble the hierarchy from the page's own content: every
+                // .port-section except the tree itself. The "view name" is the
+                // section id with its `sec-` prefix stripped (sec-lexicon ->
+                // lexicon), used as both the node label and the scroll target.
+                const views = [
+                    ...document.querySelectorAll("main.scroll .port-section"),
+                ].filter((v) => v.id !== "sec-tree");
+                const root = { label: "the lexicon", children: [] };
+                views.forEach((view) => {
+                    const vName = view.id.replace(/^sec-/, "");
+                    const vNode = { label: vName, goto: vName, children: [] };
+                    const bands = [...view.querySelectorAll(".band")];
+                    const cardNode = (col) => ({
+                        label: (col.querySelector(".term") || {}).textContent.trim(),
+                        open: col.id,
+                    });
+                    if (bands.length > 1) {
+                        bands.forEach((band) => {
+                            const bn = {
+                                label: (
+                                    band.querySelector(".band-axis span:not(.rn)") || {}
+                                ).textContent.trim(),
+                                goto: vName,
+                                children: [...band.querySelectorAll(".col")].map(cardNode),
+                            };
+                            vNode.children.push(bn);
+                        });
+                    } else {
+                        view.querySelectorAll(".col").forEach((c) =>
+                            vNode.children.push(cardNode(c)),
+                        );
+                    }
+                    root.children.push(vNode);
+                });
+
+                // ---- tiny L-system sprout trailing each leaf ----
+                // A short stem that forks a couple of generations into a few
+                // @-tipped twiglets, drawn with the sapling glyph vocabulary
+                // (/ \ | _ @) as a small inline SVG. Deterministic per leaf
+                // (seed derived from the label) so it's stable across reloads;
+                // inked with the label's --text via currentColor, so it
+                // re-inks with the theme. Decorative only — the leaf <a> stays
+                // clickable; the SVG is inert (pointer-events:none).
+                const SPROUT = {
+                    depth: 3, // L-system recursion depth (decorative twig, 2–3)
+                    len: 7, // first segment length (SVG units)
+                    shrink: 0.66, // child length multiplier per generation
+                    angle: 34, // split half-angle in degrees
+                    jitter: 0.35, // jitter as a fraction of the split angle
+                    w: 46, // SVG viewport width
+                    h: 22, // SVG viewport height
+                };
+                // mulberry32 — small deterministic PRNG, seeded per leaf
+                function rngFor(str) {
+                    let h = 2166136261 >>> 0;
+                    for (let i = 0; i < str.length; i++) {
+                        h ^= str.charCodeAt(i);
+                        h = Math.imul(h, 16777619) >>> 0;
+                    }
+                    let a = h >>> 0;
+                    return function () {
+                        a |= 0;
+                        a = (a + 0x6d2b79f5) | 0;
+                        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                    };
+                }
+                // build a tiny fractal sprout as an inline SVG string
+                function sproutSVG(label) {
+                    const rng = rngFor("sprout:" + label);
+                    const ang = (SPROUT.angle * Math.PI) / 180;
+                    const segs = []; // {x1,y1,x2,y2}
+                    const tips = []; // {x,y}
+                    // start at the left-middle, growing to the RIGHT
+                    const x0 = 1,
+                        y0 = SPROUT.h / 2;
+                    function grow(x, y, dir, len, depth) {
+                        if (depth >= SPROUT.depth || len < 1.2) {
+                            tips.push({ x, y });
+                            return;
+                        }
+                        const nx = x + Math.cos(dir) * len;
+                        const ny = y + Math.sin(dir) * len;
+                        segs.push({ x1: x, y1: y, x2: nx, y2: ny });
+                        const jL = (rng() - 0.5) * ang * SPROUT.jitter;
+                        const jR = (rng() - 0.5) * ang * SPROUT.jitter;
+                        const cl = len * SPROUT.shrink;
+                        grow(nx, ny, dir - ang + jL, cl, depth + 1);
+                        grow(nx, ny, dir + ang + jR, cl, depth + 1);
+                    }
+                    grow(x0, y0, 0, SPROUT.len, 0); // dir 0 = straight right
+                    let body = "";
+                    segs.forEach((s) => {
+                        body +=
+                            '<line x1="' + s.x1.toFixed(1) +
+                            '" y1="' + s.y1.toFixed(1) +
+                            '" x2="' + s.x2.toFixed(1) +
+                            '" y2="' + s.y2.toFixed(1) + '"/>';
+                    });
+                    tips.forEach((p) => {
+                        body +=
+                            '<circle class="sprout-tip" cx="' + p.x.toFixed(1) +
+                            '" cy="' + p.y.toFixed(1) + '" r="1.1"/>';
+                    });
+                    return (
+                        '<svg class="tree-sprout" width="' + SPROUT.w +
+                        '" height="' + SPROUT.h +
+                        '" viewBox="0 0 ' + SPROUT.w + " " + SPROUT.h +
+                        '" aria-hidden="true" focusable="false">' +
+                        body +
+                        "</svg>"
+                    );
+                }
+
+                // render rows with sapling connectors (| \ _ rails, hot @ tips)
+                const frag = document.createDocumentFragment();
+                let n = 0;
+                function walk(node, prefix, isLast, isRoot) {
+                    const leaf = !node.children || !node.children.length;
+                    const row = document.createElement("div");
+                    row.className = "tree-row";
+                    row.style.animationDelay = n++ * 0.02 + "s";
+                    let html = "";
+                    if (!isRoot)
+                        html +=
+                            '<span class="tree-rail">' +
+                            (prefix + (isLast ? "\\___ " : "|___ ")) +
+                            "</span>";
+                    html +=
+                        '<span class="tree-mark' +
+                        (leaf ? " hot" : "") +
+                        '">' +
+                        (leaf ? "@" : isRoot ? "◈" : "▸") +
+                        " </span>";
+                    const cls =
+                        "tree-node" + (leaf ? " is-leaf" : " is-branch");
+                    const attr = node.open
+                        ? ' data-open="' + node.open + '"'
+                        : node.goto
+                          ? ' data-goto="' + node.goto + '"'
+                          : "";
+                    html +=
+                        "<span class=\"" + cls + '"' + attr + ' tabindex="0">' +
+                        node.label +
+                        "</span>";
+                    // each leaf trails its own tiny L-system sprout
+                    if (leaf) html += sproutSVG(node.label);
+                    row.innerHTML = html;
+                    frag.appendChild(row);
+                    const kids = node.children || [];
+                    const cp = isRoot
+                        ? ""
+                        : prefix + (isLast ? "     " : "|    ");
+                    kids.forEach((k, i) =>
+                        walk(k, cp, i === kids.length - 1, false),
+                    );
+                }
+                walk(root, "", true, true);
+                host.appendChild(frag);
+
+                // wire clicks: leaf -> open its card via the shared dispatcher
+                // (scrolls to the owning section AND opens the scoped reader);
+                // branch/section -> scroll to that section (smooth via CSS,
+                // reduced-motion respected by the html scroll-behavior rule).
+                function act(el) {
+                    const id = el.dataset.open;
+                    if (id) {
+                        if (window.__spaOpenCard) window.__spaOpenCard(id);
+                    } else if (el.dataset.goto) {
+                        document
+                            .getElementById("sec-" + el.dataset.goto)
+                            ?.scrollIntoView();
+                    }
+                }
+                host.addEventListener("click", (ev) => {
+                    const el = ev.target.closest(".tree-node");
+                    if (el) act(el);
+                });
+                host.addEventListener("keydown", (ev) => {
+                    if (ev.key !== "Enter") return;
+                    const el = ev.target.closest(".tree-node");
+                    if (el) {
+                        ev.preventDefault();
+                        act(el);
+                    }
+                });
             })();
         </script>
     </body>
