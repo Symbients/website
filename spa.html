@@ -360,14 +360,43 @@
                 position: relative;
                 /* anchored scrolls land BELOW the frozen hero, not under it */
                 scroll-margin-top: var(--hero-h);
-                min-height: 60vh;
+                /* size to content so inter-section gaps are uniform (the old
+                   min-height:60vh + justify-content:center padded short sections
+                   to 60vh and centered them, producing uneven empty gaps). The
+                   gap between sections is now just the symmetric top+bottom
+                   padding below. The stage sections (#sec-home / #sec-symbients)
+                   set their own min-height. The labeled .sec-rule (injected per
+                   section) replaces the old border-top divider. */
                 max-width: 1320px;
                 margin: 0 auto;
-                padding: clamp(2rem, 7vh, 5.5rem) clamp(0.9rem, 2.5vw, 2rem);
-                border-top: 1px solid var(--hair);
+                padding: clamp(2.4rem, 6vh, 4.5rem) clamp(0.9rem, 2.5vw, 2rem);
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
+                justify-content: flex-start;
+            }
+            /* labeled inter-section divider, injected as each section's first
+               child: "NAME ————————————————" (mono tag + flex-grow hairline) */
+            .sec-rule {
+                display: flex;
+                align-items: center;
+                gap: 0.85rem;
+                margin: 0 0 clamp(1.3rem, 3vh, 2.3rem);
+                position: relative;
+                z-index: 3; /* above section backdrops (creature/familiar/field) */
+            }
+            .sec-rule-name {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: var(--dim);
+                white-space: nowrap;
+            }
+            .sec-rule::after {
+                content: "";
+                flex: 1 1 auto;
+                height: 0;
+                border-top: 1px solid var(--hair);
             }
             /* subtle alternating spacing/tint so stacked sections read distinctly
                while scrolling (placeholder affordance only — scoped to the
@@ -6099,6 +6128,36 @@
                         act(el);
                     }
                 });
+            })();
+        </script>
+        <script>
+            // labeled inter-section dividers: prepend a "NAME ————————" rule to
+            // each section as a wayfinding header (replaces the plain border-top).
+            (function () {
+                const NAMES = {
+                    "sec-home": "Home",
+                    "sec-symbients": "Symbients",
+                    "sec-narrative": "Narrative",
+                    "sec-lexicon": "Lexicon",
+                    "sec-events": "Events",
+                    "sec-writings": "Writings",
+                    "sec-organics": "Organics",
+                    "sec-tree": "Tree",
+                };
+                document
+                    .querySelectorAll("main.scroll .port-section")
+                    .forEach((sec) => {
+                        const name = NAMES[sec.id];
+                        if (!name || sec.querySelector(":scope > .sec-rule")) return;
+                        const rule = document.createElement("div");
+                        rule.className = "sec-rule";
+                        rule.setAttribute("aria-hidden", "true");
+                        const label = document.createElement("span");
+                        label.className = "sec-rule-name";
+                        label.textContent = name;
+                        rule.appendChild(label);
+                        sec.insertBefore(rule, sec.firstChild);
+                    });
             })();
         </script>
     </body>
