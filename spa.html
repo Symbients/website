@@ -1176,6 +1176,14 @@
             .col:focus-within .col-media::after {
                 opacity: 0;
             }
+            /* no-portrait organics cards (org-13..22) get a generative
+               being-composer familiar in place of a photo; the canvas fills the
+               same 16/10 .col-media box so the card grid stays uniform. */
+            .col-media--familiar canvas {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
 
             /* ---- the section-scoped reader (was lexicon's .shell.reading) ---- */
             .reader {
@@ -6175,6 +6183,140 @@
                         rule.appendChild(label);
                         sec.insertBefore(rule, sec.firstChild);
                     });
+            })();
+        </script>
+
+        <!-- organics no-image cards → generative being-composer familiars.
+             org-13..22 carry no .col-media portrait; give each a generative
+             "familiar" canvas (the lab being-composer) as its card-face
+             placeholder, sized to the SAME 16/10 box as the photo cards so the
+             grid stays uniform. ADDITIVE: a separate module that runs after the
+             organics reader IIFE (which already mapped these href-less cards as
+             img:null / href:null, so the section reader keeps their media
+             hidden — the familiar is a card face ONLY, never in the reader).
+             Mirrors the narrative/symbients being-composer lifecycle: lazy
+             per-card IntersectionObserver start/stop (never 10 rAF loops at
+             once), deterministic seed per organism, recolor on `themechange`,
+             one static frame under prefers-reduced-motion. -->
+        <script type="module">
+            (async function () {
+                const sec = document.getElementById("sec-organics");
+                if (!sec) return;
+                const grid = sec.querySelector(".cols.n4");
+                if (!grid) return;
+
+                // the no-portrait cards are exactly those WITHOUT a .col-media
+                const cards = [
+                    ...grid.querySelectorAll(":scope > .col"),
+                ].filter((c) => !c.querySelector(".col-media"));
+                if (!cards.length) return;
+
+                const reduce = matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+
+                // inject a 16/10 .col-media holding a <canvas>, in the same slot
+                // the photo cards use (after .tag, before .body). aria-hidden:
+                // decorative ornament, not content. No <img> + no data-href on
+                // these cards → the organics reader leaves their media hidden.
+                const recs = cards.map((card) => {
+                    const num =
+                        parseInt((card.id.match(/\d+/) || ["0"])[0], 10) || 0;
+                    const media = document.createElement("div");
+                    media.className = "col-media col-media--familiar";
+                    media.setAttribute("aria-hidden", "true");
+                    const canvas = document.createElement("canvas");
+                    media.appendChild(canvas);
+                    const body = card.querySelector(".body");
+                    if (body) card.insertBefore(media, body);
+                    else card.appendChild(media);
+                    return { card, canvas, num, inst: null, inView: false };
+                });
+
+                // lab assets — guarded so a missing asset can't break the page;
+                // the subtle empty .col-media box then stays as a graceful,
+                // still-aspect-matched placeholder.
+                let Being = null,
+                    readPalette = null;
+                try {
+                    Being = await import("/lab/assets/being-composer.js");
+                    ({ readPalette } = await import("/lab/assets/common.js"));
+                } catch (e) {
+                    return;
+                }
+                if (typeof Being.create !== "function" || !readPalette) return;
+
+                const live = []; // recs whose instance has been created
+                // deterministic, visually distinct parameters per organism number
+                function seedParams(inst, n) {
+                    inst.setParam("seed", 1 + ((n * 73) % 997));
+                    inst.setParam("limbs", 2 + (n % 5));
+                    inst.setParam("mix", ((n * 11) % 10) / 10);
+                    inst.setParam("symmetry", 0.6 + ((n + 1) % 4) * 0.1);
+                }
+                // paint exactly one frame, no rAF loop (prefers-reduced-motion)
+                function renderStatic(inst) {
+                    inst.start();
+                    requestAnimationFrame(() => inst.stop());
+                }
+                // lazily build a familiar the first time its card nears the
+                // viewport, so we never spin up 10 WebGL contexts at load.
+                function ensure(rec) {
+                    if (rec.inst) return rec.inst;
+                    const inst = Being.create(rec.canvas);
+                    inst.setTheme(readPalette());
+                    seedParams(inst, rec.num); // structural → builds the being
+                    rec.inst = inst;
+                    live.push(rec);
+                    requestAnimationFrame(() => {
+                        if (rec.inst !== inst) return;
+                        inst.resize(); // re-derive layout for the real 16/10 box
+                        if (reduce) renderStatic(inst);
+                        else if (rec.inView) inst.start();
+                    });
+                    return inst;
+                }
+
+                // animate only while in view; stop when off-screen (never 10
+                // rAF loops at once). Reduced motion: a single static frame.
+                const byCanvas = new Map(recs.map((r) => [r.canvas, r]));
+                const io = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((en) => {
+                            const rec = byCanvas.get(en.target);
+                            if (!rec) return;
+                            rec.inView = en.isIntersecting;
+                            if (en.isIntersecting) {
+                                const inst = ensure(rec);
+                                if (inst && !reduce) inst.start();
+                            } else if (rec.inst && !reduce) {
+                                rec.inst.stop();
+                            }
+                        });
+                    },
+                    { rootMargin: "200px 0px 200px 0px", threshold: 0 },
+                );
+                recs.forEach((rec) => io.observe(rec.canvas));
+
+                // re-layout live familiars on resize (repaint static frames too)
+                window.addEventListener("resize", () => {
+                    live.forEach((rec) => {
+                        if (!rec.inst || !rec.inView) return;
+                        rec.inst.resize();
+                        if (reduce) renderStatic(rec.inst);
+                    });
+                });
+
+                // recolor with the global theme (light / dark / amber), exactly
+                // like the narrative familiars; repaint the static frame too.
+                window.addEventListener("themechange", () => {
+                    const pal = readPalette();
+                    live.forEach((rec) => {
+                        if (!rec.inst) return;
+                        rec.inst.setTheme(pal);
+                        if (reduce) renderStatic(rec.inst);
+                    });
+                });
             })();
         </script>
     </body>
