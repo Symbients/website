@@ -752,6 +752,23 @@
                 justify-content: flex-start;
             }
 
+            /* polish: even the three event cards' image baselines. Titles range
+               from one line (E·02 "The Symbient is Near") to two (E·01 / E·03),
+               which floated E·02's image higher and left uneven whitespace.
+               Clamp every title to 2 lines (ellipsis beyond) and RESERVE a 2-line
+               block (min-height = 2 × the .term line-height of 1.02), so .tag and
+               .col-media start at the same Y across all three columns; with the
+               identical 16/10 .col-media boxes that also bottom-aligns the images.
+               Scoped to #sec-events so the image-less lexicon/writings cards
+               (short single-line .term) keep their natural height. */
+            #sec-events .term {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                min-height: calc(1.02em * 2);
+            }
+
             /* ---- the atlas: bands × columns ---- */
             .band {
                 display: grid;
