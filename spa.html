@@ -2162,6 +2162,14 @@
                 .col.is-expanded .inner {
                     overflow: visible;
                 }
+                /* the inline placeholder body copy (events / writings) */
+                .col-xtra-lorem {
+                    margin: 0.85rem 0 0;
+                    font-size: var(--fs-small);
+                    line-height: 1.62;
+                    color: var(--dim);
+                    white-space: pre-line;
+                }
                 /* a quiet "tap to expand" affordance + expanded emphasis */
                 .col {
                     cursor: pointer;
@@ -2334,13 +2342,9 @@
                 </div>
 
                 <nav class="nav">
-                    <button id="back" type="button" class="nav-back">↖ define</button>
                     <button id="prev" type="button">‹ prev</button>
                     <span class="nav-counter" id="counter"></span>
                     <button id="next" type="button">next ›</button>
-                    <button id="to-lexicon" type="button" class="nav-lexicon">
-                        lexicon ↗
-                    </button>
                 </nav>
             </section>
 
@@ -4443,17 +4447,6 @@
                         }
                     });
                 }
-                // back out of the showcase to the definition / home
-                const backBtn = document.getElementById("back");
-                if (backBtn)
-                    backBtn.addEventListener("click", () => scrollToSec(homeSec));
-                // jump to the lexicon section
-                const toLex = document.getElementById("to-lexicon");
-                if (toLex)
-                    toLex.addEventListener("click", () =>
-                        scrollToSec(document.getElementById("sec-lexicon")),
-                    );
-
                 /* =============================================================
                    NAV (prev/next/counter) + RESIZE + THEME
                    ============================================================= */
@@ -4465,11 +4458,26 @@
                     index = (index + 1) % SYMBIENTS.length;
                     render(index);
                 });
-                window.addEventListener("resize", () => {
+                // re-fit the ascii art to the current box. Synchronous so it works
+                // even in a backgrounded tab (rAF/timers get throttled there). The
+                // ResizeObserver coalesces to ~once per frame, and resizing the
+                // drawing buffer doesn't change the observed CSS box, so there's no
+                // feedback loop.
+                function refit() {
                     if (creature) creature.resize();
                     familiar.resize();
                     if (showInView) drawWires();
-                });
+                }
+                window.addEventListener("resize", refit);
+                window.addEventListener("orientationchange", refit);
+                // a ResizeObserver catches box changes that window 'resize' misses
+                // (layout reflow, the mobile URL-bar collapse, container/section
+                // size changes) — the cause of the creature/familiar aspect +
+                // resolution only updating after a manual reload (F5).
+                const _refitRO = new ResizeObserver(refit);
+                _refitRO.observe(familiarCanvas);
+                const _creatureCanvas = document.getElementById("creature");
+                if (_creatureCanvas) _refitRO.observe(_creatureCanvas);
 
                 // recolor with the GLOBAL theme: the chrome's toggle dispatches a
                 // `themechange` event (same page) — re-ink both familiars, the
@@ -6491,13 +6499,34 @@
                 // card's data-* attrs: an image for image-less cards, a source link,
                 // and a download. Lives inside .body .inner so it's hidden when the
                 // body is collapsed.
+                // the section readers append "still being kindled" placeholder copy
+                // for events + writings (their full text isn't written yet); mirror
+                // it inline so expand shows the same body, not just the one-line .def
+                const PLACEHOLDER =
+                    "— full text still being kindled —\n\n" +
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna " +
+                    "aliqua. Ut enim ad minim veniam, quis nostrud exercitation " +
+                    "ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
+                    "Duis aute irure dolor in reprehenderit in voluptate velit " +
+                    "esse cillum dolore eu fugiat nulla pariatur.";
+
                 function ensureExtra(col) {
                     const inner = col.querySelector(".body .inner");
-                    if (!inner || inner.querySelector(":scope > .col-xtra")) return;
+                    if (!inner || inner.dataset.xtraDone) return;
+                    inner.dataset.xtraDone = "1";
                     const href = col.dataset.href || "";
                     const dl = col.dataset.download || "";
                     const img = col.dataset.img || "";
                     const hasMedia = !!col.querySelector(".col-media");
+                    const secId = col.closest(".port-section")?.id || "";
+                    // placeholder body copy — events + writings (not the PDF card)
+                    if ((secId === "sec-events" || secId === "sec-writings") && !dl) {
+                        const p = document.createElement("p");
+                        p.className = "col-xtra-lorem";
+                        p.textContent = PLACEHOLDER;
+                        inner.appendChild(p);
+                    }
                     if (!href && !dl && !(img && !hasMedia)) return;
                     const x = document.createElement("div");
                     x.className = "col-xtra";
@@ -6542,6 +6571,11 @@
                         col.classList.add("is-expanded");
                     } else {
                         col.classList.remove("is-expanded");
+                        // drop focus so the :focus-within native-colour image reveal
+                        // stops and the theme shading is restored on collapse (the
+                        // tapped card otherwise stays focused → image stays native)
+                        const ae = document.activeElement;
+                        if (ae && (ae === col || col.contains(ae))) ae.blur();
                     }
                 }
 
