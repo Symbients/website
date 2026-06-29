@@ -2106,6 +2106,12 @@
                 /* tendrils stay live on mobile now, routed to the markers */
                 #sec-symbients .familiar {
                     opacity: 0.26;
+                    /* enlarge + bump up so the being's head sits behind the name
+                       text rather than being covered by the portrait photo (the
+                       stacked mobile layout puts the portrait lower than desktop) */
+                    width: min(440px, 92%);
+                    height: 76%;
+                    transform: translate(-50%, -56%);
                 }
             }
 
