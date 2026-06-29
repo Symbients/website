@@ -4272,69 +4272,97 @@
                             ),
                         },
                     ];
+                    const f = (x) => x.toFixed(1);
+                    // a small fork at a tendril's IMAGE-connection point: a few
+                    // twigs frayed toward the portrait, each tipped with a hot dot
+                    // (mirrors the desktop landing fray). Replaces the old anchor dot.
+                    function forkAt(sx, sy, inward, rng) {
+                        let s = "";
+                        const m = 2 + Math.floor(rng() * 2); // 2–3 twigs
+                        for (let b = 0; b < m; b++) {
+                            const t = m > 1 ? b / (m - 1) - 0.5 : 0;
+                            const bx = sx + inward * (5 + rng() * 7);
+                            const by = sy + t * (9 + rng() * 6) + (rng() - 0.5) * 3;
+                            s +=
+                                '<path class="wire" d="M ' +
+                                f(sx) + " " + f(sy) + " L " + f(bx) + " " + f(by) +
+                                '"/>';
+                            s +=
+                                '<circle class="wire-dot is-hot" cx="' +
+                                f(bx) + '" cy="' + f(by) + '" r="2"/>';
+                        }
+                        return s;
+                    }
+                    // a DNA double-helix from the image side (sx,sy) out to the
+                    // marker (tx,ty): two strands twisting around a centerline that
+                    // bows OUTWARD, no rungs, tapered so the strands meet at each end
+                    function helix(sx, sy, tx, ty, dir, rng) {
+                        const N = 32;
+                        const turns = 2.3 + rng() * 0.9;
+                        const amp = 7 + rng() * 3;
+                        const bow = 26 + rng() * 16; // outward bulge, out of the image
+                        const ph = rng() * Math.PI * 2;
+                        let A = "",
+                            B = "";
+                        for (let i = 0; i <= N; i++) {
+                            const t = i / N;
+                            const cx =
+                                sx + (tx - sx) * t + dir * bow * Math.sin(Math.PI * t);
+                            const cy = sy + (ty - sy) * t;
+                            const off =
+                                amp *
+                                Math.sin(turns * Math.PI * 2 * t + ph) *
+                                Math.sin(Math.PI * t);
+                            A += (i ? "L " : "M ") + f(cx + off) + " " + f(cy) + " ";
+                            B += (i ? "L " : "M ") + f(cx - off) + " " + f(cy) + " ";
+                        }
+                        return (
+                            '<path class="wire" d="' + A.trim() + '"/>' +
+                            '<path class="wire" d="' + B.trim() + '"/>'
+                        );
+                    }
+
                     let svg = "";
                     sides.forEach((side, si) => {
                         const n = side.mks.length;
                         side.mks.forEach((mk, k) => {
                             const mr = mk.getBoundingClientRect();
-                            const rng = mulberry32(
-                                index * 131 + si * 19 + k * 7 + 3,
-                            );
-                            const f = (x) => x.toFixed(1);
-                            // START: float just off the image edge, spread down it
+                            const rng = mulberry32(index * 131 + si * 19 + k * 7 + 3);
                             const spread = n > 1 ? k / (n - 1) - 0.5 : 0;
-                            const ax = side.ax + side.dir * (2 + rng() * 5);
-                            const ay =
-                                pTop +
-                                pH * (0.5 + spread * 0.46) +
-                                (rng() - 0.5) * 10;
-                            // END: latch onto the marker (tiny jitter on the join)
+                            // image-connection point (start), spread down the edge
+                            const sx = side.ax;
+                            const sy =
+                                pTop + pH * (0.5 + spread * 0.46) + (rng() - 0.5) * 10;
+                            // marker (end), tiny jitter on the join
                             const tx = mr.left + mr.width / 2 - sr.left;
                             const ty =
                                 mr.top + mr.height / 2 - sr.top + (rng() - 0.5) * 6;
-                            // a per-line vertical "lane" inboard of the marker,
-                            // staggered by k so stacked markers don't share one
-                            // descending column (the cause of the overlap)
-                            const laneX =
-                                tx - side.dir * (12 + k * 16 + rng() * 8);
                             if (side.organic) {
-                                // ORGANIC: expand OUTWARD (left) to the lane, descend
-                                // it, then latch to the marker — curved cubic
-                                svg +=
-                                    '<path class="wire" d="M ' +
-                                    f(ax) + " " + f(ay) +
-                                    " C " + f(laneX) + " " + f(ay + (ty - ay) * 0.1) +
-                                    " " + f(laneX) + " " + f(ay + (ty - ay) * 0.86) +
-                                    " " + f(tx) + " " + f(ty) +
-                                    '"/>';
+                                // ORGANIC: a DNA helix bowed outward (no connectors)
+                                svg += helix(sx, sy, tx, ty, side.dir, rng);
                             } else {
-                                // SYNTHETIC: 45-deg orthogonal — out to the lane,
-                                // straight down the lane, 45 into the marker
-                                const sgy = Math.sign(ty - ay) || 1;
-                                const topY = ay + Math.abs(laneX - ax);
+                                // SYNTHETIC: 45-deg orthogonal via a staggered lane
+                                const laneX =
+                                    tx - side.dir * (12 + k * 16 + rng() * 8);
+                                const sgy = Math.sign(ty - sy) || 1;
+                                const topY = sy + Math.abs(laneX - sx);
                                 const botY = ty - sgy * Math.abs(tx - laneX);
                                 svg +=
                                     '<path class="wire" d="M ' +
-                                    f(ax) + " " + f(ay) +
+                                    f(sx) + " " + f(sy) +
                                     " L " + f(laneX) + " " + f(topY) +
                                     " L " + f(laneX) + " " + f(botY) +
                                     " L " + f(tx) + " " + f(ty) +
                                     '"/>';
                             }
+                            // latch dot at the marker
                             svg +=
                                 '<circle class="wire-dot is-hot" cx="' +
-                                f(tx) + '" cy="' + f(ty) +
-                                '" r="2.4"/>';
+                                f(tx) + '" cy="' + f(ty) + '" r="2.4"/>';
+                            // fork at the image connection (fanned toward the portrait)
+                            svg += forkAt(sx, sy, -side.dir, rng);
                         });
                     });
-                    // the two anchor nodes floating at the image edges
-                    const acy = (pTop + pH * 0.5).toFixed(1);
-                    svg +=
-                        '<circle class="wire-dot" cx="' +
-                        leftAx.toFixed(1) + '" cy="' + acy + '" r="3"/>';
-                    svg +=
-                        '<circle class="wire-dot" cx="' +
-                        rightAx.toFixed(1) + '" cy="' + acy + '" r="3"/>';
                     wiresEl.innerHTML = svg;
                 }
 
