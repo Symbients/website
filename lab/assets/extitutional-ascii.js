@@ -63,7 +63,11 @@ export function create(canvas) {
     // aspect (fall back to the creature's 477x446 ratio until decoded).
     let COLS = params.cols | 0;
     let ROWS = Math.round(COLS * (SRC_H / SRC_W) * CELL_AR);
-    let field, hot;
+    let field, hot, scatterX, scatterY;
+    // dispersal amount 0..1 — a rising value scatters/expands the glyphs and
+    // fades them in the ascii itself (used by the spa intro to dissolve the
+    // creature on scroll instead of a CSS blur). 0 = no effect (default).
+    let disperse = 0;
 
     // Source-image luminance buffer (small offscreen canvas). Read once on load
     // at a fixed resolution; the glyph field is resampled from this whenever a
@@ -148,6 +152,23 @@ export function create(canvas) {
         ROWS = aspectRows();
         field = new Float32Array(COLS * ROWS);
         hot = new Uint8Array(COLS * ROWS);
+        // per-cell dispersal vector = radial-outward (so the creature expands
+        // from its centre) + a stochastic jitter (so it scatters organically).
+        // Seeded → stable across frames.
+        scatterX = new Float32Array(COLS * ROWS);
+        scatterY = new Float32Array(COLS * ROWS);
+        const drng = makeRng(7);
+        for (let cy = 0; cy < ROWS; cy++) {
+            for (let cx = 0; cx < COLS; cx++) {
+                const i = cy * COLS + cx;
+                const relX = (cx + 0.5) / COLS - 0.5; // -0.5..0.5 from centre
+                const relY = (cy + 0.5) / ROWS - 0.5;
+                const ang = drng() * Math.PI * 2;
+                const mag = 0.4 + drng() * 0.9;
+                scatterX[i] = relX * 1.5 + Math.cos(ang) * 0.22 * mag;
+                scatterY[i] = relY * 1.5 + Math.sin(ang) * 0.22 * mag;
+            }
+        }
     }
 
     // Resample the luminance buffer into the COLS×ROWS glyph field. The image is
@@ -254,6 +275,17 @@ export function create(canvas) {
             ink.b * 255
         )}`;
         const tw = params.twinkle;
+        // dispersal: a rising `disperse` scatters/expands the glyphs (per-cell
+        // radial + stochastic vector) and fades them — the creature dissolves in
+        // ascii rather than via a CSS blur of the canvas.
+        const disp = disperse;
+        const fade = disp > 0 ? Math.max(0, 1 - disp * 1.05) : 1;
+        if (fade <= 0.004) {
+            // fully dispersed — nothing left to draw, the field has cleared
+            tex.needsUpdate = true;
+            return;
+        }
+        const SPREAD = 0.55;
 
         for (let cy = 0; cy < ROWS; cy++) {
             for (let cx = 0; cx < COLS; cx++) {
@@ -279,8 +311,14 @@ export function create(canvas) {
                     if (glyph === " ") continue;
                     alpha = 0.5 + 0.5 * v;
                 }
-                tctx.fillStyle = `rgba(${inkRGB},${alpha.toFixed(3)})`;
-                tctx.fillText(glyph, (cx + 0.5) * cw, (cy + 0.5) * ch);
+                let px = (cx + 0.5) * cw;
+                let py = (cy + 0.5) * ch;
+                if (disp > 0) {
+                    px += disp * scatterX[i] * tcanvas.width * SPREAD;
+                    py += disp * scatterY[i] * tcanvas.height * SPREAD;
+                }
+                tctx.fillStyle = `rgba(${inkRGB},${(alpha * fade).toFixed(3)})`;
+                tctx.fillText(glyph, px, py);
             }
         }
         tex.needsUpdate = true;
@@ -307,6 +345,11 @@ export function create(canvas) {
             }
         },
         resize: () => stage.resize(),
+        // 0..1 — scatter/expand + fade the glyphs in the ascii (the intro drives
+        // this on scroll). Default 0 = the creature renders normally.
+        setDisperse: (v) => {
+            disperse = v < 0 ? 0 : v > 1 ? 1 : v;
+        },
         dispose: () => {
             stage.dispose();
             tex.dispose();

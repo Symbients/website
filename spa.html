@@ -4056,7 +4056,9 @@
                 // Creature. Dynamic-import so a missing lab asset can't break the
                 // page; it starts if #sec-home is already in view.
                 let creature = null;
-                import("/lab/assets/extitutional-ascii.js")
+                // ?v bumped when the asset's API changes (the intro now drives its
+                // setDisperse) so a cached older build doesn't shadow the new one
+                import("/lab/assets/extitutional-ascii.js?v=disperse1")
                     .then((Creature) => {
                         creature = Creature.create(
                             document.getElementById("creature"),
@@ -4065,6 +4067,13 @@
                         creature._init && creature._init();
                         requestAnimationFrame(() => creature.resize());
                         if (homeInView) creature.start();
+                        // let the intro IIFE drive the ascii dispersal on scroll
+                        // (guarded: a stale cached build without setDisperse is a
+                        // harmless no-op rather than throwing in the scroll handler)
+                        window.__creatureDisperse = (v) =>
+                            creature &&
+                            creature.setDisperse &&
+                            creature.setDisperse(v);
                     })
                     .catch((e) =>
                         console.warn("creature familiar unavailable", e),
@@ -6903,10 +6912,42 @@
                     }
                     return;
                 }
-                const creature = pin.querySelector(".creature");
-                const define = pin.querySelector(".define");
+                const defBlock = pin.querySelector(".definition-block");
                 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
                 const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+
+                // STOCHASTIC UN-TYPEWRITER: wrap each visible glyph of the
+                // definition in a span with a RANDOM fade threshold, so scrolling
+                // makes the characters vanish in a scattered order (the typed text
+                // un-types). Skipped under reduced motion (the overlay just fades).
+                const chars = [];
+                const UTW_WIN = 0.13; // each char fades over this much progress
+                if (!reduce && defBlock) {
+                    const walker = document.createTreeWalker(
+                        defBlock,
+                        NodeFilter.SHOW_TEXT,
+                    );
+                    const tns = [];
+                    let tn;
+                    while ((tn = walker.nextNode())) tns.push(tn);
+                    tns.forEach((node) => {
+                        if (!node.nodeValue.trim()) return;
+                        const frag = document.createDocumentFragment();
+                        for (const ch of node.nodeValue) {
+                            if (ch === " " || ch === "\n" || ch === "\t") {
+                                frag.appendChild(document.createTextNode(ch));
+                                continue;
+                            }
+                            const s = document.createElement("span");
+                            s.className = "utw-ch";
+                            s.textContent = ch;
+                            s._thr = 0.04 + Math.random() * 0.5;
+                            frag.appendChild(s);
+                            chars.push(s);
+                        }
+                        node.parentNode.replaceChild(frag, node);
+                    });
+                }
 
                 let ticking = false;
                 function apply() {
@@ -6924,21 +6965,16 @@
                     // dominates (by p≈0.67) so its ghost never overlaps #sec-symbients
                     pin.style.opacity = clamp(1 - p * 1.5).toFixed(3);
                     pin.style.pointerEvents = p > 0.6 ? "none" : "";
-                    if (creature) {
-                        // disperse: scale up + blur (on top of the overlay fade)
-                        creature.style.transform =
-                            "translate(-50%, -50%) scale(" +
-                            (1 + (reduce ? 0 : p * 0.85)).toFixed(3) +
-                            ")";
-                        creature.style.filter = reduce
-                            ? ""
-                            : "blur(" + (p * p * 13).toFixed(2) + "px)";
+                    // the creature dissolves IN ASCII — scatter/expand + fade the
+                    // glyphs (driven in the lab asset), not a CSS blur of the canvas
+                    if (window.__creatureDisperse) {
+                        window.__creatureDisperse(reduce ? 0 : clamp(p / 0.55));
                     }
-                    if (define) {
-                        // the text drifts up as the intro goes
-                        define.style.transform = reduce
-                            ? ""
-                            : "translateY(" + (-p * 64).toFixed(1) + "px)";
+                    // the definition un-types: each char vanishes once p passes its
+                    // (random) threshold
+                    for (let k = 0; k < chars.length; k++) {
+                        const s = chars[k];
+                        s.style.opacity = clamp(1 - (p - s._thr) / UTW_WIN).toFixed(2);
                     }
                 }
                 function onScroll() {
