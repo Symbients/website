@@ -313,11 +313,21 @@ export function create(canvas) {
                 }
                 let px = (cx + 0.5) * cw;
                 let py = (cy + 0.5) * ch;
+                let a = alpha * fade;
                 if (disp > 0) {
                     px += disp * scatterX[i] * tcanvas.width * SPREAD;
                     py += disp * scatterY[i] * tcanvas.height * SPREAD;
+                    // soft edge fade: dispersing glyphs dissolve as they near the
+                    // canvas bounds instead of hard-clipping. GATED by disp, so at
+                    // disp=0 the static composition is untouched (no edge fade).
+                    const mx = tcanvas.width * 0.17;
+                    const my = tcanvas.height * 0.17;
+                    const efx = clamp(Math.min(px, tcanvas.width - px) / mx, 0, 1);
+                    const efy = clamp(Math.min(py, tcanvas.height - py) / my, 0, 1);
+                    const edge = efx < efy ? efx : efy; // 0 at edge → 1 inside
+                    a *= 1 - disp * (1 - edge);
                 }
-                tctx.fillStyle = `rgba(${inkRGB},${(alpha * fade).toFixed(3)})`;
+                tctx.fillStyle = `rgba(${inkRGB},${a.toFixed(3)})`;
                 tctx.fillText(glyph, px, py);
             }
         }
