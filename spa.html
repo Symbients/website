@@ -1539,8 +1539,12 @@
                 background: var(--void);
                 will-change: opacity;
             }
-            /* the intro shows on the bare theme background — no labeled divider */
-            #sec-home .sec-rule {
+            /* the intro shows on the bare theme background — no labeled divider,
+               and no dir-tree nav list: just the definition + the creature. (Nav
+               happens by scrolling — which reveals the hero + sections — or by
+               clicking the headword.) */
+            #sec-home .sec-rule,
+            #sec-home .dir-tree {
                 display: none;
             }
             /* the ascii Extitutional Creature — the define backdrop. The glyph
@@ -6905,9 +6909,11 @@
                     // agnostic — works whether window or a container scrolls)
                     const dist = Math.max(1, spacer.offsetHeight);
                     const p = clamp(-spacer.getBoundingClientRect().top / dist);
-                    // hero fades in over the first ~45% of the scroll track
-                    hero.style.opacity = clamp(p / 0.45).toFixed(3);
-                    hero.classList.toggle("is-revealed", p > 0.03);
+                    // hero fades in later + more gradually (a small initial scroll
+                    // used to pop it straight in): held hidden until p≈0.2, then
+                    // ramps to full by p≈0.8
+                    hero.style.opacity = clamp((p - 0.2) / 0.6).toFixed(3);
+                    hero.classList.toggle("is-revealed", p > 0.24);
                     // the intro overlay fades out well before the next section
                     // dominates (by p≈0.67) so its ghost never overlaps #sec-symbients
                     pin.style.opacity = clamp(1 - p * 1.5).toFixed(3);
