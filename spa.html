@@ -110,7 +110,10 @@
                 line-height: 1.55;
                 font-weight: 300;
                 -webkit-font-smoothing: antialiased;
-                overflow-x: hidden;
+                /* clip (not hidden) so the body does NOT become a scroll container
+                   — hidden makes overflow-y compute to auto, which moves scrolling
+                   off window and breaks scroll-driven effects (the intro) */
+                overflow-x: clip;
             }
             ::selection {
                 background: var(--green);
@@ -188,6 +191,14 @@
                 height: var(--hero-h);
                 overflow: hidden;
                 z-index: 5; /* above #field (0) and .scroll content (1) */
+                /* hidden during the intro; the intro IIFE fades it in on scroll
+                   (opacity is set inline as scroll progresses) */
+                opacity: 0;
+                pointer-events: none;
+                will-change: opacity;
+            }
+            .site-hero.is-revealed {
+                pointer-events: auto;
             }
             .hero-img {
                 position: absolute;
@@ -354,7 +365,10 @@
             .scroll {
                 position: relative;
                 z-index: 1; /* above #field (0), below .site-hero (5) */
-                padding-top: var(--hero-h); /* clear the frozen hero */
+                /* no top padding: the intro (#sec-home) fills the screen from the
+                   very top while the hero is hidden; post-intro sections clear the
+                   hero via #sec-symbients's padding + scroll-padding for anchors */
+                scroll-padding-top: var(--hero-h);
             }
             .port-section {
                 position: relative;
@@ -1499,10 +1513,35 @@
                 isolation: isolate;
             }
 
-            /* ---------- #sec-home : DEFINE ---------- */
+            /* ---------- #sec-home : DEFINE / INTRO ---------- */
             #sec-home {
-                overflow: hidden; /* clip the (often taller-than-section) creature */
-                min-height: clamp(520px, 82vh, 920px);
+                /* a spacer that gives the intro its scroll "track"; the content
+                   (.intro-pin) is a FIXED full-screen overlay, so the next section
+                   follows immediately (no dead scroll past a pinned screen). The
+                   intro IIFE maps scroll over this height to the transition. */
+                min-height: 120vh;
+                padding: 0;
+                margin: 0;
+                overflow: visible;
+            }
+            #sec-home .intro-pin {
+                position: fixed;
+                inset: 0;
+                z-index: 4; /* over the field (0) + scroll content (1), below hero (5) */
+                overflow: hidden; /* clip the (taller-than-viewport) creature */
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                isolation: isolate;
+                padding: clamp(1.3rem, 5vh, 3rem) clamp(0.9rem, 2.5vw, 2rem);
+                /* the bare theme background — the only thing visible at the top,
+                   covering the field + sections until scroll fades it out */
+                background: var(--void);
+                will-change: opacity;
+            }
+            /* the intro shows on the bare theme background — no labeled divider */
+            #sec-home .sec-rule {
+                display: none;
             }
             /* the ascii Extitutional Creature — the define backdrop. The glyph
                field is landscape (~477/446), so the box carries that aspect. */
@@ -1694,6 +1733,9 @@
             #sec-symbients {
                 overflow: hidden; /* keep the centred familiar from bleeding out */
                 min-height: clamp(560px, 84vh, 960px);
+                /* the first section after the intro: clear the (now-revealed) fixed
+                   hero so its content doesn't start hidden under it */
+                padding-top: var(--hero-h);
             }
             /* z0: the randomised Faggot-Familiar backdrop */
             #sec-symbients .familiar {
@@ -2308,7 +2350,13 @@
                  scrolls to #sec-symbients; the other tree entries scroll to their
                  matching section. The creature canvas animates only while this
                  section is in view (IntersectionObserver in the module script). -->
-            <section id="sec-home" class="port-section sec-stage">
+            <section id="sec-home" class="port-section sec-stage intro">
+                <!-- the intro: a full-screen symbient definition on the bare theme
+                     background. Scrolling drives an in-place transition (the
+                     .intro-pin stays put while the section provides scroll track):
+                     the creature disperses + the text fades out as the hero and the
+                     rest of the page fade in. Wired in the intro IIFE near </body>. -->
+                <div class="intro-pin">
                 <canvas class="creature" id="creature" aria-hidden="true"></canvas>
                 <div class="define">
                     <div class="definition-block">
@@ -2337,6 +2385,7 @@
                     </div>
                     <!-- the top directories one can navigate to, terminal-tree style -->
                     <nav class="dir-tree" id="dir-tree" aria-label="sections"></nav>
+                </div>
                 </div>
             </section>
 
@@ -6826,6 +6875,72 @@
                             .querySelectorAll(".col.is-expanded")
                             .forEach((c) => c.classList.remove("is-expanded"));
                 });
+            })();
+        </script>
+        <script>
+            // ---- scroll-driven intro ----
+            // #sec-home is a full-screen symbient definition on the bare theme
+            // background (a fixed .intro-pin overlay covering the field + sections).
+            // Scrolling fades + disperses it to reveal the hero and the rest of the
+            // page (starting with #sec-symbients). Scroll is only the progress
+            // driver — the content stays put; it reverses on scroll-up. Bails (and
+            // shows the hero normally) if the intro markup isn't present.
+            (function () {
+                const spacer = document.getElementById("sec-home");
+                const pin = spacer && spacer.querySelector(".intro-pin");
+                const hero = document.querySelector(".site-hero");
+                if (!spacer || !pin || !hero) {
+                    if (hero) {
+                        hero.style.opacity = "1";
+                        hero.classList.add("is-revealed");
+                    }
+                    return;
+                }
+                const creature = pin.querySelector(".creature");
+                const define = pin.querySelector(".define");
+                const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+                const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+
+                let ticking = false;
+                function apply() {
+                    ticking = false;
+                    // progress from the spacer's viewport position (scroller-
+                    // agnostic — works whether window or a container scrolls)
+                    const dist = Math.max(1, spacer.offsetHeight);
+                    const p = clamp(-spacer.getBoundingClientRect().top / dist);
+                    // hero fades in over the first ~45% of the scroll track
+                    hero.style.opacity = clamp(p / 0.45).toFixed(3);
+                    hero.classList.toggle("is-revealed", p > 0.03);
+                    // the intro overlay fades out well before the next section
+                    // dominates (by p≈0.67) so its ghost never overlaps #sec-symbients
+                    pin.style.opacity = clamp(1 - p * 1.5).toFixed(3);
+                    pin.style.pointerEvents = p > 0.6 ? "none" : "";
+                    if (creature) {
+                        // disperse: scale up + blur (on top of the overlay fade)
+                        creature.style.transform =
+                            "translate(-50%, -50%) scale(" +
+                            (1 + (reduce ? 0 : p * 0.85)).toFixed(3) +
+                            ")";
+                        creature.style.filter = reduce
+                            ? ""
+                            : "blur(" + (p * p * 13).toFixed(2) + "px)";
+                    }
+                    if (define) {
+                        // the text drifts up as the intro goes
+                        define.style.transform = reduce
+                            ? ""
+                            : "translateY(" + (-p * 64).toFixed(1) + "px)";
+                    }
+                }
+                function onScroll() {
+                    if (!ticking) {
+                        ticking = true;
+                        requestAnimationFrame(apply);
+                    }
+                }
+                addEventListener("scroll", onScroll, { passive: true });
+                addEventListener("resize", onScroll);
+                apply(); // initial state
             })();
         </script>
     </body>
