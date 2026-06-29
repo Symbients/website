@@ -6941,7 +6941,7 @@
                             const s = document.createElement("span");
                             s.className = "utw-ch";
                             s.textContent = ch;
-                            s._thr = 0.04 + Math.random() * 0.5;
+                            s._thr = Math.random() * 0.5;
                             frag.appendChild(s);
                             chars.push(s);
                         }
@@ -6965,10 +6965,11 @@
                     // dominates (by p≈0.67) so its ghost never overlaps #sec-symbients
                     pin.style.opacity = clamp(1 - p * 1.5).toFixed(3);
                     pin.style.pointerEvents = p > 0.6 ? "none" : "";
-                    // the creature dissolves IN ASCII — scatter/expand + fade the
-                    // glyphs (driven in the lab asset), not a CSS blur of the canvas
+                    // the creature implodes IN ASCII — glyphs collapse inward + fade
+                    // (driven in the lab asset). p/0.66 → fully gone by p≈0.63, so it
+                    // lasts about as long as the text un-typing below (aligned).
                     if (window.__creatureDisperse) {
-                        window.__creatureDisperse(reduce ? 0 : clamp(p / 0.55));
+                        window.__creatureDisperse(reduce ? 0 : clamp(p / 0.66));
                     }
                     // the definition un-types: each char vanishes once p passes its
                     // (random) threshold
