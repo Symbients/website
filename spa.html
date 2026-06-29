@@ -1798,9 +1798,39 @@
                 line-height: 1.5;
                 color: var(--dim);
             }
+            /* constituent markers — circle for organic, diamond for synthetic.
+               Hidden on desktop (there the wires spring straight off the card
+               edge); shown on the ≤900 mobile 2-col layout where they sit on the
+               inner edge of each card and become the tendril landing points. */
+            #sec-symbients .card-marker {
+                display: none;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 0.72rem;
+                line-height: 1;
+                pointer-events: none;
+                z-index: 3;
+            }
+            #sec-symbients .card-marker--organic {
+                right: -0.5rem;
+                color: var(--green);
+            }
+            #sec-symbients .card-marker--synthetic {
+                left: -0.5rem;
+                color: var(--text);
+            }
             #sec-symbients .symbient-center {
                 text-align: center;
                 position: relative;
+                /* PORTRAIT ANCHOR (desktop): keep the centre column reliably the
+                   tallest of the three (floor below) so — under the grid's
+                   align-items:center — the row height stays constant and the
+                   portrait sits at a fixed vertical offset from the row top as
+                   you prev/next. The name (above) and desc (below) reserve their
+                   own space so neither a 2-line name nor a long blurb can shift
+                   the portrait. All reset in the ≤900 mobile layout. */
+                min-height: clamp(420px, 56vh, 520px);
             }
             /* soft radial void halo behind the name */
             #sec-symbients .symbient-center::before {
@@ -1836,6 +1866,9 @@
                 line-height: 0.95;
                 margin: 0;
                 color: var(--text);
+                /* reserve two display lines so a wrapping name (e.g. "Truth
+                   Terminal") doesn't push the portrait down vs a one-word one */
+                min-height: 1.9em;
             }
             #sec-symbients .symbient-cat {
                 font-family: var(--grotesk);
@@ -1902,6 +1935,10 @@
                 color: var(--text);
                 max-width: 42ch;
                 margin: 1.1rem auto 0;
+                /* reserve ~3 lines so a short (1-sentence) blurb keeps the centre
+                   column tall enough to stay the row's tallest — see the anchor
+                   note on .symbient-center */
+                min-height: 5.1em;
             }
             /* nav — prev / next + counter (scoped; distinct from the chrome .site-nav) */
             #sec-symbients .nav {
@@ -1947,26 +1984,49 @@
                 margin-left: 0.4rem;
             }
 
-            /* ---------- symbients responsive: collapse the 3-col grid ----------
-               At/below 900px the centre+two columns can no longer share a row
-               without cramping (verified at 768), so they stack to one column;
-               the synthetic column re-aligns left, the wires hide (they route
-               horizontally between columns, meaningless when stacked) and the
-               familiar dims so the stacked text stays legible. */
+            /* ---------- symbients responsive: the mobile rhizome ----------
+               At/below 900px the 3-col row can no longer share a line without
+               cramping. Instead of stacking flat, we recompose into a rhizome:
+               the portrait+name span the top as the anchor, and the two
+               constituent columns sit BELOW as a 2×N grid — organic LEFT,
+               synthetic RIGHT (2 organic + 2 synthetic reads as a 2×2). Each
+               card wears its marker (circle / diamond) on its inner edge, and
+               the tendrils are RE-ENABLED here, springing from the portrait down
+               to every marker (see drawWiresMobile). */
             @media (max-width: 900px) {
                 #sec-symbients .symbient {
-                    grid-template-columns: 1fr;
-                    gap: 2rem;
+                    grid-template-columns: 1fr 1fr;
+                    grid-template-areas:
+                        "center  center"
+                        "organic synthetic";
+                    align-items: start;
+                    gap: clamp(1.1rem, 4vw, 2rem) clamp(2.6rem, 13vw, 4.5rem);
                 }
-                #sec-symbients .column--synthetic .card,
-                #sec-symbients .column--synthetic .column-head {
-                    text-align: left;
+                #sec-symbients .symbient-center {
+                    grid-area: center;
+                    min-height: 0; /* drop the desktop anchor floor */
                 }
-                #sec-symbients .wires {
-                    display: none;
+                #sec-symbients .column--organic {
+                    grid-area: organic;
                 }
+                #sec-symbients .column--synthetic {
+                    grid-area: synthetic;
+                }
+                /* keep desktop reserves from padding the stacked centre column */
+                #sec-symbients .symbient-name {
+                    min-height: 0;
+                }
+                #sec-symbients .symbient-desc {
+                    min-height: 0;
+                }
+                /* synthetic stays right-aligned so its inner edge (and marker) is
+                   the LEFT side, mirroring organic — the two columns face inward */
+                #sec-symbients .card-marker {
+                    display: block;
+                }
+                /* tendrils stay live on mobile now, routed to the markers */
                 #sec-symbients .familiar {
-                    opacity: 0.32;
+                    opacity: 0.26;
                 }
             }
 
@@ -4051,9 +4111,18 @@
                 readFrameColors();
                 requestAnimationFrame(drawFrame);
 
-                function cardHTML(c) {
+                function cardHTML(c, kind) {
+                    // marker: circle = organic, diamond = synthetic. Always in the
+                    // DOM (so drawWiresMobile can measure it) but only painted on
+                    // the ≤900 mobile layout via CSS. The glyph sits on the card's
+                    // inner edge — the tendril landing point.
+                    const marker =
+                        kind === "organic"
+                            ? '<span class="card-marker card-marker--organic" aria-hidden="true">●</span>'
+                            : '<span class="card-marker card-marker--synthetic" aria-hidden="true">◆</span>';
                     return (
-                        '<article class="card"><div class="card-kind">' + c.kind +
+                        '<article class="card">' + marker +
+                        '<div class="card-kind">' + c.kind +
                         '</div><h3 class="card-name">' + c.name +
                         '</h3><p class="card-blurb">' + c.blurb + "</p></article>"
                     );
@@ -4085,10 +4154,10 @@
                     els.desc.textContent = s.desc;
                     els.organic.innerHTML =
                         '<div class="column-head">organic</div>' +
-                        s.organic.map(cardHTML).join("");
+                        s.organic.map((c) => cardHTML(c, "organic")).join("");
                     els.synthetic.innerHTML =
                         '<div class="column-head">synthetic</div>' +
-                        s.synthetic.map(cardHTML).join("");
+                        s.synthetic.map((c) => cardHTML(c, "synthetic")).join("");
                     els.counter.textContent =
                         String(i + 1).padStart(2, "0") +
                         " / " +
@@ -4104,6 +4173,9 @@
                    page is no longer a single .stage).
                    ============================================================= */
                 const wiresEl = document.getElementById("wires");
+                // the ≤900 layout swaps the wire routing (portrait → markers);
+                // matches the mobile media query in the CSS above
+                const mobileWires = window.matchMedia("(max-width: 900px)");
 
                 function route(sx, sy, ex, ey) {
                     const dx = ex - sx,
@@ -4139,7 +4211,75 @@
                     };
                 }
 
+                /* MOBILE WIRES — on the ≤900 2-col layout the constituents sit in
+                   a grid BELOW the portrait, so the desktop horizontal routing no
+                   longer applies. Here the tendrils spring from the central
+                   portrait (the anchor) down to each card's marker (circle for
+                   organic on the left column, diamond for synthetic on the right),
+                   measured live from the markers' rects. No animation, so it's
+                   safe under prefers-reduced-motion — it's a one-shot repaint. */
+                function drawWiresMobile() {
+                    const sr = showSec.getBoundingClientRect();
+                    wiresEl.setAttribute(
+                        "viewBox",
+                        "0 0 " + sr.width + " " + sr.height,
+                    );
+                    // anchor: the portrait centre (fall back to the name if the
+                    // portrait is hidden / not yet laid out)
+                    let src = els.portrait.getBoundingClientRect();
+                    if (
+                        els.portrait.style.display === "none" ||
+                        !src.width ||
+                        !src.height
+                    ) {
+                        src = els.name.getBoundingClientRect();
+                    }
+                    const ax = src.left + src.width / 2 - sr.left;
+                    const ay = src.bottom - sr.top - src.height * 0.16;
+                    const markers = [
+                        ...showSec.querySelectorAll(".card-marker"),
+                    ];
+                    let svg = "";
+                    markers.forEach((mk, k) => {
+                        const mr = mk.getBoundingClientRect();
+                        if (!mr.width && !mr.height) return; // skipped if hidden
+                        const tx = mr.left + mr.width / 2 - sr.left;
+                        const ty = mr.top + mr.height / 2 - sr.top;
+                        const rng = mulberry32(index * 137 + k * 23 + 5);
+                        const organic = mk.classList.contains(
+                            "card-marker--organic",
+                        );
+                        const dir = organic ? -1 : 1; // fan left / right
+                        // a sagging tendril: leave the anchor near-vertical, bow
+                        // outward, then arrive at the marker from the inner side
+                        const c1x = ax + dir * (6 + rng() * 14);
+                        const c1y = ay + (ty - ay) * (0.34 + rng() * 0.14);
+                        const c2x = tx - dir * (14 + rng() * 22);
+                        const c2y = ty - (10 + rng() * 22);
+                        svg +=
+                            '<path class="wire" d="M ' +
+                            ax.toFixed(1) + " " + ay.toFixed(1) +
+                            " C " + c1x.toFixed(1) + " " + c1y.toFixed(1) +
+                            " " + c2x.toFixed(1) + " " + c2y.toFixed(1) +
+                            " " + tx.toFixed(1) + " " + ty.toFixed(1) +
+                            '"/>';
+                        svg +=
+                            '<circle class="wire-dot is-hot" cx="' +
+                            tx.toFixed(1) + '" cy="' + ty.toFixed(1) +
+                            '" r="2.4"/>';
+                    });
+                    // the anchor node where every tendril gathers
+                    svg +=
+                        '<circle class="wire-dot" cx="' +
+                        ax.toFixed(1) + '" cy="' + ay.toFixed(1) + '" r="3.2"/>';
+                    wiresEl.innerHTML = svg;
+                }
+
                 function drawWires() {
+                    if (mobileWires.matches) {
+                        drawWiresMobile();
+                        return;
+                    }
                     const stage = showSec; // the showcase section is the wire stage
                     const sr = stage.getBoundingClientRect();
                     const nr = els.name.getBoundingClientRect();
