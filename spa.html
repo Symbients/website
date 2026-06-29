@@ -1812,12 +1812,14 @@
                 pointer-events: none;
                 z-index: 3;
             }
+            /* markers sit on the OUTER edge of each card (organic far-left,
+               synthetic far-right) so the tendrils latch onto the outer edges */
             #sec-symbients .card-marker--organic {
-                right: -0.5rem;
+                left: -0.5rem;
                 color: var(--green);
             }
             #sec-symbients .card-marker--synthetic {
-                left: -0.5rem;
+                right: -0.5rem;
                 color: var(--text);
             }
             #sec-symbients .symbient-center {
@@ -2000,7 +2002,11 @@
                         "center  center"
                         "organic synthetic";
                     align-items: start;
-                    gap: clamp(1.1rem, 4vw, 2rem) clamp(2.6rem, 13vw, 4.5rem);
+                    /* tighter centre gap + outer padding: the whitespace that used
+                       to sit between the columns is redistributed to the edges,
+                       where the markers + tendrils now live */
+                    gap: clamp(1.1rem, 4vw, 2rem) clamp(0.8rem, 3vw, 1.4rem);
+                    padding: 0 clamp(0.9rem, 5vw, 2rem);
                 }
                 #sec-symbients .symbient-center {
                     grid-area: center;
@@ -4224,21 +4230,23 @@
                         "viewBox",
                         "0 0 " + sr.width + " " + sr.height,
                     );
-                    // anchor: the portrait centre (fall back to the name if the
-                    // portrait is hidden / not yet laid out)
-                    let src = els.portrait.getBoundingClientRect();
+                    // two anchors floating at the LEFT and RIGHT edges of the
+                    // portrait (fall back to the name box if the portrait is
+                    // hidden / not yet laid out). Tendrils fan OUTWARD from the
+                    // matching edge to each card's outer-edge marker.
+                    let pr = els.portrait.getBoundingClientRect();
                     if (
                         els.portrait.style.display === "none" ||
-                        !src.width ||
-                        !src.height
+                        !pr.width ||
+                        !pr.height
                     ) {
-                        src = els.name.getBoundingClientRect();
+                        pr = els.name.getBoundingClientRect();
                     }
-                    const ax = src.left + src.width / 2 - sr.left;
-                    const ay = src.bottom - sr.top - src.height * 0.16;
-                    const markers = [
-                        ...showSec.querySelectorAll(".card-marker"),
-                    ];
+                    const leftAx = pr.left - sr.left;
+                    const rightAx = pr.right - sr.left;
+                    const pTop = pr.top - sr.top,
+                        pH = pr.height;
+                    const markers = [...showSec.querySelectorAll(".card-marker")];
                     let svg = "";
                     markers.forEach((mk, k) => {
                         const mr = mk.getBoundingClientRect();
@@ -4249,29 +4257,48 @@
                         const organic = mk.classList.contains(
                             "card-marker--organic",
                         );
-                        const dir = organic ? -1 : 1; // fan left / right
-                        // a sagging tendril: leave the anchor near-vertical, bow
-                        // outward, then arrive at the marker from the inner side
-                        const c1x = ax + dir * (6 + rng() * 14);
-                        const c1y = ay + (ty - ay) * (0.34 + rng() * 0.14);
-                        const c2x = tx - dir * (14 + rng() * 22);
-                        const c2y = ty - (10 + rng() * 22);
-                        svg +=
-                            '<path class="wire" d="M ' +
-                            ax.toFixed(1) + " " + ay.toFixed(1) +
-                            " C " + c1x.toFixed(1) + " " + c1y.toFixed(1) +
-                            " " + c2x.toFixed(1) + " " + c2y.toFixed(1) +
-                            " " + tx.toFixed(1) + " " + ty.toFixed(1) +
-                            '"/>';
+                        // start on the matching image edge, spread down the edge
+                        const ax = organic ? leftAx : rightAx;
+                        const ay = pTop + pH * (0.34 + rng() * 0.42);
+                        const dx = tx - ax,
+                            dy = ty - ay;
+                        if (organic) {
+                            // curved (cubic) — desktop ORGANIC style, bowing outward
+                            const bow = 8 + rng() * 18;
+                            const c1x = ax + dx * 0.18 - bow;
+                            const c1y = ay + dy * 0.3;
+                            const c2x = ax + dx * 0.78;
+                            const c2y = ty - dy * 0.16;
+                            svg +=
+                                '<path class="wire" d="M ' +
+                                ax.toFixed(1) + " " + ay.toFixed(1) +
+                                " C " + c1x.toFixed(1) + " " + c1y.toFixed(1) +
+                                " " + c2x.toFixed(1) + " " + c2y.toFixed(1) +
+                                " " + tx.toFixed(1) + " " + ty.toFixed(1) +
+                                '"/>';
+                        } else {
+                            // 45-deg orthogonal — desktop SYNTHETIC style (route())
+                            const pts = route(ax, ay, tx, ty);
+                            svg +=
+                                '<path class="wire" d="M ' +
+                                pts
+                                    .map((p) => p[0].toFixed(1) + " " + p[1].toFixed(1))
+                                    .join(" L ") +
+                                '"/>';
+                        }
                         svg +=
                             '<circle class="wire-dot is-hot" cx="' +
                             tx.toFixed(1) + '" cy="' + ty.toFixed(1) +
                             '" r="2.4"/>';
                     });
-                    // the anchor node where every tendril gathers
+                    // the two anchor nodes floating at the image edges
+                    const acy = (pTop + pH * 0.5).toFixed(1);
                     svg +=
                         '<circle class="wire-dot" cx="' +
-                        ax.toFixed(1) + '" cy="' + ay.toFixed(1) + '" r="3.2"/>';
+                        leftAx.toFixed(1) + '" cy="' + acy + '" r="3"/>';
+                    svg +=
+                        '<circle class="wire-dot" cx="' +
+                        rightAx.toFixed(1) + '" cy="' + acy + '" r="3"/>';
                     wiresEl.innerHTML = svg;
                 }
 
