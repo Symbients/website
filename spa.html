@@ -1550,18 +1550,18 @@
             /* the ascii Extitutional Creature — the define backdrop. The glyph
                field is landscape (~477/446), so the box carries that aspect. */
             #sec-home .creature {
-                /* fill the whole intro viewport so the dispersing glyphs reach the
-                   physical screen edges (where the render's edge-fade dissolves
-                   them) instead of clipping at a centred box. The asset fits the
-                   creature un-stretched + centred inside, with the surrounding
-                   void as scatter room — so no CSS mask needed. */
                 position: absolute;
-                inset: 0;
-                width: 100%;
-                height: 100%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: min(1050px, 96%);
+                aspect-ratio: 477 / 446;
+                height: auto;
                 z-index: 0;
                 opacity: 0.8;
                 pointer-events: none;
+                -webkit-mask-image: radial-gradient(farthest-corner, #000 82%, transparent 100%);
+                mask-image: radial-gradient(farthest-corner, #000 82%, transparent 100%);
             }
             html[data-theme="dark"] #sec-home .creature {
                 opacity: 1;
@@ -4058,7 +4058,7 @@
                 let creature = null;
                 // ?v bumped when the asset's API changes (the intro now drives its
                 // setDisperse) so a cached older build doesn't shadow the new one
-                import("/lab/assets/extitutional-ascii.js?v=disperse3")
+                import("/lab/assets/extitutional-ascii.js?v=implode1")
                     .then((Creature) => {
                         creature = Creature.create(
                             document.getElementById("creature"),

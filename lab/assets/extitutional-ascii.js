@@ -152,21 +152,19 @@ export function create(canvas) {
         ROWS = aspectRows();
         field = new Float32Array(COLS * ROWS);
         hot = new Uint8Array(COLS * ROWS);
-        // per-cell dispersal vector = radial-outward (so the creature expands
-        // from its centre) + a stochastic jitter (so it scatters organically).
-        // Seeded → stable across frames.
+        // per-cell stochastic jitter (a random unit-ish vector), seeded → stable.
+        // The implosion's main pull is toward the centre (computed in render); this
+        // only adds organic variation so the glyphs don't collapse dead-uniformly.
         scatterX = new Float32Array(COLS * ROWS);
         scatterY = new Float32Array(COLS * ROWS);
         const drng = makeRng(7);
         for (let cy = 0; cy < ROWS; cy++) {
             for (let cx = 0; cx < COLS; cx++) {
                 const i = cy * COLS + cx;
-                const relX = (cx + 0.5) / COLS - 0.5; // -0.5..0.5 from centre
-                const relY = (cy + 0.5) / ROWS - 0.5;
                 const ang = drng() * Math.PI * 2;
                 const mag = 0.4 + drng() * 0.9;
-                scatterX[i] = relX * 1.5 + Math.cos(ang) * 0.22 * mag;
-                scatterY[i] = relY * 1.5 + Math.sin(ang) * 0.22 * mag;
+                scatterX[i] = Math.cos(ang) * mag;
+                scatterY[i] = Math.sin(ang) * mag;
             }
         }
     }
@@ -261,16 +259,9 @@ export function create(canvas) {
             tcanvas.width = Math.max(2, W * dpr);
             tcanvas.height = Math.max(2, H * dpr);
         }
-        // fit the (image-aspect) glyph grid into the canvas with SQUARE cells,
-        // centred — the creature stays un-stretched even when the canvas is a
-        // different aspect (e.g. the full-viewport intro). The slack around it is
-        // void the dispersal scatters into, fading at the real screen edges.
-        const cell = Math.min(tcanvas.width / COLS, tcanvas.height / ROWS);
-        const gridW = cell * COLS;
-        const gridH = cell * ROWS;
-        const offX = (tcanvas.width - gridW) / 2;
-        const offY = (tcanvas.height - gridH) / 2;
-        const fs = cell * 0.95;
+        const cw = tcanvas.width / COLS;
+        const ch = tcanvas.height / ROWS;
+        const fs = Math.min(cw * 1.7, ch) * 0.95;
         tctx.fillStyle = palette.voidHex;
         tctx.fillRect(0, 0, tcanvas.width, tcanvas.height);
         tctx.font = `${fs}px "Space Mono", ui-monospace, monospace`;
@@ -282,17 +273,21 @@ export function create(canvas) {
             ink.b * 255
         )}`;
         const tw = params.twinkle;
-        // dispersal: a rising `disperse` scatters/expands the glyphs (per-cell
-        // radial + stochastic vector) and fades them — the creature dissolves in
-        // ascii rather than via a CSS blur of the canvas.
+        // implosion: a rising `disperse` (0..1) collapses the glyphs INWARD toward
+        // the centre and fades them — the creature implodes in ascii rather than via
+        // a CSS effect. Inward motion means nothing ever reaches the bounds, so the
+        // dissolve cannot clip at the edges.
         const disp = disperse;
         const fade = disp > 0 ? Math.max(0, 1 - disp * 1.05) : 1;
         if (fade <= 0.004) {
-            // fully dispersed — nothing left to draw, the field has cleared
+            // fully imploded — nothing left to draw, the field has collapsed away
             tex.needsUpdate = true;
             return;
         }
-        const SPREAD = 0.55;
+        const ccx = tcanvas.width / 2;
+        const ccy = tcanvas.height / 2;
+        const IMPLODE = 0.9; // fraction of the way to centre at disp=1
+        const JIT = 0.05; // stochastic jitter, as a fraction of the canvas
 
         for (let cy = 0; cy < ROWS; cy++) {
             for (let cx = 0; cx < COLS; cx++) {
@@ -318,25 +313,17 @@ export function create(canvas) {
                     if (glyph === " ") continue;
                     alpha = 0.5 + 0.5 * v;
                 }
-                let px = offX + (cx + 0.5) * cell;
-                let py = offY + (cy + 0.5) * cell;
-                let a = alpha * fade;
+                const bx = (cx + 0.5) * cw;
+                const by = (cy + 0.5) * ch;
+                let px = bx;
+                let py = by;
                 if (disp > 0) {
-                    // scatter scaled to the creature (grid) size, not the canvas,
-                    // so the spread is consistent regardless of viewport aspect
-                    px += disp * scatterX[i] * gridW * SPREAD;
-                    py += disp * scatterY[i] * gridH * SPREAD;
-                    // soft edge fade: dispersing glyphs dissolve as they near the
-                    // canvas bounds instead of hard-clipping. GATED by disp, so at
-                    // disp=0 the static composition is untouched (no edge fade).
-                    const mx = tcanvas.width * 0.17;
-                    const my = tcanvas.height * 0.17;
-                    const efx = clamp(Math.min(px, tcanvas.width - px) / mx, 0, 1);
-                    const efy = clamp(Math.min(py, tcanvas.height - py) / my, 0, 1);
-                    const edge = efx < efy ? efx : efy; // 0 at edge → 1 inside
-                    a *= 1 - disp * (1 - edge);
+                    // rush INWARD toward the centre (+ a little jitter); moving in,
+                    // the glyphs never reach the bounds → no edge clipping at all
+                    px = bx + disp * ((ccx - bx) * IMPLODE + scatterX[i] * tcanvas.width * JIT);
+                    py = by + disp * ((ccy - by) * IMPLODE + scatterY[i] * tcanvas.height * JIT);
                 }
-                tctx.fillStyle = `rgba(${inkRGB},${a.toFixed(3)})`;
+                tctx.fillStyle = `rgba(${inkRGB},${(alpha * fade).toFixed(3)})`;
                 tctx.fillText(glyph, px, py);
             }
         }
