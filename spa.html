@@ -1818,6 +1818,36 @@
                 left: -0.5rem;
                 color: var(--green);
             }
+            /* a very thin 3/4 (270°) ring floating around the organic circle
+               marker — a tiny orbital border to balance the smaller circle glyph
+               against the synthetic diamonds */
+            #sec-symbients .card-marker--organic::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 1.65em;
+                height: 1.65em;
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                background: conic-gradient(
+                    from 140deg,
+                    currentColor 0 270deg,
+                    transparent 270deg
+                );
+                -webkit-mask: radial-gradient(
+                    closest-side,
+                    transparent calc(100% - 1.2px),
+                    #000 calc(100% - 1.2px)
+                );
+                mask: radial-gradient(
+                    closest-side,
+                    transparent calc(100% - 1.2px),
+                    #000 calc(100% - 1.2px)
+                );
+                opacity: 0.8;
+                pointer-events: none;
+            }
             #sec-symbients .card-marker--synthetic {
                 right: -0.5rem;
                 color: var(--text);
@@ -4217,6 +4247,43 @@
                     };
                 }
 
+                /* a DNA double-helix between (sx,sy) and (ex,ey): two strands
+                   twisting around a centerline that bows along the path's
+                   perpendicular (bowSign picks the side), tapered to meet at both
+                   ends, no rungs. Orientation-agnostic, so it works for the desktop
+                   organic run (card → name) and any other path. */
+                function helixStrands(sx, sy, ex, ey, rng, bowSign) {
+                    const N = 30;
+                    const turns = 2.2 + rng() * 0.9;
+                    const amp = 6 + rng() * 3;
+                    const dx = ex - sx,
+                        dy = ey - sy;
+                    const len = Math.hypot(dx, dy) || 1;
+                    const nx = -dy / len,
+                        ny = dx / len; // unit perpendicular
+                    const bow = (10 + rng() * 14) * bowSign;
+                    const ph = rng() * Math.PI * 2;
+                    let A = "",
+                        B = "";
+                    for (let i = 0; i <= N; i++) {
+                        const t = i / N;
+                        const env = Math.sin(Math.PI * t);
+                        const bx = sx + dx * t + nx * bow * env;
+                        const by = sy + dy * t + ny * bow * env;
+                        const off = amp * Math.sin(turns * 2 * Math.PI * t + ph) * env;
+                        A +=
+                            (i ? "L " : "M ") +
+                            (bx + nx * off).toFixed(1) + " " + (by + ny * off).toFixed(1) + " ";
+                        B +=
+                            (i ? "L " : "M ") +
+                            (bx - nx * off).toFixed(1) + " " + (by - ny * off).toFixed(1) + " ";
+                    }
+                    return (
+                        '<path class="wire" d="' + A.trim() + '"/>' +
+                        '<path class="wire" d="' + B.trim() + '"/>'
+                    );
+                }
+
                 /* MOBILE WIRES — on the ≤900 2-col layout the constituents sit in
                    a grid BELOW the portrait, so the desktop horizontal routing no
                    longer applies. Here the tendrils spring from the central
@@ -4415,15 +4482,12 @@
                             const fx = ex - bdir * (11 + rng() * 7);
                             const fy = ey + (rng() - 0.5) * 6;
                             if (side.flow) {
-                                const c = (fx - sx) * (0.42 + rng() * 0.22);
-                                const bow = (rng() - 0.5) * 30;
-                                svg +=
-                                    '<path class="wire" d="M ' +
-                                    sx.toFixed(1) + " " + sy.toFixed(1) +
-                                    " C " + (sx + c).toFixed(1) + " " + (sy + bow).toFixed(1) +
-                                    " " + (fx - c).toFixed(1) + " " + (fy - bow * 0.5).toFixed(1) +
-                                    " " + fx.toFixed(1) + " " + fy.toFixed(1) +
-                                    '"/>';
+                                // ORGANIC: a DNA double-helix from the card to the
+                                // landing (matches the mobile organic tendrils)
+                                svg += helixStrands(
+                                    sx, sy, fx, fy, rng,
+                                    Math.sign(sy - fy) || 1,
+                                );
                             } else {
                                 const pts = route(sx, sy, fx, fy);
                                 svg +=
