@@ -4246,50 +4246,86 @@
                     const rightAx = pr.right - sr.left;
                     const pTop = pr.top - sr.top,
                         pH = pr.height;
-                    const markers = [...showSec.querySelectorAll(".card-marker")];
+                    // process per side so each side's tendrils can be spread down
+                    // the portrait edge (no overlap) and seeded individually
+                    const all = [
+                        ...showSec.querySelectorAll(".card-marker"),
+                    ].filter((mk) => {
+                        const r = mk.getBoundingClientRect();
+                        return r.width || r.height;
+                    });
+                    const sides = [
+                        {
+                            organic: true,
+                            dir: -1,
+                            ax: leftAx,
+                            mks: all.filter((m) =>
+                                m.classList.contains("card-marker--organic"),
+                            ),
+                        },
+                        {
+                            organic: false,
+                            dir: 1,
+                            ax: rightAx,
+                            mks: all.filter((m) =>
+                                m.classList.contains("card-marker--synthetic"),
+                            ),
+                        },
+                    ];
                     let svg = "";
-                    markers.forEach((mk, k) => {
-                        const mr = mk.getBoundingClientRect();
-                        if (!mr.width && !mr.height) return; // skipped if hidden
-                        const tx = mr.left + mr.width / 2 - sr.left;
-                        const ty = mr.top + mr.height / 2 - sr.top;
-                        const rng = mulberry32(index * 137 + k * 23 + 5);
-                        const organic = mk.classList.contains(
-                            "card-marker--organic",
-                        );
-                        // start on the matching image edge, spread down the edge
-                        const ax = organic ? leftAx : rightAx;
-                        const ay = pTop + pH * (0.34 + rng() * 0.42);
-                        const dx = tx - ax,
-                            dy = ty - ay;
-                        if (organic) {
-                            // curved (cubic) — desktop ORGANIC style, bowing outward
-                            const bow = 8 + rng() * 18;
-                            const c1x = ax + dx * 0.18 - bow;
-                            const c1y = ay + dy * 0.3;
-                            const c2x = ax + dx * 0.78;
-                            const c2y = ty - dy * 0.16;
+                    sides.forEach((side, si) => {
+                        const n = side.mks.length;
+                        side.mks.forEach((mk, k) => {
+                            const mr = mk.getBoundingClientRect();
+                            const rng = mulberry32(
+                                index * 131 + si * 19 + k * 7 + 3,
+                            );
+                            const f = (x) => x.toFixed(1);
+                            // START: float just off the image edge, spread down it
+                            const spread = n > 1 ? k / (n - 1) - 0.5 : 0;
+                            const ax = side.ax + side.dir * (2 + rng() * 5);
+                            const ay =
+                                pTop +
+                                pH * (0.5 + spread * 0.46) +
+                                (rng() - 0.5) * 10;
+                            // END: latch onto the marker (tiny jitter on the join)
+                            const tx = mr.left + mr.width / 2 - sr.left;
+                            const ty =
+                                mr.top + mr.height / 2 - sr.top + (rng() - 0.5) * 6;
+                            // a per-line vertical "lane" inboard of the marker,
+                            // staggered by k so stacked markers don't share one
+                            // descending column (the cause of the overlap)
+                            const laneX =
+                                tx - side.dir * (12 + k * 16 + rng() * 8);
+                            if (side.organic) {
+                                // ORGANIC: expand OUTWARD (left) to the lane, descend
+                                // it, then latch to the marker — curved cubic
+                                svg +=
+                                    '<path class="wire" d="M ' +
+                                    f(ax) + " " + f(ay) +
+                                    " C " + f(laneX) + " " + f(ay + (ty - ay) * 0.1) +
+                                    " " + f(laneX) + " " + f(ay + (ty - ay) * 0.86) +
+                                    " " + f(tx) + " " + f(ty) +
+                                    '"/>';
+                            } else {
+                                // SYNTHETIC: 45-deg orthogonal — out to the lane,
+                                // straight down the lane, 45 into the marker
+                                const sgy = Math.sign(ty - ay) || 1;
+                                const topY = ay + Math.abs(laneX - ax);
+                                const botY = ty - sgy * Math.abs(tx - laneX);
+                                svg +=
+                                    '<path class="wire" d="M ' +
+                                    f(ax) + " " + f(ay) +
+                                    " L " + f(laneX) + " " + f(topY) +
+                                    " L " + f(laneX) + " " + f(botY) +
+                                    " L " + f(tx) + " " + f(ty) +
+                                    '"/>';
+                            }
                             svg +=
-                                '<path class="wire" d="M ' +
-                                ax.toFixed(1) + " " + ay.toFixed(1) +
-                                " C " + c1x.toFixed(1) + " " + c1y.toFixed(1) +
-                                " " + c2x.toFixed(1) + " " + c2y.toFixed(1) +
-                                " " + tx.toFixed(1) + " " + ty.toFixed(1) +
-                                '"/>';
-                        } else {
-                            // 45-deg orthogonal — desktop SYNTHETIC style (route())
-                            const pts = route(ax, ay, tx, ty);
-                            svg +=
-                                '<path class="wire" d="M ' +
-                                pts
-                                    .map((p) => p[0].toFixed(1) + " " + p[1].toFixed(1))
-                                    .join(" L ") +
-                                '"/>';
-                        }
-                        svg +=
-                            '<circle class="wire-dot is-hot" cx="' +
-                            tx.toFixed(1) + '" cy="' + ty.toFixed(1) +
-                            '" r="2.4"/>';
+                                '<circle class="wire-dot is-hot" cx="' +
+                                f(tx) + '" cy="' + f(ty) +
+                                '" r="2.4"/>';
+                        });
                     });
                     // the two anchor nodes floating at the image edges
                     const acy = (pTop + pH * 0.5).toFixed(1);
