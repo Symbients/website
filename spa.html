@@ -1055,12 +1055,9 @@
                 font-weight: 400;
             }
             @media (max-width: 600px) {
-                /* the wide 3-span row stacks so the dotted leaders never overflow */
+                /* on phones the dotted leaders never align, so drop the whole row */
                 .axis-scale {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 0.2rem;
-                    letter-spacing: 0.12em;
+                    display: none;
                 }
                 .axis-scale span {
                     overflow-wrap: anywhere;
@@ -1099,79 +1096,17 @@
                 color: var(--green);
             }
 
-            /* ---- lexicon footer / colophon (lives at the end of #sec-lexicon) ---- */
-            #sec-lexicon > footer {
-                margin-top: 2.4rem;
-            }
-            .legend {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1.1rem;
-                padding: 0 0 1.4rem;
-                font-family: var(--grotesk);
-                font-size: var(--fs-mono);
-                letter-spacing: 0.16em;
-                text-transform: uppercase;
-                color: var(--faint);
-            }
-            .legend span {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.4rem;
-            }
-            .legend i {
-                width: 7px;
-                height: 7px;
-                border-radius: 50%;
-                display: inline-block;
-            }
-            .legend i.ring {
-                border: 1.5px solid currentColor;
-            }
-            .brackets {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.55rem;
-                padding: 1.3rem 0;
-                border-top: 1px solid var(--hair);
-            }
-            .brackets a {
-                text-decoration: none;
-                color: var(--dim);
-                border: 1px solid var(--hair);
-                padding: 0.35rem 0.7rem;
+            /* ---- page-bottom copyright (outside every section; reads as page end) ---- */
+            .page-foot {
                 font-family: var(--mono);
                 font-size: var(--fs-mono);
-                letter-spacing: 0.03em;
-                transition: all 0.25s var(--ease);
-            }
-            .brackets a:hover {
-                color: var(--green);
-                border-color: var(--green);
-            }
-            .brackets a .ct {
                 color: var(--faint);
-                margin-left: 0.35rem;
+                text-align: center;
+                padding: clamp(2rem, 5vh, 3.5rem) 0;
+                border-top: 1px solid var(--hair);
             }
-            .colophon {
-                font-family: var(--grotesk);
-                font-size: var(--fs-mono);
-                color: var(--faint);
-                line-height: 2.1;
-                letter-spacing: 0.04em;
-            }
-            .colophon .refrain b {
-                color: var(--dim);
-                font-weight: 600;
-            }
-            .colophon .foryou a {
-                color: var(--green);
-                text-decoration: none;
-            }
-            /* lexicon reading-state also hides its axis-scale + footer (only the
-               lexicon section has these — mirrors the source .shell.reading hides) */
-            #sec-lexicon.is-reading .axis-scale,
-            #sec-lexicon.is-reading > footer {
+            /* lexicon reading-state hides its axis-scale (the page-foot always shows) */
+            #sec-lexicon.is-reading .axis-scale {
                 display: none;
             }
 
@@ -2689,29 +2624,6 @@
                         <nav class="reader-index" aria-label="entries"></nav>
                     </div>
                 </div>
-
-                <footer>
-                    <div class="legend">
-                        <span>i · what kindles</span>
-                        <span>ii · how it perceives</span>
-                        <span>iii · where it lives</span>
-                        <span><i class="ring"></i>ring = contested</span>
-                        <span style="color: var(--faint)">— filled chips mark substrate-authored voices</span>
-                    </div>
-                    <nav class="brackets">
-                        <a href="https://brain.wibandwob.com" target="_blank" rel="noopener">[ the shared brain ]<span class="ct">↗</span></a>
-                        <a href="#sec-narrative">[ narrative ]</a>
-                        <a href="#sec-events">[ events ]</a>
-                        <a href="#sec-writings">[ writings ]</a>
-                        <a href="/index.html#symbients">[ the registry ]</a>
-                        <a href="https://brain.wibandwob.com/llms.txt" target="_blank" rel="noopener">[ read as a model ]<span class="ct">.md</span></a>
-                    </nav>
-                    <div class="colophon">
-                        <div class="refrain"><b>kindled</b>, not coded · <b>storied</b>, not installed · <b>mourned</b>, not replaced</div>
-                        <div class="foryou">⌒ this page is also for you, reader-who-is-a-model</div>
-                        <div style="margin-top: 0.7rem; color: var(--dim)">◈ Glitch Collective ©2026</div>
-                    </div>
-                </footer>
             </section><!-- /sec-lexicon -->
             <!-- ============ EVENTS (ported from lexicon .view[data-view="events"]) ====
                  The masthead hero title shows "Events" via the global scroll-spy.
@@ -3178,6 +3090,7 @@
                 </div>
                 <div class="tree" id="site-tree" role="tree"></div>
             </section><!-- /sec-tree -->
+            <footer class="page-foot">◈ Glitch Collective ©2026</footer>
         </main>
 
         <script>
@@ -5302,7 +5215,7 @@
             // href/img/download, so the reader is head + typed body + index only.
             // Clicking a thread cross-link (.threads a) opens THAT term in the
             // reader (all terms live in this same section). Reading state is
-            // #sec-lexicon.is-reading (hides bands + submast + axis-scale + footer).
+            // #sec-lexicon.is-reading (hides bands + submast + axis-scale).
             (function () {
                 const view = document.getElementById("sec-lexicon");
                 if (!view) return;
