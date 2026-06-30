@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex" />
+        <title>Lab · Site Tree — ASCII Sapling — Symbients</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@300;400&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            /* ---- palette, mirroring lexicon.html / lab three themes ---- */
+            :root {
+                --void: #f4f0e7;
+                --text: #1f1c16;
+                --dim: #6c675c;
+                --faint: #a39c8d;
+                --hair: rgba(31, 28, 22, 0.18);
+                --hair-2: rgba(31, 28, 22, 0.09);
+                --field-rgb: 92, 90, 82;
+                --ink-rgb: 31, 28, 22;
+                --mono: "Space Mono", ui-monospace, monospace;
+                --body: "IBM Plex Sans", system-ui, sans-serif;
+                --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            html[data-theme="dark"] {
+                --void: #0a0b0c;
+                --text: #c6ccc0;
+                --dim: #7e857a;
+                --faint: #515750;
+                --hair: rgba(196, 204, 192, 0.16);
+                --hair-2: rgba(196, 204, 192, 0.08);
+                --field-rgb: 158, 162, 152;
+                --ink-rgb: 198, 204, 192;
+            }
+            html[data-theme="amber"] {
+                --void: #e9cf93;
+                --text: #2a1808;
+                --dim: #6b4a1c;
+                --faint: #9c7c3e;
+                --hair: rgba(42, 24, 8, 0.22);
+                --hair-2: rgba(42, 24, 8, 0.11);
+                --field-rgb: 120, 82, 28;
+                --ink-rgb: 42, 24, 8;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                margin: 0;
+            }
+            body {
+                background: var(--void);
+                color: var(--text);
+                font-family: var(--body);
+                font-size: 13px;
+                line-height: 1.55;
+                font-weight: 300;
+                -webkit-font-smoothing: antialiased;
+                transition: background 0.4s var(--ease), color 0.4s var(--ease);
+            }
+
+            header.lab-head {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 1rem;
+                flex-wrap: wrap;
+                padding: 1.6rem 1.6rem 0.7rem;
+                border-bottom: 1px solid var(--hair);
+            }
+            header.lab-head h1 {
+                font-family: var(--mono);
+                font-weight: 400;
+                font-size: 1rem;
+                letter-spacing: 0.04em;
+                margin: 0;
+                text-transform: uppercase;
+            }
+            header.lab-head .sub {
+                color: var(--dim);
+                font-size: 0.78rem;
+                max-width: 62ch;
+                margin: 0.35rem 0 0;
+            }
+            header.lab-head .sub code {
+                font-family: var(--mono);
+                color: var(--text);
+            }
+
+            .theme-toggle {
+                font-family: var(--mono);
+                font-size: 0.72rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--text);
+                background: transparent;
+                border: 1px solid var(--hair);
+                border-radius: 2px;
+                padding: 0.45rem 0.8rem;
+                cursor: pointer;
+                transition: border-color 0.3s var(--ease);
+                white-space: nowrap;
+            }
+            .theme-toggle:hover {
+                border-color: var(--text);
+            }
+
+            /* ---- the tree stage ---- */
+            main.stage {
+                position: relative;
+                padding: 1.6rem 1.6rem 4rem;
+            }
+            /* a single positioned box that holds the canvas + the link overlay,
+               both on the same glyph grid */
+            .tree {
+                position: relative;
+                width: max-content;
+                min-width: 100%;
+            }
+            canvas.field {
+                position: absolute;
+                top: 0;
+                left: 0;
+                pointer-events: none;
+            }
+            .labels {
+                position: relative;
+                font-family: var(--mono);
+                font-size: 15px;
+                /* must equal renderer cellH in site-tree.js */
+                line-height: 22px;
+                white-space: nowrap;
+            }
+            .labels .row {
+                position: absolute;
+                left: 0;
+                height: 22px;
+                display: flex;
+                align-items: center;
+            }
+            .labels .lbl {
+                color: var(--text);
+                text-decoration: none;
+                letter-spacing: 0.01em;
+                border-bottom: 1px solid transparent;
+                transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+            }
+            .labels a.lbl:hover {
+                border-bottom-color: var(--text);
+            }
+            /* parents (have children) read a touch heavier; leaves are dim-tipped */
+            .labels .lbl.parent {
+                font-weight: 700;
+            }
+            .labels .lbl.root {
+                font-weight: 700;
+                letter-spacing: 0.06em;
+            }
+            .labels .note {
+                color: var(--faint);
+                font-size: 12px;
+                margin-left: 0.7em;
+                letter-spacing: 0.02em;
+            }
+            .labels .lbl.leaf {
+                color: var(--dim);
+            }
+            .labels a.lbl.leaf:hover {
+                color: var(--text);
+            }
+            /* collapsed marker (the registry sub-lists) */
+            .labels .caret {
+                color: var(--faint);
+                margin-left: 0.5em;
+                font-size: 12px;
+            }
+
+            footer.lab-foot {
+                padding: 0 1.6rem 3rem;
+                color: var(--faint);
+                font-size: 0.72rem;
+                max-width: 76ch;
+            }
+            footer.lab-foot code {
+                font-family: var(--mono);
+                color: var(--dim);
+            }
+            .legend {
+                font-family: var(--mono);
+                color: var(--dim);
+                font-size: 0.7rem;
+                margin-top: 0.3rem;
+            }
+            .legend b {
+                color: var(--text);
+                font-weight: 400;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="lab-head">
+            <div>
+                <h1>Site Tree · ASCII Sapling</h1>
+                <p class="sub">
+                    The whole <code>symbient.life</code> hierarchy listed like a
+                    terminal <code>tree</code> — but the connectors are grown as
+                    living ascii: the tonal ramp <code>" .:-=+*#%"</code>,
+                    twinkling vertical rails, and a hot <code>@</code> tip at
+                    every node. Leaf labels are real links into the site. Strictly
+                    2D, monochrome, theme-aware. Not wired into the live site.
+                </p>
+                <p class="legend">
+                    <b>|</b> rail · <b>\_</b> elbow run · <b>@</b> growing tip ·
+                    drawn top→down, twinkling.
+                </p>
+            </div>
+            <button class="theme-toggle" type="button">
+                <span class="theme-label">Light</span>
+            </button>
+        </header>
+
+        <main class="stage">
+            <div class="tree" id="tree">
+                <canvas class="field" id="field"></canvas>
+                <div class="labels" id="labels"></div>
+            </div>
+        </main>
+
+        <footer class="lab-foot">
+            Structure verified against <code>index.html</code>,
+            <code>lexicon.html</code>, <code>tokyo.html</code> and
+            <code>registry.json</code> (the source of truth for the
+            symbient/artist roster). The <code>tree</code> connectors map onto the
+            sapling like this: each row is one glyph row; ancestor rails become
+            twinkling <code>|</code> columns; each <code>├──/└──</code> elbow is a
+            <code>\</code> turn plus a living <code>_</code> run that grows
+            rightward into a hot <code>@</code> tip just before the label.
+        </footer>
+
+        <script type="module">
+            import {
+                SITE,
+                flatten,
+                layout,
+                createRenderer,
+                INDENT,
+            } from "./site-tree.js";
+
+            // ---- theme (reuses the site's key + data-theme approach) --------
+            const THEMES = ["light", "dark", "amber"];
+            const LABELS = { light: "Light", dark: "Dark", amber: "Amber" };
+            const KEY = "symbient-theme";
+            const root = document.documentElement;
+
+            function applyTheme(t) {
+                const n = THEMES.includes(t) ? t : "light";
+                if (n === "light") root.removeAttribute("data-theme");
+                else root.setAttribute("data-theme", n);
+                return n;
+            }
+            const stored = localStorage.getItem(KEY);
+            let current = applyTheme(THEMES.includes(stored) ? stored : "light");
+
+            const toggle = document.querySelector(".theme-toggle");
+            const labelEl = toggle.querySelector(".theme-label");
+            labelEl.textContent = LABELS[current];
+
+            function readInk() {
+                const cs = getComputedStyle(root);
+                const voidHex =
+                    cs.getPropertyValue("--void").trim() || "#f4f0e7";
+                const inkRGB =
+                    cs.getPropertyValue("--ink-rgb").trim() || "31,28,22";
+                return { voidHex, inkRGB };
+            }
+
+            // ---- build the tree model --------------------------------------
+            const rows = flatten(SITE);
+            const plan = layout(rows);
+
+            // total grid width = widest label end (in cols) + a little air
+            let maxCols = 0;
+            for (const r of plan) {
+                // approx label length in glyph columns (label + note)
+                const lbl = r.node.label || "";
+                const note = r.node.note ? r.node.note.length + 4 : 0;
+                const cols = r.labelCol + lbl.length + note + 4;
+                if (cols > maxCols) maxCols = cols;
+            }
+
+            const canvas = document.getElementById("field");
+            const labelsEl = document.getElementById("labels");
+            const treeEl = document.getElementById("tree");
+
+            const renderer = createRenderer(canvas, {
+                cellW: 11,
+                cellH: 22,
+                fontPx: 15,
+            });
+            const CW = renderer.cellW;
+            const CH = renderer.cellH;
+
+            // ---- emit DOM link rows on the same grid -----------------------
+            function buildLabels() {
+                labelsEl.innerHTML = "";
+                plan.forEach((r, i) => {
+                    const row = document.createElement("div");
+                    row.className = "row";
+                    row.style.top = i * CH + "px";
+                    row.style.left = r.labelCol * CW + "px";
+
+                    const a = document.createElement(
+                        r.node.href ? "a" : "span"
+                    );
+                    let cls = "lbl";
+                    if (r.depth < 0) cls += " root";
+                    else if (r.hasChildren || r.collapsed) cls += " parent";
+                    else cls += " leaf";
+                    a.className = cls;
+                    a.textContent = r.node.label;
+                    if (r.node.href) {
+                        a.href = r.node.href;
+                        if (/^https?:/.test(r.node.href)) {
+                            a.target = "_blank";
+                            a.rel = "noopener";
+                        }
+                    }
+                    row.appendChild(a);
+
+                    if (r.collapsed) {
+                        const caret = document.createElement("span");
+                        caret.className = "caret";
+                        const n = r.node.children
+                            ? r.node.children.length
+                            : 0;
+                        caret.textContent = `[ +${n} ]`;
+                        row.appendChild(caret);
+                    }
+                    if (r.node.note) {
+                        const note = document.createElement("span");
+                        note.className = "note";
+                        note.textContent = r.node.note;
+                        row.appendChild(note);
+                    }
+                    labelsEl.appendChild(row);
+                });
+                labelsEl.style.height = plan.length * CH + "px";
+            }
+
+            function fit() {
+                const w = maxCols * CW;
+                const h = plan.length * CH;
+                treeEl.style.width = w + "px";
+                treeEl.style.height = h + "px";
+                renderer.size(w, h);
+            }
+
+            renderer.build(plan, maxCols);
+            buildLabels();
+            renderer.setTheme(readInk());
+            fit();
+
+            toggle.addEventListener("click", () => {
+                const idx = THEMES.indexOf(current);
+                current = THEMES[(idx + 1) % THEMES.length];
+                applyTheme(current);
+                localStorage.setItem(KEY, current);
+                labelEl.textContent = LABELS[current];
+                requestAnimationFrame(() => renderer.setTheme(readInk()));
+            });
+
+            let raf = 0;
+            function loop(now) {
+                renderer.render(now);
+                raf = requestAnimationFrame(loop);
+            }
+            raf = requestAnimationFrame(loop);
+
+            window.addEventListener("resize", () => {
+                // grid is fixed in cols; nothing to recompute, canvas already sized
+            });
+        </script>
+    </body>
+</html>
