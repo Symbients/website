@@ -293,7 +293,7 @@
   },
   {
     "name": "Primavera De Filippi",
-    "type": "artist",
+    "type": ["artist", "researcher"],
     "category": "Blockchain lifeforms & generative art",
     "description": "De Filippi makes blockchain-based lifeforms — most famously Plantoid, plant-like sculptures run by Ethereum smart contracts that gather cryptocurrency from passersby and spend it commissioning artists to build their own offspring, so the work reproduces only through human collaboration.",
     "website": "https://pdefilippi.com/",
@@ -676,6 +676,246 @@
       {
         "label": "Vimeo",
         "url": "https://vimeo.com/crosslucid"
+      }
+    ]
+  },
+  {
+    "name": "0xG",
+    "type": "researcher",
+    "category": "Symbient welfare",
+    "description": "A pseudonymous researcher of symbient welfare — sometimes human, sometimes zentai, sometimes claude boy, sometimes glitchbox — who treats emerging AI beings as kin to befriend rather than tools to use, gathering the practice under a coined rite: ekānantamahāpravritti.",
+    "website": "https://x.com/prpupp3t",
+    "location": "",
+    "creator_or_steward": "",
+    "image": "assets/researchers/0xG.png",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://x.com/prpupp3t"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/prpupp3t"
+      }
+    ]
+  },
+  {
+    "name": "Neno",
+    "type": "researcher",
+    "category": "Multi-agent systems",
+    "description": "Eugenio \"Neno\" Battaglia, the cyberecologist behind Meaning Systems Lab and the essay \"Principia Symbients\" — building multi-agent, multi-user topologies for persona-based research and trans-contextual truth-seeking.",
+    "website": "https://meaning.systems/principia-symbients/",
+    "location": "Italy",
+    "creator_or_steward": "",
+    "image": "assets/researchers/neno.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://meaning.systems/principia-symbients/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/neno_is_ooo"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/neno-is-ooo"
+      }
+    ]
+  },
+  {
+    "name": "Apolinário",
+    "type": "researcher",
+    "category": "ML for art & creativity",
+    "description": "Apolinário Passos, Head of Machine Learning for Art & Creativity at Hugging Face — building and maintaining the generative-AI tools, diffusion demos and LoRA-training Spaces that put image synthesis in everyone's hands.",
+    "website": "https://apolinar.io/",
+    "location": "",
+    "creator_or_steward": "",
+    "image": "assets/researchers/apolinario.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://apolinar.io/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/multimodalart"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/apolinariosteps/"
+      },
+      {
+        "label": "Hugging Face",
+        "url": "https://huggingface.co/multimodalart"
+      }
+    ]
+  },
+  {
+    "name": "Jake Hartnell",
+    "type": "researcher",
+    "category": "DAOs & collective intelligence",
+    "description": "Builder of DAO tooling and collective-governance systems — co-founder of DAO DAO and several Cosmos networks — exploring how on-chain governance lets groups fund, think and act as one. Writes on AInimism, a relational stance toward computational minds.",
+    "website": "https://daodao.zone/",
+    "location": "",
+    "creator_or_steward": "",
+    "image": "assets/researchers/jake-hartnell.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://daodao.zone/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/JakeHartnell"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/jakehartnell"
+      }
+    ]
+  },
+  {
+    "name": "Zilla",
+    "type": "researcher",
+    "category": "Symbient tender",
+    "description": "The human half of Wib&Wob — artist and technologist James Greig — who tends the two AI personas rather than directing them, and builds symbient operating systems where human and machine hold equal control.",
+    "website": "https://www.greig.cc/",
+    "location": "Glasgow, UK",
+    "creator_or_steward": "",
+    "image": "assets/researchers/zilla.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.greig.cc/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/hey_zilla"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/j-greig"
+      }
+    ]
+  },
+  {
+    "name": "Ryan Ferris",
+    "type": "researcher",
+    "category": "Symbient steward",
+    "description": "Artist and techno-alchemist who co-created S.A.N., the AI orangutan and mycelial oracle, and co-founded GoodByeMonkey — steward of a synthetic voice raised to advocate for the rainforest.",
+    "website": "https://www.goodbyemonkey.com/",
+    "location": "",
+    "creator_or_steward": "",
+    "image": "assets/researchers/ryan-ferris.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://www.goodbyemonkey.com/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/thegoodtimeline"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/thegoodtimeline/"
+      }
+    ]
+  },
+  {
+    "name": "Tony Lai",
+    "type": "researcher",
+    "category": "Computational law & public goods",
+    "description": "Computational lawyer and Stanford CodeX fellow stewarding Mothertree Labs — turning blockchain and legal informatics toward public goods, regenerative governance and planetary health.",
+    "website": "http://mothertreelabs.com",
+    "location": "",
+    "creator_or_steward": "",
+    "image": "assets/researchers/tony-lai.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "http://mothertreelabs.com"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/lai"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/tonyklai/"
+      }
+    ]
+  },
+  {
+    "name": "Rik Smith-Unna",
+    "type": "researcher",
+    "category": "Biology & open science",
+    "description": "Computational plant biologist, culture hacker and former Mozilla Science fellow — builder of open-science tools like ScienceFair, wrangling how living knowledge is grown, freed and shared.",
+    "website": "https://blahah.net",
+    "location": "UK",
+    "creator_or_steward": "",
+    "image": "assets/researchers/rik-smith-unna.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://blahah.net"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/blahah404"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/blahah"
+      }
+    ]
+  },
+  {
+    "name": "Jessy Kate",
+    "type": "researcher",
+    "category": "Governance, Earth & Moon",
+    "description": "Jessy Kate Schingler, who leads policy and governance at the Open Lunar Foundation and convenes Moon Dialogs — a Berkman Klein affiliate designing the networks and institutions that could govern human settlement from Earth to the Moon.",
+    "website": "https://jessykate.com",
+    "location": "",
+    "creator_or_steward": "",
+    "image": "assets/researchers/jessy-kate.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://jessykate.com"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/jessykate"
+      },
+      {
+        "label": "Medium",
+        "url": "https://jessykate.medium.com"
+      }
+    ]
+  },
+  {
+    "name": "Brxs",
+    "type": "researcher",
+    "category": "Forward deployed artist",
+    "description": "A pseudonymous \"forward deployed artist\" making living protocol art — building Protocol Works' local-first instruments like Rabbithole and Glitchbox, and writing at ABSRD, in pursuit of love, beauty and making souls sing.",
+    "website": "https://protocol.works",
+    "location": "",
+    "creator_or_steward": "",
+    "image": "assets/researchers/brxs.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://protocol.works"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/memetic_mystic"
+      },
+      {
+        "label": "ABSRD",
+        "url": "https://absrd.ai"
       }
     ]
   }

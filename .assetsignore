@@ -1,0 +1,19 @@
+# Files/dirs that must NOT be published as static assets by Cloudflare Workers.
+# Syntax is gitignore-style, resolved from the assets directory root (repo root).
+# Chiefly this keeps the 45 MB .git dir out of the upload — a packed git object
+# exceeds the 25 MiB per-asset limit and fails the deploy.
+
+.git
+.wrangler
+.claude
+.gitignore
+.DS_Store
+
+# Dev-only / non-shipping material
+_archive
+tools
+CLAUDE.md
+CLEANUP.md
+TODO.md
+SKILL.md
+README.md

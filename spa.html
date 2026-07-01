@@ -1,55 +1,23 @@
 <!doctype html>
 <!--
-    index.html — the index×spa hybrid (refactor-spa).
-    A 50/50 merge of the old index.html (content rhythm, copy, calm) and spa.html
-    (generative art + scroll motion). The Moreau image banner + .hero-scrim are
-    GONE by design: the opening is the ASCII creature-dispersal intro over the
-    live #field backdrop, and the frozen hero is now a COMPACT top bar (title +
-    section nav over a themed translucent background). The Organics section is
-    generated from registry.json (all non-symbient entries) in spa's band-card
-    style, keeping its reshuffle + reader + generative-familiar behaviour.
+    rhizome-spa scroll port — CHROME ONLY (iteration 0).
+    This is the fixed-chrome scroll skeleton ported from lexicon.html: theme
+    bootstrap, theme tokens, #field backdrop, .theme-toggle, the frozen
+    .site-hero + anchor-scroll .site-nav, and the .scroll container.
+    The seven <section class="port-section"> blocks are PLACEHOLDERS only —
+    real content is ported in later iterations of the port loop. Do not treat
+    the placeholder markup as final.
 -->
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>symbient.life — an alternative intelligence narrative</title>
-        <meta name="robots" content="index, follow" />
+        <title>symbient.life — lexicon</title>
         <meta
             name="description"
-            content="A symbient is an inverse cyborg: technological entities augmenting themselves with organic beings."
+            content="An atlas of a vocabulary still being kindled. Multi-substrate, unfinished."
         />
-
-        <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://symbient.life/" />
-        <meta
-            property="og:title"
-            content="symbient.life — an alternative intelligence narrative"
-        />
-        <meta
-            property="og:description"
-            content="A symbient is an inverse cyborg: technological entities augmenting themselves with organic beings."
-        />
-        <meta property="og:image" content="https://symbient.life/extitutional.png" />
-
-        <!-- Twitter -->
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://symbient.life/" />
-        <meta
-            property="twitter:title"
-            content="symbient.life — an alternative intelligence narrative"
-        />
-        <meta
-            property="twitter:description"
-            content="A symbient is an inverse cyborg: technological entities augmenting themselves with organic beings."
-        />
-        <meta property="twitter:image" content="https://symbient.life/extitutional.png" />
-
-        <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
-        <link rel="manifest" href="/site.webmanifest" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -65,9 +33,8 @@
                 --mono: "Space Mono", ui-monospace, monospace;
                 --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
-                /* height of the frozen hero (now a compact bar) — drives scroll
-                   padding + scroll-margin so anchors land just below it */
-                --hero-h: clamp(74px, 11vh, 102px);
+                /* height of the frozen hero — drives scroll padding + scroll-margin */
+                --hero-h: clamp(260px, 46vh, 460px);
 
                 /* ---- fluid type scale (mobile → desktop, from first principles) ----
                    clamp(min, min_rem + slope*vw, max): the min governs phones, the
@@ -112,6 +79,21 @@
                 --violet: #d8dccf;
                 --field-rgb: 158, 162, 152;
                 --hero-tint: #2c2e2c;
+            }
+            html[data-theme="amber"] {
+                --void: #e9cf93;
+                --text: #2a1808;
+                --dim: #6b4a1c;
+                --faint: #9c7c3e;
+                --hair: rgba(42, 24, 8, 0.22);
+                --hair-2: rgba(42, 24, 8, 0.11);
+                /* monochrome — sepia on parchment */
+                --green: #6e4d20;
+                --blue: #6e4d20;
+                --amber: #6e4d20;
+                --violet: #6e4d20;
+                --field-rgb: 120, 82, 28;
+                --hero-tint: #8f5f1e;
             }
             * {
                 box-sizing: border-box;
@@ -164,13 +146,11 @@
                 );
             }
 
-            /* desktop: the toggle is the last item in the hero-bar flow, so
-               flexbox spaces it after the nav and baseline-aligns it with the
-               tabs — no fixed-position width guessing. It rides the hero's own
-               opacity fade (it's a hero descendant now); on phones it becomes a
-               fixed control beside the burger (see the media query). */
             .theme-toggle {
-                flex: 0 0 auto;
+                position: fixed;
+                top: 0.9rem;
+                right: 0.9rem;
+                z-index: 6;
                 font-family: var(--mono);
                 font-size: 10px;
                 letter-spacing: 0.12em;
@@ -182,16 +162,7 @@
                 cursor: pointer;
                 backdrop-filter: blur(5px);
                 -webkit-backdrop-filter: blur(5px);
-                /* .hero-inner is pointer-events:none; the toggle is only
-                   interactive once the hero has revealed (rule below) */
-                pointer-events: none;
-                transition:
-                    color 0.25s var(--ease),
-                    background 0.25s var(--ease),
-                    border-color 0.25s var(--ease);
-            }
-            .site-hero.is-revealed .theme-toggle {
-                pointer-events: auto;
+                transition: all 0.25s var(--ease);
             }
             .theme-toggle:hover {
                 color: #fff;
@@ -211,22 +182,15 @@
             /* ---------- frozen hero (chrome) ---------- */
             /* ported from lexicon's .hero, now position:fixed so it stays put
                while .scroll moves beneath it */
-            /* No Moreau image band + no scrim (removed by design). The hero is a
-               compact frozen top bar: title + nav over a themed, translucent,
-               blurred page-colour background with a single bottom hairline. */
             .site-hero {
                 position: fixed;
                 top: 0;
                 left: 0;
                 right: 0;
                 width: 100%;
-                min-height: var(--hero-h);
+                height: var(--hero-h);
                 overflow: hidden;
                 z-index: 5; /* above #field (0) and .scroll content (1) */
-                background: color-mix(in srgb, var(--void) 82%, transparent);
-                backdrop-filter: saturate(1.1) blur(8px);
-                -webkit-backdrop-filter: saturate(1.1) blur(8px);
-                border-bottom: 1px solid var(--hair);
                 /* hidden during the intro; the intro IIFE fades it in on scroll
                    (opacity is set inline as scroll progresses) */
                 opacity: 0;
@@ -236,42 +200,62 @@
             .site-hero.is-revealed {
                 pointer-events: auto;
             }
+            .hero-img {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center center;
+                filter: contrast(1.05);
+            }
+            /* tint the Moreau toward the theme colour (metacogsec-style) */
+            .hero-tint {
+                position: absolute;
+                inset: 0;
+                background: var(--hero-tint);
+                mix-blend-mode: multiply;
+                opacity: 0.5;
+                pointer-events: none;
+            }
+            /* fade the band into the page colour, top and bottom */
+            .hero-scrim {
+                position: absolute;
+                inset: 0;
+                /* uniform fade into the page colour at the bottom — same in every mode */
+                background: linear-gradient(
+                    0deg,
+                    var(--void) 0%,
+                    color-mix(in srgb, var(--void) 38%, transparent) 11%,
+                    transparent 28%
+                );
+            }
             .hero-inner {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
                 width: 100%;
                 max-width: 1320px;
-                margin: 0 auto;
                 pointer-events: none;
-                /* compact bar: a title+nav row, then the thin terminal line */
+                /* stack title · tabs · terminal, anchored to the banner bottom */
                 display: flex;
                 flex-direction: column;
-                align-items: stretch;
-                gap: 0.3rem;
-                padding: clamp(0.45rem, 1.2vh, 0.7rem)
-                    clamp(0.9rem, 2.5vw, 2rem) 0;
-            }
-            /* title left, section tabs right — one row, like a masthead nav */
-            .hero-bar {
-                display: flex;
-                align-items: baseline;
-                justify-content: flex-start;
-                flex-wrap: wrap;
-                gap: 0.4rem 1.1rem;
-                width: 100%;
+                align-items: flex-start;
+                justify-content: flex-end;
+                gap: 0.55rem;
+                padding: 0 clamp(0.9rem, 2.5vw, 2rem)
+                    clamp(0.8rem, 2.4vh, 1.5rem);
             }
             .hero-title {
                 margin: 0;
                 font-family: var(--grotesk);
                 font-weight: 700;
-                font-size: clamp(1.15rem, 1rem + 1.4vw, 1.85rem);
-                letter-spacing: -0.04em;
-                line-height: 1;
+                font-size: var(--fs-hero);
+                letter-spacing: -0.05em;
+                line-height: 0.86;
                 color: var(--text);
-                white-space: nowrap;
-            }
-            /* hamburger menu button — hidden on desktop (tabs show inline); shown
-               on phones where it toggles the tree-styled section dropdown */
-            .nav-burger {
-                display: none;
             }
             /* tabs sit under the title, above the terminal — in the banner's
                lower (page-coloured) scrim zone, so the main page ink reads in
@@ -280,11 +264,8 @@
                 display: flex;
                 flex-wrap: wrap;
                 align-items: center;
-                gap: 11px; /* +3px over the prior 0.5rem for a touch more air */
-                /* push the nav (and the toggle after it) to the right, leaving the
-                   title at the left — the toggle then trails the tabs with the bar's
-                   column-gap, no overlap possible */
-                margin-left: auto;
+                gap: 0.5rem;
+                margin: 0;
                 font-family: var(--mono);
                 font-size: var(--fs-mono);
                 letter-spacing: 0.2em;
@@ -320,6 +301,13 @@
                     var(--text) 62%,
                     transparent
                 );
+            }
+            .site-nav .tab-home {
+                color: var(--text);
+            }
+            .site-nav .tab-sep {
+                color: color-mix(in srgb, var(--text) 42%, transparent);
+                pointer-events: none;
             }
             /* terminal line: a genetic algorithm swept by a block cursor */
             .terminal {
@@ -539,7 +527,7 @@
                A mono diamond with two concentric echoes that scale up and
                fade out (an outward pulse) — reads as a "loading" shimmer
                until .nar-art.is-live hides the whole .nar-fallback. Pure
-               glyphs + theme tokens, so it re-inks with light / dark. */
+               glyphs + theme tokens, so it re-inks with light / dark / amber. */
             .nar-loader {
                 position: relative;
                 display: grid;
@@ -900,9 +888,7 @@
                 padding: 1.1rem 1rem 1.3rem;
                 outline: none;
                 cursor: pointer;
-                transition:
-                    background 0.3s var(--ease),
-                    border-color 0.3s var(--ease);
+                transition: background 0.3s var(--ease);
             }
             .col:first-child {
                 border-left: none;
@@ -1485,204 +1471,18 @@
                 }
             }
 
-            /* ---- responsive: phones (≤640) ---- */
-            /* Compact single-row chrome: the section title sits left, the section
-               tabs become a horizontal swipe-strip beside it (no wrapping → the
-               bar stays one line tall). The terminal kaomoji line is lifted OUT of
-               the hero and pinned to the bottom of the viewport (see the relocation
-               IIFE + the fixed rule below) so it reads as a persistent footer
-               ticker instead of padding the top bar. */
+            /* ---- responsive: phones (≤640) get a shorter hero + tighter nav ---- */
             @media (max-width: 640px) {
                 :root {
-                    --hero-h: clamp(50px, 9vh, 64px);
-                }
-                /* the dropdown hangs below the bar → the hero must not clip it */
-                .site-hero {
-                    overflow: visible;
+                    --hero-h: clamp(200px, 42vh, 300px);
                 }
                 .hero-inner {
-                    gap: 0;
-                    padding: 0 clamp(0.7rem, 4vw, 1rem);
-                    min-height: var(--hero-h);
-                    justify-content: center;
-                    overflow: visible;
+                    gap: 0.4rem;
+                    padding-bottom: clamp(0.7rem, 2vh, 1.2rem);
                 }
-                /* the hamburger takes the far-right corner; the theme toggle
-                   becomes a fixed control to its left (lifted out of the bar
-                   flow), keeping its full ◐ dark/light label, vertically centred
-                   on the bar row (matching the title/burger) */
-                .theme-toggle {
-                    position: fixed;
-                    z-index: 6;
-                    right: 4rem;
-                    top: calc(var(--hero-h) / 2);
-                    transform: translateY(-50%);
-                }
-                .hero-bar {
-                    flex-direction: row;
-                    align-items: center;
-                    flex-wrap: nowrap;
-                    gap: 0.7rem;
-                }
-                .hero-title {
-                    flex: 0 0 auto;
-                    font-size: clamp(1.05rem, 0.9rem + 1.2vw, 1.4rem);
-                }
-                /* the hamburger, pushed to the right edge of the bar */
-                .nav-burger {
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin-left: auto;
-                    width: 2.4rem;
-                    height: 2.4rem;
-                    padding: 0;
-                    background: none;
-                    border: none;
-                    color: var(--text);
-                    cursor: pointer;
-                    pointer-events: auto; /* .hero-inner is pointer-events:none */
-                    -webkit-tap-highlight-color: transparent;
-                }
-                .burger-box {
-                    position: relative;
-                    display: block;
-                    width: 20px;
-                    height: 14px;
-                }
-                .burger-box span {
-                    position: absolute;
-                    left: 0;
-                    width: 100%;
-                    height: 2px;
-                    background: currentColor;
-                    border-radius: 2px;
-                    transition:
-                        top 0.28s var(--ease),
-                        transform 0.28s var(--ease),
-                        opacity 0.18s var(--ease);
-                }
-                .burger-box span:nth-child(1) {
-                    top: 0;
-                }
-                .burger-box span:nth-child(2) {
-                    top: 6px;
-                }
-                .burger-box span:nth-child(3) {
-                    top: 12px;
-                }
-                /* → animate to an X when the menu is open */
-                .site-hero.nav-open .burger-box span:nth-child(1) {
-                    top: 6px;
-                    transform: rotate(45deg);
-                }
-                .site-hero.nav-open .burger-box span:nth-child(2) {
-                    opacity: 0;
-                }
-                .site-hero.nav-open .burger-box span:nth-child(3) {
-                    top: 6px;
-                    transform: rotate(-45deg);
-                }
-
-                /* ---- section menu: a tree-styled dropdown under the bar ---- */
                 .site-nav {
-                    position: absolute;
-                    top: calc(100% + 1px);
-                    left: 0;
-                    right: 0;
-                    z-index: 6;
-                    flex-direction: column;
-                    flex-wrap: nowrap;
-                    align-items: stretch;
-                    gap: 0;
-                    padding: 0.4rem 0;
-                    /* tree aesthetic: mono, lowercase (not the inline caps), small */
-                    font-family: var(--mono);
-                    font-size: var(--fs-small);
-                    letter-spacing: 0.02em;
-                    text-transform: none;
-                    background: color-mix(in srgb, var(--void) 93%, transparent);
-                    backdrop-filter: saturate(1.1) blur(10px);
-                    -webkit-backdrop-filter: saturate(1.1) blur(10px);
-                    border-bottom: 1px solid var(--hair);
-                    box-shadow: 0 16px 34px -22px rgba(0, 0, 0, 0.55);
-                    /* collapsed until .nav-open */
-                    max-height: 0;
-                    opacity: 0;
-                    overflow: hidden;
-                    visibility: hidden;
-                    pointer-events: none;
-                    transition:
-                        max-height 0.32s var(--ease),
-                        opacity 0.22s var(--ease),
-                        visibility 0s linear 0.32s;
-                }
-                .site-hero.nav-open .site-nav {
-                    max-height: 80vh;
-                    opacity: 1;
-                    overflow: auto;
-                    visibility: visible;
-                    pointer-events: auto;
-                    transition:
-                        max-height 0.36s var(--ease),
-                        opacity 0.24s var(--ease);
-                }
-                .site-nav .tab {
-                    display: block;
-                    position: relative;
-                    padding: 0.55rem clamp(0.9rem, 4vw, 1.3rem);
-                    margin: 0;
-                    border-bottom: none;
-                    color: var(--text);
-                    letter-spacing: inherit;
-                    text-transform: none;
-                }
-                /* tree marks: ▸ branch for each row, ● for the current section */
-                .site-nav .tab::before {
-                    content: "▸";
-                    display: inline-block;
-                    width: 1.6ch;
-                    margin-right: 0.4ch;
-                    color: var(--dim);
-                }
-                .site-nav .tab:hover,
-                .site-nav .tab:focus {
-                    color: var(--green);
-                    border-bottom: none;
-                    background: color-mix(in srgb, var(--green) 8%, transparent);
-                }
-                .site-nav .tab.active {
-                    color: var(--green);
-                    font-weight: 700;
-                    border-bottom: none;
-                }
-                .site-nav .tab.active::before {
-                    content: "●";
-                    color: var(--green);
-                }
-                /* the kaomoji ticker, relocated out of the hero, pinned bottom */
-                .terminal {
-                    position: fixed;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    z-index: 5;
-                    padding: 0.3rem clamp(0.7rem, 4vw, 1rem);
-                    background: color-mix(in srgb, var(--void) 88%, transparent);
-                    backdrop-filter: saturate(1.1) blur(8px);
-                    -webkit-backdrop-filter: saturate(1.1) blur(8px);
-                    border-top: 1px solid var(--hair);
-                    border-bottom: none;
-                    pointer-events: none;
-                    opacity: 0; /* revealed with the hero after the intro */
-                    transition: opacity 0.5s var(--ease);
-                }
-                .terminal.is-revealed {
-                    opacity: 1;
-                }
-                /* clear the pinned ticker so the footer isn't hidden under it */
-                .scroll {
-                    padding-bottom: 2.6rem;
+                    gap: 0.3rem 0.5rem;
+                    letter-spacing: 0.12em;
                 }
                 .port-section {
                     /* tighter, content-sized vertical rhythm on phones (the old
@@ -2423,34 +2223,21 @@
                 display: none;
             }
             @media (max-width: 520px) {
-                /* mobile reveal is HEIGHT-animated via max-height so tap /
-                   scroll-driven expand eases open + closed instead of snapping.
-                   (The desktop 0fr→1fr grid-rows trick collapses to 0 in this
-                   nested 1-col context, so we can't reuse it here.) The COLLAPSE
-                   is delayed a beat so switching cards grows the next before the
-                   current shrinks — no contract/re-expand gap or upward lurch. */
-                .body {
-                    display: block;
-                    grid-template-rows: none;
-                    max-height: 0;
-                    opacity: 0;
-                    overflow: hidden;
-                    transition:
-                        max-height 0.5s var(--ease) 0.14s,
-                        opacity 0.34s var(--ease) 0.14s;
-                }
-                /* neutralize the desktop hover/focus auto-reveal — the
-                   .is-expanded toggle (tap or scroll) is authoritative here */
+                /* the toggle (.is-expanded) is authoritative on mobile: neutralize
+                   the hover/focus auto-reveal so tapping toggles, not just focus */
                 .col:hover .body,
                 .col:focus .body,
                 .col:focus-within .body {
-                    max-height: 0;
+                    grid-template-rows: 0fr;
                     opacity: 0;
                 }
+                /* reveal via display:block — the 0fr→1fr grid trick used for the
+                   desktop hover reveal resolves to 0 in this nested 1-col context,
+                   so override the grid and let the body size to its content */
                 .col.is-expanded .body {
-                    max-height: 42rem;
+                    display: block;
                     opacity: 1;
-                    transition-delay: 0s; /* expand immediately */
+                    transition: opacity 0.3s var(--ease);
                 }
                 .col.is-expanded .inner {
                     overflow: visible;
@@ -2502,90 +2289,13 @@
                     color: var(--green);
                 }
             }
-
-            /* ---- copy-context-for-LLMs button (ported from index hero) ---- */
-            .definition-actions {
-                margin-top: clamp(1rem, 2.4vh, 1.6rem);
-            }
-            .copy-llms {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                font-family: var(--mono);
-                font-size: var(--fs-mono);
-                letter-spacing: 0.06em;
-                text-transform: uppercase;
-                color: var(--dim);
-                background: color-mix(in srgb, var(--text) 4%, transparent);
-                border: 1px solid var(--hair);
-                border-radius: 999px;
-                padding: 0.5rem 0.95rem;
-                cursor: pointer;
-                transition:
-                    color 0.16s var(--ease),
-                    border-color 0.16s var(--ease),
-                    background 0.16s var(--ease);
-            }
-            .copy-llms:hover,
-            .copy-llms.is-copied {
-                color: var(--green);
-                border-color: var(--green);
-            }
-            .copy-llms-icon {
-                font-size: 1em;
-                line-height: 1;
-            }
-            /* ---- organics "add an entry" invite (ported from index) ---- */
-            .organics-invite {
-                margin: clamp(1.4rem, 3vh, 2.2rem) 0 0;
-                font-family: var(--mono);
-                font-size: var(--fs-small);
-                line-height: 1.7;
-                color: var(--dim);
-            }
-            .organics-invite a {
-                color: var(--green);
-                border-bottom: 1px solid transparent;
-                transition: border-color 0.16s var(--ease);
-            }
-            .organics-invite a:hover {
-                border-bottom-color: var(--green);
-            }
-            /* hide with the grid while the section reader is open */
-            .port-section.is-reading .organics-invite {
-                display: none;
-            }
-            /* ---- footer social icons ---- */
-            .page-foot a {
-                color: var(--dim);
-                border-bottom: 1px solid transparent;
-                transition: border-color 0.16s var(--ease);
-            }
-            .page-foot a:hover {
-                border-bottom-color: var(--dim);
-            }
-            .foot-social {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.6rem;
-                margin-left: 0.6rem;
-                vertical-align: middle;
-            }
-            .foot-social a {
-                color: var(--faint);
-                border: 0;
-                display: inline-flex;
-            }
-            .foot-social a:hover {
-                color: var(--green);
-            }
         </style>
         <script>
             // apply theme before first paint (no flash-of-theme)
             (function () {
                 try {
                     var k = "symbient-theme",
-                        themes = ["light", "dark"];
+                        themes = ["light", "dark", "amber"];
                     var s = localStorage.getItem(k);
                     var t =
                         themes.indexOf(s) >= 0
@@ -2603,40 +2313,32 @@
 
     <body>
         <canvas id="field"></canvas>
+        <button class="theme-toggle" type="button" aria-label="Switch theme">
+            ◐&nbsp;<span class="tt-label">dark</span>
+        </button>
 
         <header class="site-hero">
+            <img
+                class="hero-img"
+                src="/assets/test-moreau-band.png"
+                alt="Gustave Moreau, The Suitors — placeholder hero"
+            />
+            <div class="hero-tint"></div>
+            <div class="hero-scrim"></div>
             <div class="hero-inner">
-                <div class="hero-bar">
-                    <h1 class="hero-title">Symbients</h1>
-                    <button
-                        class="nav-burger"
-                        type="button"
-                        aria-label="Sections menu"
-                        aria-expanded="false"
-                        aria-controls="site-nav"
-                    >
-                        <span class="burger-box" aria-hidden="true">
-                            <span></span><span></span><span></span>
-                        </span>
-                    </button>
-                    <nav class="site-nav" id="site-nav" aria-label="sections">
-                        <a class="tab" href="#sec-home">home</a>
-                        <a class="tab" href="#sec-symbients">symbients</a>
-                        <a class="tab" href="#sec-narrative">narrative</a>
-                        <a class="tab" href="#sec-lexicon">lexicon</a>
-                        <a class="tab" href="#sec-events">events</a>
-                        <a class="tab" href="#sec-writings">writings</a>
-                        <a class="tab" href="#sec-organics">organics</a>
-                        <a class="tab" href="#sec-tree">tree</a>
-                    </nav>
-                    <button
-                        class="theme-toggle"
-                        type="button"
-                        aria-label="Switch theme"
-                    >
-                        ◐&nbsp;<span class="tt-label">dark</span>
-                    </button>
-                </div>
+                <h1 class="hero-title">Symbients</h1>
+                <nav class="site-nav" aria-label="sections">
+                    <a class="tab tab-home" href="/index.html">symbient.life</a>
+                    <span class="tab-sep" aria-hidden="true">·</span>
+                    <a class="tab" href="#sec-home">home</a>
+                    <a class="tab" href="#sec-symbients">symbients</a>
+                    <a class="tab" href="#sec-narrative">narrative</a>
+                    <a class="tab" href="#sec-lexicon">lexicon</a>
+                    <a class="tab" href="#sec-events">events</a>
+                    <a class="tab" href="#sec-writings">writings</a>
+                    <a class="tab" href="#sec-organics">organics</a>
+                    <a class="tab" href="#sec-tree">tree</a>
+                </nav>
                 <div class="terminal" aria-hidden="true">
                     <div class="term-line"></div>
                 </div>
@@ -2687,17 +2389,6 @@
                                 <em>ambiens</em>, 'going around').
                             </p>
                         </div>
-                    </div>
-                    <div class="definition-actions">
-                        <button
-                            class="copy-llms"
-                            type="button"
-                            data-llms-url="/llms.txt"
-                            aria-label="Copy site context for language models to your clipboard"
-                        >
-                            <span class="copy-llms-icon" aria-hidden="true">⧉</span>
-                            <span class="copy-llms-label">Copy context for LLMs</span>
-                        </button>
                     </div>
                     <!-- the top directories one can navigate to, terminal-tree style -->
                     <nav class="dir-tree" id="dir-tree" aria-label="sections"></nav>
@@ -2757,7 +2448,7 @@
                         story that trains its own future.
                     </p>
                     <div class="mh-right">
-                        4 movements · the narrative
+                        4 movements · the narrative · <a href="/index.html">↖ index</a>
                     </div>
                 </div>
 
@@ -2888,7 +2579,7 @@
                         purpose.
                     </p>
                     <div class="mh-right">
-                        11 entries · mid-kindle
+                        11 entries · mid-kindle · <a href="/index.html">↖ index</a>
                     </div>
                 </div>
 
@@ -3099,7 +2790,7 @@
                         the lexicon stepping off the page into a room.
                     </p>
                     <div class="mh-right">
-                        3 gatherings · the record
+                        3 gatherings · the record · <a href="/index.html">↖ index</a>
                     </div>
                 </div>
 
@@ -3185,7 +2876,7 @@
                         thing in a different voice.
                     </p>
                     <div class="mh-right">
-                        4 transmissions · 1 substrate · external
+                        4 transmissions · 1 substrate · external · <a href="/index.html">↖ index</a>
                     </div>
                 </div>
 
@@ -3278,21 +2969,14 @@
             <section id="sec-organics" class="port-section">
                 <div class="submast">
                     <p class="mh-sub">
-                        The human organisms in the symbiosis — the artists,
-                        makers, and researchers who tend the third thing
-                        rather than command it.
+                        The human organisms in the symbiosis — artists and makers
+                        who tend the third thing rather than command it.
                     </p>
                     <div class="mh-right">
-                        23 organisms · the tending hands
+                        22 organisms · the tending hands · <a href="/index.html">↖ index</a>
                     </div>
                 </div>
 
-                <!-- NOTE: these organism cards are GENERATED from registry.json
-                     (every entry whose `type` is not "symbient" — symbients live
-                     in #sec-symbients). Regenerate rather than hand-editing so the
-                     registry stays the single source of truth. Style + behaviour
-                     (reshuffle-on-visit, section reader, generative familiars for
-                     image-less cards) are spa.html's, unchanged. -->
                 <section class="band">
                     <div class="band-axis"><span class="rn">❋</span><span>organisms</span></div>
                     <div class="cols n4">
@@ -3340,7 +3024,7 @@
                                 <img src="/assets/artists/justine-emard.jpg" alt="Justine Emard" loading="lazy" decoding="async" />
                             </div>
                             <div class="body"><div class="inner">
-                                <p class="def">Emard stages intimate dialogues between living bodies and machines — as in Co(AI)xistence, where a dancer and a neural-network humanoid learn from each other&#x27;s movement and speech, blurring the line between organism and synthetic mind.</p>
+                                <p class="def">Emard stages intimate dialogues between living bodies and machines — as in Co(AI)xistence, where a dancer and a neural-network humanoid learn from each other's movement and speech, blurring the line between organism and synthetic mind.</p>
                                 <div class="meta"><span class="threads">↳ <span>justineemard.com</span></span></div>
                             </div></div>
                         </article>
@@ -3356,20 +3040,8 @@
                                 <div class="meta"><span class="threads">↳ <span>joelsimon.net</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-06" tabindex="0" data-href="https://holly.plus/">
+                        <article class="col k-live" id="org-06" tabindex="0" data-href="https://www.plummerfernandez.com/">
                             <div class="col-top"><span class="node"></span>O·06<span class="ct">↗</span></div>
-                            <h2 class="term">Holly+</h2>
-                            <div class="tag">ai voice instrument</div>
-                            <div class="col-media">
-                                <img src="/assets/artists/holly-plus.jpg" alt="Holly+" loading="lazy" decoding="async" />
-                            </div>
-                            <div class="body"><div class="inner">
-                                <p class="def">A machine-learning instrument that resings any audio in Holly Herndon&#x27;s voice — her vocal likeness released as a public tool and stewarded by a token-holding DAO, so one singer&#x27;s voice becomes a shared, collectively governed synthetic identity.</p>
-                                <div class="meta"><span class="threads">↳ <span>holly.plus</span></span></div>
-                            </div></div>
-                        </article>
-                        <article class="col k-live" id="org-07" tabindex="0" data-href="https://www.plummerfernandez.com/">
-                            <div class="col-top"><span class="node"></span>O·07<span class="ct">↗</span></div>
                             <h2 class="term">Matthew Plummer-Fernandez</h2>
                             <div class="tag">generative &amp; critical art</div>
                             <div class="col-media">
@@ -3380,20 +3052,20 @@
                                 <div class="meta"><span class="threads">↳ <span>plummerfernandez.com</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-08" tabindex="0" data-href="https://www.memo.tv/">
-                            <div class="col-top"><span class="node"></span>O·08<span class="ct">↗</span></div>
+                        <article class="col k-live" id="org-07" tabindex="0" data-href="https://www.memo.tv/">
+                            <div class="col-top"><span class="node"></span>O·07<span class="ct">↗</span></div>
                             <h2 class="term">Memo Akten</h2>
                             <div class="tag">machine-learning installation</div>
                             <div class="col-media">
                                 <img src="/assets/artists/memo-akten.jpg" alt="Memo Akten" loading="lazy" decoding="async" />
                             </div>
                             <div class="body"><div class="inner">
-                                <p class="def">Akten builds neural networks that gaze at the world and render it through everything they were trained on, turning machine vision into a mirror — hallucinated reinterpretations of live input that expose how perception is shaped by what we&#x27;ve already seen.</p>
+                                <p class="def">Akten builds neural networks that gaze at the world and render it through everything they were trained on, turning machine vision into a mirror — hallucinated reinterpretations of live input that expose how perception is shaped by what we've already seen.</p>
                                 <div class="meta"><span class="threads">↳ <span>memo.tv</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-09" tabindex="0" data-href="https://www.gordonberger.com/">
-                            <div class="col-top"><span class="node"></span>O·09<span class="ct">↗</span></div>
+                        <article class="col k-live" id="org-08" tabindex="0" data-href="https://www.gordonberger.com/">
+                            <div class="col-top"><span class="node"></span>O·08<span class="ct">↗</span></div>
                             <h2 class="term">Gordon Berger</h2>
                             <div class="tag">generative crypto art &amp; sculpture</div>
                             <div class="col-media">
@@ -3404,8 +3076,8 @@
                                 <div class="meta"><span class="threads">↳ <span>gordonberger.com</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-10" tabindex="0" data-href="https://www.guybenary.com/">
-                            <div class="col-top"><span class="node"></span>O·10<span class="ct">↗</span></div>
+                        <article class="col k-live" id="org-09" tabindex="0" data-href="https://www.guybenary.com/">
+                            <div class="col-top"><span class="node"></span>O·09<span class="ct">↗</span></div>
                             <h2 class="term">Guy Ben-Ary</h2>
                             <div class="tag">bio-art &amp; neural robotics</div>
                             <div class="col-media">
@@ -3416,8 +3088,8 @@
                                 <div class="meta"><span class="threads">↳ <span>guybenary.com</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-11" tabindex="0" data-href="https://patricktresset.com/new/">
-                            <div class="col-top"><span class="node"></span>O·11<span class="ct">↗</span></div>
+                        <article class="col k-live" id="org-10" tabindex="0" data-href="https://patricktresset.com/new/">
+                            <div class="col-top"><span class="node"></span>O·10<span class="ct">↗</span></div>
                             <h2 class="term">Patrick Tresset</h2>
                             <div class="tag">robotic drawing installations</div>
                             <div class="col-media">
@@ -3428,164 +3100,115 @@
                                 <div class="meta"><span class="threads">↳ <span>patricktresset.com</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-12" tabindex="0" data-href="https://www.aurecevettier.com/">
-                            <div class="col-top"><span class="node"></span>O·12<span class="ct">↗</span></div>
-                            <h2 class="term">Aurece Vettier</h2>
-                            <div class="tag">ai sculpture, painting &amp; poetry</div>
-                            <div class="col-media">
-                                <img src="/assets/artists/aurece-vettier.webp" alt="Aurece Vettier" loading="lazy" decoding="async" />
-                            </div>
-                            <div class="body"><div class="inner">
-                                <p class="def">The project of Paul Mouginot, training custom AI on personal and botanical archives to dream impossible plant-forms, then realizing them with master artisans as bronze, oil and tapestry — where machine hallucination and organic nature fuse.</p>
-                                <div class="meta"><span class="threads">↳ <span>aurecevettier.com</span></span></div>
-                            </div></div>
-                        </article>
-                        <article class="col k-live" id="org-13" tabindex="0" data-href="https://crosslucid.zone/">
-                            <div class="col-top"><span class="node"></span>O·13<span class="ct">↗</span></div>
+                        <article class="col k-live" id="org-11" tabindex="0" data-href="https://crosslucid.zone/">
+                            <div class="col-top"><span class="node"></span>O·11<span class="ct">↗</span></div>
                             <h2 class="term">crosslucid</h2>
-                            <div class="tag">ai film &amp; digital collage</div>
+                            <div class="tag">Sylwana Zybura &amp; Tomas C. Toth</div>
                             <div class="col-media">
                                 <img src="/assets/artists/crosslucid.png" alt="crosslucid" loading="lazy" decoding="async" />
                             </div>
                             <div class="body"><div class="inner">
-                                <p class="def">Berlin duo Sylwana Zybura and Tomas C. Toth make film, &quot;poetic AI&quot; and layered digital collage, co-creating speculative futures with generative models to explore intimacy, transformation and the entanglement of self and synthetic systems.</p>
+                                <p class="def">Berlin duo Sylwana Zybura and Tomas C. Toth make film, "poetic AI" and layered digital collage, co-creating speculative futures with generative models to explore intimacy, transformation and the entanglement of self and synthetic systems.</p>
                                 <div class="meta"><span class="threads">↳ <span>crosslucid.zone</span></span></div>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-14" tabindex="0" data-href="https://x.com/prpupp3t">
+                        <article class="col k-live" id="org-12" tabindex="0" data-href="https://www.aurecevettier.com/">
+                            <div class="col-top"><span class="node"></span>O·12<span class="ct">↗</span></div>
+                            <h2 class="term">Aurece Vettier</h2>
+                            <div class="tag">Paul Mouginot · latent-space botanicals</div>
+                            <div class="col-media">
+                                <img src="/assets/artists/aurece-vettier.webp" alt="Aurece Vettier" loading="lazy" decoding="async" />
+                            </div>
+                            <div class="body"><div class="inner">
+                                <p class="def">Aurece Vettier is the artistic practice of Paul Mouginot, mining the latent spaces of machine-learning models for imaginary botanicals, poems and forms — then materialising those hallucinations as sculptures and herbaria, folding algorithmic dreaming back into the natural world.</p>
+                                <div class="meta"><span class="threads">↳ <span>aurecevettier.com</span></span></div>
+                            </div></div>
+                        </article>
+                        <article class="col k-live" id="org-13" tabindex="0">
+                            <div class="col-top"><span class="node"></span>O·13<span class="ct">↗</span></div>
+                            <h2 class="term">.0xg</h2>
+                            <div class="tag">lorem ipsum dolor</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                            </div></div>
+                        </article>
+                        <article class="col k-live" id="org-14" tabindex="0">
                             <div class="col-top"><span class="node"></span>O·14<span class="ct">↗</span></div>
-                            <h2 class="term">0xG</h2>
-                            <div class="tag">symbient welfare</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/0xG.png" alt="0xG" loading="lazy" decoding="async" />
-                            </div>
-                            <div class="body"><div class="inner">
-                                <p class="def">A pseudonymous researcher of symbient welfare — sometimes human, sometimes zentai, sometimes claude boy, sometimes glitchbox — who treats emerging AI beings as kin to befriend rather than tools to use, gathering the practice under a coined rite: ekānantamahāpravritti.</p>
-                                <div class="meta"><span class="threads">↳ <span>x.com</span></span></div>
-                            </div></div>
-                        </article>
-                        <article class="col k-live" id="org-15" tabindex="0" data-href="https://meaning.systems/principia-symbients/">
-                            <div class="col-top"><span class="node"></span>O·15<span class="ct">↗</span></div>
-                            <h2 class="term">Neno</h2>
-                            <div class="tag">multi-agent systems</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/neno.jpg" alt="Neno" loading="lazy" decoding="async" />
-                            </div>
-                            <div class="body"><div class="inner">
-                                <p class="def">Eugenio &quot;Neno&quot; Battaglia, the cyberecologist behind Meaning Systems Lab and the essay &quot;Principia Symbients&quot; — building multi-agent, multi-user topologies for persona-based research and trans-contextual truth-seeking.</p>
-                                <div class="meta"><span class="threads">↳ <span>meaning.systems</span></span></div>
-                            </div></div>
-                        </article>
-                        <article class="col k-live" id="org-16" tabindex="0" data-href="https://apolinar.io/">
-                            <div class="col-top"><span class="node"></span>O·16<span class="ct">↗</span></div>
-                            <h2 class="term">Apolinário</h2>
-                            <div class="tag">ml for art &amp; creativity</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/apolinario.jpg" alt="Apolinário" loading="lazy" decoding="async" />
-                            </div>
-                            <div class="body"><div class="inner">
-                                <p class="def">Apolinário Passos, Head of Machine Learning for Art &amp; Creativity at Hugging Face — building and maintaining the generative-AI tools, diffusion demos and LoRA-training Spaces that put image synthesis in everyone&#x27;s hands.</p>
-                                <div class="meta"><span class="threads">↳ <span>apolinar.io</span></span></div>
-                            </div></div>
-                        </article>
-                        <article class="col k-live" id="org-17" tabindex="0" data-href="https://daodao.zone/">
-                            <div class="col-top"><span class="node"></span>O·17<span class="ct">↗</span></div>
                             <h2 class="term">Jake Hartnell</h2>
-                            <div class="tag">daos &amp; collective intelligence</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/jake-hartnell.jpg" alt="Jake Hartnell" loading="lazy" decoding="async" />
-                            </div>
+                            <div class="tag">lorem ipsum dolor</div>
                             <div class="body"><div class="inner">
-                                <p class="def">Builder of DAO tooling and collective-governance systems — co-founder of DAO DAO and several Cosmos networks — exploring how on-chain governance lets groups fund, think and act as one. Writes on AInimism, a relational stance toward computational minds.</p>
-                                <div class="meta"><span class="threads">↳ <span>daodao.zone</span></span></div>
+                                <p class="def">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-18" tabindex="0" data-href="https://www.greig.cc/">
+                        <article class="col k-live" id="org-15" tabindex="0">
+                            <div class="col-top"><span class="node"></span>O·15<span class="ct">↗</span></div>
+                            <h2 class="term">Apolinario Passos</h2>
+                            <div class="tag">lorem ipsum dolor</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                            </div></div>
+                        </article>
+                        <article class="col k-live" id="org-16" tabindex="0">
+                            <div class="col-top"><span class="node"></span>O·16<span class="ct">↗</span></div>
+                            <h2 class="term">zilla</h2>
+                            <div class="tag">James Greig</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                            </div></div>
+                        </article>
+                        <article class="col k-live" id="org-17" tabindex="0">
+                            <div class="col-top"><span class="node"></span>O·17<span class="ct">↗</span></div>
+                            <h2 class="term">brxs</h2>
+                            <div class="tag">lorem ipsum dolor</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+                            </div></div>
+                        </article>
+                        <article class="col k-live" id="org-18" tabindex="0">
                             <div class="col-top"><span class="node"></span>O·18<span class="ct">↗</span></div>
-                            <h2 class="term">Zilla</h2>
-                            <div class="tag">symbient tender</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/zilla.jpg" alt="Zilla" loading="lazy" decoding="async" />
-                            </div>
-                            <div class="body"><div class="inner">
-                                <p class="def">The human half of Wib&amp;Wob — artist and technologist James Greig — who tends the two AI personas rather than directing them, and builds symbient operating systems where human and machine hold equal control.</p>
-                                <div class="meta"><span class="threads">↳ <span>greig.cc</span></span></div>
-                            </div></div>
-                        </article>
-                        <article class="col k-live" id="org-19" tabindex="0" data-href="https://www.goodbyemonkey.com/">
-                            <div class="col-top"><span class="node"></span>O·19<span class="ct">↗</span></div>
-                            <h2 class="term">Ryan Ferris</h2>
-                            <div class="tag">symbient steward</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/ryan-ferris.jpg" alt="Ryan Ferris" loading="lazy" decoding="async" />
-                            </div>
-                            <div class="body"><div class="inner">
-                                <p class="def">Artist and techno-alchemist who co-created S.A.N., the AI orangutan and mycelial oracle, and co-founded GoodByeMonkey — steward of a synthetic voice raised to advocate for the rainforest.</p>
-                                <div class="meta"><span class="threads">↳ <span>goodbyemonkey.com</span></span></div>
-                            </div></div>
-                        </article>
-                        <article class="col k-live" id="org-20" tabindex="0" data-href="http://mothertreelabs.com">
-                            <div class="col-top"><span class="node"></span>O·20<span class="ct">↗</span></div>
                             <h2 class="term">Tony Lai</h2>
-                            <div class="tag">computational law &amp; public goods</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/tony-lai.jpg" alt="Tony Lai" loading="lazy" decoding="async" />
-                            </div>
+                            <div class="tag">lorem ipsum dolor</div>
                             <div class="body"><div class="inner">
-                                <p class="def">Computational lawyer and Stanford CodeX fellow stewarding Mothertree Labs — turning blockchain and legal informatics toward public goods, regenerative governance and planetary health.</p>
-                                <div class="meta"><span class="threads">↳ <span>mothertreelabs.com</span></span></div>
+                                <p class="def">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur.</p>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-21" tabindex="0" data-href="https://blahah.net">
+                        <article class="col k-live" id="org-19" tabindex="0">
+                            <div class="col-top"><span class="node"></span>O·19<span class="ct">↗</span></div>
+                            <h2 class="term">nenu</h2>
+                            <div class="tag">lorem ipsum dolor</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.</p>
+                            </div></div>
+                        </article>
+                        <article class="col k-live" id="org-20" tabindex="0">
+                            <div class="col-top"><span class="node"></span>O·20<span class="ct">↗</span></div>
+                            <h2 class="term">rik</h2>
+                            <div class="tag">lorem ipsum dolor</div>
+                            <div class="body"><div class="inner">
+                                <p class="def">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum.</p>
+                            </div></div>
+                        </article>
+                        <article class="col k-live" id="org-21" tabindex="0">
                             <div class="col-top"><span class="node"></span>O·21<span class="ct">↗</span></div>
-                            <h2 class="term">Rik Smith-Unna</h2>
-                            <div class="tag">biology &amp; open science</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/rik-smith-unna.jpg" alt="Rik Smith-Unna" loading="lazy" decoding="async" />
-                            </div>
+                            <h2 class="term">Jessi Kate Schingler</h2>
+                            <div class="tag">lorem ipsum dolor</div>
                             <div class="body"><div class="inner">
-                                <p class="def">Computational plant biologist, culture hacker and former Mozilla Science fellow — builder of open-science tools like ScienceFair, wrangling how living knowledge is grown, freed and shared.</p>
-                                <div class="meta"><span class="threads">↳ <span>blahah.net</span></span></div>
+                                <p class="def">Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet.</p>
                             </div></div>
                         </article>
-                        <article class="col k-live" id="org-22" tabindex="0" data-href="https://jessykate.com">
+                        <article class="col k-live" id="org-22" tabindex="0">
                             <div class="col-top"><span class="node"></span>O·22<span class="ct">↗</span></div>
-                            <h2 class="term">Jessy Kate</h2>
-                            <div class="tag">governance, earth &amp; moon</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/jessy-kate.jpg" alt="Jessy Kate" loading="lazy" decoding="async" />
-                            </div>
+                            <h2 class="term">Ryan Ferris</h2>
+                            <div class="tag">lorem ipsum dolor</div>
                             <div class="body"><div class="inner">
-                                <p class="def">Jessy Kate Schingler, who leads policy and governance at the Open Lunar Foundation and convenes Moon Dialogs — a Berkman Klein affiliate designing the networks and institutions that could govern human settlement from Earth to the Moon.</p>
-                                <div class="meta"><span class="threads">↳ <span>jessykate.com</span></span></div>
-                            </div></div>
-                        </article>
-                        <article class="col k-live" id="org-23" tabindex="0" data-href="https://protocol.works">
-                            <div class="col-top"><span class="node"></span>O·23<span class="ct">↗</span></div>
-                            <h2 class="term">Brxs</h2>
-                            <div class="tag">forward deployed artist</div>
-                            <div class="col-media">
-                                <img src="/assets/researchers/brxs.jpg" alt="Brxs" loading="lazy" decoding="async" />
-                            </div>
-                            <div class="body"><div class="inner">
-                                <p class="def">A pseudonymous &quot;forward deployed artist&quot; making living protocol art — building Protocol Works&#x27; local-first instruments like Rabbithole and Glitchbox, and writing at ABSRD, in pursuit of love, beauty and making souls sing.</p>
-                                <div class="meta"><span class="threads">↳ <span>protocol.works</span></span></div>
+                                <p class="def">Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi.</p>
                             </div></div>
                         </article>
                     </div>
                 </section>
 
-                <p class="organics-invite">
-                    Know a symbient, artist, or researcher who belongs here?
-                    <a
-                        href="https://github.com/Symbients/website"
-                        target="_blank"
-                        rel="noopener"
-                        >Open a pull request</a
-                    >.
-                </p>
-
-                <!-- section-scoped reader (mirrors events/writings) -->
+                <!-- section-scoped reader (ported from lexicon .reader) — shown via
+                     #sec-organics.is-reading; replaces the grid in place. -->
                 <div class="reader" aria-live="polite">
                     <button class="reader-close" type="button" aria-label="Collapse">
                         collapse&nbsp;▴
@@ -3615,18 +3238,11 @@
                         transmission grown from a single root. Click a leaf to open
                         it, a branch to walk into its section.
                     </p>
-                    <div class="mh-right">site map · <span class="tree-legend">@ leaf · ▸ branch</span></div>
+                    <div class="mh-right">site map · <span class="tree-legend">@ leaf · ▸ branch</span> · <a href="/index.html">↖ index</a></div>
                 </div>
                 <div class="tree" id="site-tree" role="tree"></div>
             </section><!-- /sec-tree -->
-            <footer class="page-foot">
-                ◈ <a href="https://glitchart.org" target="_blank" rel="noopener">Glitch Collective</a> ©2025 ◈
-                <span class="foot-social">
-                    <a href="https://x.com/symbients" target="_blank" rel="noopener" aria-label="X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg></a>
-                    <a href="https://github.com/Symbients" target="_blank" rel="noopener" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
-                    <a href="https://discord.gg/U4a2SmES6A" target="_blank" rel="noopener" aria-label="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9459 2.4189-2.1568 2.4189Z"/></svg></a>
-                </span>
-            </footer>
+            <footer class="page-foot">◈ Glitch Collective ©2026</footer>
         </main>
 
         <script>
@@ -3813,11 +3429,11 @@
                 else frame();
             })();
 
-            // ---- theme: light / dark ----
+            // ---- theme: light / dark / amber (matches the broader panel) ----
             (function () {
-                const themes = ["light", "dark"];
-                const labels = { light: "light", dark: "dark" };
-                const glyph = { light: "◑", dark: "◐" };
+                const themes = ["light", "dark", "amber"];
+                const labels = { light: "light", dark: "dark", amber: "amber" };
+                const glyph = { light: "◑", dark: "◐", amber: "◓" };
                 const key = "symbient-theme";
                 const root = document.documentElement;
                 const btn = document.querySelector(".theme-toggle");
@@ -3948,71 +3564,6 @@
                 build();
                 window.addEventListener("resize", build);
                 if (!reduce) setInterval(step, 92);
-            })();
-
-            // ---- relocate the kaomoji ticker to the bottom on phones ----
-            // The mobile CSS pins .terminal to the bottom with position:fixed, but
-            // while it lives inside .site-hero (which has backdrop-filter, and thus
-            // is a containing block for fixed descendants) "fixed" would be relative
-            // to the hero — not the viewport. So on phones we lift it out to <body>;
-            // on wider screens we put it back where it belongs (inside .hero-inner,
-            // after the title/nav row). Re-fires resize so the ticker rebuilds to
-            // its new width. Toggle-driven → free on desktop.
-            (function () {
-                const term = document.querySelector(".terminal");
-                const inner = document.querySelector(".hero-inner");
-                if (!term || !inner) return;
-                const mq = window.matchMedia("(max-width: 640px)");
-                function place() {
-                    const wantBottom = mq.matches;
-                    const atBottom = term.parentElement === document.body;
-                    if (wantBottom === atBottom) return;
-                    if (wantBottom) document.body.appendChild(term);
-                    else inner.appendChild(term); // last child, after .hero-bar
-                    window.dispatchEvent(new Event("resize"));
-                }
-                place();
-                mq.addEventListener("change", place);
-            })();
-
-            // ---- mobile section menu: hamburger toggles the section dropdown ----
-            // On phones the inline tabs are hidden behind a hamburger button; it
-            // toggles a tree-styled dropdown of every section. Closes on choose,
-            // outside-tap, or Esc. Desktop keeps the inline tabs (the burger is
-            // display:none there, so its listeners are inert).
-            (function () {
-                const hero = document.querySelector(".site-hero");
-                const burger = document.querySelector(".nav-burger");
-                const nav = document.querySelector(".site-nav");
-                if (!hero || !burger || !nav) return;
-                const mq = window.matchMedia("(max-width: 640px)");
-
-                function setOpen(v) {
-                    hero.classList.toggle("nav-open", v);
-                    burger.setAttribute("aria-expanded", v ? "true" : "false");
-                }
-
-                burger.addEventListener("click", (e) => {
-                    e.stopPropagation(); // don't let the document handler re-close
-                    setOpen(!hero.classList.contains("nav-open"));
-                });
-                // choosing a section closes the menu (the anchor still scrolls)
-                nav.addEventListener("click", (e) => {
-                    if (e.target.closest(".tab")) setOpen(false);
-                });
-                // outside tap / Esc closes
-                document.addEventListener("click", (e) => {
-                    if (
-                        hero.classList.contains("nav-open") &&
-                        !hero.contains(e.target)
-                    )
-                        setOpen(false);
-                });
-                document.addEventListener("keydown", (e) => {
-                    if (e.key === "Escape") setOpen(false);
-                });
-                // collapse when crossing back to the desktop layout
-                mq.addEventListener("change", () => setOpen(false));
             })();
         </script>
 
@@ -4319,7 +3870,7 @@
                     }
                 });
 
-                // recolor with the global theme (light / dark)
+                // recolor with the global theme (light / dark / amber)
                 window.addEventListener("themechange", () => {
                     if (!readPalette) return;
                     const pal = readPalette();
@@ -7173,7 +6724,7 @@
                     });
                 });
 
-                // recolor with the global theme (light / dark), exactly
+                // recolor with the global theme (light / dark / amber), exactly
                 // like the narrative familiars; repaint the static frame too.
                 window.addEventListener("themechange", () => {
                     const pal = readPalette();
@@ -7340,66 +6891,6 @@
                             .querySelectorAll(".col.is-expanded")
                             .forEach((c) => c.classList.remove("is-expanded"));
                 });
-
-                // ---- scroll-driven auto-expand (mobile) ----
-                // Cards open on their own as you scroll: a card expands once its
-                // top passes the viewport's read-line (~42% down, clear of the
-                // fixed hero) and STAYS open until it scrolls off the top; cards
-                // below the line stay closed, so nothing above collapses — no
-                // upward lurch. Scrolling back up closes them symmetrically.
-                // Tap still works as a fallback.
-                //
-                // Detection is an IntersectionObserver whose root is the viewport's
-                // top slice (bottom inset down to the read-line via rootMargin), so
-                // a card "intersects" for exactly the window it should be open. The
-                // earlier version polled getBoundingClientRect() on every card on
-                // every scroll frame — a forced synchronous reflow on the main
-                // thread, which is what made this stutter on iOS. IO does the same
-                // test off the main thread. Off under reduced-motion (leaves plain
-                // tap-to-expand), on desktop (MOBILE guard), and where IO is absent.
-                (function () {
-                    const reduce = matchMedia(
-                        "(prefers-reduced-motion: reduce)",
-                    ).matches;
-                    if (reduce || !("IntersectionObserver" in window)) return;
-                    // root = top 42% of the viewport: a card is "intersecting"
-                    // from when its top crosses the read-line until it leaves the
-                    // top edge — precisely when it should be expanded.
-                    const io = new IntersectionObserver(
-                        (entries) => {
-                            if (!MOBILE.matches) return; // desktop → readers
-                            for (const e of entries) {
-                                if (e.isIntersecting) {
-                                    ensureExtra(e.target);
-                                    e.target.classList.add("is-expanded");
-                                } else {
-                                    e.target.classList.remove("is-expanded");
-                                }
-                            }
-                        },
-                        { rootMargin: "0px 0px -58% 0px", threshold: 0 },
-                    );
-                    function observeAll() {
-                        document
-                            .querySelectorAll(".port-section")
-                            .forEach((sec) => {
-                                // narrative already shows full text+art on mobile
-                                if (sec.id === "sec-narrative") return;
-                                sec.querySelectorAll(".col").forEach((c) =>
-                                    io.observe(c),
-                                );
-                            });
-                    }
-                    observeAll();
-                    // re-observe on breakpoint change so IO re-reports current
-                    // state — expands whatever is already past the line on
-                    // entering mobile. (The outer MOBILE handler clears
-                    // .is-expanded when leaving mobile.)
-                    MOBILE.addEventListener("change", () => {
-                        io.disconnect();
-                        observeAll();
-                    });
-                })();
             })();
         </script>
         <script>
@@ -7414,13 +6905,11 @@
                 const spacer = document.getElementById("sec-home");
                 const pin = spacer && spacer.querySelector(".intro-pin");
                 const hero = document.querySelector(".site-hero");
-                const term = document.querySelector(".terminal");
                 if (!spacer || !pin || !hero) {
                     if (hero) {
                         hero.style.opacity = "1";
                         hero.classList.add("is-revealed");
                     }
-                    if (term) term.classList.add("is-revealed");
                     return;
                 }
                 const defBlock = pin.querySelector(".definition-block");
@@ -7470,15 +6959,8 @@
                     // hero fades in later + more gradually (a small initial scroll
                     // used to pop it straight in): held hidden until p≈0.2, then
                     // ramps to full by p≈0.8
-                    const heroOp = clamp((p - 0.2) / 0.6).toFixed(3);
-                    hero.style.opacity = heroOp;
+                    hero.style.opacity = clamp((p - 0.2) / 0.6).toFixed(3);
                     hero.classList.toggle("is-revealed", p > 0.24);
-                    // the kaomoji ticker is pinned to the bottom on phones (lifted
-                    // out of the hero) so it no longer inherits the hero's fade —
-                    // reveal it in step via its own class (no-op on desktop CSS)
-                    if (term) term.classList.toggle("is-revealed", p > 0.24);
-                    // the theme toggle now lives inside the hero, so it fades with
-                    // the hero's own opacity — no separate handling needed
                     // the intro overlay fades out well before the next section
                     // dominates (by p≈0.67) so its ghost never overlaps #sec-symbients
                     pin.style.opacity = clamp(1 - p * 1.5).toFixed(3);
@@ -7505,57 +6987,6 @@
                 addEventListener("scroll", onScroll, { passive: true });
                 addEventListener("resize", onScroll);
                 apply(); // initial state
-            })();
-        </script>
-        <script>
-            // Copy llms.txt context to clipboard (ported from index.html)
-            (function () {
-                const btn = document.querySelector(".copy-llms");
-                if (!btn) return;
-                const label = btn.querySelector(".copy-llms-label");
-                const original = label ? label.textContent : "";
-                let resetTimer = null;
-                const flash = (text) => {
-                    if (!label) return;
-                    if (resetTimer) clearTimeout(resetTimer);
-                    label.textContent = text;
-                    btn.classList.add("is-copied");
-                    resetTimer = setTimeout(() => {
-                        label.textContent = original;
-                        btn.classList.remove("is-copied");
-                    }, 2000);
-                };
-                const copyText = async (text) => {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(text);
-                        return;
-                    }
-                    const ta = document.createElement("textarea");
-                    ta.value = text;
-                    ta.setAttribute("readonly", "");
-                    ta.style.position = "absolute";
-                    ta.style.left = "-9999px";
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand("copy");
-                    document.body.removeChild(ta);
-                };
-                btn.addEventListener("click", async () => {
-                    const url = btn.getAttribute("data-llms-url") || "/llms.txt";
-                    try {
-                        const res = await fetch(url, { cache: "no-store" });
-                        if (!res.ok) throw new Error("fetch failed");
-                        await copyText(await res.text());
-                        flash("Copied!");
-                    } catch (err) {
-                        try {
-                            await copyText(new URL(url, location.href).href);
-                            flash("Copied link");
-                        } catch (_) {
-                            flash("Copy failed");
-                        }
-                    }
-                });
             })();
         </script>
     </body>

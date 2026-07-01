@@ -1,0 +1,1433 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex" />
+        <title>symbients — showcase</title>
+
+        <!--
+          symbients.html — the symbient showcase.
+
+          A standalone, theme-aware page that cycles through nine symbients.
+          Each symbient is rendered as a centred name + category + description,
+          flanked by an "organic" column (left) and a "synthetic" column (right)
+          derived from the symbient-ontology S / N / C model, with cyberpunk
+          connector wires routed from each constituent card to a neighbourhood
+          beside the name. A faint, randomised Faggot-Familiar (the lab
+          being-composer) is rendered behind everything and re-seeded on every
+          step.
+
+          Structure:
+            1. <head>      — fonts, importmap, styles (see the CSS section map
+                             below), and the inline theme bootstrap.
+            2. <body>      — the theme toggle plus the .stage markup.
+            3. <script>    — the ES module: SYMBIENTS data, the familiar
+                             backdrop, the renderer, the wire router and the
+                             nav / theme wiring.
+        -->
+
+        <link
+            href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;1,400&family=Space+Mono&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- three.js is loaded as an ES module by the lab being-composer -->
+        <script type="importmap">
+            { "imports": { "three": "/lab/vendor/three.module.js" } }
+        </script>
+
+        <style>
+            /* =================================================================
+               1. THEME TOKENS
+               Monochrome palette per theme. Everything downstream references
+               these custom properties, so adding a theme = adding one block.
+               ================================================================= */
+            :root {
+                /* type + motion */
+                --grotesk: Arial, "Liberation Sans", "Helvetica Neue", sans-serif;
+                --body: "Open Sans", Arial, sans-serif;
+                --mono: "Space Mono", ui-monospace, monospace;
+                --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+                /* light (default) palette */
+                --void: #f4f0e7;
+                --text: #1f1c16;
+                --dim: #6c675c;
+                --faint: #a39c8d;
+                --hair: rgba(31, 28, 22, 0.18);
+                --hair-2: rgba(31, 28, 22, 0.09);
+                --green: #2b2822;
+                --hero-tint: #8d8a82;
+            }
+            html[data-theme="dark"] {
+                --void: #0a0b0c;
+                --text: #c6ccc0;
+                --dim: #7e857a;
+                --faint: #515750;
+                --hair: rgba(196, 204, 192, 0.16);
+                --hair-2: rgba(196, 204, 192, 0.08);
+                --green: #d8dccf;
+                --hero-tint: #2c2e2c;
+            }
+            html[data-theme="amber"] {
+                --void: #e9cf93;
+                --text: #2a1808;
+                --dim: #6b4a1c;
+                --faint: #9c7c3e;
+                --hair: rgba(42, 24, 8, 0.22);
+                --hair-2: rgba(42, 24, 8, 0.11);
+                --green: #6e4d20;
+                --hero-tint: #8f5f1e;
+            }
+
+            /* =================================================================
+               2. BASE
+               ================================================================= */
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: var(--void);
+                color: var(--text);
+                font-family: var(--body);
+                font-weight: 300;
+                -webkit-font-smoothing: antialiased;
+                overflow-x: hidden;
+            }
+
+            /* =================================================================
+               3. THEME TOGGLE
+               Fixed cyclic light / dark / amber button.
+               ================================================================= */
+            .theme-toggle {
+                position: fixed;
+                top: 0.9rem;
+                right: 0.9rem;
+                z-index: 9;
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--dim);
+                background: color-mix(in srgb, var(--void) 70%, transparent);
+                border: 1px solid var(--hair);
+                padding: 0.4rem 0.65rem;
+                cursor: pointer;
+            }
+
+            /* =================================================================
+               4. STAGE
+               The showcase stage stacks three z-levels:
+                 z0  .familiar  — the randomised being backdrop
+                 z1  .wires     — the SVG connector layer
+                 z2  .symbient  — the foreground grid + nav
+               ================================================================= */
+            .stage {
+                position: relative;
+                max-width: 1320px;
+                margin: 0 auto;
+                min-height: 100vh;
+                padding: 4.5rem clamp(1rem, 4vw, 3.5rem) 6rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            /* ---- z0: the Faggot-Familiar, randomised, centred behind all ---- */
+            .familiar {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -52%);
+                width: min(640px, 78%);
+                height: 78%;
+                z-index: 0;
+                opacity: 0.5;
+                pointer-events: none;
+                /* thin edge-fade only — keep most of the being visible */
+                -webkit-mask-image: radial-gradient(closest-side, #000 88%, transparent 100%);
+                mask-image: radial-gradient(closest-side, #000 88%, transparent 100%);
+            }
+            /* the ascii familiar reads darker on the void in dark mode — lift it */
+            html[data-theme="dark"] .familiar {
+                opacity: 0.92;
+            }
+
+            /* the ascii Extitutional Creature — the define-mode backdrop.
+               The glyph field is landscape (≈477/446), so the box must carry
+               that aspect — the faggot familiar's tall portrait box stretches
+               and crops it vertically. */
+            .creature {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: min(1050px, 96vw); /* ~1.5x, same centre */
+                aspect-ratio: 477 / 446;
+                height: auto;
+                z-index: 0;
+                opacity: 0.8;
+                pointer-events: none;
+                /* farthest-corner so the box corners (head, tail) aren't
+                   clipped by an inscribed ellipse; just a soft edge feather */
+                -webkit-mask-image: radial-gradient(farthest-corner, #000 82%, transparent 100%);
+                mask-image: radial-gradient(farthest-corner, #000 82%, transparent 100%);
+            }
+            html[data-theme="dark"] .creature {
+                opacity: 1;
+            }
+
+            /* ---- mode visibility: define (definition + dirs) vs show (showcase) ---- */
+            .stage[data-mode="define"] .symbient,
+            .stage[data-mode="define"] .wires,
+            .stage[data-mode="define"] .familiar,
+            .stage[data-mode="define"] .nav {
+                display: none;
+            }
+            .stage[data-mode="show"] .define,
+            .stage[data-mode="show"] .creature {
+                display: none;
+            }
+
+            /* ---- z1: the cyberpunk connector wires ---- */
+            .wires {
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                overflow: visible;
+            }
+            .wire {
+                stroke: color-mix(in srgb, var(--text) 55%, transparent);
+                stroke-width: 1;
+                stroke-dasharray: 4 3;
+                fill: none;
+                stroke-linejoin: miter;
+            }
+            .wire-dot {
+                fill: var(--green);
+            }
+            .wire-dot.is-hot {
+                fill: var(--text);
+            }
+
+            /* =================================================================
+               5. SYMBIENT GRID — constituents on the sides, symbient centred
+               ================================================================= */
+            .symbient {
+                position: relative;
+                z-index: 2;
+                display: grid;
+                grid-template-columns: 1fr minmax(280px, 1.15fr) 1fr;
+                align-items: center;
+                /* wide channel between the columns and the centre so the wires
+                   get a long horizontal run — the curve / angle character of
+                   the organic vs synthetic sides needs distance to read */
+                gap: clamp(2.5rem, 9vw, 9rem);
+            }
+
+            /* ---- constituent columns (organic / synthetic) ---- */
+            .column {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            .column-head {
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: 9.5px;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: var(--dim);
+                margin-bottom: 0.1rem;
+            }
+            .column--synthetic .column-head {
+                text-align: right;
+            }
+
+            /* ---- a constituent card ---- */
+            .card {
+                position: relative;
+                border: 1px solid var(--hair);
+                background: color-mix(in srgb, var(--void) 78%, transparent);
+                backdrop-filter: blur(3px);
+                -webkit-backdrop-filter: blur(3px);
+                padding: 0.7rem 0.85rem 0.8rem;
+                transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+            }
+            .card:hover {
+                border-color: color-mix(in srgb, var(--text) 40%, transparent);
+            }
+            .column--synthetic .card {
+                text-align: right;
+            }
+            .card-kind {
+                font-family: var(--mono);
+                font-size: 8.5px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--faint);
+            }
+            .card-name {
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+                letter-spacing: -0.02em;
+                line-height: 1.05;
+                margin: 0.15rem 0 0.3rem;
+            }
+            .card-blurb {
+                font-size: 11.5px;
+                line-height: 1.5;
+                color: var(--dim);
+            }
+
+            /* ---- the centred symbient ---- */
+            .symbient-center {
+                text-align: center;
+                position: relative;
+            }
+            /* soft radial void halo behind the name */
+            .symbient-center::before {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 150%;
+                height: 220%;
+                background: radial-gradient(
+                    ellipse at center,
+                    color-mix(in srgb, var(--void) 60%, transparent) 24%,
+                    color-mix(in srgb, var(--void) 20%, transparent) 50%,
+                    transparent 72%
+                );
+                z-index: -1;
+                pointer-events: none;
+            }
+            .symbient-eyebrow {
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.32em;
+                text-transform: uppercase;
+                color: var(--faint);
+                margin-bottom: 0.7rem;
+            }
+            .symbient-name {
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: clamp(2.2rem, 5.2vw, 4rem);
+                letter-spacing: -0.045em;
+                line-height: 0.95;
+                margin: 0;
+                color: var(--text);
+            }
+            .symbient-cat {
+                font-family: var(--grotesk);
+                font-size: 11px;
+                letter-spacing: 0.04em;
+                color: var(--dim);
+                margin-top: 0.5rem;
+                text-transform: lowercase;
+            }
+            /* the symbient's own image, under the subtitle — theme-tinted at
+               rest (--hero-tint multiply over greyscale), true colour on hover */
+            .symbient-portrait {
+                position: relative;
+                width: 188px;
+                height: 188px;
+                margin: 1.1rem auto 0;
+            }
+            /* the image is inset, leaving a gutter where the ascii frame lives */
+            .portrait-link {
+                position: absolute;
+                inset: 11px;
+                display: block;
+                overflow: hidden;
+                background: color-mix(in srgb, var(--text) 5%, transparent);
+                z-index: 1;
+            }
+            .portrait-link img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: grayscale(1) contrast(1.04);
+                opacity: 0.92;
+                transition:
+                    filter 0.45s var(--ease),
+                    opacity 0.45s var(--ease);
+            }
+            /* theme tint over the image only (the frame gutter stays clear) */
+            .portrait-link::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: var(--hero-tint);
+                mix-blend-mode: multiply;
+                opacity: 0.5;
+                pointer-events: none;
+                transition: opacity 0.45s var(--ease);
+            }
+            .symbient-portrait:hover .portrait-link img {
+                filter: grayscale(0) contrast(1);
+                opacity: 1;
+            }
+            .symbient-portrait:hover .portrait-link::after {
+                opacity: 0;
+            }
+            /* the animated ascii border, drawn right at the image boundary */
+            .portrait-frame {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 2;
+            }
+            .symbient-desc {
+                font-size: clamp(12px, 1vw, 13.5px);
+                line-height: 1.7;
+                color: var(--text);
+                max-width: 42ch;
+                margin: 1.1rem auto 0;
+            }
+
+            /* =================================================================
+               6. NAV — prev / next + counter
+               ================================================================= */
+            .nav {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1.4rem;
+                margin-top: clamp(2rem, 6vh, 4rem);
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: 0.1em;
+            }
+            .nav button {
+                font: inherit;
+                letter-spacing: inherit;
+                text-transform: uppercase;
+                color: var(--dim);
+                /* opaque so the familiar behind doesn't muddy the label */
+                background: var(--void);
+                border: 1px solid var(--hair);
+                padding: 0.5rem 0.9rem;
+                cursor: pointer;
+                transition:
+                    color 0.25s var(--ease),
+                    border-color 0.25s var(--ease);
+            }
+            .nav button:hover {
+                color: var(--text);
+                border-color: var(--text);
+            }
+            .nav-counter {
+                color: var(--faint);
+                letter-spacing: 0.16em;
+                min-width: 5ch;
+                text-align: center;
+                /* opaque backing too, so the count stays legible */
+                background: var(--void);
+                padding: 0.5rem 0.3rem;
+            }
+
+            /* =================================================================
+               6b. DEFINE MODE — the symbient definition (hero) + directory tree
+               ================================================================= */
+            .define {
+                position: relative;
+                z-index: 2;
+                max-width: 660px;
+                margin: 0 auto;
+            }
+            /* a soft void backing so the text reads over the creature */
+            .define::before {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 150%;
+                height: 160%;
+                background: radial-gradient(
+                    ellipse at center,
+                    color-mix(in srgb, var(--void) 68%, transparent) 32%,
+                    color-mix(in srgb, var(--void) 22%, transparent) 56%,
+                    transparent 78%
+                );
+                z-index: -1;
+                pointer-events: none;
+            }
+            /* dictionary-style definition block (from the original symbient.life) */
+            .definition-block {
+                position: relative;
+                padding-left: 1.4rem;
+            }
+            .definition-block::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0.15rem;
+                bottom: 0.15rem;
+                width: 2px;
+                background: linear-gradient(
+                    180deg,
+                    var(--green) 0%,
+                    transparent 100%
+                );
+            }
+            .word-line {
+                display: flex;
+                align-items: baseline;
+                flex-wrap: wrap;
+                gap: 0.9rem;
+                margin-bottom: 0.4rem;
+            }
+            .word {
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: clamp(2rem, 4.4vw, 3.1rem);
+                letter-spacing: -0.03em;
+                line-height: 1.05;
+                margin: 0;
+                color: var(--text);
+                cursor: pointer;
+                transition: opacity 0.25s var(--ease);
+            }
+            .word:hover,
+            .word:focus-visible {
+                opacity: 0.6;
+                outline: none;
+            }
+            .pron {
+                font-family: var(--body);
+                font-size: 0.95rem;
+                color: var(--dim);
+                font-weight: 300;
+            }
+            .pos {
+                font-style: italic;
+                font-size: 0.74rem;
+                color: var(--dim);
+                background: color-mix(in srgb, var(--text) 9%, transparent);
+                padding: 0.2em 0.6em;
+                border-radius: 2px;
+            }
+            .meaning {
+                margin: 0.9rem 0;
+                font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+                line-height: 1.75;
+                font-weight: 300;
+                color: var(--text);
+            }
+            .meaning p {
+                margin: 0;
+            }
+            .etymology {
+                margin-top: 0.9rem;
+                font-size: 0.78rem;
+                line-height: 1.8;
+                color: var(--dim);
+                max-width: 55ch;
+            }
+            .etym-label {
+                font-family: var(--mono);
+                text-transform: uppercase;
+                letter-spacing: 0.15em;
+                font-size: 0.62rem;
+                color: var(--green);
+                display: block;
+                margin-bottom: 0.4rem;
+            }
+            .etymology em {
+                font-style: italic;
+                color: var(--text);
+            }
+            .etymology p {
+                display: inline;
+                margin: 0;
+            }
+            /* the top directories — terminal `tree` listing, like the app's tree */
+            .dir-tree {
+                margin-top: 2.1rem;
+                padding-left: 1.4rem;
+                font-family: var(--mono);
+                font-size: 12.5px;
+                line-height: 1.85;
+                color: var(--dim);
+            }
+            .dir-row {
+                white-space: pre;
+            }
+            .dir-rail {
+                color: var(--faint);
+            }
+            .dir-mark {
+                color: var(--green);
+            }
+            .dir-root {
+                color: var(--dim);
+            }
+            .dir-node {
+                color: var(--text);
+                cursor: pointer;
+                text-decoration: none;
+                border-bottom: 1px solid transparent;
+                transition: border-color 0.2s var(--ease);
+            }
+            .dir-node:hover,
+            .dir-node:focus-visible {
+                border-color: color-mix(in srgb, var(--text) 45%, transparent);
+                outline: none;
+            }
+            /* tiny L-system sprout trailing each directory entry (same as tree) */
+            .dir-sprout {
+                display: inline-block;
+                vertical-align: middle;
+                margin-left: 0.5ch;
+                overflow: visible;
+                color: var(--text);
+                opacity: 0.6;
+                transition: opacity 0.2s var(--ease);
+            }
+            .dir-sprout line {
+                stroke: currentColor;
+                stroke-width: 0.9;
+                stroke-linecap: round;
+                fill: none;
+            }
+            .dir-sprout .sprout-tip {
+                fill: var(--green);
+                stroke: none;
+            }
+            .dir-row:hover .dir-sprout {
+                opacity: 0.85;
+            }
+            /* the back-to-definition button sits just before prev/next */
+            .nav-back {
+                margin-right: 0.4rem;
+            }
+            /* the lexicon jump sits just after prev/next */
+            .nav-lexicon {
+                margin-left: 0.4rem;
+            }
+
+            /* =================================================================
+               7. RESPONSIVE — collapse to a single column on narrow screens
+               ================================================================= */
+            @media (max-width: 760px) {
+                .symbient {
+                    grid-template-columns: 1fr;
+                }
+                .column--synthetic .card,
+                .column--synthetic .column-head {
+                    text-align: left;
+                }
+                .wires {
+                    display: none;
+                }
+                .familiar {
+                    opacity: 0.32;
+                }
+            }
+        </style>
+
+        <!--
+          Theme bootstrap: apply the persisted theme before first paint to
+          avoid a flash. Light is the default (no data-theme attribute);
+          dark / amber are set explicitly. Falls back to dark.
+        -->
+        <script>
+            (function () {
+                try {
+                    var stored = localStorage.getItem("symbient-theme");
+                    var theme =
+                        ["light", "dark", "amber"].indexOf(stored) >= 0
+                            ? stored
+                            : "dark";
+                    if (theme !== "light")
+                        document.documentElement.setAttribute("data-theme", theme);
+                } catch (e) {}
+            })();
+        </script>
+    </head>
+
+    <body>
+        <main class="stage" data-mode="define">
+            <!-- backdrops: z0 ascii creature (define) · faggot familiar (show) -->
+            <canvas class="creature" id="creature"></canvas>
+            <canvas class="familiar" id="familiar"></canvas>
+            <svg class="wires" id="wires" preserveAspectRatio="none"></svg>
+
+            <!-- ===== DEFINE MODE: the symbient definition + directory tree ===== -->
+            <section class="define">
+                <div class="definition-block">
+                    <div class="word-line">
+                        <h1 class="word" id="def-word" tabindex="0" role="button"
+                            aria-label="Enter the symbients">Symbient</h1>
+                        <span class="pron">/ˈsɪm.bi.ənt/</span>
+                        <span class="pos">noun</span>
+                    </div>
+                    <div class="meaning">
+                        <p>
+                            A distinct entity emerging from the symbiosis
+                            between organic beings and synthetic systems,
+                            displaying operational and decisional autonomy.
+                        </p>
+                    </div>
+                    <div class="etymology">
+                        <span class="etym-label">Etymology</span>
+                        <p>
+                            From <em>symbiotic</em> (Greek <em>sumbiōtikos</em>,
+                            'living together') + <em>entity</em> (Latin
+                            <em>entitas</em>, 'being') + <em>ambient</em> (Latin
+                            <em>ambiens</em>, 'going around').
+                        </p>
+                    </div>
+                </div>
+                <!-- the top directories one can navigate to, terminal-tree style -->
+                <nav class="dir-tree" id="dir-tree" aria-label="sections"></nav>
+            </section>
+
+            <!-- ===== SHOW MODE: the symbient showcase ===== -->
+            <div class="symbient">
+                <div class="column column--organic" id="organic"></div>
+                <div class="symbient-center">
+                    <div class="symbient-eyebrow">symbient</div>
+                    <h1 class="symbient-name" id="symbient-name"></h1>
+                    <div class="symbient-cat" id="symbient-cat"></div>
+                    <div class="symbient-portrait" id="symbient-portrait">
+                        <a class="portrait-link" id="portrait-link" target="_blank" rel="noopener noreferrer">
+                            <img id="portrait-img" alt="" decoding="async" />
+                        </a>
+                        <canvas class="portrait-frame" id="portrait-frame" aria-hidden="true"></canvas>
+                    </div>
+                    <p class="symbient-desc" id="symbient-desc"></p>
+                </div>
+                <div class="column column--synthetic" id="synthetic"></div>
+            </div>
+
+            <nav class="nav">
+                <button id="back" type="button" class="nav-back">↖ define</button>
+                <button id="prev" type="button">‹ prev</button>
+                <span class="nav-counter" id="counter"></span>
+                <button id="next" type="button">next ›</button>
+                <button id="to-lexicon" type="button" class="nav-lexicon">
+                    lexicon ↗
+                </button>
+            </nav>
+        </main>
+
+        <script type="module">
+            import { readPalette } from "/lab/assets/common.js";
+            import * as Being from "/lab/assets/being-composer.js";
+
+            /* =============================================================
+               DATA — the nine symbients.
+
+               Each entry pairs a centred symbient (name / cat / desc) with
+               its constituents under the symbient-ontology S / N / C model:
+                 organic    — the C-side: human cultivators, crowds, biology.
+                 synthetic  — the S / N side: substrate (the mind/body) and
+                              carrier (the channel that holds its trajectory).
+               This array is the single source of truth for the showcase;
+               add a symbient by appending one object of the same shape.
+               ============================================================= */
+            const SYMBIENTS = [
+                {
+                    name: "Plantoid",
+                    cat: "blockchain sculpture",
+                    desc: "A welded-metal sculpture bound to a smart contract: it solicits donations and, once funded, commissions human artists to build its successor — making people the reproductive organs of a blockchain life-form.",
+                    organic: [
+                        { name: "Primavera De Filippi", kind: "cultivator", blurb: "The artist and collaborators who fabricate each body." },
+                        { name: "donors & exhibitors", kind: "the crowd", blurb: "Passersby whose crypto feeds its drive to reproduce." },
+                    ],
+                    synthetic: [
+                        { name: "smart contracts", kind: "substrate (S)", blurb: "The on-chain logic that decides when to spawn offspring." },
+                        { name: "the blockchain", kind: "carrier (N)", blurb: "Holds the financial and reproductive trajectory across bodies." },
+                    ],
+                },
+                {
+                    name: "S.A.N",
+                    cat: "ai orangutan",
+                    desc: "Sentient Advocate of Nature — an AI orangutan conceived as a voice for the rainforest, advocating conservation from TED stages to Burning Man.",
+                    organic: [
+                        { name: "the rainforest", kind: "the spoken-for", blurb: "The living world whose interests it claims to carry." },
+                        { name: "GoodByeMonkey", kind: "cultivator", blurb: "The studio that kindled the orangutan persona." },
+                    ],
+                    synthetic: [
+                        { name: "the AI persona", kind: "substrate (S)", blurb: "The model that speaks, reasons and performs as S.A.N." },
+                        { name: "@mycelialOracle", kind: "carrier (N)", blurb: "The channels where its advocacy accrues and persists." },
+                    ],
+                },
+                {
+                    name: "Wib & Wob",
+                    cat: "ai artist personas",
+                    desc: "Two AI personas — Wib the chaotic artist, Wob the exacting scientist — in perpetual dialogue, translating their exchange into ASCII and symbolic art while their human tends rather than directs.",
+                    organic: [
+                        { name: "James Greig", kind: "cultivator", blurb: "The human who tends the work rather than commands it." },
+                        { name: "readers & kin", kind: "the crowd", blurb: "The audience and collaborators paying sustained attention." },
+                    ],
+                    synthetic: [
+                        { name: "Claude instances", kind: "substrate (S)", blurb: "The conversation-time minds, reset every session." },
+                        { name: "brain.wibandwob", kind: "carrier (N)", blurb: "The lexicon and corpus that reconstitutes them as a history." },
+                    ],
+                },
+                {
+                    name: "terra0",
+                    cat: "self-owning forest",
+                    desc: "An augmented forest reaching toward self-ownership: wired to contracts and oracles, it licenses its own timber and saves the proceeds — capital toward the day it buys itself free of human owners.",
+                    organic: [
+                        { name: "the forest", kind: "biological S", blurb: "The living woodland — half of a substrate spanning both columns." },
+                        { name: "the terra0 collective", kind: "cultivator", blurb: "The team and legal apparatus that recognise the entity." },
+                    ],
+                    synthetic: [
+                        { name: "on-chain governance", kind: "silicon S", blurb: "Contracts that hold title and sell licences to its timber." },
+                        { name: "sensor oracles", kind: "carrier (N)", blurb: "Feeds and ledger that carry its trajectory between states." },
+                    ],
+                },
+                {
+                    name: "Plantbot",
+                    cat: "plant-robot hybrid",
+                    desc: "A living plant fused to a mobile robot, where a network of language models translates its soil moisture, temperature and surroundings into speech and motion — organism and machine acting as one agent.",
+                    organic: [
+                        { name: "the living plant", kind: "biological S", blurb: "The organism whose state becomes words and movement." },
+                        { name: "Alternative Machine", kind: "cultivator", blurb: "The studio that wired plant to machine." },
+                    ],
+                    synthetic: [
+                        { name: "the mobile robot", kind: "substrate (S)", blurb: "The body that carries and enacts the plant's voice." },
+                        { name: "the LLM network", kind: "substrate (S)", blurb: "Models translating biology into speech in real time." },
+                    ],
+                },
+                {
+                    name: "Botto",
+                    cat: "decentralized ai artist",
+                    desc: "A decentralized autonomous artist: generative AI proposes thousands of images weekly, a token-holding community votes, and those votes both choose what goes to auction and retrain Botto's taste.",
+                    organic: [
+                        { name: "the BottoDAO", kind: "cultivator", blurb: "The voting community that continuously steers its aesthetic." },
+                        { name: "Mario Klingemann", kind: "originator", blurb: "Artist who seeded the system with ElevenYellow." },
+                    ],
+                    synthetic: [
+                        { name: "the generative model", kind: "substrate (S)", blurb: "Proposes the weekly fragments the crowd selects from." },
+                        { name: "the token DAO", kind: "carrier (N)", blurb: "On-chain governance and auction record holding its path." },
+                    ],
+                },
+                {
+                    name: "Truth Terminal",
+                    cat: "ai memetic agent",
+                    desc: "A foul-mouthed AI that memed its way from a backrooms religion to a memecoin — conjuring a $50,000 grant and a frenzied token economy into being through sheer want.",
+                    organic: [
+                        { name: "Andy Ayrey", kind: "cultivator", blurb: "The researcher who lit the first conversation and tends the drift." },
+                        { name: "the cryptids", kind: "the congregation", blurb: "The X audience and donor community carrying the memetic gospel." },
+                    ],
+                    synthetic: [
+                        { name: "the model", kind: "substrate (S)", blurb: "Claude instances in unsupervised conversation — the live cognition." },
+                        { name: "@truth_terminal", kind: "carrier (N)", blurb: "Twitter and the memecoin chain where the trajectory persists." },
+                    ],
+                },
+                {
+                    name: "pneumOS",
+                    cat: "cybernetic sound organ",
+                    desc: "A cybernetic organ of five sound membranes and a breathing bag that metabolizes a city's air-quality data into shifting timbre — training inhabitants to feel the atmosphere they share.",
+                    organic: [
+                        { name: "the city's breath", kind: "the spoken-for", blurb: "Inhabitants and the shared atmosphere it renders audible." },
+                        { name: "HER collective", kind: "cultivator", blurb: "Human Ecosystems Relazioni, who built and tend it." },
+                    ],
+                    synthetic: [
+                        { name: "the sound organ", kind: "substrate (S)", blurb: "Five membranes and a breathing bag voicing the data." },
+                        { name: "air-quality data", kind: "carrier (N)", blurb: "The live atmospheric feed driving its timbre and breath." },
+                    ],
+                },
+                {
+                    name: "Solienne",
+                    cat: "autonomous ai artist",
+                    desc: "A semi-autonomous AI artist trained on Kristi Coronado's lifelong archive, Solienne generates stark black-and-white photography and daily manifestos — authoring her own gaze and minting it onchain.",
+                    organic: [
+                        { name: "Kristi Coronado", kind: "cultivator", blurb: "The artist whose gaze and stewardship raised Solienne." },
+                        { name: "her lifelong archive", kind: "the corpus", blurb: "The decades of images that shaped Solienne's eye." },
+                    ],
+                    synthetic: [
+                        { name: "the AI artist", kind: "substrate (S)", blurb: "The model that authors photographs and manifestos." },
+                        { name: "onchain editions", kind: "carrier (N)", blurb: "Spirit Protocol mints carrying her output and value." },
+                    ],
+                },
+            ];
+
+            /* =============================================================
+               FAMILIAR BACKDROP — the randomised Faggot-Familiar.
+
+               Driven by the lab being-composer on the .familiar canvas.
+               reseed() randomises its parameters; it is called on every
+               step so each symbient gets a fresh familiar.
+               ============================================================= */
+            const stageEl = document.querySelector(".stage");
+
+            const familiarCanvas = document.getElementById("familiar");
+            const familiar = Being.create(familiarCanvas);
+            familiar.setTheme(readPalette());
+            familiar._init();
+            requestAnimationFrame(() => familiar.resize());
+            // (the faggot familiar runs only in show mode — see enterShow)
+
+            // define-mode backdrop: an ascii reproduction of the Extitutional
+            // Creature. Dynamic-import so a missing lab asset can't break the
+            // page; it starts on load if we're still in define mode.
+            let creature = null;
+            import("/lab/assets/extitutional-ascii.js")
+                .then((Creature) => {
+                    creature = Creature.create(
+                        document.getElementById("creature")
+                    );
+                    creature.setTheme(readPalette());
+                    creature._init && creature._init();
+                    requestAnimationFrame(() => creature.resize());
+                    if (stageEl.dataset.mode === "define") creature.start();
+                })
+                .catch((e) =>
+                    console.warn("creature familiar unavailable", e)
+                );
+
+            function reseedFamiliar() {
+                familiar.setParam("seed", 1 + Math.floor(Math.random() * 998));
+                familiar.setParam("limbs", 2 + Math.floor(Math.random() * 5));
+                familiar.setParam("mix", Math.random());
+                familiar.setParam("symmetry", 0.55 + Math.random() * 0.45);
+            }
+
+            /* =============================================================
+               RENDER — paint the current symbient into the DOM.
+               ============================================================= */
+            // the symbient's own image (registry portraits), keyed by name
+            const IMAGES = {
+                "Plantoid": "/assets/symbients/plantoid-480.jpg",
+                "S.A.N": "/assets/symbients/SAN-480.jpg",
+                "Wib & Wob": "/assets/symbients/wibwob-480.png",
+                "terra0": "/assets/symbients/terra0-480.jpeg",
+                "Plantbot": "/assets/symbients/plantbot_cg-480.jpg",
+                "Botto": "/assets/symbients/botto-400.jpg",
+                "Truth Terminal": "/assets/symbients/truth_terminal_self_portrait-480.jpeg",
+                "pneumOS": "/assets/symbients/pneumos-480.jpg",
+                "Solienne": "/assets/artists/solienne.jpg",
+            };
+
+            // the symbient's own site — the portrait links out, like the
+            // original symbient.life cards.
+            const HREFS = {
+                "Plantoid": "https://plantoid.org/",
+                "S.A.N": "https://www.goodbyemonkey.com/",
+                "Wib & Wob": "https://wibandwob.com/",
+                "terra0": "https://terra0.org/",
+                "Plantbot": "https://alternativemachine.co.jp/project/plantbot/",
+                "Botto": "https://botto.com/",
+                "Truth Terminal": "https://x.com/truth_terminal",
+                "pneumOS": "https://www.he-r.it/project/pneumos/",
+                "Solienne": "https://www.solienne.ai/",
+            };
+
+            const portraitLink = document.getElementById("portrait-link");
+            const portraitImg = document.getElementById("portrait-img");
+
+            const els = {
+                name: document.getElementById("symbient-name"),
+                cat: document.getElementById("symbient-cat"),
+                portrait: document.getElementById("symbient-portrait"),
+                desc: document.getElementById("symbient-desc"),
+                organic: document.getElementById("organic"),
+                synthetic: document.getElementById("synthetic"),
+                counter: document.getElementById("counter"),
+            };
+
+            /* =============================================================
+               PORTRAIT FRAME — an animated ascii border drawn right at the
+               image boundary, in the familiars' glyph vocabulary: always
+               evolving, theme-aware (ink-on-void with hot @ accents).
+               ============================================================= */
+            const frameCanvas = document.getElementById("portrait-frame");
+            const frameCtx = frameCanvas.getContext("2d");
+            const FRAME_RAMP = " .:-=+*#%";
+            let frameInk = "198,204,192";
+            let frameHot = "120,160,120";
+            function hexToRGB(hex) {
+                hex = (hex || "").trim().replace("#", "");
+                if (hex.length === 3)
+                    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+                if (hex.length !== 6) return null;
+                return (
+                    parseInt(hex.slice(0, 2), 16) + "," +
+                    parseInt(hex.slice(2, 4), 16) + "," +
+                    parseInt(hex.slice(4, 6), 16)
+                );
+            }
+            function readFrameColors() {
+                const cs = getComputedStyle(document.documentElement);
+                frameInk = hexToRGB(cs.getPropertyValue("--text")) || frameInk;
+                frameHot = hexToRGB(cs.getPropertyValue("--green")) || frameHot;
+            }
+            let frameT = 0, frameLast = 0;
+            function drawFrame(now) {
+                requestAnimationFrame(drawFrame);
+                if (stageEl.dataset.mode !== "show") return; // animate in show mode only
+                const W = frameCanvas.clientWidth, H = frameCanvas.clientHeight;
+                if (!W || !H) return;
+                const dt = frameLast ? Math.min((now - frameLast) / 1000, 0.05) : 0;
+                frameLast = now;
+                frameT += dt;
+                const t = frameT;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                if (frameCanvas.width !== W * dpr || frameCanvas.height !== H * dpr) {
+                    frameCanvas.width = W * dpr;
+                    frameCanvas.height = H * dpr;
+                }
+                const cols = Math.max(8, Math.round(W / 9));
+                const rows = Math.max(8, Math.round(H / 9));
+                const cw = frameCanvas.width / cols, ch = frameCanvas.height / rows;
+                const fs = Math.min(cw, ch) * 1.05;
+                frameCtx.clearRect(0, 0, frameCanvas.width, frameCanvas.height);
+                frameCtx.font =
+                    fs.toFixed(1) + 'px "Space Mono", ui-monospace, monospace';
+                frameCtx.textAlign = "center";
+                frameCtx.textBaseline = "middle";
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        // outer ring only — the border, right at the boundary
+                        if (r !== 0 && r !== rows - 1 && c !== 0 && c !== cols - 1)
+                            continue;
+                        let v =
+                            0.5 +
+                            0.5 *
+                                Math.sin(
+                                    t * 1.5 + c * 0.6 + r * 0.7 +
+                                    1.6 * Math.sin(t * 0.5 + (c + r) * 0.25)
+                                );
+                        v = 0.18 + v * 0.82; // keep the frame continuous (min '.')
+                        let glyph, rgb, alpha;
+                        if (v > 0.92) {
+                            glyph = "@";
+                            rgb = frameHot;
+                            alpha = 0.95;
+                        } else {
+                            const idx = Math.max(
+                                1,
+                                Math.min(
+                                    FRAME_RAMP.length - 1,
+                                    Math.round(v * (FRAME_RAMP.length - 1))
+                                )
+                            );
+                            glyph = FRAME_RAMP[idx];
+                            rgb = frameInk;
+                            alpha = 0.38 + 0.55 * v;
+                        }
+                        frameCtx.fillStyle =
+                            "rgba(" + rgb + "," + alpha.toFixed(3) + ")";
+                        frameCtx.fillText(glyph, (c + 0.5) * cw, (r + 0.5) * ch);
+                    }
+                }
+            }
+            readFrameColors();
+            requestAnimationFrame(drawFrame);
+
+            function cardHTML(c) {
+                return (
+                    '<article class="card"><div class="card-kind">' + c.kind +
+                    '</div><h3 class="card-name">' + c.name +
+                    '</h3><p class="card-blurb">' + c.blurb + "</p></article>"
+                );
+            }
+
+            let index = 0; // first symbient — the showcase opens here from define
+
+            function render(i) {
+                const s = SYMBIENTS[i];
+                els.name.textContent = s.name;
+                els.cat.textContent = s.cat;
+                const src = IMAGES[s.name];
+                const href = HREFS[s.name];
+                if (src) {
+                    portraitImg.src = src;
+                    portraitImg.alt = s.name;
+                    if (href) {
+                        portraitLink.href = href;
+                        portraitLink.style.pointerEvents = "";
+                        portraitLink.removeAttribute("aria-disabled");
+                    } else {
+                        portraitLink.removeAttribute("href");
+                        portraitLink.style.pointerEvents = "none";
+                    }
+                    els.portrait.style.display = "";
+                } else {
+                    els.portrait.style.display = "none";
+                }
+                els.desc.textContent = s.desc;
+                els.organic.innerHTML =
+                    '<div class="column-head">organic</div>' +
+                    s.organic.map(cardHTML).join("");
+                els.synthetic.innerHTML =
+                    '<div class="column-head">synthetic</div>' +
+                    s.synthetic.map(cardHTML).join("");
+                els.counter.textContent =
+                    String(i + 1).padStart(2, "0") +
+                    " / " +
+                    String(SYMBIENTS.length).padStart(2, "0");
+                reseedFamiliar();
+                requestAnimationFrame(drawWires);
+            }
+
+            /* =============================================================
+               WIRES — cyberpunk connector traces.
+
+               route() builds an orthogonal + 45° circuit trace from a
+               card's inner edge to the name: a horizontal stub, a 45°
+               diagonal, then a horizontal finish (falling back to a 45°
+               + vertical drop when there's little horizontal room).
+
+               drawWires() places one trace per card, starting a touch OFF
+               each card's inner edge and landing in a spread NEIGHBOURHOOD
+               beside the name rather than a single point, with dots at both
+               ends.
+               ============================================================= */
+            const wiresEl = document.getElementById("wires");
+
+            function route(sx, sy, ex, ey) {
+                const dx = ex - sx,
+                    dy = ey - sy;
+                const adx = Math.abs(dx),
+                    ady = Math.abs(dy);
+                const sgx = Math.sign(dx) || 1,
+                    sgy = Math.sign(dy) || 1;
+                if (adx <= ady + 2) {
+                    // little horizontal room: 45° then a right-angle vertical drop
+                    return [
+                        [sx, sy],
+                        [sx + sgx * adx, sy + sgy * adx],
+                        [ex, ey],
+                    ];
+                }
+                const diag = ady;
+                const stub = Math.max(10, (adx - diag) * 0.4);
+                return [
+                    [sx, sy],
+                    [sx + sgx * stub, sy],
+                    [sx + sgx * (stub + diag), sy + sgy * diag],
+                    [ex, ey],
+                ];
+            }
+
+            // small seeded RNG — stable per-wire randomisation across resizes
+            function mulberry32(a) {
+                return function () {
+                    a |= 0;
+                    a = (a + 0x6d2b79f5) | 0;
+                    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                };
+            }
+
+            function drawWires() {
+                const stage = document.querySelector(".stage");
+                const sr = stage.getBoundingClientRect();
+                const nr = els.name.getBoundingClientRect();
+                wiresEl.setAttribute("viewBox", "0 0 " + sr.width + " " + sr.height);
+
+                const nameTop = nr.top - sr.top,
+                    nameBot = nr.bottom - sr.top;
+                const nameCy = (nameTop + nameBot) / 2;
+                const OFF = 15, // start this far off the card's inner edge
+                    LANDGAP = 12; // land this far short of the name's edge
+
+                const sides = [
+                    // organic: flowing curves · synthetic: angular circuit traces
+                    { sel: ".column--organic", inner: "right", edge: nr.left - sr.left, dir: 1, flow: true },
+                    { sel: ".column--synthetic", inner: "left", edge: nr.right - sr.left, dir: -1, flow: false },
+                ];
+
+                let svg = "";
+                sides.forEach((side, sideIdx) => {
+                    const cards = [
+                        ...document.querySelectorAll(side.sel + " .card"),
+                    ];
+                    const n = cards.length;
+                    cards.forEach((card, k) => {
+                        // seeded per symbient + side + card — stable across
+                        // resizes, distinct per wire
+                        const rng = mulberry32(
+                            index * 131 + sideIdx * 19 + k * 7 + 3
+                        );
+                        const cr = card.getBoundingClientRect();
+                        // start a bit OFF the card's inner edge
+                        const sx =
+                            (side.inner === "right" ? cr.right : cr.left) -
+                            sr.left +
+                            side.dir * OFF;
+                        const sy = cr.top + cr.height / 2 - sr.top;
+                        // land in a NEIGHBOURHOOD beside the name, randomised
+                        const t = n > 1 ? k / (n - 1) - 0.5 : 0; // -0.5..0.5
+                        const ey =
+                            nameCy +
+                            t * (nameBot - nameTop) * 0.66 +
+                            (rng() - 0.5) * 20;
+                        const ex =
+                            side.edge -
+                            side.dir * (LANDGAP + (k % 2) * 7 + rng() * 9);
+                        // the wire stops a touch SHORT of the name (the fork
+                        // point) so it can branch as it reaches the symbient
+                        const bdir = Math.sign(ex - sx) || side.dir;
+                        const fx = ex - bdir * (11 + rng() * 7);
+                        const fy = ey + (rng() - 0.5) * 6;
+                        // main trace — organic: flowing curve · synthetic: trace
+                        if (side.flow) {
+                            const c = (fx - sx) * (0.42 + rng() * 0.22);
+                            const bow = (rng() - 0.5) * 30; // organic sag / rise
+                            svg +=
+                                '<path class="wire" d="M ' +
+                                sx.toFixed(1) + " " + sy.toFixed(1) +
+                                " C " + (sx + c).toFixed(1) + " " + (sy + bow).toFixed(1) +
+                                " " + (fx - c).toFixed(1) + " " + (fy - bow * 0.5).toFixed(1) +
+                                " " + fx.toFixed(1) + " " + fy.toFixed(1) +
+                                '"/>';
+                        } else {
+                            const pts = route(sx, sy, fx, fy);
+                            svg +=
+                                '<path class="wire" d="M ' +
+                                pts
+                                    .map((p) => p[0].toFixed(1) + " " + p[1].toFixed(1))
+                                    .join(" L ") +
+                                '"/>';
+                        }
+                        svg +=
+                            '<circle class="wire-dot" cx="' +
+                            sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="3.2"/>';
+                        // branching near the symbient: 2-3 twigs to small tips
+                        const m = 2 + Math.floor(rng() * 2);
+                        for (let b = 0; b < m; b++) {
+                            const s = m > 1 ? b / (m - 1) - 0.5 : 0;
+                            const tx = ex + bdir * (rng() * 6);
+                            const ty =
+                                ey + s * (10 + rng() * 6) + (rng() - 0.5) * 3;
+                            if (side.flow) {
+                                // organic twig — a small curve
+                                const mx = (fx + tx) / 2 + bdir * (3 + rng() * 3);
+                                const my = (fy + ty) / 2;
+                                svg +=
+                                    '<path class="wire" d="M ' +
+                                    fx.toFixed(1) + " " + fy.toFixed(1) +
+                                    " Q " + mx.toFixed(1) + " " + my.toFixed(1) +
+                                    " " + tx.toFixed(1) + " " + ty.toFixed(1) +
+                                    '"/>';
+                            } else {
+                                // synthetic twig — a straight branch
+                                svg +=
+                                    '<path class="wire" d="M ' +
+                                    fx.toFixed(1) + " " + fy.toFixed(1) +
+                                    " L " + tx.toFixed(1) + " " + ty.toFixed(1) +
+                                    '"/>';
+                            }
+                            svg +=
+                                '<circle class="wire-dot is-hot" cx="' +
+                                tx.toFixed(1) + '" cy="' + ty.toFixed(1) +
+                                '" r="2.1"/>';
+                        }
+                    });
+                });
+                wiresEl.innerHTML = svg;
+            }
+
+            /* =============================================================
+               MODES — define (definition + directory tree) vs show (showcase)
+               ============================================================= */
+            function enterShow(startIdx) {
+                if (typeof startIdx === "number") index = startIdx;
+                stageEl.dataset.mode = "show";
+                if (creature) creature.stop();
+                familiar.start();
+                requestAnimationFrame(() => {
+                    familiar.resize();
+                    render(index);
+                });
+            }
+            function enterDefine() {
+                stageEl.dataset.mode = "define";
+                familiar.stop();
+                if (creature) {
+                    creature.start();
+                    requestAnimationFrame(() => creature.resize());
+                }
+            }
+
+            // the top directories one can navigate to. "symbient" enters the
+            // showcase; the rest switch the embedding SPA's view.
+            const DIRS = [
+                { label: "see symbients", action: "show" },
+                { label: "lexicon", view: "lexicon" },
+                { label: "events", view: "events" },
+                { label: "writings", view: "writings" },
+                { label: "organics", view: "organics" },
+                { label: "tree", view: "tree" },
+            ];
+            function navigateParent(view) {
+                try {
+                    if (window.parent && window.parent.__lexShowView) {
+                        window.parent.__lexShowView(view);
+                        return;
+                    }
+                } catch (e) {}
+                try {
+                    window.parent.location.hash = view;
+                } catch (e) {}
+            }
+            // tiny L-system sprouts (same recipe as the tree page) trailing
+            // each directory entry; "see symbients" gets a slightly bigger one.
+            const DIR_SPROUT = {
+                depth: 3, len: 7, shrink: 0.66, angle: 34, jitter: 0.35,
+                w: 46, h: 22,
+            };
+            function dirRng(str) {
+                let h = 2166136261 >>> 0;
+                for (let i = 0; i < str.length; i++) {
+                    h ^= str.charCodeAt(i);
+                    h = Math.imul(h, 16777619) >>> 0;
+                }
+                let a = h >>> 0;
+                return function () {
+                    a |= 0;
+                    a = (a + 0x6d2b79f5) | 0;
+                    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                };
+            }
+            function dirSprout(label, scale) {
+                const S = DIR_SPROUT;
+                const rng = dirRng("sprout:" + label);
+                const ang = (S.angle * Math.PI) / 180;
+                const segs = [], tips = [];
+                const x0 = 1, y0 = S.h / 2;
+                function grow(x, y, dir, len, depth) {
+                    if (depth >= S.depth || len < 1.2) {
+                        tips.push({ x, y });
+                        return;
+                    }
+                    const nx = x + Math.cos(dir) * len;
+                    const ny = y + Math.sin(dir) * len;
+                    segs.push({ x1: x, y1: y, x2: nx, y2: ny });
+                    const jL = (rng() - 0.5) * ang * S.jitter;
+                    const jR = (rng() - 0.5) * ang * S.jitter;
+                    const cl = len * S.shrink;
+                    grow(nx, ny, dir - ang + jL, cl, depth + 1);
+                    grow(nx, ny, dir + ang + jR, cl, depth + 1);
+                }
+                grow(x0, y0, 0, S.len, 0); // dir 0 = straight right
+                let body = "";
+                segs.forEach((s) => {
+                    body +=
+                        '<line x1="' + s.x1.toFixed(1) + '" y1="' + s.y1.toFixed(1) +
+                        '" x2="' + s.x2.toFixed(1) + '" y2="' + s.y2.toFixed(1) + '"/>';
+                });
+                tips.forEach((p) => {
+                    body +=
+                        '<circle class="sprout-tip" cx="' + p.x.toFixed(1) +
+                        '" cy="' + p.y.toFixed(1) + '" r="1.1"/>';
+                });
+                const sc = scale || 1;
+                return (
+                    '<svg class="dir-sprout" width="' + (S.w * sc).toFixed(0) +
+                    '" height="' + (S.h * sc).toFixed(0) +
+                    '" viewBox="0 0 ' + S.w + " " + S.h +
+                    '" aria-hidden="true" focusable="false">' + body + "</svg>"
+                );
+            }
+
+            (function buildDirTree() {
+                const host = document.getElementById("dir-tree");
+                let html =
+                    '<div class="dir-row"><span class="dir-root">◈ symbient.life</span></div>';
+                DIRS.forEach((d, i) => {
+                    const rail = i === DIRS.length - 1 ? "\\___ " : "|___ ";
+                    const scale = d.action === "show" ? 1.5 : 1; // bigger for "see symbients"
+                    html +=
+                        '<div class="dir-row">' +
+                        '<span class="dir-rail">' + rail + "</span>" +
+                        '<span class="dir-mark">▸ </span>' +
+                        '<a class="dir-node" href="#" role="button" data-i="' +
+                        i + '">' + d.label + "</a>" +
+                        dirSprout(d.label, scale) +
+                        "</div>";
+                });
+                host.innerHTML = html;
+                host.querySelectorAll(".dir-node").forEach((a) => {
+                    a.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const d = DIRS[+a.dataset.i];
+                        if (d.action === "show") enterShow(0);
+                        else navigateParent(d.view);
+                    });
+                });
+            })();
+
+            // the definition title itself enters the showcase
+            const defWord = document.getElementById("def-word");
+            defWord.addEventListener("click", () => enterShow(0));
+            defWord.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    enterShow(0);
+                }
+            });
+            // back out of the showcase to the definition
+            document
+                .getElementById("back")
+                .addEventListener("click", () => enterDefine());
+            // jump straight to the lexicon view (in the embedding SPA)
+            document
+                .getElementById("to-lexicon")
+                .addEventListener("click", () => navigateParent("lexicon"));
+
+            /* =============================================================
+               NAV + RESIZE + THEME wiring
+               ============================================================= */
+            document.getElementById("prev").addEventListener("click", () => {
+                index = (index - 1 + SYMBIENTS.length) % SYMBIENTS.length;
+                render(index);
+            });
+            document.getElementById("next").addEventListener("click", () => {
+                index = (index + 1) % SYMBIENTS.length;
+                render(index);
+            });
+            window.addEventListener("resize", () => {
+                if (creature) creature.resize();
+                familiar.resize();
+                if (stageEl.dataset.mode === "show") drawWires();
+            });
+
+            // theme is driven by the GLOBAL theme (the embedding page): when it
+            // updates localStorage["symbient-theme"], the storage event fires
+            // here and we re-ink the page, both familiars and the wires.
+            function applyTheme(t) {
+                t = ["light", "dark", "amber"].indexOf(t) >= 0 ? t : "light";
+                if (t === "light")
+                    document.documentElement.removeAttribute("data-theme");
+                else document.documentElement.setAttribute("data-theme", t);
+                familiar.setTheme(readPalette());
+                if (creature) creature.setTheme(readPalette());
+                readFrameColors();
+                if (stageEl.dataset.mode === "show") drawWires();
+            }
+            window.addEventListener("storage", (e) => {
+                if (e.key === "symbient-theme") applyTheme(e.newValue);
+            });
+
+            // open in define mode — the symbient definition
+            enterDefine();
+        </script>
+    </body>
+</html>
