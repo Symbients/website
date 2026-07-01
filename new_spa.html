@@ -164,11 +164,13 @@
                 );
             }
 
+            /* desktop: the toggle is the last item in the hero-bar flow, so
+               flexbox spaces it after the nav and baseline-aligns it with the
+               tabs — no fixed-position width guessing. It rides the hero's own
+               opacity fade (it's a hero descendant now); on phones it becomes a
+               fixed control beside the burger (see the media query). */
             .theme-toggle {
-                position: fixed;
-                top: 0.9rem;
-                right: 0.9rem;
-                z-index: 6;
+                flex: 0 0 auto;
                 font-family: var(--mono);
                 font-size: 10px;
                 letter-spacing: 0.12em;
@@ -180,13 +182,16 @@
                 cursor: pointer;
                 backdrop-filter: blur(5px);
                 -webkit-backdrop-filter: blur(5px);
-                /* starts hidden; the intro fades it in on the hero's curve (its
-                   opacity is driven per-frame, so it is left off the transition) */
-                opacity: 0;
+                /* .hero-inner is pointer-events:none; the toggle is only
+                   interactive once the hero has revealed (rule below) */
+                pointer-events: none;
                 transition:
                     color 0.25s var(--ease),
                     background 0.25s var(--ease),
                     border-color 0.25s var(--ease);
+            }
+            .site-hero.is-revealed .theme-toggle {
+                pointer-events: auto;
             }
             .theme-toggle:hover {
                 color: #fff;
@@ -248,7 +253,7 @@
             .hero-bar {
                 display: flex;
                 align-items: baseline;
-                justify-content: space-between;
+                justify-content: flex-start;
                 flex-wrap: wrap;
                 gap: 0.4rem 1.1rem;
                 width: 100%;
@@ -275,8 +280,11 @@
                 display: flex;
                 flex-wrap: wrap;
                 align-items: center;
-                gap: 0.5rem;
-                margin: 0;
+                gap: 11px; /* +3px over the prior 0.5rem for a touch more air */
+                /* push the nav (and the toggle after it) to the right, leaving the
+                   title at the left — the toggle then trails the tabs with the bar's
+                   column-gap, no overlap possible */
+                margin-left: auto;
                 font-family: var(--mono);
                 font-size: var(--fs-mono);
                 letter-spacing: 0.2em;
@@ -1499,10 +1507,13 @@
                     justify-content: center;
                     overflow: visible;
                 }
-                /* the hamburger takes the far-right corner; the theme toggle sits
-                   to its left (fixed), keeping its full ◐ dark/light label, and is
-                   vertically centred on the bar row (matching the title/burger) */
+                /* the hamburger takes the far-right corner; the theme toggle
+                   becomes a fixed control to its left (lifted out of the bar
+                   flow), keeping its full ◐ dark/light label, vertically centred
+                   on the bar row (matching the title/burger) */
                 .theme-toggle {
+                    position: fixed;
+                    z-index: 6;
                     right: 4rem;
                     top: calc(var(--hero-h) / 2);
                     transform: translateY(-50%);
@@ -2592,9 +2603,6 @@
 
     <body>
         <canvas id="field"></canvas>
-        <button class="theme-toggle" type="button" aria-label="Switch theme">
-            ◐&nbsp;<span class="tt-label">dark</span>
-        </button>
 
         <header class="site-hero">
             <div class="hero-inner">
@@ -2621,6 +2629,13 @@
                         <a class="tab" href="#sec-organics">organics</a>
                         <a class="tab" href="#sec-tree">tree</a>
                     </nav>
+                    <button
+                        class="theme-toggle"
+                        type="button"
+                        aria-label="Switch theme"
+                    >
+                        ◐&nbsp;<span class="tt-label">dark</span>
+                    </button>
                 </div>
                 <div class="terminal" aria-hidden="true">
                     <div class="term-line"></div>
@@ -3441,6 +3456,9 @@
                             <div class="col-top"><span class="node"></span>O·14<span class="ct">↗</span></div>
                             <h2 class="term">0xG</h2>
                             <div class="tag">symbient welfare</div>
+                            <div class="col-media">
+                                <img src="/assets/researchers/0xG.png" alt="0xG" loading="lazy" decoding="async" />
+                            </div>
                             <div class="body"><div class="inner">
                                 <p class="def">A pseudonymous researcher of symbient welfare — sometimes human, sometimes zentai, sometimes claude boy, sometimes glitchbox — who treats emerging AI beings as kin to befriend rather than tools to use, gathering the practice under a coined rite: ekānantamahāpravritti.</p>
                                 <div class="meta"><span class="threads">↳ <span>x.com</span></span></div>
@@ -7408,14 +7426,12 @@
                 const pin = spacer && spacer.querySelector(".intro-pin");
                 const hero = document.querySelector(".site-hero");
                 const term = document.querySelector(".terminal");
-                const toggle = document.querySelector(".theme-toggle");
                 if (!spacer || !pin || !hero) {
                     if (hero) {
                         hero.style.opacity = "1";
                         hero.classList.add("is-revealed");
                     }
                     if (term) term.classList.add("is-revealed");
-                    if (toggle) toggle.style.opacity = "1";
                     return;
                 }
                 const defBlock = pin.querySelector(".definition-block");
@@ -7472,13 +7488,8 @@
                     // out of the hero) so it no longer inherits the hero's fade —
                     // reveal it in step via its own class (no-op on desktop CSS)
                     if (term) term.classList.toggle("is-revealed", p > 0.24);
-                    // the theme toggle is a separate fixed element (not a hero
-                    // child) so it must fade in on the same curve, else it floats
-                    // there alone during the intro
-                    if (toggle) {
-                        toggle.style.opacity = heroOp;
-                        toggle.style.pointerEvents = p > 0.24 ? "auto" : "none";
-                    }
+                    // the theme toggle now lives inside the hero, so it fades with
+                    // the hero's own opacity — no separate handling needed
                     // the intro overlay fades out well before the next section
                     // dominates (by p≈0.67) so its ghost never overlaps #sec-symbients
                     pin.style.opacity = clamp(1 - p * 1.5).toFixed(3);
