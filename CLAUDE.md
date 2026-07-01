@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The website for **symbient.life** — a static, hand-authored marketing/concept site. There is **no build step, no framework, no bundler, and no package.json**: HTML files reference plain `.css` and `.js` directly, and what's on disk is what ships. Edit the files, reload the browser.
 
+**Deferred cleanup lives in [`CLEANUP.md`](CLEANUP.md).** While the design is in flux we defer tidy-ups (dead code, stale/unoptimized assets, file-lifecycle decisions) to a final pass — when you spot something to clean but shouldn't act on yet, add it there rather than fixing inline.
+
 ## Commands
 
 ```bash
