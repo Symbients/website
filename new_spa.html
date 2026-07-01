@@ -180,7 +180,13 @@
                 cursor: pointer;
                 backdrop-filter: blur(5px);
                 -webkit-backdrop-filter: blur(5px);
-                transition: all 0.25s var(--ease);
+                /* starts hidden; the intro fades it in on the hero's curve (its
+                   opacity is driven per-frame, so it is left off the transition) */
+                opacity: 0;
+                transition:
+                    color 0.25s var(--ease),
+                    background 0.25s var(--ease),
+                    border-color 0.25s var(--ease);
             }
             .theme-toggle:hover {
                 color: #fff;
@@ -256,6 +262,11 @@
                 line-height: 1;
                 color: var(--text);
                 white-space: nowrap;
+            }
+            /* hamburger menu button — hidden on desktop (tabs show inline); shown
+               on phones where it toggles the tree-styled section dropdown */
+            .nav-burger {
+                display: none;
             }
             /* tabs sit under the title, above the terminal — in the banner's
                lower (page-coloured) scrim zone, so the main page ink reads in
@@ -1466,23 +1477,201 @@
                 }
             }
 
-            /* ---- responsive: phones (≤640) — nav wraps, so the bar is taller ---- */
+            /* ---- responsive: phones (≤640) ---- */
+            /* Compact single-row chrome: the section title sits left, the section
+               tabs become a horizontal swipe-strip beside it (no wrapping → the
+               bar stays one line tall). The terminal kaomoji line is lifted OUT of
+               the hero and pinned to the bottom of the viewport (see the relocation
+               IIFE + the fixed rule below) so it reads as a persistent footer
+               ticker instead of padding the top bar. */
             @media (max-width: 640px) {
                 :root {
-                    --hero-h: clamp(104px, 22vh, 156px);
+                    --hero-h: clamp(50px, 9vh, 64px);
+                }
+                /* the dropdown hangs below the bar → the hero must not clip it */
+                .site-hero {
+                    overflow: visible;
                 }
                 .hero-inner {
-                    gap: 0.35rem;
-                    padding-top: clamp(0.4rem, 1.4vh, 0.6rem);
+                    gap: 0;
+                    padding: 0 clamp(0.7rem, 4vw, 1rem);
+                    min-height: var(--hero-h);
+                    justify-content: center;
+                    overflow: visible;
+                }
+                /* the hamburger takes the far-right corner; the theme toggle sits
+                   to its left (fixed), keeping its full ◐ dark/light label, and is
+                   vertically centred on the bar row (matching the title/burger) */
+                .theme-toggle {
+                    right: 4rem;
+                    top: calc(var(--hero-h) / 2);
+                    transform: translateY(-50%);
                 }
                 .hero-bar {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 0.25rem;
+                    flex-direction: row;
+                    align-items: center;
+                    flex-wrap: nowrap;
+                    gap: 0.7rem;
                 }
+                .hero-title {
+                    flex: 0 0 auto;
+                    font-size: clamp(1.05rem, 0.9rem + 1.2vw, 1.4rem);
+                }
+                /* the hamburger, pushed to the right edge of the bar */
+                .nav-burger {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-left: auto;
+                    width: 2.4rem;
+                    height: 2.4rem;
+                    padding: 0;
+                    background: none;
+                    border: none;
+                    color: var(--text);
+                    cursor: pointer;
+                    pointer-events: auto; /* .hero-inner is pointer-events:none */
+                    -webkit-tap-highlight-color: transparent;
+                }
+                .burger-box {
+                    position: relative;
+                    display: block;
+                    width: 20px;
+                    height: 14px;
+                }
+                .burger-box span {
+                    position: absolute;
+                    left: 0;
+                    width: 100%;
+                    height: 2px;
+                    background: currentColor;
+                    border-radius: 2px;
+                    transition:
+                        top 0.28s var(--ease),
+                        transform 0.28s var(--ease),
+                        opacity 0.18s var(--ease);
+                }
+                .burger-box span:nth-child(1) {
+                    top: 0;
+                }
+                .burger-box span:nth-child(2) {
+                    top: 6px;
+                }
+                .burger-box span:nth-child(3) {
+                    top: 12px;
+                }
+                /* → animate to an X when the menu is open */
+                .site-hero.nav-open .burger-box span:nth-child(1) {
+                    top: 6px;
+                    transform: rotate(45deg);
+                }
+                .site-hero.nav-open .burger-box span:nth-child(2) {
+                    opacity: 0;
+                }
+                .site-hero.nav-open .burger-box span:nth-child(3) {
+                    top: 6px;
+                    transform: rotate(-45deg);
+                }
+
+                /* ---- section menu: a tree-styled dropdown under the bar ---- */
                 .site-nav {
-                    gap: 0.25rem 0.55rem;
-                    letter-spacing: 0.1em;
+                    position: absolute;
+                    top: calc(100% + 1px);
+                    left: 0;
+                    right: 0;
+                    z-index: 6;
+                    flex-direction: column;
+                    flex-wrap: nowrap;
+                    align-items: stretch;
+                    gap: 0;
+                    padding: 0.4rem 0;
+                    /* tree aesthetic: mono, lowercase (not the inline caps), small */
+                    font-family: var(--mono);
+                    font-size: var(--fs-small);
+                    letter-spacing: 0.02em;
+                    text-transform: none;
+                    background: color-mix(in srgb, var(--void) 93%, transparent);
+                    backdrop-filter: saturate(1.1) blur(10px);
+                    -webkit-backdrop-filter: saturate(1.1) blur(10px);
+                    border-bottom: 1px solid var(--hair);
+                    box-shadow: 0 16px 34px -22px rgba(0, 0, 0, 0.55);
+                    /* collapsed until .nav-open */
+                    max-height: 0;
+                    opacity: 0;
+                    overflow: hidden;
+                    visibility: hidden;
+                    pointer-events: none;
+                    transition:
+                        max-height 0.32s var(--ease),
+                        opacity 0.22s var(--ease),
+                        visibility 0s linear 0.32s;
+                }
+                .site-hero.nav-open .site-nav {
+                    max-height: 80vh;
+                    opacity: 1;
+                    overflow: auto;
+                    visibility: visible;
+                    pointer-events: auto;
+                    transition:
+                        max-height 0.36s var(--ease),
+                        opacity 0.24s var(--ease);
+                }
+                .site-nav .tab {
+                    display: block;
+                    position: relative;
+                    padding: 0.55rem clamp(0.9rem, 4vw, 1.3rem);
+                    margin: 0;
+                    border-bottom: none;
+                    color: var(--text);
+                    letter-spacing: inherit;
+                    text-transform: none;
+                }
+                /* tree marks: ▸ branch for each row, ● for the current section */
+                .site-nav .tab::before {
+                    content: "▸";
+                    display: inline-block;
+                    width: 1.6ch;
+                    margin-right: 0.4ch;
+                    color: var(--dim);
+                }
+                .site-nav .tab:hover,
+                .site-nav .tab:focus {
+                    color: var(--green);
+                    border-bottom: none;
+                    background: color-mix(in srgb, var(--green) 8%, transparent);
+                }
+                .site-nav .tab.active {
+                    color: var(--green);
+                    font-weight: 700;
+                    border-bottom: none;
+                }
+                .site-nav .tab.active::before {
+                    content: "●";
+                    color: var(--green);
+                }
+                /* the kaomoji ticker, relocated out of the hero, pinned bottom */
+                .terminal {
+                    position: fixed;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    z-index: 5;
+                    padding: 0.3rem clamp(0.7rem, 4vw, 1rem);
+                    background: color-mix(in srgb, var(--void) 88%, transparent);
+                    backdrop-filter: saturate(1.1) blur(8px);
+                    -webkit-backdrop-filter: saturate(1.1) blur(8px);
+                    border-top: 1px solid var(--hair);
+                    border-bottom: none;
+                    pointer-events: none;
+                    opacity: 0; /* revealed with the hero after the intro */
+                    transition: opacity 0.5s var(--ease);
+                }
+                .terminal.is-revealed {
+                    opacity: 1;
+                }
+                /* clear the pinned ticker so the footer isn't hidden under it */
+                .scroll {
+                    padding-bottom: 2.6rem;
                 }
                 .port-section {
                     /* tighter, content-sized vertical rhythm on phones (the old
@@ -2411,7 +2600,18 @@
             <div class="hero-inner">
                 <div class="hero-bar">
                     <h1 class="hero-title">Symbients</h1>
-                    <nav class="site-nav" aria-label="sections">
+                    <button
+                        class="nav-burger"
+                        type="button"
+                        aria-label="Sections menu"
+                        aria-expanded="false"
+                        aria-controls="site-nav"
+                    >
+                        <span class="burger-box" aria-hidden="true">
+                            <span></span><span></span><span></span>
+                        </span>
+                    </button>
+                    <nav class="site-nav" id="site-nav" aria-label="sections">
                         <a class="tab" href="#sec-home">home</a>
                         <a class="tab" href="#sec-symbients">symbients</a>
                         <a class="tab" href="#sec-narrative">narrative</a>
@@ -3730,6 +3930,71 @@
                 build();
                 window.addEventListener("resize", build);
                 if (!reduce) setInterval(step, 92);
+            })();
+
+            // ---- relocate the kaomoji ticker to the bottom on phones ----
+            // The mobile CSS pins .terminal to the bottom with position:fixed, but
+            // while it lives inside .site-hero (which has backdrop-filter, and thus
+            // is a containing block for fixed descendants) "fixed" would be relative
+            // to the hero — not the viewport. So on phones we lift it out to <body>;
+            // on wider screens we put it back where it belongs (inside .hero-inner,
+            // after the title/nav row). Re-fires resize so the ticker rebuilds to
+            // its new width. Toggle-driven → free on desktop.
+            (function () {
+                const term = document.querySelector(".terminal");
+                const inner = document.querySelector(".hero-inner");
+                if (!term || !inner) return;
+                const mq = window.matchMedia("(max-width: 640px)");
+                function place() {
+                    const wantBottom = mq.matches;
+                    const atBottom = term.parentElement === document.body;
+                    if (wantBottom === atBottom) return;
+                    if (wantBottom) document.body.appendChild(term);
+                    else inner.appendChild(term); // last child, after .hero-bar
+                    window.dispatchEvent(new Event("resize"));
+                }
+                place();
+                mq.addEventListener("change", place);
+            })();
+
+            // ---- mobile section menu: hamburger toggles the section dropdown ----
+            // On phones the inline tabs are hidden behind a hamburger button; it
+            // toggles a tree-styled dropdown of every section. Closes on choose,
+            // outside-tap, or Esc. Desktop keeps the inline tabs (the burger is
+            // display:none there, so its listeners are inert).
+            (function () {
+                const hero = document.querySelector(".site-hero");
+                const burger = document.querySelector(".nav-burger");
+                const nav = document.querySelector(".site-nav");
+                if (!hero || !burger || !nav) return;
+                const mq = window.matchMedia("(max-width: 640px)");
+
+                function setOpen(v) {
+                    hero.classList.toggle("nav-open", v);
+                    burger.setAttribute("aria-expanded", v ? "true" : "false");
+                }
+
+                burger.addEventListener("click", (e) => {
+                    e.stopPropagation(); // don't let the document handler re-close
+                    setOpen(!hero.classList.contains("nav-open"));
+                });
+                // choosing a section closes the menu (the anchor still scrolls)
+                nav.addEventListener("click", (e) => {
+                    if (e.target.closest(".tab")) setOpen(false);
+                });
+                // outside tap / Esc closes
+                document.addEventListener("click", (e) => {
+                    if (
+                        hero.classList.contains("nav-open") &&
+                        !hero.contains(e.target)
+                    )
+                        setOpen(false);
+                });
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") setOpen(false);
+                });
+                // collapse when crossing back to the desktop layout
+                mq.addEventListener("change", () => setOpen(false));
             })();
         </script>
 
@@ -7059,11 +7324,13 @@
                 });
 
                 // ---- scroll-driven auto-expand (mobile experiment) ----
-                // Instead of relying on a tap that isn't obviously there, the card
-                // nearest the viewport's read-line opens on its own as you scroll,
-                // collapsing its section-siblings (the same one-per-section model).
-                // Tap still works as a fallback; scroll is authoritative. Off under
-                // reduced-motion (leaves plain tap-to-expand) and off on desktop.
+                // Instead of relying on a tap that isn't obviously there, cards open
+                // on their own as you scroll: a card expands once its top passes the
+                // viewport's read-line and STAYS open (cards below the line, not yet
+                // reached, stay closed). Scrolling down only grows the next card
+                // below the line, so nothing above collapses — no upward lurch.
+                // Tap still works as a fallback. Off under reduced-motion (leaves
+                // plain tap-to-expand) and off on desktop.
                 (function () {
                     const reduce = matchMedia(
                         "(prefers-reduced-motion: reduce)",
@@ -7084,32 +7351,33 @@
                                 const cols = [...sec.querySelectorAll(".col")];
                                 if (!cols.length) return;
                                 const sr = sec.getBoundingClientRect();
-                                // section off-screen → collapse so far-away height
-                                // changes don't shift what you're reading
+                                // section fully off-screen → reset (re-opens on
+                                // return); keeps far-away height changes out of view
                                 if (
                                     sr.bottom < 0 ||
                                     sr.top > window.innerHeight
                                 ) {
-                                    collapseSiblings(sec, null);
+                                    for (const c of cols)
+                                        c.classList.remove("is-expanded");
                                     return;
                                 }
-                                // active = the last card whose top has risen
-                                // above the read-line. Monotonic — switches once
-                                // per card as you scroll past its top, so it never
-                                // flip-flops between two neighbours at a midpoint.
-                                let active = cols[0];
+                                // a card stays OPEN once its top has passed the
+                                // read-line; cards below the line (not yet reached)
+                                // stay closed. Scrolling DOWN only ever grows the
+                                // next card BELOW the line — nothing above collapses,
+                                // so there's no upward lurch. Scrolling back UP closes
+                                // cards symmetrically as they drop below the line.
                                 for (const c of cols) {
-                                    if (c.getBoundingClientRect().top <= focusY)
-                                        active = c;
-                                    else break;
-                                }
-                                if (
-                                    active &&
-                                    !active.classList.contains("is-expanded")
-                                ) {
-                                    ensureExtra(active);
-                                    collapseSiblings(sec, active);
-                                    active.classList.add("is-expanded");
+                                    const passed =
+                                        c.getBoundingClientRect().top <= focusY;
+                                    const open =
+                                        c.classList.contains("is-expanded");
+                                    if (passed && !open) {
+                                        ensureExtra(c);
+                                        c.classList.add("is-expanded");
+                                    } else if (!passed && open) {
+                                        c.classList.remove("is-expanded");
+                                    }
                                 }
                             });
                     }
@@ -7139,11 +7407,15 @@
                 const spacer = document.getElementById("sec-home");
                 const pin = spacer && spacer.querySelector(".intro-pin");
                 const hero = document.querySelector(".site-hero");
+                const term = document.querySelector(".terminal");
+                const toggle = document.querySelector(".theme-toggle");
                 if (!spacer || !pin || !hero) {
                     if (hero) {
                         hero.style.opacity = "1";
                         hero.classList.add("is-revealed");
                     }
+                    if (term) term.classList.add("is-revealed");
+                    if (toggle) toggle.style.opacity = "1";
                     return;
                 }
                 const defBlock = pin.querySelector(".definition-block");
@@ -7193,8 +7465,20 @@
                     // hero fades in later + more gradually (a small initial scroll
                     // used to pop it straight in): held hidden until p≈0.2, then
                     // ramps to full by p≈0.8
-                    hero.style.opacity = clamp((p - 0.2) / 0.6).toFixed(3);
+                    const heroOp = clamp((p - 0.2) / 0.6).toFixed(3);
+                    hero.style.opacity = heroOp;
                     hero.classList.toggle("is-revealed", p > 0.24);
+                    // the kaomoji ticker is pinned to the bottom on phones (lifted
+                    // out of the hero) so it no longer inherits the hero's fade —
+                    // reveal it in step via its own class (no-op on desktop CSS)
+                    if (term) term.classList.toggle("is-revealed", p > 0.24);
+                    // the theme toggle is a separate fixed element (not a hero
+                    // child) so it must fade in on the same curve, else it floats
+                    // there alone during the intro
+                    if (toggle) {
+                        toggle.style.opacity = heroOp;
+                        toggle.style.pointerEvents = p > 0.24 ? "auto" : "none";
+                    }
                     // the intro overlay fades out well before the next section
                     // dominates (by p≈0.67) so its ghost never overlaps #sec-symbients
                     pin.style.opacity = clamp(1 - p * 1.5).toFixed(3);
