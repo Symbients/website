@@ -7341,75 +7341,64 @@
                             .forEach((c) => c.classList.remove("is-expanded"));
                 });
 
-                // ---- scroll-driven auto-expand (mobile experiment) ----
-                // Instead of relying on a tap that isn't obviously there, cards open
-                // on their own as you scroll: a card expands once its top passes the
-                // viewport's read-line and STAYS open (cards below the line, not yet
-                // reached, stay closed). Scrolling down only grows the next card
-                // below the line, so nothing above collapses — no upward lurch.
-                // Tap still works as a fallback. Off under reduced-motion (leaves
-                // plain tap-to-expand) and off on desktop.
+                // ---- scroll-driven auto-expand (mobile) ----
+                // Cards open on their own as you scroll: a card expands once its
+                // top passes the viewport's read-line (~42% down, clear of the
+                // fixed hero) and STAYS open until it scrolls off the top; cards
+                // below the line stay closed, so nothing above collapses — no
+                // upward lurch. Scrolling back up closes them symmetrically.
+                // Tap still works as a fallback.
+                //
+                // Detection is an IntersectionObserver whose root is the viewport's
+                // top slice (bottom inset down to the read-line via rootMargin), so
+                // a card "intersects" for exactly the window it should be open. The
+                // earlier version polled getBoundingClientRect() on every card on
+                // every scroll frame — a forced synchronous reflow on the main
+                // thread, which is what made this stutter on iOS. IO does the same
+                // test off the main thread. Off under reduced-motion (leaves plain
+                // tap-to-expand), on desktop (MOBILE guard), and where IO is absent.
                 (function () {
                     const reduce = matchMedia(
                         "(prefers-reduced-motion: reduce)",
                     ).matches;
-                    if (reduce) return;
-                    // the read-line: a touch above centre, clear of the fixed hero
-                    const FOCUS = 0.42;
-                    let raf = 0;
-                    function pick() {
-                        raf = 0;
-                        if (!MOBILE.matches) return;
-                        const focusY = window.innerHeight * FOCUS;
+                    if (reduce || !("IntersectionObserver" in window)) return;
+                    // root = top 42% of the viewport: a card is "intersecting"
+                    // from when its top crosses the read-line until it leaves the
+                    // top edge — precisely when it should be expanded.
+                    const io = new IntersectionObserver(
+                        (entries) => {
+                            if (!MOBILE.matches) return; // desktop → readers
+                            for (const e of entries) {
+                                if (e.isIntersecting) {
+                                    ensureExtra(e.target);
+                                    e.target.classList.add("is-expanded");
+                                } else {
+                                    e.target.classList.remove("is-expanded");
+                                }
+                            }
+                        },
+                        { rootMargin: "0px 0px -58% 0px", threshold: 0 },
+                    );
+                    function observeAll() {
                         document
                             .querySelectorAll(".port-section")
                             .forEach((sec) => {
                                 // narrative already shows full text+art on mobile
                                 if (sec.id === "sec-narrative") return;
-                                const cols = [...sec.querySelectorAll(".col")];
-                                if (!cols.length) return;
-                                const sr = sec.getBoundingClientRect();
-                                // section fully off-screen → reset (re-opens on
-                                // return); keeps far-away height changes out of view
-                                if (
-                                    sr.bottom < 0 ||
-                                    sr.top > window.innerHeight
-                                ) {
-                                    for (const c of cols)
-                                        c.classList.remove("is-expanded");
-                                    return;
-                                }
-                                // a card stays OPEN once its top has passed the
-                                // read-line; cards below the line (not yet reached)
-                                // stay closed. Scrolling DOWN only ever grows the
-                                // next card BELOW the line — nothing above collapses,
-                                // so there's no upward lurch. Scrolling back UP closes
-                                // cards symmetrically as they drop below the line.
-                                for (const c of cols) {
-                                    const passed =
-                                        c.getBoundingClientRect().top <= focusY;
-                                    const open =
-                                        c.classList.contains("is-expanded");
-                                    if (passed && !open) {
-                                        ensureExtra(c);
-                                        c.classList.add("is-expanded");
-                                    } else if (!passed && open) {
-                                        c.classList.remove("is-expanded");
-                                    }
-                                }
+                                sec.querySelectorAll(".col").forEach((c) =>
+                                    io.observe(c),
+                                );
                             });
                     }
-                    function onScroll() {
-                        if (!raf) raf = requestAnimationFrame(pick);
-                    }
-                    window.addEventListener("scroll", onScroll, {
-                        passive: true,
+                    observeAll();
+                    // re-observe on breakpoint change so IO re-reports current
+                    // state — expands whatever is already past the line on
+                    // entering mobile. (The outer MOBILE handler clears
+                    // .is-expanded when leaving mobile.)
+                    MOBILE.addEventListener("change", () => {
+                        io.disconnect();
+                        observeAll();
                     });
-                    window.addEventListener("resize", onScroll, {
-                        passive: true,
-                    });
-                    MOBILE.addEventListener("change", onScroll);
-                    onScroll();
                 })();
             })();
         </script>
