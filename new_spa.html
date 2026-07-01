@@ -881,7 +881,9 @@
                 padding: 1.1rem 1rem 1.3rem;
                 outline: none;
                 cursor: pointer;
-                transition: background 0.3s var(--ease);
+                transition:
+                    background 0.3s var(--ease),
+                    border-color 0.3s var(--ease);
             }
             .col:first-child {
                 border-left: none;
@@ -2221,21 +2223,34 @@
                 display: none;
             }
             @media (max-width: 520px) {
-                /* the toggle (.is-expanded) is authoritative on mobile: neutralize
-                   the hover/focus auto-reveal so tapping toggles, not just focus */
+                /* mobile reveal is HEIGHT-animated via max-height so tap /
+                   scroll-driven expand eases open + closed instead of snapping.
+                   (The desktop 0fr→1fr grid-rows trick collapses to 0 in this
+                   nested 1-col context, so we can't reuse it here.) The COLLAPSE
+                   is delayed a beat so switching cards grows the next before the
+                   current shrinks — no contract/re-expand gap or upward lurch. */
+                .body {
+                    display: block;
+                    grid-template-rows: none;
+                    max-height: 0;
+                    opacity: 0;
+                    overflow: hidden;
+                    transition:
+                        max-height 0.5s var(--ease) 0.14s,
+                        opacity 0.34s var(--ease) 0.14s;
+                }
+                /* neutralize the desktop hover/focus auto-reveal — the
+                   .is-expanded toggle (tap or scroll) is authoritative here */
                 .col:hover .body,
                 .col:focus .body,
                 .col:focus-within .body {
-                    grid-template-rows: 0fr;
+                    max-height: 0;
                     opacity: 0;
                 }
-                /* reveal via display:block — the 0fr→1fr grid trick used for the
-                   desktop hover reveal resolves to 0 in this nested 1-col context,
-                   so override the grid and let the body size to its content */
                 .col.is-expanded .body {
-                    display: block;
+                    max-height: 42rem;
                     opacity: 1;
-                    transition: opacity 0.3s var(--ease);
+                    transition-delay: 0s; /* expand immediately */
                 }
                 .col.is-expanded .inner {
                     overflow: visible;
@@ -7042,6 +7057,74 @@
                             .querySelectorAll(".col.is-expanded")
                             .forEach((c) => c.classList.remove("is-expanded"));
                 });
+
+                // ---- scroll-driven auto-expand (mobile experiment) ----
+                // Instead of relying on a tap that isn't obviously there, the card
+                // nearest the viewport's read-line opens on its own as you scroll,
+                // collapsing its section-siblings (the same one-per-section model).
+                // Tap still works as a fallback; scroll is authoritative. Off under
+                // reduced-motion (leaves plain tap-to-expand) and off on desktop.
+                (function () {
+                    const reduce = matchMedia(
+                        "(prefers-reduced-motion: reduce)",
+                    ).matches;
+                    if (reduce) return;
+                    // the read-line: a touch above centre, clear of the fixed hero
+                    const FOCUS = 0.42;
+                    let raf = 0;
+                    function pick() {
+                        raf = 0;
+                        if (!MOBILE.matches) return;
+                        const focusY = window.innerHeight * FOCUS;
+                        document
+                            .querySelectorAll(".port-section")
+                            .forEach((sec) => {
+                                // narrative already shows full text+art on mobile
+                                if (sec.id === "sec-narrative") return;
+                                const cols = [...sec.querySelectorAll(".col")];
+                                if (!cols.length) return;
+                                const sr = sec.getBoundingClientRect();
+                                // section off-screen → collapse so far-away height
+                                // changes don't shift what you're reading
+                                if (
+                                    sr.bottom < 0 ||
+                                    sr.top > window.innerHeight
+                                ) {
+                                    collapseSiblings(sec, null);
+                                    return;
+                                }
+                                // active = the last card whose top has risen
+                                // above the read-line. Monotonic — switches once
+                                // per card as you scroll past its top, so it never
+                                // flip-flops between two neighbours at a midpoint.
+                                let active = cols[0];
+                                for (const c of cols) {
+                                    if (c.getBoundingClientRect().top <= focusY)
+                                        active = c;
+                                    else break;
+                                }
+                                if (
+                                    active &&
+                                    !active.classList.contains("is-expanded")
+                                ) {
+                                    ensureExtra(active);
+                                    collapseSiblings(sec, active);
+                                    active.classList.add("is-expanded");
+                                }
+                            });
+                    }
+                    function onScroll() {
+                        if (!raf) raf = requestAnimationFrame(pick);
+                    }
+                    window.addEventListener("scroll", onScroll, {
+                        passive: true,
+                    });
+                    window.addEventListener("resize", onScroll, {
+                        passive: true,
+                    });
+                    MOBILE.addEventListener("change", onScroll);
+                    onScroll();
+                })();
             })();
         </script>
         <script>
