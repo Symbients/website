@@ -1,9 +1,8 @@
 (() => {
-    const themes = ["light", "dark", "amber"];
+    const themes = ["light", "dark"];
     const labels = {
         light: "Light",
         dark: "Dark",
-        amber: "Amber",
     };
     const storageKey = "symbient-theme";
     const root = document.documentElement;

@@ -73,19 +73,6 @@
                 --symbient-color: #5c5a55;
             }
 
-            html[data-theme="amber"] {
-                --carbon: #241507;
-                --cream: #edd39a;
-                --cream-dark: #e1c58a;
-                --accent: #b86800;
-                --accent-muted: rgba(184, 104, 0, 0.28);
-                --text-secondary: #5b3f19;
-                --border-subtle: rgba(36, 21, 7, 0.18);
-                --border-medium: rgba(36, 21, 7, 0.32);
-                --panel-bg: rgba(36, 21, 7, 0.12);
-                --symbient-color: #7b5526;
-            }
-
             body {
                 background: var(--cream);
                 color: var(--carbon);
@@ -334,15 +321,12 @@
                 opacity: 0.4;
             }
 
-            html:not([data-theme="dark"]):not([data-theme="amber"])
-                .theme-toggle
-                .dot-light {
+            html:not([data-theme="dark"]) .theme-toggle .dot-light {
                 opacity: 1;
                 background: var(--carbon);
             }
 
-            html[data-theme="dark"] .theme-toggle .dot-dark,
-            html[data-theme="amber"] .theme-toggle .dot-amber {
+            html[data-theme="dark"] .theme-toggle .dot-dark {
                 opacity: 1;
                 background: var(--carbon);
             }
@@ -457,7 +441,6 @@
             <span class="theme-label" aria-hidden="true">Light</span>
             <span class="dot dot-light" aria-hidden="true"></span>
             <span class="dot dot-dark" aria-hidden="true"></span>
-            <span class="dot dot-amber" aria-hidden="true"></span>
         </button>
 
         <a href="#" class="lang-toggle" onclick="toggleLanguage(event)">

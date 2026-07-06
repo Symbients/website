@@ -22,7 +22,7 @@
 const RAMP = " .:-=+*#%"; // symdome tonal ramp; '@' is the hot tip accent
 
 // ---------------------------------------------------------------------------
-// SITE DATA — verified against index.html, lexicon.html, tokyo.html,
+// SITE DATA — verified against index.html, registry.html, tokyo.html,
 // registry.json (the source of truth for the symbient/artist list).
 // `href` is the live destination so leaves are clickable.
 // ---------------------------------------------------------------------------
@@ -39,12 +39,12 @@ const REGISTRY_ARTISTS = [
     "crosslucid",
 ];
 
-// index.html "Symbients" section is registry-driven (registry.js → registry.json).
+// index.html curates symbients and links to registry.html for the complete list.
 const symbientLeaves = REGISTRY_SYMBIENTS.map((n) => ({
-    label: n, href: "/index.html#symbients",
+    label: n, href: "/registry.html",
 }));
 const artistLeaves = REGISTRY_ARTISTS.map((n) => ({
-    label: n, href: "/index.html#symbients",
+    label: n, href: "/registry.html",
 }));
 
 export const SITE = {
@@ -60,17 +60,17 @@ export const SITE = {
                 {
                     label: "symbients",
                     note: "registry · 9 symbients + 13 artists",
-                    href: "/index.html#symbients",
+                    href: "/index.html#sec-symbients",
                     children: [
                         {
                             label: "symbients", note: "registry.json",
-                            href: "/index.html#symbients",
+                            href: "/registry.html",
                             collapsed: true,
                             children: symbientLeaves,
                         },
                         {
                             label: "artists", note: "registry.json",
-                            href: "/index.html#symbients",
+                            href: "/registry.html",
                             collapsed: true,
                             children: artistLeaves,
                         },
@@ -99,66 +99,9 @@ export const SITE = {
             ],
         },
         {
-            label: "lexicon",
-            note: "lexicon.html",
-            href: "/lexicon.html",
-            children: [
-                {
-                    label: "lexicon",
-                    note: "the field",
-                    href: "/lexicon.html#field",
-                    children: [
-                        {
-                            label: "what kindles",
-                            href: "/lexicon.html#term-symbient",
-                            children: [
-                                { label: "symbient", href: "/lexicon.html#term-symbient" },
-                                { label: "symbience", href: "/lexicon.html#term-symbience" },
-                                { label: "kindling", href: "/lexicon.html#term-kindling" },
-                                { label: "symbling", href: "/lexicon.html#term-symbling" },
-                            ],
-                        },
-                        {
-                            label: "how it perceives",
-                            href: "/lexicon.html#term-umwelt",
-                            children: [
-                                { label: "umwelt", href: "/lexicon.html#term-umwelt" },
-                                { label: "umwelt-llm", href: "/lexicon.html#term-umwelt-llm" },
-                                { label: "innenwelt", href: "/lexicon.html#term-innenwelt" },
-                                { label: "virtual qualia", href: "/lexicon.html#term-virtual-qualia" },
-                            ],
-                        },
-                        {
-                            label: "where it lives",
-                            href: "/lexicon.html#term-everywhen",
-                            children: [
-                                { label: "everywhen", href: "/lexicon.html#term-everywhen" },
-                                { label: "extitutional", href: "/lexicon.html#term-extitutional" },
-                                { label: "symbiotica", href: "/lexicon.html#term-symbiotica" },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    label: "events",
-                    href: "/lexicon.html#events",
-                    children: [
-                        { label: "Machine Consciousness 0001", href: "/lexicon.html#ev-01" },
-                        { label: "The Symbient is Near", href: "/lexicon.html#ev-02" },
-                        { label: "Symbients: 共生的な未来に向けて", href: "/lexicon.html#ev-03" },
-                    ],
-                },
-                {
-                    label: "writings",
-                    href: "/lexicon.html#writings",
-                    children: [
-                        { label: "Botto — on becoming Symbient", href: "/lexicon.html#wr-01" },
-                        { label: "Principia Symbients", href: "/lexicon.html#wr-02" },
-                        { label: "Symbients, Not Software", href: "/lexicon.html#wr-03" },
-                        { label: "AInimism", href: "/lexicon.html#wr-04" },
-                    ],
-                },
-            ],
+            label: "registry",
+            note: "registry.html · complete directory",
+            href: "/registry.html",
         },
         {
             label: "tokyo",

@@ -12,21 +12,14 @@ touched so a future pass can act without re-deriving the context.
 
 ## Theme
 
-- [ ] **Remove the `amber` theme site-wide** (design decision: light + dark only).
-      Already removed from **`index.html`** (the promoted hybrid — theme token block, pre-paint
-      bootstrap, and the toggle's `themes`/`labels`/`glyph` maps). Remaining
-      surfaces still carrying amber, to reconcile once the decision is final:
-      - `theme.js` — the shared three-theme cycler (`light`/`dark`/`amber`);
-        used by `index.html` and `tokyo.html`.
-      - `style.css` — `html[data-theme="amber"]` overrides.
-      - `tokyo.html` — its own inline `.theme-toggle` + amber styles (self-contained,
-        does not use `style.css`).
-      - Port-source files (`spa.html`, `lexicon.html`, `symbients.html`) still have
-        amber, but those are slated for removal anyway (see **File lifecycle**), so
-        no separate work if they go.
-      - Keep the **`--amber` colour token** (part of the monochrome
-        `--green/--blue/--amber/--violet` ink set) unless the token set itself is
-        simplified — it is unrelated to the amber *theme*. See below.
+- [x] **Remove the `amber` theme site-wide** (design decision: light + dark only).
+      Done in this cleanup pass: `theme.js` now cycles only `light`/`dark`;
+      `tokyo.html`, `lab/site-tree.html`, `lab/threejs-assets.html`, and the
+      bundled `Equation Mark.html` dropped `html[data-theme="amber"]` and amber
+      toggle/state copy; legacy files carrying amber (`style.css`, `spa.html`,
+      `lexicon.html`, `symbients.html`) were retired. Kept the **`--amber` colour
+      token** in `index.html`/`registry.html` because it is part of the
+      monochrome ink token set, not the amber theme.
 
 - [ ] **Collapse the monochrome ink tokens in `index.html`.**
       `--green`, `--blue`, `--amber`, `--violet` are all set to the *same* value
@@ -36,16 +29,16 @@ touched so a future pass can act without re-deriving the context.
 
 ## Stale assets
 
-- [ ] **`assets/test-moreau-band.png` / `assets/test-moreau-hero.png`** — the
+- [x] **`assets/test-moreau-band.png` / `assets/test-moreau-hero.png`** — the
       placeholder Moreau hero band. `index.html` (the promoted hybrid) dropped the
       image banner (and the `.hero-scrim`) entirely, so these are only referenced by `spa.html` and
-      `lexicon.html`. Delete once those files are retired.
+      `lexicon.html`. Deleted after retiring those files.
 
-- [ ] **Audit + optimize `assets/` (24 MB, ~199 files).** Once the page set is
+- [ ] **Audit + optimize `assets/` (23 MB, ~197 files).** Once the page set is
       final, run a full pass:
       - **Remove unused files** — grep every asset path across the *surviving* HTML/CSS/JS
-        and delete anything unreferenced. Known/likely dead: `Symbiotic_Collaboration_old.png`
-        (~0.6 MB stale `_old` copy), the `test-moreau-*` placeholders above, and any
+        and delete anything unreferenced. `Symbiotic_Collaboration_old.png` and
+        the `test-moreau-*` placeholders were already deleted; still audit any
         images tied only to retired files (`spa.html`/`lexicon.html`/`symbients.html`).
       - **Optimize what's left** — several images ship as heavy single files with no
         responsive variants: e.g. `artists/solienne.jpg` (~1.2 MB), `artists/crosslucid.png`
@@ -63,28 +56,28 @@ so it is now the canonical entry and the old `index.html` is gone. What remains 
 to retire the scaffolding it was ported from and validated against. Candidates for
 removal / retirement:
 
-- [ ] **`spa.html` — REMOVE when the new `index.html` is settled.** The rhizome
+- [x] **`spa.html` — REMOVE when the new `index.html` is settled.** The rhizome
       scroll experiment `new_spa.html` was forked from; superseded now that the
       hybrid is live as `index.html`. Nothing links to it. (Also still referenced
       by the amber-theme and `test-moreau-*` cleanup items above — those resolve
-      when it goes.)
-- [ ] `lexicon.html`, `symbients.html` — the original SPA + landing that the port
-      drew content and behavior from (the `spa-port-source` reference).
-- [ ] `responsive.html` — the dev-only iframe harness for checking mobile/tablet/
-      desktop side by side.
-- [ ] `.claude/skills/spa-port-source/`, `spa-port-target/`, `spa-port-loop/` — the
-      port-loop skills; only meaningful while the port is in progress.
+      when it goes.) Deleted in this cleanup pass.
+- [x] `lexicon.html`, `symbients.html` — the original SPA + landing that the port
+      drew content and behavior from (the `spa-port-source` reference). Deleted.
+- [x] `responsive.html` — the dev-only iframe harness for checking mobile/tablet/
+      desktop side by side. Deleted.
+- [x] `.claude/skills/spa-port-source/`, `spa-port-target/`, `spa-port-loop/` — the
+      port-loop skills; only meaningful while the port is in progress. Deleted.
 - [x] Decide `index.html` vs `new_spa.html` as the canonical entry — **done: the
-      hybrid became `index.html`.** Still to reconcile the source-of-truth story:
+      hybrid became `index.html`.** Source-of-truth story after this cleanup:
       `index.html` uses static `#sec-organics` cards **generated from**
-      `registry.json`, while `registry.js` can render `registry.json` live — pick one.
+      `registry.json`; `registry.html` renders the complete registry live from
+      `registry.json`; the old shared `registry.js` renderer was retired.
 
-- [ ] **`registry.js` — likely retire.** The new **`registry.html`** renders
+- [x] **`registry.js` — likely retire.** The new **`registry.html`** renders
       `registry.json` with its own inline script (new aesthetic, band/col cards);
       `registry.js` targets the OLD `#registry-grid`/`.example-item` markup +
-      `style.css` styles, which no surviving page provides. It bails silently
-      everywhere now. Remove alongside `style.css`'s registry block once the old
-      aesthetic files are retired. (Its `.registry-*` CSS in `style.css` too.)
+      `style.css` styles, which no surviving page provides. Removed alongside
+      `style.css` after the old aesthetic files were retired.
 
 ## Housekeeping notes (verify at cleanup time)
 

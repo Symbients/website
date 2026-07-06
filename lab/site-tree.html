@@ -14,7 +14,7 @@
         />
 
         <style>
-            /* ---- palette, mirroring lexicon.html / lab three themes ---- */
+            /* ---- palette, mirroring the site's light/dark themes ---- */
             :root {
                 --void: #f4f0e7;
                 --text: #1f1c16;
@@ -38,17 +38,6 @@
                 --field-rgb: 158, 162, 152;
                 --ink-rgb: 198, 204, 192;
             }
-            html[data-theme="amber"] {
-                --void: #e9cf93;
-                --text: #2a1808;
-                --dim: #6b4a1c;
-                --faint: #9c7c3e;
-                --hair: rgba(42, 24, 8, 0.22);
-                --hair-2: rgba(42, 24, 8, 0.11);
-                --field-rgb: 120, 82, 28;
-                --ink-rgb: 42, 24, 8;
-            }
-
             * {
                 box-sizing: border-box;
             }
@@ -236,7 +225,7 @@
 
         <footer class="lab-foot">
             Structure verified against <code>index.html</code>,
-            <code>lexicon.html</code>, <code>tokyo.html</code> and
+            <code>registry.html</code>, <code>tokyo.html</code> and
             <code>registry.json</code> (the source of truth for the
             symbient/artist roster). The <code>tree</code> connectors map onto the
             sapling like this: each row is one glyph row; ancestor rails become
@@ -255,8 +244,8 @@
             } from "./site-tree.js";
 
             // ---- theme (reuses the site's key + data-theme approach) --------
-            const THEMES = ["light", "dark", "amber"];
-            const LABELS = { light: "Light", dark: "Dark", amber: "Amber" };
+            const THEMES = ["light", "dark"];
+            const LABELS = { light: "Light", dark: "Dark" };
             const KEY = "symbient-theme";
             const root = document.documentElement;
 

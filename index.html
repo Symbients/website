@@ -1,13 +1,12 @@
 <!doctype html>
 <!--
-    index.html — the index×spa hybrid (refactor-spa).
-    A 50/50 merge of the old index.html (content rhythm, copy, calm) and spa.html
-    (generative art + scroll motion). The Moreau image banner + .hero-scrim are
-    GONE by design: the opening is the ASCII creature-dispersal intro over the
-    live #field backdrop, and the frozen hero is now a COMPACT top bar (title +
-    section nav over a themed translucent background). The Organics section is
-    generated from registry.json (all non-symbient entries) in spa's band-card
-    style, keeping its reshuffle + reader + generative-familiar behaviour.
+    index.html — the canonical Symbient homepage.
+    The Moreau image banner + .hero-scrim are GONE by design: the opening is the
+    ASCII creature-dispersal intro over the live #field backdrop, and the frozen
+    hero is now a COMPACT top bar (title + section nav over a themed translucent
+    background). The Organics section is generated from registry.json (all
+    non-symbient entries) in band-card style, keeping its reshuffle + reader +
+    generative-familiar behaviour.
 -->
 <html lang="en">
     <head>
@@ -73,7 +72,7 @@
                    clamp(min, min_rem + slope*vw, max): the min governs phones, the
                    max caps on wide desktop, the vw term interpolates between. Used
                    site-wide so every size is responsive with no per-breakpoint px.
-                   Verify ports at ~375 / ~768 / ~1280+ (see responsive.html). */
+                   Verify at ~375 / ~768 / ~1280+ when changing layout. */
                 --fs-hero: clamp(2rem, 1rem + 5vw, 5.4rem); /* masthead title */
                 --fs-h2: clamp(1.5rem, 0.9rem + 3vw, 3.3rem); /* section headings */
                 --fs-h3: clamp(1.1rem, 0.8rem + 1.4vw, 1.8rem);
@@ -1692,8 +1691,7 @@
             }
 
             /* ===================================================================
-               SYMBIENTS LANDING — ported from symbients.html, SPLIT into two
-               stacked scroll sections:
+               SYMBIENTS LANDING — two stacked scroll sections:
                  #sec-home       (define: creature backdrop + definition + dir-tree)
                  #sec-symbients  (show: 3-col grid + familiar backdrop + wires + nav)
                The source `.stage[data-mode]` toggle is gone — both sections are
@@ -2424,8 +2422,8 @@
             }
 
             /* ---------- #sec-tree : the whole site as one living tree ----------
-               Ported from lexicon.html's tree view. Text listing built from the
-               page's own sections/bands/cards (rails | \ _, marks ◈/▸/@, a tiny
+               Text listing built from the page's own sections/bands/cards
+               (rails | \ _, marks ◈/▸/@, a tiny
                fractal SVG sprout trailing each leaf). Fluid mono + theme tokens;
                the sprout inks via currentColor so it re-tints with the theme. The
                container scrolls horizontally so deep rows never overflow the page. */
@@ -2749,10 +2747,7 @@
         </header>
 
         <main class="scroll">
-            <!-- PLACEHOLDER SECTIONS — content ported in later iterations.
-                 Each keeps its stable #sec-<name> anchor + scroll-margin-top. -->
-
-            <!-- ============ HOME / DEFINE (ported from symbients.html define mode) ==
+            <!-- ============ HOME / DEFINE ========================================
                  The first section: the ascii Extitutional Creature backdrop + the
                  dictionary-style symbient definition + the terminal-tree directory.
                  The masthead title shows "Home" via the global scroll-spy. Clicking
@@ -2810,7 +2805,7 @@
                 </div>
             </section>
 
-            <!-- ============ SYMBIENTS / SHOW (ported from symbients.html show mode) ==
+            <!-- ============ SYMBIENTS / SHOW ======================================
                  The showcase, now SCROLL-DRIVEN (user testing showed nobody clicked
                  prev/next): the section is a tall scroll TRACK and the stage
                  (.show-pin) pins below the hero while the track scrolls past.
@@ -3406,7 +3401,7 @@
                      in #sec-symbients). Regenerate rather than hand-editing so the
                      registry stays the single source of truth. Style + behaviour
                      (reshuffle-on-visit, section reader, generative familiars for
-                     image-less cards) are spa.html's, unchanged. -->
+                     image-less cards) are local to this page. -->
                 <section class="band">
                     <div class="band-axis"><span class="rn">❋</span><span>organisms</span></div>
                     <div class="cols n4">
@@ -4446,7 +4441,7 @@
 
         <!-- symbients landing: the define backdrop (extitutional creature) +
              the showcase (being-composer familiar, SVG wires, animated portrait
-             frame, prev/next). Ported from symbients.html and split across
+             frame, prev/next). Split across
              #sec-home (define) and #sec-symbients (show). The .stage[data-mode]
              toggle is replaced by an IntersectionObserver per section that
              starts/stops the canvases; the mode-transition controls become
@@ -5131,8 +5126,7 @@
                 }
                 // the dir-tree entries: "see symbients" enters the showcase; the
                 // rest scroll to the matching #sec-<view> section (lexicon, events,
-                // writings, organics, tree) — in symbients.html these jumped the
-                // embedding SPA via window.parent; here they are in-page anchors.
+                // writings, organics, tree) via in-page anchors.
                 const DIRS = [
                     { label: "see symbients", action: "show" },
                     { label: "lexicon", view: "lexicon" },
@@ -6989,8 +6983,8 @@
             // leaf opens its card (via the shared cross-section dispatcher
             // window.__spaOpenCard, populated by the card-section IIFEs above)
             // and a branch scrolls to its section. Mirrors the lexicon SPA's
-            // tree, re-pointed at spa.html's vertical-scroll model. Placed after
-            // the card IIFEs so the dispatcher exists; clicks fire post-load.
+            // tree. Placed after the card IIFEs so the dispatcher exists; clicks
+            // fire post-load.
             (function () {
                 const host = document.getElementById("site-tree");
                 if (!host) return;

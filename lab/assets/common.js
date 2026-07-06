@@ -15,7 +15,7 @@ export { THREE };
 
 // ---------------------------------------------------------------------------
 // Palette — read straight off the site's CSS custom properties so the lab is
-// theme-aware (light / dark / amber) exactly like lexicon.html.
+// theme-aware (light / dark) like the live site.
 // ---------------------------------------------------------------------------
 export function readPalette() {
     const cs = getComputedStyle(document.documentElement);
