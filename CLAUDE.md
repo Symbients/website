@@ -8,6 +8,16 @@ The website for **symbient.life** — a static, hand-authored marketing/concept 
 
 **Deferred cleanup lives in [`CLEANUP.md`](CLEANUP.md).** While the design is in flux we defer tidy-ups (dead code, stale/unoptimized assets, file-lifecycle decisions) to a final pass — when you spot something to clean but shouldn't act on yet, add it there rather than fixing inline.
 
+> **⚠ Stale on the `new-aesthetics` line:** much of this file describes the OLD
+> `index.html` (the one that loaded `style.css`/`registry.js`/`ascii.js`). That
+> page was replaced by the promoted SPA hybrid (`git mv new_spa.html index.html`),
+> which is **self-contained** (inline styles + scripts; loads none of the shared
+> JS below). There is also a new self-contained **`registry.html`** — the complete
+> filterable symbient/artist/researcher directory, rendered at runtime from
+> `registry.json` (still the single source of truth for the entity list). The
+> sections below remain accurate for `tokyo.html` and the legacy files pending
+> the CLEANUP.md file-lifecycle pass; rewrite this file once that pass lands.
+
 ## Commands
 
 ```bash

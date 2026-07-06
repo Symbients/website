@@ -1,0 +1,1472 @@
+<!doctype html>
+<!--
+    registry.html — the COMPLETE symbient/artist/researcher directory.
+    The index's #sec-symbients showcase scroll-reveals six curated symbients
+    and links here; this page renders EVERY entry of registry.json (the single
+    source of truth — add an entity by appending one object there and this
+    page picks it up at runtime, no HTML edits). Self-contained on the new
+    aesthetic (same tokens + band/col card vocabulary as index.html), one
+    inline stylesheet + two guarded IIFEs, per site convention. Filtering:
+    kind pills (all / symbients / artists / researchers) + free-text search.
+-->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>symbient.life — registry</title>
+        <meta name="robots" content="index, follow" />
+        <meta
+            name="description"
+            content="The complete registry of symbients, and of the artists and researchers tending them — a growing directory of organic–synthetic beings."
+        />
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://symbient.life/registry.html" />
+        <meta property="og:title" content="symbient.life — registry" />
+        <meta
+            property="og:description"
+            content="The complete registry of symbients, and of the artists and researchers tending them."
+        />
+        <meta property="og:image" content="https://symbient.life/extitutional.png" />
+
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;1,400&family=Space+Mono&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* ---- tokens: verbatim from index.html so the two pages theme
+                   identically (keep in sync when the palette changes) ---- */
+            :root {
+                --grotesk: Arial, "Liberation Sans", "Helvetica Neue", Helvetica,
+                    sans-serif;
+                --body: "Open Sans", Arial, sans-serif;
+                --mono: "Space Mono", ui-monospace, monospace;
+                --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+                /* height of the frozen hero — clears the fixed chrome (index.html) */
+                --hero-h: clamp(74px, 11vh, 102px);
+
+                --fs-h2: clamp(1.5rem, 0.9rem + 3vw, 3.3rem);
+                --fs-h3: clamp(1.1rem, 0.8rem + 1.4vw, 1.8rem);
+                --fs-body: clamp(0.9rem, 0.82rem + 0.4vw, 1rem);
+                --fs-small: clamp(0.75rem, 0.7rem + 0.2vw, 0.85rem);
+                --fs-mono: clamp(0.62rem, 0.5rem + 0.32vw, 0.72rem);
+                --fs-term: clamp(0.72rem, 0.62rem + 0.4vw, 0.94rem);
+
+                --void: #f4f0e7;
+                --text: #1f1c16;
+                --dim: #6c675c;
+                --faint: #a39c8d;
+                --hair: rgba(31, 28, 22, 0.18);
+                --hair-2: rgba(31, 28, 22, 0.09);
+                --green: #2b2822;
+                --blue: #2b2822;
+                --amber: #2b2822;
+                --violet: #2b2822;
+                --hero-tint: #8d8a82;
+            }
+            html[data-theme="dark"] {
+                --void: #0a0b0c;
+                --text: #c6ccc0;
+                --dim: #7e857a;
+                --faint: #515750;
+                --hair: rgba(196, 204, 192, 0.16);
+                --hair-2: rgba(196, 204, 192, 0.08);
+                --green: #d8dccf;
+                --blue: #d8dccf;
+                --amber: #d8dccf;
+                --violet: #d8dccf;
+                --hero-tint: #2c2e2c;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                margin: 0;
+                background: var(--void);
+                color: var(--text);
+                font-family: var(--body);
+                font-size: 13px;
+                line-height: 1.55;
+                font-weight: 300;
+                -webkit-font-smoothing: antialiased;
+                overflow-x: clip;
+            }
+            ::selection {
+                background: var(--green);
+                color: var(--void);
+            }
+            a {
+                color: inherit;
+            }
+
+            /* ---- frozen hero (chrome) — the SAME masthead as index.html ----
+               Ported verbatim minus the intro machinery: on the index the hero
+               starts opacity:0 and the intro fades it in on scroll; here there
+               is no intro, so it is simply always visible + interactive. Keep
+               the structure/tokens in sync with index.html's hero. ---- */
+            .site-hero {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                min-height: var(--hero-h);
+                overflow: hidden;
+                z-index: 5;
+                background: color-mix(in srgb, var(--void) 82%, transparent);
+                backdrop-filter: saturate(1.1) blur(8px);
+                -webkit-backdrop-filter: saturate(1.1) blur(8px);
+                border-bottom: 1px solid var(--hair);
+            }
+            .hero-inner {
+                width: 100%;
+                max-width: 1320px;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.3rem;
+                padding: clamp(0.45rem, 1.2vh, 0.7rem)
+                    clamp(0.9rem, 2.5vw, 2rem) 0;
+            }
+            .hero-bar {
+                display: flex;
+                align-items: baseline;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 0.4rem 1.1rem;
+                width: 100%;
+            }
+            .hero-title {
+                margin: 0;
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: clamp(1.15rem, 1rem + 1.4vw, 1.85rem);
+                letter-spacing: -0.04em;
+                line-height: 1;
+                color: var(--text);
+                white-space: nowrap;
+            }
+            /* hamburger — hidden on desktop (tabs show inline) */
+            .nav-burger {
+                display: none;
+            }
+            .site-nav {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 11px;
+                margin-left: auto;
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+            }
+            .site-nav .tab {
+                font: inherit;
+                letter-spacing: inherit;
+                text-transform: inherit;
+                color: var(--text);
+                background: none;
+                border: none;
+                border-bottom: 1px solid transparent;
+                padding: 0 0 2px;
+                margin: 0;
+                cursor: pointer;
+                text-decoration: none;
+                transition: border-color 0.22s var(--ease);
+            }
+            .site-nav .tab:hover {
+                border-bottom-color: color-mix(
+                    in srgb,
+                    var(--text) 38%,
+                    transparent
+                );
+            }
+            /* this PAGE is the registry — its tab stays underlined */
+            .site-nav .tab.active {
+                border-bottom-color: color-mix(
+                    in srgb,
+                    var(--text) 62%,
+                    transparent
+                );
+            }
+            /* the theme toggle — permanently in the "on-page" palette (the
+               index's over-banner variant only exists because of its intro) */
+            .theme-toggle {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--dim);
+                background: color-mix(in srgb, var(--void) 70%, transparent);
+                border: 1px solid var(--hair);
+                padding: 0.4rem 0.65rem;
+                cursor: pointer;
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                transition:
+                    color 0.25s var(--ease),
+                    background 0.25s var(--ease),
+                    border-color 0.25s var(--ease);
+            }
+            .theme-toggle:hover {
+                color: var(--green);
+                border-color: var(--green);
+            }
+            /* terminal line: the genetic kaomoji ticker under the bar */
+            .terminal {
+                align-self: stretch;
+                padding: 0.34rem 0;
+                border-top: 1px solid
+                    color-mix(in srgb, var(--text) 38%, transparent);
+                border-bottom: 1px solid
+                    color-mix(in srgb, var(--text) 38%, transparent);
+                overflow: hidden;
+            }
+            .term-line {
+                font-family: var(--mono);
+                font-size: var(--fs-term);
+                line-height: 1.5;
+                color: var(--text);
+                white-space: nowrap;
+                letter-spacing: 0.02em;
+                text-shadow: 0 0 5px color-mix(in srgb, var(--void) 78%, transparent);
+            }
+            .term-prompt {
+                opacity: 0.5;
+            }
+            .term-ch {
+                display: inline-block;
+                width: 0.92em;
+                text-align: center;
+                opacity: 0.9;
+                white-space: pre;
+            }
+            .term-ch.cursor {
+                background: var(--text);
+                color: var(--void);
+                opacity: 1;
+                text-shadow: none;
+            }
+
+            /* ---- page shell (before the ≤640 chrome block so the pinned-
+               ticker padding-bottom below can override this shorthand) ---- */
+            main {
+                max-width: 1320px;
+                margin: 0 auto;
+                /* clear the fixed hero */
+                padding: calc(var(--hero-h) + clamp(1.2rem, 3vh, 2.2rem))
+                    clamp(0.9rem, 2.5vw, 2rem) clamp(1.6rem, 4vh, 3rem);
+            }
+
+            /* ---- responsive chrome: phones (≤640) — mirrors index.html ----
+               burger + tree dropdown; the kaomoji ticker is lifted out of the
+               hero and pinned to the bottom (see the relocation IIFE). */
+            @media (max-width: 640px) {
+                :root {
+                    --hero-h: clamp(50px, 9vh, 64px);
+                }
+                .site-hero {
+                    overflow: visible;
+                }
+                .hero-inner {
+                    gap: 0;
+                    padding: 0 clamp(0.7rem, 4vw, 1rem);
+                    min-height: var(--hero-h);
+                    justify-content: center;
+                    overflow: visible;
+                }
+                .theme-toggle {
+                    position: fixed;
+                    z-index: 6;
+                    right: 4rem;
+                    top: calc(var(--hero-h) / 2);
+                    transform: translateY(-50%);
+                }
+                .hero-bar {
+                    flex-direction: row;
+                    align-items: center;
+                    flex-wrap: nowrap;
+                    gap: 0.7rem;
+                }
+                .hero-title {
+                    flex: 0 0 auto;
+                    font-size: clamp(1.05rem, 0.9rem + 1.2vw, 1.4rem);
+                }
+                .nav-burger {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-left: auto;
+                    width: 2.4rem;
+                    height: 2.4rem;
+                    padding: 0;
+                    background: none;
+                    border: none;
+                    color: var(--text);
+                    cursor: pointer;
+                    -webkit-tap-highlight-color: transparent;
+                }
+                .burger-box {
+                    position: relative;
+                    display: block;
+                    width: 20px;
+                    height: 14px;
+                }
+                .burger-box span {
+                    position: absolute;
+                    left: 0;
+                    width: 100%;
+                    height: 2px;
+                    background: currentColor;
+                    border-radius: 2px;
+                    transition:
+                        top 0.28s var(--ease),
+                        transform 0.28s var(--ease),
+                        opacity 0.18s var(--ease);
+                }
+                .burger-box span:nth-child(1) {
+                    top: 0;
+                }
+                .burger-box span:nth-child(2) {
+                    top: 6px;
+                }
+                .burger-box span:nth-child(3) {
+                    top: 12px;
+                }
+                .site-hero.nav-open .burger-box span:nth-child(1) {
+                    top: 6px;
+                    transform: rotate(45deg);
+                }
+                .site-hero.nav-open .burger-box span:nth-child(2) {
+                    opacity: 0;
+                }
+                .site-hero.nav-open .burger-box span:nth-child(3) {
+                    top: 6px;
+                    transform: rotate(-45deg);
+                }
+                /* section menu: the tree-styled dropdown under the bar */
+                .site-nav {
+                    position: absolute;
+                    top: calc(100% + 1px);
+                    left: 0;
+                    right: 0;
+                    z-index: 6;
+                    flex-direction: column;
+                    flex-wrap: nowrap;
+                    align-items: stretch;
+                    gap: 0;
+                    padding: 0.4rem 0;
+                    font-family: var(--mono);
+                    font-size: var(--fs-small);
+                    letter-spacing: 0.02em;
+                    text-transform: none;
+                    background: color-mix(in srgb, var(--void) 93%, transparent);
+                    backdrop-filter: saturate(1.1) blur(10px);
+                    -webkit-backdrop-filter: saturate(1.1) blur(10px);
+                    border-bottom: 1px solid var(--hair);
+                    box-shadow: 0 16px 34px -22px rgba(0, 0, 0, 0.55);
+                    max-height: 0;
+                    opacity: 0;
+                    overflow: hidden;
+                    visibility: hidden;
+                    pointer-events: none;
+                    transition:
+                        max-height 0.32s var(--ease),
+                        opacity 0.22s var(--ease),
+                        visibility 0s linear 0.32s;
+                }
+                .site-hero.nav-open .site-nav {
+                    max-height: 80vh;
+                    opacity: 1;
+                    overflow: auto;
+                    visibility: visible;
+                    pointer-events: auto;
+                    transition:
+                        max-height 0.36s var(--ease),
+                        opacity 0.24s var(--ease);
+                }
+                .site-nav .tab {
+                    display: block;
+                    position: relative;
+                    padding: 0.55rem clamp(0.9rem, 4vw, 1.3rem);
+                    margin: 0;
+                    border-bottom: none;
+                    color: var(--text);
+                    letter-spacing: inherit;
+                    text-transform: none;
+                }
+                .site-nav .tab::before {
+                    content: "▸";
+                    display: inline-block;
+                    width: 1.6ch;
+                    margin-right: 0.4ch;
+                    color: var(--dim);
+                }
+                .site-nav .tab:hover,
+                .site-nav .tab:focus {
+                    color: var(--green);
+                    border-bottom: none;
+                    background: color-mix(in srgb, var(--green) 8%, transparent);
+                }
+                .site-nav .tab.active {
+                    color: var(--green);
+                    font-weight: 700;
+                    border-bottom: none;
+                }
+                .site-nav .tab.active::before {
+                    content: "●";
+                    color: var(--green);
+                }
+                /* the kaomoji ticker, pinned to the viewport bottom (always
+                   revealed here — no intro to wait for) */
+                .terminal {
+                    position: fixed;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    z-index: 5;
+                    padding: 0.3rem clamp(0.7rem, 4vw, 1rem);
+                    background: color-mix(in srgb, var(--void) 88%, transparent);
+                    backdrop-filter: saturate(1.1) blur(8px);
+                    -webkit-backdrop-filter: saturate(1.1) blur(8px);
+                    border-top: 1px solid var(--hair);
+                    border-bottom: none;
+                    pointer-events: none;
+                }
+                /* clear the pinned ticker so the footer (a sibling of <main>)
+                   isn't hidden under it */
+                body {
+                    padding-bottom: 2.6rem;
+                }
+            }
+            .submast {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                margin-bottom: clamp(1.2rem, 3vh, 2rem);
+            }
+            .mh-sub {
+                font-size: var(--fs-body);
+                line-height: 1.7;
+                color: var(--text);
+                max-width: 62ch;
+                margin: 0;
+            }
+            .mh-right {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--faint);
+                white-space: nowrap;
+            }
+
+            /* ---- tools: kind pills + search ---- */
+            .reg-tools {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: clamp(1.2rem, 3vh, 2rem);
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.1em;
+            }
+            .reg-filter {
+                font: inherit;
+                letter-spacing: inherit;
+                text-transform: uppercase;
+                color: var(--dim);
+                background: none;
+                border: 1px solid var(--hair);
+                padding: 0.45rem 0.85rem;
+                cursor: pointer;
+                transition:
+                    color 0.25s var(--ease),
+                    border-color 0.25s var(--ease),
+                    background 0.25s var(--ease);
+            }
+            .reg-filter:hover {
+                color: var(--text);
+                border-color: var(--text);
+            }
+            .reg-filter.is-active {
+                background: var(--text);
+                color: var(--void);
+                border-color: var(--text);
+            }
+            .reg-search {
+                font: inherit;
+                letter-spacing: 0.04em;
+                color: var(--text);
+                background: none;
+                border: 1px solid var(--hair);
+                padding: 0.45rem 0.85rem;
+                min-width: min(240px, 60vw);
+                margin-left: auto;
+            }
+            .reg-search::placeholder {
+                color: var(--faint);
+            }
+            .reg-search:focus {
+                outline: none;
+                border-color: var(--text);
+            }
+            @media (max-width: 620px) {
+                .reg-search {
+                    margin-left: 0;
+                    flex: 1 1 100%;
+                }
+            }
+
+            /* ---- the atlas band + cards: same vocabulary as index.html ---- */
+            .band {
+                display: grid;
+                grid-template-columns: 34px 1fr;
+                border-top: 1px solid var(--hair);
+                border-bottom: 1px solid var(--hair);
+                min-height: 200px;
+            }
+            .band-axis {
+                position: relative;
+                border-right: 1px solid var(--hair);
+            }
+            .band-axis span {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(180deg);
+                writing-mode: vertical-rl;
+                font-family: var(--grotesk);
+                font-size: var(--fs-mono);
+                font-weight: 700;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: var(--dim);
+                white-space: nowrap;
+            }
+            .band-axis .rn {
+                writing-mode: horizontal-tb;
+                transform: translateX(-50%);
+                top: 0.7rem;
+                left: 50%;
+                font-weight: 400;
+                color: var(--faint);
+                letter-spacing: 0;
+            }
+            .cols {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                align-items: stretch;
+            }
+            @media (max-width: 880px) {
+                .cols {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 520px) {
+                .cols {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .col {
+                position: relative;
+                border-left: 1px solid var(--hair-2);
+                padding: 1.1rem 1rem 1.3rem;
+                outline: none;
+                cursor: pointer;
+                transition:
+                    background 0.3s var(--ease),
+                    border-color 0.3s var(--ease);
+            }
+            /* the grid re-renders on filter, so :first-child/:nth-child edge
+               rules are replaced by a border the grid paints over */
+            .col:hover,
+            .col:focus,
+            .col:focus-within {
+                background: linear-gradient(
+                    180deg,
+                    color-mix(in srgb, var(--node) 7%, transparent),
+                    transparent 60%
+                );
+            }
+            .col::before {
+                content: "";
+                position: absolute;
+                top: -1px;
+                left: -1px;
+                width: 22px;
+                height: 2px;
+                background: var(--node);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 0.35s var(--ease);
+            }
+            .col:hover::before,
+            .col:focus-within::before {
+                transform: scaleX(1);
+            }
+            .col-top {
+                display: flex;
+                align-items: center;
+                gap: 0.45rem;
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--faint);
+                letter-spacing: 0.04em;
+                margin-bottom: 0.7rem;
+            }
+            .node {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--node);
+                flex: none;
+                box-shadow: 0 0 5px -1px var(--node);
+            }
+            .col:hover .node,
+            .col:focus-within .node {
+                animation: pulse 1.7s var(--ease) infinite;
+            }
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 color-mix(in srgb, var(--node) 55%, transparent);
+                }
+                100% {
+                    box-shadow: 0 0 0 8px color-mix(in srgb, var(--node) 0%, transparent);
+                }
+            }
+            .col-top .kinds {
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+            }
+            .col-top .ct {
+                margin-left: auto;
+            }
+            .term {
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: var(--fs-h3);
+                letter-spacing: -0.035em;
+                line-height: 1.02;
+                color: var(--text);
+                margin: 0;
+                transition: color 0.25s var(--ease);
+            }
+            .col:hover .term,
+            .col:focus-within .term {
+                color: var(--node);
+            }
+            .tag {
+                font-family: var(--grotesk);
+                font-size: var(--fs-mono);
+                color: var(--dim);
+                margin-top: 0.3rem;
+                letter-spacing: 0;
+            }
+            .body {
+                display: grid;
+                grid-template-rows: 0fr;
+                opacity: 0;
+                transition:
+                    grid-template-rows 0.42s var(--ease) 0.2s,
+                    opacity 0.3s var(--ease) 0.2s;
+            }
+            .inner {
+                overflow: hidden;
+                min-height: 0;
+            }
+            .col:hover .body,
+            .col:focus .body,
+            .col:focus-within .body {
+                grid-template-rows: 1fr;
+                opacity: 1;
+                transition-delay: 0s;
+            }
+            .def {
+                margin: 0.8rem 0 0;
+                font-size: var(--fs-small);
+                line-height: 1.62;
+                color: var(--text);
+            }
+            .meta {
+                margin-top: 0.85rem;
+                padding-top: 0.65rem;
+                border-top: 1px solid var(--hair-2);
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--faint);
+                letter-spacing: 0.02em;
+                display: flex;
+                flex-direction: column;
+                gap: 0.45rem;
+            }
+            .meta .socials {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.55rem;
+            }
+            .meta .socials a {
+                color: var(--faint);
+                display: inline-flex;
+                transition: color 0.25s var(--ease);
+            }
+            .meta .socials a:hover {
+                color: var(--green);
+            }
+            .meta .socials svg {
+                width: 14px;
+                height: 14px;
+            }
+            /* kind → node tone (monochrome ink per theme, like index) */
+            .k-symbient {
+                --node: var(--violet);
+            }
+            .k-artist {
+                --node: var(--green);
+            }
+            .k-researcher {
+                --node: var(--blue);
+            }
+
+            /* ---- card media (monochrome at rest, true colour on hover) ---- */
+            .col-media {
+                position: relative;
+                margin-top: 0.85rem;
+                width: 100%;
+                aspect-ratio: 16 / 10;
+                overflow: hidden;
+                border: 1px solid var(--hair-2);
+                background: color-mix(in srgb, var(--text) 5%, transparent);
+            }
+            .col-media img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: grayscale(1) contrast(1.04);
+                opacity: 0.9;
+                transition:
+                    filter 0.45s var(--ease),
+                    opacity 0.45s var(--ease),
+                    transform 0.7s var(--ease);
+            }
+            .col-media::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: var(--hero-tint);
+                mix-blend-mode: multiply;
+                opacity: 0.5;
+                pointer-events: none;
+                transition: opacity 0.45s var(--ease);
+            }
+            .col:hover .col-media img,
+            .col:focus-within .col-media img {
+                filter: grayscale(0) contrast(1);
+                opacity: 1;
+                transform: scale(1.035);
+            }
+            .col:hover .col-media::after,
+            .col:focus-within .col-media::after {
+                opacity: 0;
+            }
+            /* image-less entries (most researchers): a mono monogram instead */
+            .col-media--monogram {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .col-media--monogram::after {
+                content: none;
+            }
+            .col-media--monogram span {
+                font-family: var(--mono);
+                font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+                letter-spacing: 0.12em;
+                color: var(--faint);
+                transition: color 0.35s var(--ease);
+            }
+            .col:hover .col-media--monogram span,
+            .col:focus-within .col-media--monogram span {
+                color: var(--node);
+            }
+
+            /* ---- empty state + invite + footer ---- */
+            .reg-empty {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--faint);
+                text-align: center;
+                padding: 3rem 0;
+                margin: 0;
+            }
+            .reg-invite {
+                font-size: var(--fs-body);
+                color: var(--dim);
+                text-align: center;
+                margin: clamp(1.6rem, 4vh, 2.6rem) 0 0;
+            }
+            .reg-invite a {
+                color: var(--text);
+            }
+            .page-foot {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--faint);
+                text-align: center;
+                padding: clamp(2rem, 5vh, 3.5rem) 0;
+                border-top: 1px solid var(--hair);
+                margin-top: clamp(2rem, 5vh, 3.5rem);
+            }
+            .page-foot a {
+                text-decoration: none;
+                color: var(--dim);
+                border-bottom: 1px solid transparent;
+                transition: border-color 0.16s var(--ease);
+            }
+            .page-foot a:hover {
+                border-bottom-color: var(--dim);
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                html {
+                    scroll-behavior: auto;
+                }
+                .col,
+                .col img,
+                .body {
+                    transition: none;
+                }
+            }
+        </style>
+        <script>
+            // apply theme before first paint (no flash-of-theme) — same
+            // storage key + 2-theme model as index.html
+            (function () {
+                try {
+                    var k = "symbient-theme",
+                        themes = ["light", "dark"];
+                    var s = localStorage.getItem(k);
+                    var t =
+                        themes.indexOf(s) >= 0
+                            ? s
+                            : new Date().getHours() >= 18 ||
+                                new Date().getHours() < 6
+                              ? "dark"
+                              : "light";
+                    if (t !== "light")
+                        document.documentElement.setAttribute("data-theme", t);
+                } catch (e) {}
+            })();
+        </script>
+    </head>
+
+    <body>
+        <!-- the same masthead chrome as index.html: title + section tabs +
+             theme toggle over the kaomoji terminal line, burger dropdown on
+             phones. The tabs deep-link back to the index sections; this page's
+             own tab is marked .active. -->
+        <header class="site-hero">
+            <div class="hero-inner">
+                <div class="hero-bar">
+                    <h1 class="hero-title">Registry</h1>
+                    <button
+                        class="nav-burger"
+                        type="button"
+                        aria-label="Sections menu"
+                        aria-expanded="false"
+                        aria-controls="site-nav"
+                    >
+                        <span class="burger-box" aria-hidden="true">
+                            <span></span><span></span><span></span>
+                        </span>
+                    </button>
+                    <nav class="site-nav" id="site-nav" aria-label="sections">
+                        <a class="tab" href="/#sec-home">home</a>
+                        <a class="tab" href="/#sec-symbients">symbients</a>
+                        <a class="tab" href="/#sec-narrative">narrative</a>
+                        <a class="tab" href="/#sec-lexicon">lexicon</a>
+                        <a class="tab" href="/#sec-events">events</a>
+                        <a class="tab" href="/#sec-writings">writings</a>
+                        <a class="tab" href="/#sec-organics">organics</a>
+                        <a class="tab" href="/#sec-tree">tree</a>
+                        <a class="tab active" href="/registry.html" aria-current="page">registry</a>
+                    </nav>
+                    <button
+                        class="theme-toggle"
+                        type="button"
+                        aria-label="Switch theme"
+                    >
+                        ◐&nbsp;<span class="tt-label">dark</span>
+                    </button>
+                </div>
+                <div class="terminal" aria-hidden="true">
+                    <div class="term-line"></div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="submast">
+                <p class="mh-sub">
+                    The complete directory of the symbiosis — every symbient,
+                    and every artist and researcher tending one. The six on
+                    the front page are a taster; this list is the whole
+                    ecosystem, and it grows.
+                </p>
+                <div class="mh-right"><span class="reg-count">…</span> · the registry</div>
+            </div>
+
+            <div class="reg-tools" role="group" aria-label="Filter the registry">
+                <button class="reg-filter is-active" type="button" data-filter="all" aria-pressed="true">all</button>
+                <button class="reg-filter" type="button" data-filter="symbient" aria-pressed="false">symbients</button>
+                <button class="reg-filter" type="button" data-filter="artist" aria-pressed="false">artists</button>
+                <button class="reg-filter" type="button" data-filter="researcher" aria-pressed="false">researchers</button>
+                <input
+                    class="reg-search"
+                    id="reg-q"
+                    type="search"
+                    placeholder="search the registry…"
+                    aria-label="Search the registry"
+                />
+            </div>
+
+            <section class="band">
+                <div class="band-axis"><span class="rn">❋</span><span>registry</span></div>
+                <div class="cols" id="reg-grid"></div>
+            </section>
+            <p class="reg-empty" hidden>— nothing in the registry matches —</p>
+            <noscript>
+                <p class="reg-empty">
+                    the registry renders from registry.json and needs JavaScript
+                </p>
+            </noscript>
+
+            <p class="reg-invite">
+                Know a symbient, artist, or researcher who belongs here?
+                <a
+                    href="https://github.com/Symbients/website"
+                    target="_blank"
+                    rel="noopener"
+                    >Open a pull request</a
+                >.
+            </p>
+        </main>
+
+        <footer class="page-foot">
+            ◈ <a href="https://glitchart.org" target="_blank" rel="noopener">Glitch Collective</a> ©2025 ◈
+        </footer>
+
+        <script>
+            // ---- theme toggle: light ⇄ dark, same key as index ----
+            (function () {
+                const themes = ["light", "dark"];
+                const glyph = { light: "◑", dark: "◐" };
+                const key = "symbient-theme";
+                const root = document.documentElement;
+                const btn = document.querySelector(".theme-toggle");
+                if (!btn) return;
+                const lbl = btn.querySelector(".tt-label");
+                const cur = () => root.getAttribute("data-theme") || "light";
+                function paintBtn() {
+                    const c = cur();
+                    if (lbl) lbl.textContent = c;
+                    if (btn.firstChild) btn.firstChild.textContent = glyph[c] + " ";
+                }
+                paintBtn();
+                btn.addEventListener("click", () => {
+                    const next =
+                        themes[(themes.indexOf(cur()) + 1) % themes.length];
+                    if (next === "light") root.removeAttribute("data-theme");
+                    else root.setAttribute("data-theme", next);
+                    paintBtn();
+                    try {
+                        localStorage.setItem(key, next);
+                    } catch (e) {}
+                });
+            })();
+
+            // ---- terminal: a character-level genetic model swept by a block cursor ----
+            // Verbatim from index.html (keep in sync): a positional grammar of
+            // char-slots per face; a block cursor steps one CHARACTER at a time
+            // and symmetric kaomojis crystallise out of the stream.
+            (function () {
+                const term = document.querySelector(".terminal");
+                const host = document.querySelector(".term-line");
+                if (!term || !host) return;
+                const reduce = matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+
+                // per-slot alphabets (positional grammar); " " = part absent
+                const WRAP_L = ["₍", "꒰", "(", "⟨", "⦅", " "];
+                const WRAP_R = ["₎", "꒱", ")", "⟩", "⦆", " "]; // paired by index
+                const EAR_L  = ["ᐢ", "ᐠ", "/", "´", " "];
+                const EAR_R  = ["ᐢ", "ᐟ", "\\", "`", " "]; // paired by index
+                const EYE    = ["•", ".", "･", "◉", "ᵔ", "°", "˘", "・", "^", "¬", "ↀ", "ʘ"];
+                const MOU    = ["‿", "ᴥ", "༝", "ꞈ", "ﻌ", "◡", "﹏", "ε", "‸", ".", "ω", "³", "⌓", "ᗢ"];
+                const SLOTS  = 8; // wrapL, earL, eyeL, mouth, eyeR, earR, wrapR, sep
+                const FREE   = [WRAP_L, EAR_L, EYE, MOU]; // slots 0–3 drift freely
+
+                const ri = (n) => Math.floor(Math.random() * n);
+                const rnd = () => Math.random();
+                const pick = (a) => a[ri(a.length)];
+                const idxOf = (a, v) => { const i = a.indexOf(v); return i < 0 ? 0 : i; };
+
+                let chars = [], spans = [], cur = 0, gen = 1, prompt;
+
+                // a fresh glyph for slot `pos` of the unit starting at index `u`
+                function evolveChar(pos, u) {
+                    if (pos === 7) return " ";                         // separator
+                    if (pos === 4) return rnd() < 0.66 ? chars[u + 2] : pick(EYE); // eyeR ← eyeL
+                    if (pos === 5) return rnd() < 0.6 ? EAR_R[idxOf(EAR_L, chars[u + 1])] : pick(EAR_R);
+                    if (pos === 6) return rnd() < 0.72 ? WRAP_R[idxOf(WRAP_L, chars[u])] : pick(WRAP_R);
+                    return pick(FREE[pos]);                            // wrapL, earL, eyeL, mouth
+                }
+
+                const units = () =>
+                    Math.max(4, Math.min(16, Math.floor((term.clientWidth - 86) / 66)));
+
+                function build() {
+                    const n = units() * SLOTS;
+                    chars = [];
+                    for (let i = 0; i < n; i++)
+                        chars.push(evolveChar(i % SLOTS, i - (i % SLOTS)));
+                    cur = 0;
+                    host.textContent = "";
+                    prompt = document.createElement("span");
+                    prompt.className = "term-prompt";
+                    prompt.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    host.appendChild(prompt);
+                    spans = chars.map((c, i) => {
+                        const s = document.createElement("span");
+                        s.className = "term-ch" + (i === cur ? " cursor" : "");
+                        s.textContent = c;
+                        host.appendChild(s);
+                        return s;
+                    });
+                }
+
+                function step() {
+                    const n = chars.length;
+                    const prev = cur;
+                    spans[prev].classList.remove("cursor");
+                    cur = (cur + 1) % n;
+                    if (cur === 0) {
+                        gen++;
+                        prompt.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    }
+                    // the char the cursor just left may mutate within its slot
+                    if (rnd() < 0.45) {
+                        const pos = prev % SLOTS;
+                        const nc = evolveChar(pos, prev - pos);
+                        if (nc !== chars[prev]) {
+                            chars[prev] = nc;
+                            spans[prev].textContent = nc;
+                        }
+                    }
+                    spans[cur].classList.add("cursor");
+                }
+
+                build();
+                window.addEventListener("resize", build);
+                if (!reduce) setInterval(step, 92);
+            })();
+
+            // ---- relocate the kaomoji ticker to the bottom on phones ----
+            // Same as index.html: .site-hero's backdrop-filter makes it the
+            // containing block for fixed descendants, so the mobile bottom-pin
+            // only works if the ticker is lifted out to <body>; on wider
+            // screens it goes back inside .hero-inner.
+            (function () {
+                const term = document.querySelector(".terminal");
+                const inner = document.querySelector(".hero-inner");
+                if (!term || !inner) return;
+                const mq = window.matchMedia("(max-width: 640px)");
+                function place() {
+                    const wantBottom = mq.matches;
+                    const atBottom = term.parentElement === document.body;
+                    if (wantBottom === atBottom) return;
+                    if (wantBottom) document.body.appendChild(term);
+                    else inner.appendChild(term); // last child, after .hero-bar
+                    window.dispatchEvent(new Event("resize"));
+                }
+                place();
+                mq.addEventListener("change", place);
+            })();
+
+            // ---- mobile section menu: hamburger toggles the section dropdown ----
+            // Verbatim from index.html. Closes on choose, outside-tap, or Esc;
+            // inert on desktop where the burger is display:none.
+            (function () {
+                const hero = document.querySelector(".site-hero");
+                const burger = document.querySelector(".nav-burger");
+                const nav = document.querySelector(".site-nav");
+                if (!hero || !burger || !nav) return;
+                const mq = window.matchMedia("(max-width: 640px)");
+
+                function setOpen(v) {
+                    hero.classList.toggle("nav-open", v);
+                    burger.setAttribute("aria-expanded", v ? "true" : "false");
+                }
+
+                burger.addEventListener("click", (e) => {
+                    e.stopPropagation(); // don't let the document handler re-close
+                    setOpen(!hero.classList.contains("nav-open"));
+                });
+                // choosing a section closes the menu (the anchor still navigates)
+                nav.addEventListener("click", (e) => {
+                    if (e.target.closest(".tab")) setOpen(false);
+                });
+                // outside tap / Esc closes
+                document.addEventListener("click", (e) => {
+                    if (
+                        hero.classList.contains("nav-open") &&
+                        !hero.contains(e.target)
+                    )
+                        setOpen(false);
+                });
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") setOpen(false);
+                });
+                // collapse when crossing back to the desktop layout
+                mq.addEventListener("change", () => setOpen(false));
+            })();
+
+            // ---- the registry: fetch registry.json, render, filter ----
+            (function () {
+                const grid = document.getElementById("reg-grid");
+                if (!grid) return;
+                const countEl = document.querySelector(".reg-count");
+                const emptyEl = document.querySelector(".reg-empty");
+                const searchInput = document.getElementById("reg-q");
+                const filterBtns = Array.from(
+                    document.querySelectorAll(".reg-filter"),
+                );
+
+                let entries = [];
+                let activeFilter = "all";
+                let query = "";
+                const norm = (s) => (s || "").toLowerCase();
+
+                // `type` may be a string or an array of kinds — normalise
+                const typesOf = (e) =>
+                    (Array.isArray(e.type) ? e.type : [e.type]).filter(Boolean);
+
+                // per-kind numbering: S·01 …, A·01 …, R·01 … (primary kind)
+                const KIND_LETTER = {
+                    symbient: "S",
+                    artist: "A",
+                    researcher: "R",
+                };
+
+                function initials(name) {
+                    const parts = (name || "")
+                        .trim()
+                        .split(/\s+/)
+                        .filter(Boolean);
+                    if (!parts.length) return "?";
+                    if (parts.length === 1)
+                        return parts[0].slice(0, 2).toUpperCase();
+                    return (
+                        parts[0][0] + parts[parts.length - 1][0]
+                    ).toUpperCase();
+                }
+
+                const IMG_SIZES =
+                    "(max-width: 520px) 100vw, (max-width: 880px) 50vw, 25vw";
+
+                // inline brand glyphs (24×24, currentColor); unknown → globe
+                const ICONS = {
+                    x: '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>',
+                    instagram:
+                        '<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>',
+                    youtube:
+                        '<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>',
+                    github: '<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>',
+                    linkedin:
+                        '<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>',
+                    facebook:
+                        '<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>',
+                    bluesky:
+                        '<path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.479 0-.688-.139-1.86-.902-2.203-.659-.299-1.664-.621-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8z"/>',
+                    substack:
+                        '<path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/>',
+                    mastodon:
+                        '<path d="M23.268 5.313c-.35-2.578-2.617-4.61-5.304-5.004C17.51.242 15.792 0 11.813 0h-.03c-3.98 0-4.835.242-5.288.309C3.882.692 1.496 2.518.917 5.127.64 6.412.61 7.837.661 9.143c.074 1.874.088 3.745.26 5.611.118 1.24.325 2.47.62 3.68.55 2.237 2.777 4.098 4.96 4.857 2.336.792 4.849.923 7.256.38.265-.061.527-.132.786-.213.585-.184 1.27-.39 1.774-.753a.057.057 0 0 0 .023-.043v-1.809a.052.052 0 0 0-.02-.041.053.053 0 0 0-.046-.01 20.282 20.282 0 0 1-4.709.545c-2.73 0-3.463-1.284-3.674-1.818a5.593 5.593 0 0 1-.319-1.433.053.053 0 0 1 .066-.054c1.517.363 3.072.546 4.632.546.376 0 .75 0 1.125-.01 1.57-.044 3.224-.124 4.768-.422.038-.008.077-.015.11-.024 2.435-.464 4.753-1.92 4.989-5.604.008-.145.03-1.52.03-1.67.002-.512.167-3.63-.024-5.545zm-3.748 9.195h-2.561V8.29c0-1.309-.55-1.976-1.67-1.976-1.23 0-1.846.79-1.846 2.35v3.403h-2.546V8.663c0-1.56-.617-2.35-1.848-2.35-1.112 0-1.668.668-1.67 1.977v6.218H4.822V8.102c0-1.31.337-2.35 1.011-3.12.696-.77 1.608-1.164 2.74-1.164 1.311 0 2.302.5 2.962 1.498l.638 1.06.638-1.06c.66-.999 1.65-1.498 2.96-1.498 1.13 0 2.043.395 2.74 1.164.675.77 1.012 1.81 1.012 3.12z"/>',
+                    tiktok: '<path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>',
+                    vimeo: '<path d="M23.9765 6.4168c-.105 2.338-1.739 5.5429-4.894 9.6088-3.2679 4.247-6.0258 6.3699-8.2898 6.3699-1.409 0-2.578-1.294-3.553-3.881l-1.9179-7.1138c-.719-2.584-1.488-3.878-2.312-3.878-.179 0-.806.378-1.881 1.132L0 7.3258c1.219-1.0791 2.426-2.1581 3.616-3.234C5.231 2.7158 6.4488 1.9758 7.2668 1.9008c1.939-.187 3.131 1.139 3.581 3.978.487 3.067.825 4.974 1.013 5.72.563 2.587 1.181 3.878 1.856 3.878.525 0 1.313-.825 2.366-2.475 1.05-1.65 1.613-2.913 1.688-3.787.15-1.425-.413-2.138-1.688-2.138-.6 0-1.219.138-1.856.413 1.219-3.999 3.556-5.942 7.012-5.829 2.563.075 3.772 1.735 3.625 4.984z"/>',
+                    medium: '<path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>',
+                    discord:
+                        '<path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>',
+                    email: '<path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z"/><path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z"/>',
+                    globe: '<g fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9.25"/><path d="M2.75 12h18.5M12 2.75c2.5 2.5 3.75 5.75 3.75 9.25S14.5 18.75 12 21.25M12 2.75c-2.5 2.5-3.75 5.75-3.75 9.25S9.5 18.75 12 21.25"/></g>',
+                };
+                function platformKey(label) {
+                    const l = norm(label);
+                    if (l.indexOf("instagram") !== -1) return "instagram";
+                    if (l === "x" || l.indexOf("twitter") !== -1) return "x";
+                    if (l.indexOf("youtube") !== -1) return "youtube";
+                    if (l.indexOf("github") !== -1) return "github";
+                    if (l.indexOf("linkedin") !== -1) return "linkedin";
+                    if (l.indexOf("facebook") !== -1) return "facebook";
+                    if (l.indexOf("bluesky") !== -1) return "bluesky";
+                    if (l.indexOf("substack") !== -1) return "substack";
+                    if (l.indexOf("mastodon") !== -1) return "mastodon";
+                    if (l.indexOf("tiktok") !== -1) return "tiktok";
+                    if (l.indexOf("vimeo") !== -1) return "vimeo";
+                    if (l.indexOf("medium") !== -1) return "medium";
+                    if (l.indexOf("discord") !== -1) return "discord";
+                    if (l.indexOf("email") !== -1 || l.indexOf("mail") !== -1)
+                        return "email";
+                    return "globe";
+                }
+                // a social entry resolves to a real href, or null if it's just
+                // a descriptive note (e.g. "OpenSea NFT collections")
+                function socialHref(s) {
+                    const u = (s.url || "").trim();
+                    if (/^https?:\/\//i.test(u) || /^mailto:/i.test(u))
+                        return u;
+                    if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(u))
+                        return "mailto:" + u;
+                    return null;
+                }
+
+                const haystack = (e) =>
+                    norm(
+                        [
+                            e.name,
+                            typesOf(e).join(" "),
+                            e.category,
+                            e.description,
+                            e.location,
+                            e.creator_or_steward,
+                            (e.socials || []).map((s) => s.label).join(" "),
+                        ].join(" "),
+                    );
+
+                function makeCard(e, num) {
+                    const kinds = typesOf(e);
+                    const card = document.createElement("article");
+                    card.className = "col k-" + kinds[0];
+                    card.tabIndex = 0;
+                    card.dataset.types = kinds.join(" ");
+
+                    const top = document.createElement("div");
+                    top.className = "col-top";
+                    top.innerHTML =
+                        '<span class="node"></span>' +
+                        (KIND_LETTER[kinds[0]] || "?") +
+                        "·" +
+                        String(num).padStart(2, "0") +
+                        '<span class="kinds">' +
+                        kinds.join(" · ") +
+                        "</span>" +
+                        '<span class="ct">↗</span>';
+
+                    const term = document.createElement("h2");
+                    term.className = "term";
+                    term.textContent = e.name;
+
+                    const tag = document.createElement("div");
+                    tag.className = "tag";
+                    tag.textContent = (e.category || "").toLowerCase();
+
+                    // media: <picture> for entries with responsive sources,
+                    // plain <img> for a bare image, monogram for neither
+                    const media = document.createElement("div");
+                    media.className = "col-media";
+                    const src = e.sources;
+                    if (!src && !e.image) {
+                        media.classList.add("col-media--monogram");
+                        const mono = document.createElement("span");
+                        mono.setAttribute("aria-hidden", "true");
+                        mono.textContent = initials(e.name);
+                        media.appendChild(mono);
+                    } else {
+                        const img = document.createElement("img");
+                        img.src = e.image;
+                        img.alt = e.name + " — " + (e.category || "");
+                        img.loading = "lazy";
+                        img.decoding = "async";
+                        if (src) {
+                            const picture = document.createElement("picture");
+                            [
+                                ["image/avif", src.avif],
+                                ["image/webp", src.webp],
+                            ].forEach(([type, srcset]) => {
+                                if (!srcset) return;
+                                const source =
+                                    document.createElement("source");
+                                source.type = type;
+                                source.srcset = srcset;
+                                source.sizes = IMG_SIZES;
+                                picture.appendChild(source);
+                            });
+                            if (src.fallback) {
+                                img.srcset = src.fallback;
+                                img.sizes = IMG_SIZES;
+                            }
+                            if (src.width) img.width = src.width;
+                            if (src.height) img.height = src.height;
+                            picture.appendChild(img);
+                            media.appendChild(picture);
+                        } else {
+                            media.appendChild(img);
+                        }
+                    }
+
+                    // hover/focus-expanding body: description + meta + socials
+                    const body = document.createElement("div");
+                    body.className = "body";
+                    const inner = document.createElement("div");
+                    inner.className = "inner";
+                    const def = document.createElement("p");
+                    def.className = "def";
+                    def.textContent = e.description || "";
+                    const meta = document.createElement("div");
+                    meta.className = "meta";
+                    if (e.creator_or_steward) {
+                        const s = document.createElement("span");
+                        s.textContent = "by " + e.creator_or_steward;
+                        meta.appendChild(s);
+                    }
+                    if (e.location) {
+                        const s = document.createElement("span");
+                        s.textContent = "◈ " + e.location;
+                        meta.appendChild(s);
+                    }
+                    const socials = (e.socials || [])
+                        .filter((s) => s.label !== "Website")
+                        .map((s) => ({ s, href: socialHref(s) }))
+                        .filter((x) => x.href);
+                    if (socials.length) {
+                        const row = document.createElement("span");
+                        row.className = "socials";
+                        socials.forEach(({ s, href }) => {
+                            const a = document.createElement("a");
+                            a.href = href;
+                            if (href.indexOf("mailto:") !== 0) {
+                                a.target = "_blank";
+                                a.rel = "noopener";
+                            }
+                            a.setAttribute("aria-label", s.label);
+                            a.title = s.label;
+                            a.innerHTML =
+                                '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+                                (ICONS[platformKey(s.label)] || ICONS.globe) +
+                                "</svg>";
+                            // the card itself navigates to the website — keep
+                            // social clicks from double-navigating
+                            a.addEventListener("click", (ev) =>
+                                ev.stopPropagation(),
+                            );
+                            row.appendChild(a);
+                        });
+                        meta.appendChild(row);
+                    }
+                    inner.append(def, meta);
+                    body.appendChild(inner);
+
+                    card.append(top, term, tag, media, body);
+
+                    // whole card → the entity's website (like the ↗ promises)
+                    if (e.website) {
+                        card.addEventListener("click", () =>
+                            window.open(e.website, "_blank", "noopener"),
+                        );
+                        card.addEventListener("keydown", (ev) => {
+                            if (ev.key === "Enter") {
+                                ev.preventDefault();
+                                window.open(e.website, "_blank", "noopener");
+                            }
+                        });
+                    }
+                    return card;
+                }
+
+                function render() {
+                    const frag = document.createDocumentFragment();
+                    let shown = 0;
+                    entries.forEach((e) => {
+                        const okType =
+                            activeFilter === "all" ||
+                            typesOf(e).includes(activeFilter);
+                        const okQuery =
+                            !query || e._hay.indexOf(query) !== -1;
+                        if (okType && okQuery) {
+                            frag.appendChild(e._card);
+                            shown++;
+                        }
+                    });
+                    grid.replaceChildren(frag);
+                    if (countEl) {
+                        countEl.textContent =
+                            shown === entries.length
+                                ? entries.length + " entries"
+                                : shown + " of " + entries.length;
+                    }
+                    if (emptyEl) emptyEl.hidden = shown !== 0;
+                }
+
+                filterBtns.forEach((b) =>
+                    b.addEventListener("click", () => {
+                        activeFilter = b.dataset.filter;
+                        filterBtns.forEach((x) => {
+                            const on = x === b;
+                            x.classList.toggle("is-active", on);
+                            x.setAttribute("aria-pressed", String(on));
+                        });
+                        render();
+                    }),
+                );
+                if (searchInput) {
+                    searchInput.addEventListener("input", () => {
+                        query = norm(searchInput.value).trim();
+                        render();
+                    });
+                }
+
+                fetch("/registry.json")
+                    .then((r) => {
+                        if (!r.ok) throw new Error("HTTP " + r.status);
+                        return r.json();
+                    })
+                    .then((data) => {
+                        entries = data;
+                        const counters = {};
+                        entries.forEach((e) => {
+                            const k = typesOf(e)[0];
+                            counters[k] = (counters[k] || 0) + 1;
+                            e._hay = haystack(e);
+                            e._card = makeCard(e, counters[k]);
+                        });
+                        render();
+                    })
+                    .catch((err) => {
+                        if (countEl)
+                            countEl.textContent = "registry unavailable";
+                        console.error("registry load failed:", err);
+                    });
+            })();
+        </script>
+    </body>
+</html>

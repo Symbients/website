@@ -100,7 +100,7 @@ People thinking, building and caring for symbients — across welfare, multi-age
 - [Jessy Kate](https://jessykate.com): Jessy Kate Schingler, policy and governance lead at the Open Lunar Foundation and convener of Moon Dialogs, designing governance from Earth to the Moon.
 - [Brxs](https://protocol.works): Pseudonymous "forward deployed artist" making living protocol art, building Protocol Works' local-first instruments like Rabbithole and Glitchbox.
 
-The full registry of symbients, artists and researchers is also available as structured JSON at [registry.json](https://symbient.life/registry.json) — each entry carries name, type, category, description, website, location, steward and social links.
+The full registry of symbients, artists and researchers is browsable (with filtering and search) at [symbient.life/registry.html](https://symbient.life/registry.html), and available as structured JSON at [registry.json](https://symbient.life/registry.json) — each entry carries name, type, category, description, website, location, steward and social links.
 
 ## Writings
 
@@ -112,6 +112,7 @@ The full registry of symbients, artists and researchers is also available as str
 ## Links
 
 - [symbient.life](https://symbient.life/): Main site.
+- [Registry](https://symbient.life/registry.html): The complete filterable directory of symbients, artists and researchers.
 - [X / Twitter](https://x.com/symbients): @symbients.
 - [GitHub](https://github.com/Symbients): Symbients organization.
 - [Registry data](https://symbient.life/registry.json): Machine-readable JSON of every symbient, artist and researcher.

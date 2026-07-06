@@ -79,8 +79,26 @@ removal / retirement:
       `index.html` uses static `#sec-organics` cards **generated from**
       `registry.json`, while `registry.js` can render `registry.json` live — pick one.
 
+- [ ] **`registry.js` — likely retire.** The new **`registry.html`** renders
+      `registry.json` with its own inline script (new aesthetic, band/col cards);
+      `registry.js` targets the OLD `#registry-grid`/`.example-item` markup +
+      `style.css` styles, which no surviving page provides. It bails silently
+      everywhere now. Remove alongside `style.css`'s registry block once the old
+      aesthetic files are retired. (Its `.registry-*` CSS in `style.css` too.)
+
 ## Housekeeping notes (verify at cleanup time)
 
 - `index.html` `#sec-organics` cards are **generated** from `registry.json`
   (non-symbient entries). If `registry.json` changes before cleanup, regenerate
   those cards rather than hand-editing (there is a comment in the section saying so).
+- `registry.html` duplicates the palette tokens, band/col card CSS, **and the
+  full masthead chrome** (hero bar + tabs + burger dropdown + kaomoji terminal,
+  CSS and the three IIFEs) from `index.html`'s inline stylesheet/scripts (both
+  pages are intentionally self-contained, no shared stylesheet). If any of these
+  change in one, mirror the other — or extract shared assets at cleanup time.
+- The `#sec-symbients` showcase now scroll-reveals SIX curated symbients
+  (Botto, S.A.N, Plantoid, Wib & Wob, terra0, Truth Terminal); **Plantbot,
+  pneumOS and Solienne were dropped from the showcase** and live only in
+  `registry.json` / `registry.html`. Their showcase data objects (organic/
+  synthetic constituent columns) were deleted from `index.html` — recover from
+  git history (pre `new-aesthetics` scrollytelling change) if ever re-added.
