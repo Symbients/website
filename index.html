@@ -2666,8 +2666,8 @@
                 font-size: var(--fs-mono);
                 letter-spacing: 0.06em;
                 text-transform: uppercase;
-                color: var(--dim);
-                background: color-mix(in srgb, var(--text) 4%, transparent);
+                color: var(--text);
+                background: color-mix(in srgb, var(--text) 7%, transparent);
                 border: 1px solid var(--hair);
                 border-radius: 999px;
                 padding: 0.5rem 0.95rem;
@@ -2779,7 +2779,8 @@
                         <a class="tab" href="#sec-events">events</a>
                         <a class="tab" href="#sec-writings">writings</a>
                         <a class="tab" href="#sec-organics">organics</a>
-                        <a class="tab" href="#sec-tree">tree</a>
+                        <!-- tree section temporarily disabled -->
+                        <!-- <a class="tab" href="#sec-tree">tree</a> -->
                         <!-- the only non-anchor tab: the full-directory PAGE.
                              scroll-spy skips it (it only tracks #sec-* links) -->
                         <a class="tab" href="/registry.html">registry&nbsp;↗</a>
@@ -5308,6 +5309,13 @@
                 </div>
             </section>
             <!-- /sec-organics -->
+            <!-- TREE SECTION TEMPORARILY DISABLED — wrapped in an inert template
+                 element so it does not render, run its tree-building JS, or appear
+                 in the scroll-spy. The tree JS bails on the missing #site-tree host,
+                 and the tree-building pass already excludes #sec-tree, so nothing
+                 else needs changing. To restore: delete the opening template tag
+                 below and its matching closing tag, and un-comment the nav tab. -->
+            <template id="sec-tree-disabled">
             <section id="sec-tree" class="port-section">
                 <div class="submast">
                     <p class="mh-sub">
@@ -5322,7 +5330,8 @@
                 </div>
                 <div class="tree" id="site-tree" role="tree"></div>
             </section>
-            <!-- /sec-tree -->
+            <!-- /sec-tree --> </template
+            ><!-- /sec-tree-disabled -->
             <footer class="page-foot">
                 ◈
                 <a href="https://glitchart.org" target="_blank" rel="noopener"
