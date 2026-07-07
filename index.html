@@ -2613,13 +2613,11 @@
                 .inner {
                     overflow: visible;
                 }
-                /* the inline placeholder body copy (events / writings) */
-                .col-xtra-lorem {
-                    margin: 0.85rem 0 0;
-                    font-size: var(--fs-small);
-                    line-height: 1.62;
-                    color: var(--dim);
-                    white-space: pre-line;
+                /* the decorative "↳ hostname" row (.meta > .threads) duplicates
+                   the real source link injected below as .col-xtra-link, so drop
+                   it on mobile — the affordance row carries the tappable link. */
+                .meta {
+                    display: none;
                 }
                 /* the extra affordances the reader adds, rendered inline
                    (source link, download, and an image for image-less cards) */
@@ -7432,15 +7430,6 @@
                 const closeBtn = reader.querySelector(".reader-close");
                 const mainEl = reader.querySelector(".reader-main");
 
-                const PLACEHOLDER =
-                    "— full text still being kindled —\n\n" +
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                    "sed do eiusmod tempor incididunt ut labore et dolore magna " +
-                    "aliqua. Ut enim ad minim veniam, quis nostrud exercitation " +
-                    "ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
-                    "Duis aute irure dolor in reprehenderit in voluptate velit " +
-                    "esse cillum dolore eu fugiat nulla pariatur.";
-
                 const labelOf = (url) => {
                     if (!url) return "";
                     if (url.startsWith("/"))
@@ -7519,9 +7508,9 @@
                     });
                 }
 
-                // events have no full text yet → def + the shared placeholder copy
+                // events carry a real one-line description → use it AS-IS
                 function content(e) {
-                    return (e.def ? e.def + "\n\n" : "") + PLACEHOLDER;
+                    return e.def;
                 }
 
                 let timer = null;
@@ -9088,19 +9077,6 @@
                 // card's data-* attrs: an image for image-less cards, a source link,
                 // and a download. Lives inside .body .inner so it's hidden when the
                 // body is collapsed.
-                // the events reader appends "still being kindled" placeholder copy
-                // (its full text isn't written yet); mirror it inline so expand
-                // shows the same body, not just the one-line .def. Writings are
-                // excluded — they're link-out cards now, no full-text/detail view.
-                const PLACEHOLDER =
-                    "— full text still being kindled —\n\n" +
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                    "sed do eiusmod tempor incididunt ut labore et dolore magna " +
-                    "aliqua. Ut enim ad minim veniam, quis nostrud exercitation " +
-                    "ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
-                    "Duis aute irure dolor in reprehenderit in voluptate velit " +
-                    "esse cillum dolore eu fugiat nulla pariatur.";
-
                 function ensureExtra(col) {
                     const inner = col.querySelector(".body .inner");
                     if (!inner || inner.dataset.xtraDone) return;
@@ -9109,14 +9085,6 @@
                     const dl = col.dataset.download || "";
                     const img = col.dataset.img || "";
                     const hasMedia = !!col.querySelector(".col-media");
-                    const secId = col.closest(".port-section")?.id || "";
-                    // placeholder body copy — events only (not the PDF card)
-                    if (secId === "sec-events" && !dl) {
-                        const p = document.createElement("p");
-                        p.className = "col-xtra-lorem";
-                        p.textContent = PLACEHOLDER;
-                        inner.appendChild(p);
-                    }
                     if (!href && !dl && !(img && !hasMedia)) return;
                     const x = document.createElement("div");
                     x.className = "col-xtra";
