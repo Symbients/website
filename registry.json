@@ -292,6 +292,26 @@
     ]
   },
   {
+    "name": "AARON",
+    "type": "symbient",
+    "category": "Autonomous painting program",
+    "description": "One of the earliest symbients: a program that autonomously draws and paints original works in its own evolving style. AARON never learned on its own — every new capability, from abstract line to color to human figures, was hand-coded by Harold Cohen across more than four decades, so the machine artist lived only through the lifelong tending of its human.",
+    "website": "https://aaronshome.com/",
+    "location": "San Diego, USA",
+    "creator_or_steward": "Harold Cohen",
+    "image": "assets/symbients/aaron.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://aaronshome.com/"
+      },
+      {
+        "label": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/AARON"
+      }
+    ]
+  },
+  {
     "name": "Primavera De Filippi",
     "type": ["artist", "researcher"],
     "category": "Blockchain lifeforms & generative art",
@@ -676,6 +696,26 @@
       {
         "label": "Vimeo",
         "url": "https://vimeo.com/crosslucid"
+      }
+    ]
+  },
+  {
+    "name": "Harold Cohen",
+    "type": "artist",
+    "category": "Generative art pioneer",
+    "description": "British painter who represented Britain at the 1966 Venice Biennale, then spent the rest of his life tending AARON — the autonomous art-making program he began around 1968 at UC San Diego. Rather than direct a tool, he raised a machine artist by hand, coding its sense of line, form and colour for over forty years until his death in 2016.",
+    "website": "https://aaronshome.com/",
+    "location": "Encinitas, California",
+    "creator_or_steward": "",
+    "image": "assets/artists/harold-cohen.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://aaronshome.com/"
+      },
+      {
+        "label": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Harold_Cohen_(artist)"
       }
     ]
   },
