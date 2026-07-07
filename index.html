@@ -2029,7 +2029,7 @@
                backdrop dip out, re-render (which reseeds the familiar), dip
                back — so the whole stage breathes as one. The familiar's
                opacity transition composes with its theme/breakpoint base
-               opacities (0.5 light / 0.92 dark / 0.26 mobile) since the
+               opacities (0.3 light / 0.4 dark / 0.26 mobile) since the
                switching rule only ever sends it to 0. */
             #sec-symbients .symbient,
             #sec-symbients .wires,
@@ -2062,7 +2062,7 @@
                 width: min(600px, 68%);
                 height: 68%;
                 z-index: 0;
-                opacity: 0.5;
+                opacity: 0.3;
                 pointer-events: none;
                 -webkit-mask-image: radial-gradient(
                     closest-side,
@@ -2075,8 +2075,11 @@
                     transparent 100%
                 );
             }
+            /* in dark, the familiar inks LIGHT-on-dark, so at the old 0.92 it read
+               as a bright halo/vignette that washed out the name + portrait. Keep
+               it as a faint texture only, well below the light theme's 0.5. */
             html[data-theme="dark"] #sec-symbients .familiar {
-                opacity: 0.92;
+                opacity: 0.4;
             }
             /* z1: the cyberpunk connector wires */
             #sec-symbients .wires {
@@ -2432,7 +2435,16 @@
                 #sec-symbients .card-marker {
                     display: block;
                 }
-                /* tendrils stay live on mobile now, routed to the markers */
+                /* tendrils stay live on mobile now, routed to the markers — but
+                   here they fan down THROUGH the centre copy and the cards, so
+                   soften the ink and give the cards a more opaque backing so the
+                   text keeps its contrast against the lines passing behind it. */
+                #sec-symbients .wire {
+                    stroke: color-mix(in srgb, var(--text) 32%, transparent);
+                }
+                #sec-symbients .card {
+                    background: color-mix(in srgb, var(--void) 92%, transparent);
+                }
                 #sec-symbients .familiar {
                     opacity: 0.26;
                     /* enlarge + bump up so the being's head sits behind the name
@@ -2468,10 +2480,6 @@
                     height: 120px;
                 }
                 #sec-symbients .symbient-desc {
-                    display: -webkit-box;
-                    -webkit-line-clamp: 3;
-                    -webkit-box-orient: vertical;
-                    overflow: hidden;
                     margin-top: 0.7rem;
                 }
                 #sec-symbients .card {

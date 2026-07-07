@@ -28,11 +28,28 @@
             property="og:description"
             content="The complete registry of symbients, and of the artists and researchers tending them."
         />
-        <meta property="og:image" content="https://symbient.life/extitutional.png" />
+        <meta
+            property="og:image"
+            content="https://symbient.life/extitutional.png"
+        />
 
-        <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/assets/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/assets/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/assets/favicon-16x16.png"
+        />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -44,7 +61,8 @@
             /* ---- tokens: verbatim from index.html so the two pages theme
                    identically (keep in sync when the palette changes) ---- */
             :root {
-                --grotesk: Arial, "Liberation Sans", "Helvetica Neue", Helvetica,
+                --grotesk:
+                    Arial, "Liberation Sans", "Helvetica Neue", Helvetica,
                     sans-serif;
                 --body: "Open Sans", Arial, sans-serif;
                 --mono: "Space Mono", ui-monospace, monospace;
@@ -242,7 +260,8 @@
                 color: var(--text);
                 white-space: nowrap;
                 letter-spacing: 0.02em;
-                text-shadow: 0 0 5px color-mix(in srgb, var(--void) 78%, transparent);
+                text-shadow: 0 0 5px
+                    color-mix(in srgb, var(--void) 78%, transparent);
             }
             .term-prompt {
                 opacity: 0.5;
@@ -373,7 +392,11 @@
                     font-size: var(--fs-small);
                     letter-spacing: 0.02em;
                     text-transform: none;
-                    background: color-mix(in srgb, var(--void) 93%, transparent);
+                    background: color-mix(
+                        in srgb,
+                        var(--void) 93%,
+                        transparent
+                    );
                     backdrop-filter: saturate(1.1) blur(10px);
                     -webkit-backdrop-filter: saturate(1.1) blur(10px);
                     border-bottom: 1px solid var(--hair);
@@ -419,7 +442,11 @@
                 .site-nav .tab:focus {
                     color: var(--green);
                     border-bottom: none;
-                    background: color-mix(in srgb, var(--green) 8%, transparent);
+                    background: color-mix(
+                        in srgb,
+                        var(--green) 8%,
+                        transparent
+                    );
                 }
                 .site-nav .tab.active {
                     color: var(--green);
@@ -439,7 +466,11 @@
                     bottom: 0;
                     z-index: 5;
                     padding: 0.3rem clamp(0.7rem, 4vw, 1rem);
-                    background: color-mix(in srgb, var(--void) 88%, transparent);
+                    background: color-mix(
+                        in srgb,
+                        var(--void) 88%,
+                        transparent
+                    );
                     backdrop-filter: saturate(1.1) blur(8px);
                     -webkit-backdrop-filter: saturate(1.1) blur(8px);
                     border-top: 1px solid var(--hair);
@@ -645,10 +676,12 @@
             }
             @keyframes pulse {
                 0% {
-                    box-shadow: 0 0 0 0 color-mix(in srgb, var(--node) 55%, transparent);
+                    box-shadow: 0 0 0 0
+                        color-mix(in srgb, var(--node) 55%, transparent);
                 }
                 100% {
-                    box-shadow: 0 0 0 8px color-mix(in srgb, var(--node) 0%, transparent);
+                    box-shadow: 0 0 0 8px
+                        color-mix(in srgb, var(--node) 0%, transparent);
                 }
             }
             .col-top .kinds {
@@ -908,7 +941,12 @@
                         <a class="tab" href="/#sec-writings">writings</a>
                         <a class="tab" href="/#sec-organics">organics</a>
                         <a class="tab" href="/#sec-tree">tree</a>
-                        <a class="tab active" href="/registry.html" aria-current="page">registry</a>
+                        <a
+                            class="tab active"
+                            href="/registry.html"
+                            aria-current="page"
+                            >registry</a
+                        >
                     </nav>
                     <button
                         class="theme-toggle"
@@ -928,18 +966,50 @@
             <div class="submast">
                 <p class="mh-sub">
                     The complete directory of the symbiosis — every symbient,
-                    and every artist and researcher tending one. The six on
-                    the front page are a taster; this list is the whole
-                    ecosystem, and it grows.
+                    and every artist and researcher tending one.
                 </p>
-                <div class="mh-right"><span class="reg-count">…</span> · the registry</div>
+                <div class="mh-right">
+                    <span class="reg-count">…</span> · the registry
+                </div>
             </div>
 
-            <div class="reg-tools" role="group" aria-label="Filter the registry">
-                <button class="reg-filter is-active" type="button" data-filter="all" aria-pressed="true">all</button>
-                <button class="reg-filter" type="button" data-filter="symbient" aria-pressed="false">symbients</button>
-                <button class="reg-filter" type="button" data-filter="artist" aria-pressed="false">artists</button>
-                <button class="reg-filter" type="button" data-filter="researcher" aria-pressed="false">researchers</button>
+            <div
+                class="reg-tools"
+                role="group"
+                aria-label="Filter the registry"
+            >
+                <button
+                    class="reg-filter is-active"
+                    type="button"
+                    data-filter="all"
+                    aria-pressed="true"
+                >
+                    all
+                </button>
+                <button
+                    class="reg-filter"
+                    type="button"
+                    data-filter="symbient"
+                    aria-pressed="false"
+                >
+                    symbients
+                </button>
+                <button
+                    class="reg-filter"
+                    type="button"
+                    data-filter="artist"
+                    aria-pressed="false"
+                >
+                    artists
+                </button>
+                <button
+                    class="reg-filter"
+                    type="button"
+                    data-filter="researcher"
+                    aria-pressed="false"
+                >
+                    researchers
+                </button>
                 <input
                     class="reg-search"
                     id="reg-q"
@@ -950,7 +1020,9 @@
             </div>
 
             <section class="band">
-                <div class="band-axis"><span class="rn">❋</span><span>registry</span></div>
+                <div class="band-axis">
+                    <span class="rn">❋</span><span>registry</span>
+                </div>
                 <div class="cols" id="reg-grid"></div>
             </section>
             <p class="reg-empty" hidden>— nothing in the registry matches —</p>
@@ -972,7 +1044,11 @@
         </main>
 
         <footer class="page-foot">
-            ◈ <a href="https://glitchart.org" target="_blank" rel="noopener">Glitch Collective</a> ©2025 ◈
+            ◈
+            <a href="https://glitchart.org" target="_blank" rel="noopener"
+                >Glitch Collective</a
+            >
+            ©2025 ◈
         </footer>
 
         <script>
@@ -989,7 +1065,8 @@
                 function paintBtn() {
                     const c = cur();
                     if (lbl) lbl.textContent = c;
-                    if (btn.firstChild) btn.firstChild.textContent = glyph[c] + " ";
+                    if (btn.firstChild)
+                        btn.firstChild.textContent = glyph[c] + " ";
                 }
                 paintBtn();
                 btn.addEventListener("click", () => {
@@ -1019,31 +1096,76 @@
                 // per-slot alphabets (positional grammar); " " = part absent
                 const WRAP_L = ["₍", "꒰", "(", "⟨", "⦅", " "];
                 const WRAP_R = ["₎", "꒱", ")", "⟩", "⦆", " "]; // paired by index
-                const EAR_L  = ["ᐢ", "ᐠ", "/", "´", " "];
-                const EAR_R  = ["ᐢ", "ᐟ", "\\", "`", " "]; // paired by index
-                const EYE    = ["•", ".", "･", "◉", "ᵔ", "°", "˘", "・", "^", "¬", "ↀ", "ʘ"];
-                const MOU    = ["‿", "ᴥ", "༝", "ꞈ", "ﻌ", "◡", "﹏", "ε", "‸", ".", "ω", "³", "⌓", "ᗢ"];
-                const SLOTS  = 8; // wrapL, earL, eyeL, mouth, eyeR, earR, wrapR, sep
-                const FREE   = [WRAP_L, EAR_L, EYE, MOU]; // slots 0–3 drift freely
+                const EAR_L = ["ᐢ", "ᐠ", "/", "´", " "];
+                const EAR_R = ["ᐢ", "ᐟ", "\\", "`", " "]; // paired by index
+                const EYE = [
+                    "•",
+                    ".",
+                    "･",
+                    "◉",
+                    "ᵔ",
+                    "°",
+                    "˘",
+                    "・",
+                    "^",
+                    "¬",
+                    "ↀ",
+                    "ʘ",
+                ];
+                const MOU = [
+                    "‿",
+                    "ᴥ",
+                    "༝",
+                    "ꞈ",
+                    "ﻌ",
+                    "◡",
+                    "﹏",
+                    "ε",
+                    "‸",
+                    ".",
+                    "ω",
+                    "³",
+                    "⌓",
+                    "ᗢ",
+                ];
+                const SLOTS = 8; // wrapL, earL, eyeL, mouth, eyeR, earR, wrapR, sep
+                const FREE = [WRAP_L, EAR_L, EYE, MOU]; // slots 0–3 drift freely
 
                 const ri = (n) => Math.floor(Math.random() * n);
                 const rnd = () => Math.random();
                 const pick = (a) => a[ri(a.length)];
-                const idxOf = (a, v) => { const i = a.indexOf(v); return i < 0 ? 0 : i; };
+                const idxOf = (a, v) => {
+                    const i = a.indexOf(v);
+                    return i < 0 ? 0 : i;
+                };
 
-                let chars = [], spans = [], cur = 0, gen = 1, prompt;
+                let chars = [],
+                    spans = [],
+                    cur = 0,
+                    gen = 1,
+                    prompt;
 
                 // a fresh glyph for slot `pos` of the unit starting at index `u`
                 function evolveChar(pos, u) {
-                    if (pos === 7) return " ";                         // separator
-                    if (pos === 4) return rnd() < 0.66 ? chars[u + 2] : pick(EYE); // eyeR ← eyeL
-                    if (pos === 5) return rnd() < 0.6 ? EAR_R[idxOf(EAR_L, chars[u + 1])] : pick(EAR_R);
-                    if (pos === 6) return rnd() < 0.72 ? WRAP_R[idxOf(WRAP_L, chars[u])] : pick(WRAP_R);
-                    return pick(FREE[pos]);                            // wrapL, earL, eyeL, mouth
+                    if (pos === 7) return " "; // separator
+                    if (pos === 4)
+                        return rnd() < 0.66 ? chars[u + 2] : pick(EYE); // eyeR ← eyeL
+                    if (pos === 5)
+                        return rnd() < 0.6
+                            ? EAR_R[idxOf(EAR_L, chars[u + 1])]
+                            : pick(EAR_R);
+                    if (pos === 6)
+                        return rnd() < 0.72
+                            ? WRAP_R[idxOf(WRAP_L, chars[u])]
+                            : pick(WRAP_R);
+                    return pick(FREE[pos]); // wrapL, earL, eyeL, mouth
                 }
 
                 const units = () =>
-                    Math.max(4, Math.min(16, Math.floor((term.clientWidth - 86) / 66)));
+                    Math.max(
+                        4,
+                        Math.min(16, Math.floor((term.clientWidth - 86) / 66)),
+                    );
 
                 function build() {
                     const n = units() * SLOTS;
@@ -1054,7 +1176,8 @@
                     host.textContent = "";
                     prompt = document.createElement("span");
                     prompt.className = "term-prompt";
-                    prompt.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    prompt.textContent =
+                        "gen " + String(gen).padStart(3, "0") + " ▸ ";
                     host.appendChild(prompt);
                     spans = chars.map((c, i) => {
                         const s = document.createElement("span");
@@ -1072,7 +1195,8 @@
                     cur = (cur + 1) % n;
                     if (cur === 0) {
                         gen++;
-                        prompt.textContent = "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                        prompt.textContent =
+                            "gen " + String(gen).padStart(3, "0") + " ▸ ";
                     }
                     // the char the cursor just left may mutate within its slot
                     if (rnd() < 0.45) {
@@ -1314,8 +1438,7 @@
                                 ["image/webp", src.webp],
                             ].forEach(([type, srcset]) => {
                                 if (!srcset) return;
-                                const source =
-                                    document.createElement("source");
+                                const source = document.createElement("source");
                                 source.type = type;
                                 source.srcset = srcset;
                                 source.sizes = IMG_SIZES;
@@ -1410,8 +1533,7 @@
                         const okType =
                             activeFilter === "all" ||
                             typesOf(e).includes(activeFilter);
-                        const okQuery =
-                            !query || e._hay.indexOf(query) !== -1;
+                        const okQuery = !query || e._hay.indexOf(query) !== -1;
                         if (okType && okQuery) {
                             frag.appendChild(e._card);
                             shown++;
