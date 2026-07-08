@@ -1435,7 +1435,9 @@
                 width: 100%;
                 margin: 0 auto;
             }
-            /* a soft void backing so the text reads over the creature */
+            /* a void backing so the text reads over the creature — a mostly
+               solid core under the words that feathers out into the glyph
+               field so the creature still shows at the edges */
             #sec-home .define::before {
                 content: "";
                 position: absolute;
@@ -1446,8 +1448,8 @@
                 height: 160%;
                 background: radial-gradient(
                     ellipse at center,
-                    color-mix(in srgb, var(--void) 68%, transparent) 32%,
-                    color-mix(in srgb, var(--void) 22%, transparent) 56%,
+                    var(--void) 30%,
+                    color-mix(in srgb, var(--void) 80%, transparent) 55%,
                     transparent 78%
                 );
                 z-index: -1;
@@ -1512,7 +1514,7 @@
                 margin: 0.9rem 0;
                 font-size: clamp(0.95rem, 1.1vw, 1.1rem);
                 line-height: 1.75;
-                font-weight: 300;
+                font-weight: 400;
                 color: var(--text);
             }
             #sec-home .meaning p {
@@ -2280,8 +2282,8 @@
                 letter-spacing: 0.06em;
                 text-transform: uppercase;
                 color: var(--text);
-                background: color-mix(in srgb, var(--text) 7%, transparent);
-                border: 1px solid var(--hair);
+                background: color-mix(in srgb, var(--text) 12%, transparent);
+                border: 1px solid color-mix(in srgb, var(--text) 38%, transparent);
                 border-radius: 999px;
                 padding: 0.5rem 0.95rem;
                 cursor: pointer;
