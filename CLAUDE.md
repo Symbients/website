@@ -27,11 +27,13 @@ There are three independent public pages. **Which shared assets each loads is lo
 
 | Page | Stylesheets | Scripts |
 |---|---|---|
-| `index.html` | inline `<style>` | large inline `<script>` |
-| `registry.html` | inline `<style>` | inline registry/filter script |
+| `index.html` | `theme.css` + inline `<style>` | large inline `<script>` |
+| `registry.html` | `theme.css` + inline `<style>` | inline registry/filter script |
 | `tokyo.html` | `tufte-css` (CDN) + its own inline `<style>` | `theme.js`, `reveal.js` + inline `<script>` |
 
-`index.html` and `registry.html` are intentionally self-contained on the new aesthetic. `tokyo.html` is self-contained on Tufte CSS plus inline styles, but still shares `theme.js` and `reveal.js`.
+`index.html` and `registry.html` share **`theme.css`** — the design tokens, base reset and masthead "chrome" (frozen hero bar + section nav + kaomoji terminal + the ≤640 phone treatment) they render identically. Each links it **before** its inline `<style>`, so page-specific rules override the shared ones by source order. The `theme.css` baseline is the always-visible, always-interactive masthead; `index.html`'s inline `<style>` layers its intro machinery on top (the hero starts `opacity:0` and the intro reveals it, with the pointer-events juggling that implies). Each page also keeps its own `.theme-toggle` (index's has over-hero intro states; registry's is always on-page) and its own pinned-ticker clearance. `tokyo.html` does **not** use `theme.css` — it is self-contained on Tufte CSS plus inline styles, but still shares `theme.js` and `reveal.js`.
+
+When the palette or masthead changes, edit `theme.css` **once** (it was previously hand-duplicated across both inline blocks). Confirm both pages still match, since a rule genuinely divergent between them belongs in that page's inline override, not in `theme.css`.
 
 The `index.html` Organics section (`#sec-organics`) is static HTML generated from `registry.json` (all non-symbient entries). Regenerate that section from the data rather than hand-editing it when registry entries change. `registry.html` renders the complete directory directly from `registry.json` at runtime.
 
