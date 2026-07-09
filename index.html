@@ -1917,6 +1917,13 @@
                 color: var(--void);
                 border-color: var(--text);
             }
+            /* on the final symbient, fill the registry door black to pull the
+               eye toward the full directory (toggled from render()) */
+            #sec-symbients .nav-registry.is-cued {
+                background: var(--text);
+                color: var(--void);
+                border-color: var(--text);
+            }
             #sec-symbients .nav-counter {
                 color: var(--faint);
                 letter-spacing: 0.16em;
@@ -2695,7 +2702,10 @@
 
                     <nav class="nav">
                         <span class="nav-counter" id="counter"></span>
-                        <a class="nav-registry" href="/registry.html"
+                        <a
+                            class="nav-registry"
+                            id="nav-registry"
+                            href="/registry.html"
                             >full&nbsp;registry&nbsp;↗</a
                         >
                     </nav>
@@ -5830,6 +5840,7 @@
                     organic: document.getElementById("organic"),
                     synthetic: document.getElementById("synthetic"),
                     counter: document.getElementById("counter"),
+                    registry: document.getElementById("nav-registry"),
                 };
 
                 /* =============================================================
@@ -6011,6 +6022,12 @@
                         String(i + 1).padStart(2, "0") +
                         " / " +
                         String(SYMBIENTS.length).padStart(2, "0");
+                    // cue the registry door on the last symbient in the taster
+                    if (els.registry)
+                        els.registry.classList.toggle(
+                            "is-cued",
+                            i === SYMBIENTS.length - 1,
+                        );
                     reseedFamiliar();
                     requestAnimationFrame(drawWires);
                 }
