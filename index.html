@@ -279,11 +279,10 @@
                 color: var(--green);
             }
 
-            /* ---------- narrative: the 1×4 movements grid + section-scoped reader ----
+            /* ---------- narrative: the four movements as full-width rows ----
                Ported from lexicon's .view-narrative. Fixed px font-sizes are
-               replaced with the fluid --fs-* tokens; the reading state is scoped
-               to #sec-narrative.is-reading so the reader expands IN PLACE within
-               this section instead of taking over the page. */
+               replaced with the fluid --fs-* tokens. Each movement renders
+               fully expanded inline; there is no click-to-expand reader. */
             #sec-narrative {
                 /* content-heavy section reads top-aligned, not vertically centered */
                 justify-content: flex-start;
@@ -307,7 +306,6 @@
                 align-items: start;
                 column-gap: clamp(1.75rem, 4vw, 4rem);
                 min-width: 0;
-                cursor: pointer;
             }
             /* even movements mirror: art to the right */
             .nar-cell:nth-child(even) {
@@ -323,6 +321,13 @@
             .nar-art {
                 grid-area: art;
                 align-self: start;
+            }
+            /* N·04 (Symbient as Hyperstition) has the longest prose, so its art
+               would sit high against a much taller text column — center it
+               vertically within the row instead. Grid-only: on mobile the cell
+               is a flex column, where this has no effect. */
+            .nar-cell:nth-child(4) .nar-art {
+                align-self: center;
             }
             .nar-head {
                 grid-area: head;
@@ -530,151 +535,6 @@
                 letter-spacing: 0.01em;
                 color: var(--dim);
             }
-            /* the grid cells are clickable (like the lexicon cards) */
-            .nar-cell:hover .nar-head {
-                color: var(--green);
-            }
-            .nar-cell .nar-head::after {
-                content: " ↗";
-                color: var(--faint);
-                font-weight: 400;
-            }
-            .nar-cell:focus-visible {
-                outline: 1px solid var(--hair-2);
-                outline-offset: 5px;
-            }
-
-            /* ---- the expanded reader: full prose left, the movement's live art
-               right (two columns). Scoped to THIS section — it replaces the grid
-               in place; the rest of the page stays visible and scrollable. ---- */
-            .narr-reader {
-                display: none;
-                position: relative;
-                padding: 3.2rem 0 2.5rem;
-                transition: opacity 0.35s var(--ease);
-            }
-            #sec-narrative.is-reading .nar-grid {
-                display: none;
-            }
-            #sec-narrative.is-reading .narr-reader {
-                display: block;
-            }
-            .narr-close {
-                position: absolute;
-                top: 0;
-                left: 0;
-                font-family: var(--mono);
-                font-size: var(--fs-mono);
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                color: var(--dim);
-                background: none;
-                border: 1px solid var(--hair);
-                padding: 0.4rem 0.7rem;
-                cursor: pointer;
-                transition: all 0.2s var(--ease);
-            }
-            .narr-close:hover {
-                color: var(--text);
-                border-color: var(--text);
-            }
-            .narr-reader-inner {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: clamp(2rem, 5vw, 4.5rem);
-                align-items: start;
-            }
-            @media (max-width: 760px) {
-                .narr-reader-inner {
-                    grid-template-columns: 1fr;
-                }
-            }
-            .narr-reader-kicker {
-                font-family: var(--mono);
-                font-size: var(--fs-mono);
-                color: var(--faint);
-                letter-spacing: 0.18em;
-                text-transform: uppercase;
-                margin-bottom: 0.8rem;
-            }
-            .narr-reader-head {
-                font-family: var(--grotesk);
-                font-size: var(--fs-h2);
-                font-weight: 700;
-                line-height: 1.08;
-                letter-spacing: -0.015em;
-                color: var(--text);
-                margin: 0 0 1.3rem;
-            }
-            .narr-reader-body {
-                font-family: var(--body);
-                color: var(--text);
-            }
-            .narr-reader-body p {
-                font-size: clamp(1rem, 0.88rem + 0.6vw, 1.25rem);
-                line-height: 1.65;
-                margin: 0 0 1rem;
-                max-width: 58ch;
-            }
-            .narr-reader-body a {
-                color: var(--green);
-                text-decoration: underline;
-                text-underline-offset: 2px;
-                text-decoration-thickness: 1px;
-            }
-            .narr-reader-body a:hover {
-                color: var(--text);
-            }
-            .narr-reader-body blockquote {
-                margin: 1.1rem 0;
-                padding: 0.3rem 0 0.3rem 1rem;
-                border-left: 1px solid var(--hair);
-                color: var(--dim);
-                font-style: italic;
-                font-size: var(--fs-body);
-                line-height: 1.6;
-            }
-            .narr-reader-body blockquote.nar-quote-mono {
-                font-family: var(--mono);
-                font-style: normal;
-                font-size: var(--fs-small);
-                line-height: 1.75;
-                letter-spacing: 0.01em;
-            }
-            /* the right column hosts the moved .nar-art (live ascii or fallback) */
-            .narr-reader-media {
-                position: relative;
-                width: 100%;
-            }
-            .narr-reader-media .nar-art {
-                margin-bottom: 0;
-            }
-            .narr-reader-nav {
-                display: flex;
-                align-items: center;
-                gap: 1.4rem;
-                margin-top: clamp(1.4rem, 3vw, 2.2rem);
-            }
-            .narr-reader-nav button {
-                font-family: var(--mono);
-                font-size: var(--fs-mono);
-                letter-spacing: 0.04em;
-                color: var(--dim);
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 0.3rem 0;
-            }
-            .narr-reader-nav button:hover {
-                color: var(--text);
-            }
-            .narr-counter {
-                font-family: var(--mono);
-                font-size: var(--fs-mono);
-                color: var(--faint);
-                letter-spacing: 0.12em;
-            }
-
             /* ============ events: atlas cards + section-scoped reader ============
                Ported from lexicon's .band/.cols/.col card system and its
                shell-wide .reader. Reading state is scoped to #sec-events.is-reading
@@ -2576,8 +2436,8 @@
             <!-- ============ NARRATIVE (ported from lexicon .view-narrative) ============
                  The masthead hero title shows "Narrative" via the global scroll-spy,
                  so there is no duplicate big heading here — the submast intro is the
-                 only lead-in. The reader is scoped to #sec-narrative.is-reading and
-                 expands in place; the rest of the page stays scrollable. -->
+                 only lead-in. The four movements read as full-width editorial rows,
+                 fully expanded; there is no click-to-expand reader. -->
             <section id="sec-narrative" class="port-section">
                 <div class="submast">
                     <p class="mh-sub">
@@ -2665,9 +2525,9 @@
                                 entity emerges, with its own identity and
                                 agency.
                             </p>
-                            <blockquote class="nar-quote">
+                            <!--<blockquote class="nar-quote">
                                 The future is symbiosis, not replacement.
-                            </blockquote>
+                            </blockquote>-->
                         </div>
                     </article>
 
@@ -2769,36 +2629,6 @@
                             </p>
                         </div>
                     </article>
-                </div>
-
-                <!-- expanded reading view (one movement at a time): full prose on the
-                     left, the movement's live .nar-art relocated into the right column.
-                     Scoped to this section — shown via #sec-narrative.is-reading. -->
-                <div class="narr-reader" aria-live="polite">
-                    <button
-                        class="narr-close"
-                        type="button"
-                        aria-label="Collapse"
-                    >
-                        collapse&nbsp;▴
-                    </button>
-                    <div class="narr-reader-inner">
-                        <div class="narr-reader-text">
-                            <div class="narr-reader-kicker"></div>
-                            <h2 class="narr-reader-head"></h2>
-                            <div class="narr-reader-body"></div>
-                            <nav class="narr-reader-nav" aria-label="movements">
-                                <button class="narr-prev" type="button">
-                                    ◂&nbsp;prev
-                                </button>
-                                <span class="narr-counter"></span>
-                                <button class="narr-next" type="button">
-                                    next&nbsp;▸
-                                </button>
-                            </nav>
-                        </div>
-                        <div class="narr-reader-media" aria-hidden="true"></div>
-                    </div>
                 </div>
             </section>
             <!-- /sec-narrative -->
@@ -5557,14 +5387,12 @@
             })();
         </script>
 
-        <!-- narrative section: animated ascii lab assets per cell + the
-             section-scoped two-column reader. Adapted for the scroll layout —
-             canvas visibility is driven by an IntersectionObserver on the
-             section (it is never [hidden]); the reading state is scoped to
-             #sec-narrative.is-reading so the reader expands IN PLACE; the
-             keyboard handler only fires while THIS section is reading. Module-
-             scoped so the lab imports work; fully guarded so a missing asset is
-             harmless (the raster fallback stays and the reader still works). -->
+        <!-- narrative section: animated ascii lab assets per cell. The four
+             movements render as full-width editorial rows (fully expanded, no
+             click-to-expand reader). Adapted for the scroll layout — canvas
+             visibility is driven by an IntersectionObserver on the section (it
+             is never [hidden]). Module-scoped so the lab imports work; fully
+             guarded so a missing asset is harmless (the raster fallback stays). -->
         <script type="module">
             (async function () {
                 const view = document.getElementById("sec-narrative");
@@ -5572,14 +5400,13 @@
                 const cells = [...view.querySelectorAll(".nar-cell")];
                 if (!cells.length) return;
 
-                const heroEl = document.querySelector(".site-hero");
                 const reduce = matchMedia(
                     "(prefers-reduced-motion: reduce)",
                 ).matches;
 
                 // fade each movement up as it is reached. Opt-in via .reveal-on
                 // so the rows stay fully visible without JS / under reduced
-                // motion; independent of the reader logic below.
+                // motion.
                 const narGrid = view.querySelector(".nar-grid");
                 if (narGrid && !reduce && "IntersectionObserver" in window) {
                     narGrid.classList.add("reveal-on");
@@ -5602,7 +5429,6 @@
 
                 // one record per cell that successfully loads a lab asset
                 const live = []; // { inst, art, i }
-                const recFor = (idx) => live.find((r) => r.i === idx);
 
                 function startAll() {
                     live.forEach(({ inst }) => {
@@ -5628,166 +5454,7 @@
                     inst.setParam("symmetry", 0.55 + Math.random() * 0.45);
                 }
 
-                const readerEl = view.querySelector(".narr-reader");
-                const mediaSlot = view.querySelector(".narr-reader-media");
-                const kickEl = view.querySelector(".narr-reader-kicker");
-                const headOut = view.querySelector(".narr-reader-head");
-                const bodyOut = view.querySelector(".narr-reader-body");
-                const counterEl = view.querySelector(".narr-counter");
-                const closeBtnEl = view.querySelector(".narr-close");
-                const prevBtn = view.querySelector(".narr-prev");
-                const nextBtn = view.querySelector(".narr-next");
-
-                const rectOf = (el) => el.getBoundingClientRect();
-                // expand/collapse ghost — the same fly the chrome defines
-                function fly(from, to) {
-                    const g = document.createElement("div");
-                    g.className = "cell-ghost";
-                    g.style.top = from.top + "px";
-                    g.style.left = from.left + "px";
-                    g.style.width = from.width + "px";
-                    g.style.height = from.height + "px";
-                    document.body.appendChild(g);
-                    g.getBoundingClientRect(); // reflow so the transition runs
-                    g.style.top = to.top + "px";
-                    g.style.left = to.left + "px";
-                    g.style.width = to.width + "px";
-                    g.style.height = to.height + "px";
-                    setTimeout(() => (g.style.opacity = "0"), 520);
-                    setTimeout(() => g.remove(), 1320);
-                }
-
-                let openIdx = -1;
-                let anchor = null; // { cell, headEl, art } — to put the art back
-                function restoreArt() {
-                    if (!anchor) return;
-                    anchor.cell.insertBefore(anchor.art, anchor.headEl);
-                    anchor = null;
-                }
-
-                // does the section need a gentle scroll so the reader is framed
-                // below the frozen hero? (true when its top is hidden under the
-                // hero or sits far down the viewport)
-                function needsFraming() {
-                    const heroH = heroEl
-                        ? heroEl.getBoundingClientRect().height
-                        : 0;
-                    const top = view.getBoundingClientRect().top;
-                    return top < heroH - 1 || top > window.innerHeight * 0.45;
-                }
-
-                function openReader(i) {
-                    if (!readerEl || i < 0 || i >= cells.length) return;
-                    if (openIdx === i) return;
-                    const entering = openIdx < 0;
-                    // when entering, decide between an in-place ghost fly (section
-                    // already framed) and a smooth scroll-into-frame + fade-in
-                    const frame = entering && inView && needsFraming();
-                    const from =
-                        entering && !reduce && inView && !frame
-                            ? rectOf(cells[i])
-                            : null;
-                    restoreArt(); // return any currently-open art first
-                    const cell = cells[i];
-                    const art = cell.querySelector(".nar-art");
-                    const headEl = cell.querySelector(".nar-head");
-                    if (art && headEl) {
-                        anchor = { cell, headEl, art };
-                        mediaSlot.appendChild(art); // move live ascii / fallback in
-                    }
-                    kickEl.textContent =
-                        (cell.querySelector(".nar-kicker") || {}).textContent ||
-                        "";
-                    headOut.textContent = (headEl || {}).textContent || "";
-                    bodyOut.innerHTML =
-                        (cell.querySelector(".nar-body") || {}).innerHTML || "";
-                    counterEl.textContent = i + 1 + " / " + cells.length;
-                    view.classList.add("is-reading"); // scoped reading state
-                    openIdx = i;
-                    // while reading, run only the focused instance
-                    stopAll();
-                    const rec = recFor(i);
-                    if (rec)
-                        requestAnimationFrame(() => {
-                            rec.inst.resize && rec.inst.resize();
-                            rec.inst.start && rec.inst.start();
-                        });
-                    // expand animation (ghost), only when entering in place
-                    if (from) {
-                        readerEl.style.opacity = "0";
-                        const to = rectOf(readerEl);
-                        requestAnimationFrame(() => fly(from, to));
-                        setTimeout(() => {
-                            readerEl.style.opacity = "1";
-                        }, 420);
-                    } else {
-                        readerEl.style.opacity = "1";
-                    }
-                    // frame the reader below the frozen hero when it would
-                    // otherwise be off-screen. The page does NOT jump to top —
-                    // scroll-margin-top lands this section just below the hero.
-                    if (frame)
-                        view.scrollIntoView({
-                            behavior: reduce ? "auto" : "smooth",
-                            block: "start",
-                        });
-                    if (closeBtnEl) closeBtnEl.focus({ preventScroll: true });
-                }
-                function closeReader() {
-                    if (openIdx < 0) return;
-                    const was = openIdx;
-                    const from = reduce || !inView ? null : rectOf(readerEl);
-                    restoreArt();
-                    view.classList.remove("is-reading"); // grid shown again
-                    openIdx = -1;
-                    const c = cells[was];
-                    if (from && c) {
-                        const to = rectOf(c);
-                        readerEl.style.opacity = "";
-                        requestAnimationFrame(() => fly(from, to));
-                    }
-                    if (inView) requestAnimationFrame(startAll);
-                    if (c) c.focus({ preventScroll: true });
-                }
-                function go(delta) {
-                    openReader((openIdx + delta + cells.length) % cells.length);
-                }
-
-                // wire cells + controls (works even if the lab never loads — the
-                // relocated art just shows its raster fallback)
-                cells.forEach((cell, i) => {
-                    cell.setAttribute("tabindex", "0");
-                    cell.setAttribute("role", "button");
-                    cell.setAttribute(
-                        "aria-label",
-                        "Read: " +
-                            ((cell.querySelector(".nar-head") || {})
-                                .textContent || "movement"),
-                    );
-                    cell.addEventListener("click", (ev) => {
-                        if (ev.target.closest("a")) return; // let inline links work
-                        openReader(i);
-                    });
-                    cell.addEventListener("keydown", (ev) => {
-                        if (ev.key === "Enter" || ev.key === " ") {
-                            ev.preventDefault();
-                            openReader(i);
-                        }
-                    });
-                });
-                if (closeBtnEl)
-                    closeBtnEl.addEventListener("click", closeReader);
-                if (prevBtn) prevBtn.addEventListener("click", () => go(-1));
-                if (nextBtn) nextBtn.addEventListener("click", () => go(1));
-                // keyboard is GUARDED — only fires while THIS section is reading
-                document.addEventListener("keydown", (ev) => {
-                    if (!view.classList.contains("is-reading")) return;
-                    if (ev.key === "Escape") closeReader();
-                    else if (ev.key === "ArrowLeft") go(-1);
-                    else if (ev.key === "ArrowRight") go(1);
-                });
-
-                /* ---- lab assets per cell (graceful; the reader works without) ---- */
+                /* ---- lab assets per cell (graceful; fallback shows without) ---- */
                 const MODULES = [
                     "/lab/assets/being-composer.js",
                     "/lab/assets/symbiogenesis-ascii.js",
@@ -5798,7 +5465,7 @@
                 try {
                     ({ readPalette } = await import("/lab/assets/common.js"));
                 } catch (e) {
-                    readPalette = null; // no lab → fallbacks stay; reader still works
+                    readPalette = null; // no lab → the raster fallbacks stay
                 }
 
                 if (readPalette) {
@@ -5821,9 +5488,7 @@
                                 }
                                 live.push({ inst, art, i });
                                 art.classList.add("is-live"); // hides fallback
-                                // start if the section is in view and this cell
-                                // is not hidden behind the reader
-                                if (inView && (openIdx < 0 || openIdx === i)) {
+                                if (inView) {
                                     requestAnimationFrame(() => {
                                         inst.resize && inst.resize();
                                         inst.start && inst.start();
@@ -5838,24 +5503,14 @@
 
                 // canvas visibility = scroll, not [hidden]: start (and reseed the
                 // familiar, as lexicon did each visit) when the section nears the
-                // viewport; stop when it leaves (perf). While reading, only the
-                // focused instance runs.
+                // viewport; stop when it leaves (perf).
                 const io = new IntersectionObserver(
                     (entries) => {
                         const wasIn = inView;
                         inView = entries[0].isIntersecting;
                         if (inView && !wasIn) {
-                            if (openIdx < 0) {
-                                if (familiar) reseedFamiliar(familiar);
-                                requestAnimationFrame(startAll);
-                            } else {
-                                const rec = recFor(openIdx);
-                                if (rec)
-                                    requestAnimationFrame(() => {
-                                        rec.inst.resize && rec.inst.resize();
-                                        rec.inst.start && rec.inst.start();
-                                    });
-                            }
+                            if (familiar) reseedFamiliar(familiar);
+                            requestAnimationFrame(startAll);
                         } else if (!inView && wasIn) {
                             stopAll();
                         }
@@ -5865,13 +5520,7 @@
                 io.observe(view);
 
                 window.addEventListener("resize", () => {
-                    if (!inView) return;
-                    if (openIdx >= 0) {
-                        const r = recFor(openIdx);
-                        r && r.inst.resize && r.inst.resize();
-                    } else {
-                        resizeAll();
-                    }
+                    if (inView) resizeAll();
                 });
 
                 // recolor with the global theme (light / dark)
@@ -8634,7 +8283,7 @@
             (function () {
                 const NAMES = {
                     "sec-home": "Home",
-                    "sec-symbients": "Symbients",
+                    "sec-symbients": "Meet the Symbients",
                     "sec-narrative": "Narrative",
                     "sec-lexicon": "Lexicon",
                     "sec-events": "Events",
