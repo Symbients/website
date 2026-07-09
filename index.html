@@ -1601,6 +1601,33 @@
                 opacity: 0.85;
             }
 
+            /* ---- mobile intro: stack the creature ABOVE the definition ----
+               On phones the definition box spans nearly the full width, so the
+               centred creature backdrop sat directly behind the text and the
+               solid scrim hid it entirely. Bring the creature into normal flow
+               as a top band (it is the first child of .intro-pin), drop the
+               scrim, and let the definition read on the bare background below
+               it — mirroring the stacked hero on the live site. */
+            @media (max-width: 640px) {
+                #sec-home .intro-pin {
+                    justify-content: center;
+                    gap: clamp(0.8rem, 3.5vh, 1.8rem);
+                }
+                #sec-home .creature {
+                    position: relative;
+                    top: auto;
+                    left: auto;
+                    transform: none;
+                    width: min(280px, 66vw);
+                    margin: 0 auto;
+                    opacity: 1;
+                }
+                /* the text no longer overlaps the creature → no scrim needed */
+                #sec-home .define::before {
+                    display: none;
+                }
+            }
+
             /* ---------- #sec-symbients : SHOW ---------- */
             #sec-symbients {
                 /* the scrollytelling TRACK: ~92 viewport-heights of scroll per
@@ -2387,8 +2414,8 @@
                     </button>
                     <nav class="site-nav" id="site-nav" aria-label="sections">
                         <a class="tab" href="#sec-home">home</a>
-                        <a class="tab" href="#sec-symbients">symbients</a>
                         <a class="tab" href="#sec-narrative">narrative</a>
+                        <a class="tab" href="#sec-symbients">symbients</a>
                         <!-- lexicon section temporarily disabled -->
                         <!-- <a class="tab" href="#sec-lexicon">lexicon</a> -->
                         <a class="tab" href="#sec-events">events</a>
@@ -2491,84 +2518,6 @@
                             aria-label="sections"
                         ></nav>
                     </div>
-                </div>
-            </section>
-
-            <!-- ============ SYMBIENTS / SHOW ======================================
-                 The showcase, now SCROLL-DRIVEN (user testing showed nobody clicked
-                 prev/next): the section is a tall scroll TRACK and the stage
-                 (.show-pin) pins below the hero while the track scrolls past.
-                 Scroll progress steps through six curated symbients — Botto, S.A.N,
-                 Plantoid, Wib & Wob, terra0, Truth Terminal — each a centred name +
-                 category + portrait, flanked by an organic column (left) and a
-                 synthetic column (right) under the S/N/C model, with cyberpunk
-                 connector wires routed from each constituent card to a neighbourhood
-                 beside the name. A randomised being-composer familiar is rendered
-                 behind everything, re-seeded on every step; steps (content, wires
-                 AND the familiar backdrop) crossfade via .show-pin.is-switching.
-                 Scroll is the only driver (no buttons — arrow keys scroll too);
-                 the stage nav shows a step counter and links to /registry.html —
-                 the full directory (these six are a taster; the registry holds the
-                 complete, growing list). The masthead title shows "Symbients" via
-                 the global scroll-spy. The familiar + wires + portrait frame animate
-                 only while this section is in view. -->
-            <section id="sec-symbients" class="port-section sec-stage">
-                <div class="show-pin" id="show-pin">
-                    <!-- backdrops: z0 randomised familiar · z1 connector wires -->
-                    <canvas
-                        class="familiar"
-                        id="familiar"
-                        aria-hidden="true"
-                    ></canvas>
-                    <svg
-                        class="wires"
-                        id="wires"
-                        preserveAspectRatio="none"
-                        aria-hidden="true"
-                    ></svg>
-
-                    <div class="symbient">
-                        <div class="column column--organic" id="organic"></div>
-                        <div class="symbient-center">
-                            <div class="symbient-eyebrow">symbient</div>
-                            <h2 class="symbient-name" id="symbient-name"></h2>
-                            <div class="symbient-cat" id="symbient-cat"></div>
-                            <div
-                                class="symbient-portrait"
-                                id="symbient-portrait"
-                            >
-                                <a
-                                    class="portrait-link"
-                                    id="portrait-link"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <img
-                                        id="portrait-img"
-                                        alt=""
-                                        decoding="async"
-                                    />
-                                </a>
-                                <canvas
-                                    class="portrait-frame"
-                                    id="portrait-frame"
-                                    aria-hidden="true"
-                                ></canvas>
-                            </div>
-                            <p class="symbient-desc" id="symbient-desc"></p>
-                        </div>
-                        <div
-                            class="column column--synthetic"
-                            id="synthetic"
-                        ></div>
-                    </div>
-
-                    <nav class="nav">
-                        <span class="nav-counter" id="counter"></span>
-                        <a class="nav-registry" href="/registry.html"
-                            >full&nbsp;registry&nbsp;↗</a
-                        >
-                    </nav>
                 </div>
             </section>
 
@@ -2811,6 +2760,84 @@
                 </div>
             </section>
             <!-- /sec-narrative -->
+
+            <!-- ============ SYMBIENTS / SHOW ======================================
+                 The showcase, now SCROLL-DRIVEN (user testing showed nobody clicked
+                 prev/next): the section is a tall scroll TRACK and the stage
+                 (.show-pin) pins below the hero while the track scrolls past.
+                 Scroll progress steps through six curated symbients — Botto, S.A.N,
+                 Plantoid, Wib & Wob, terra0, Truth Terminal — each a centred name +
+                 category + portrait, flanked by an organic column (left) and a
+                 synthetic column (right) under the S/N/C model, with cyberpunk
+                 connector wires routed from each constituent card to a neighbourhood
+                 beside the name. A randomised being-composer familiar is rendered
+                 behind everything, re-seeded on every step; steps (content, wires
+                 AND the familiar backdrop) crossfade via .show-pin.is-switching.
+                 Scroll is the only driver (no buttons — arrow keys scroll too);
+                 the stage nav shows a step counter and links to /registry.html —
+                 the full directory (these six are a taster; the registry holds the
+                 complete, growing list). The masthead title shows "Symbients" via
+                 the global scroll-spy. The familiar + wires + portrait frame animate
+                 only while this section is in view. -->
+            <section id="sec-symbients" class="port-section sec-stage">
+                <div class="show-pin" id="show-pin">
+                    <!-- backdrops: z0 randomised familiar · z1 connector wires -->
+                    <canvas
+                        class="familiar"
+                        id="familiar"
+                        aria-hidden="true"
+                    ></canvas>
+                    <svg
+                        class="wires"
+                        id="wires"
+                        preserveAspectRatio="none"
+                        aria-hidden="true"
+                    ></svg>
+
+                    <div class="symbient">
+                        <div class="column column--organic" id="organic"></div>
+                        <div class="symbient-center">
+                            <div class="symbient-eyebrow">symbient</div>
+                            <h2 class="symbient-name" id="symbient-name"></h2>
+                            <div class="symbient-cat" id="symbient-cat"></div>
+                            <div
+                                class="symbient-portrait"
+                                id="symbient-portrait"
+                            >
+                                <a
+                                    class="portrait-link"
+                                    id="portrait-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <img
+                                        id="portrait-img"
+                                        alt=""
+                                        decoding="async"
+                                    />
+                                </a>
+                                <canvas
+                                    class="portrait-frame"
+                                    id="portrait-frame"
+                                    aria-hidden="true"
+                                ></canvas>
+                            </div>
+                            <p class="symbient-desc" id="symbient-desc"></p>
+                        </div>
+                        <div
+                            class="column column--synthetic"
+                            id="synthetic"
+                        ></div>
+                    </div>
+
+                    <nav class="nav">
+                        <span class="nav-counter" id="counter"></span>
+                        <a class="nav-registry" href="/registry.html"
+                            >full&nbsp;registry&nbsp;↗</a
+                        >
+                    </nav>
+                </div>
+            </section>
 
             <!-- ============ LEXICON (ported from lexicon .view[data-view="lexicon"]) ==
                  The biggest card section: 11 terms across 3 bands, plus the
@@ -8832,7 +8859,7 @@
             // #sec-home is a full-screen symbient definition on the bare theme
             // background (a fixed .intro-pin overlay covering the field + sections).
             // Scrolling fades + disperses it to reveal the hero and the rest of the
-            // page (starting with #sec-symbients). Scroll is only the progress
+            // page (starting with #sec-narrative). Scroll is only the progress
             // driver — the content stays put; it reverses on scroll-up. Bails (and
             // shows the hero normally) if the intro markup isn't present.
             (function () {
@@ -8907,7 +8934,7 @@
                     // the theme toggle now lives inside the hero, so it fades with
                     // the hero's own opacity — no separate handling needed
                     // the intro overlay fades out well before the next section
-                    // dominates (by p≈0.67) so its ghost never overlaps #sec-symbients
+                    // dominates (by p≈0.67) so its ghost never overlaps #sec-narrative
                     pin.style.opacity = clamp(1 - p * 1.5).toFixed(3);
                     pin.style.pointerEvents = p > 0.6 ? "none" : "";
                     // the creature implodes IN ASCII — glyphs collapse inward + fade
