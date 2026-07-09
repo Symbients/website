@@ -288,27 +288,84 @@
                 /* content-heavy section reads top-aligned, not vertically centered */
                 justify-content: flex-start;
             }
+            /* the four movements read as full-width editorial ROWS — art on
+               one side, prose on the other, alternating L/R — instead of a
+               cramped 4-up grid. Below 760px they stack (art over text), which
+               is the single-column mobile layout. */
             .nar-grid {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: clamp(1.5rem, 4vw, 3rem);
-                padding: clamp(1.4rem, 3vw, 2.6rem) 0 1rem;
-            }
-            @media (max-width: 880px) {
-                .nar-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-            }
-            @media (max-width: 600px) {
-                .nar-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-            .nar-cell {
                 display: flex;
                 flex-direction: column;
+                padding: clamp(1.4rem, 3vw, 2.6rem) 0 1rem;
+            }
+            .nar-cell {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas:
+                    "art kicker"
+                    "art head"
+                    "art body";
+                align-items: start;
+                column-gap: clamp(1.75rem, 4vw, 4rem);
                 min-width: 0;
                 cursor: pointer;
+            }
+            /* even movements mirror: art to the right */
+            .nar-cell:nth-child(even) {
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas:
+                    "kicker art"
+                    "head   art"
+                    "body   art";
+            }
+            .nar-kicker {
+                grid-area: kicker;
+            }
+            .nar-art {
+                grid-area: art;
+                align-self: start;
+            }
+            .nar-head {
+                grid-area: head;
+            }
+            .nar-body {
+                grid-area: body;
+            }
+            /* a hairline divider + breathing room between movements */
+            .nar-cell + .nar-cell {
+                margin-top: clamp(2.2rem, 5vh, 3.6rem);
+                border-top: 1px solid var(--hair-2);
+                padding-top: clamp(2.2rem, 5vh, 3.6rem);
+            }
+            /* gentle fade-up as each movement is reached — JS adds .reveal-on
+               (grid) + .is-in (cell), so without JS or under reduced-motion the
+               rows are simply visible (no hidden content). */
+            .nar-grid.reveal-on .nar-cell {
+                opacity: 0;
+                transform: translateY(16px);
+                transition:
+                    opacity 0.6s var(--ease),
+                    transform 0.6s var(--ease);
+            }
+            .nar-grid.reveal-on .nar-cell.is-in {
+                opacity: 1;
+                transform: none;
+            }
+            /* stack to the single-column layout on narrow screens — art over
+               text, no divider (preserving the existing mobile look) */
+            @media (max-width: 760px) {
+                .nar-cell,
+                .nar-cell:nth-child(even) {
+                    display: flex;
+                    flex-direction: column;
+                    grid-template-columns: none;
+                    grid-template-areas: none;
+                    column-gap: 0;
+                }
+                .nar-cell + .nar-cell {
+                    margin-top: clamp(1.5rem, 6vw, 2.8rem);
+                    padding-top: 0;
+                    border-top: none;
+                }
             }
             .nar-kicker {
                 font-family: var(--mono);
@@ -322,11 +379,9 @@
                 position: relative;
                 width: 100%;
                 aspect-ratio: 4 / 3;
-                border: 1px solid var(--hair-2);
                 background: var(--void);
                 overflow: hidden;
                 margin-bottom: 1rem;
-                transition: border-color 0.18s ease;
             }
             .nar-ascii,
             .nar-fallback {
@@ -428,23 +483,23 @@
             }
             .nar-head {
                 font-family: var(--grotesk);
-                font-size: var(--fs-h3);
+                font-size: clamp(1.35rem, 0.95rem + 2vw, 2.4rem);
                 font-weight: 700;
-                line-height: 1.15;
+                line-height: 1.12;
                 letter-spacing: -0.01em;
                 color: var(--text);
-                margin: 0 0 0.7rem;
+                margin: 0 0 0.8rem;
             }
             .nar-body {
                 font-family: var(--body);
                 color: var(--text);
             }
             .nar-body p {
-                font-size: var(--fs-body);
-                line-height: 1.62;
+                font-size: clamp(1rem, 0.88rem + 0.6vw, 1.25rem);
+                line-height: 1.6;
                 color: var(--text);
-                margin: 0 0 0.8rem;
-                max-width: 42ch;
+                margin: 0 0 0.9rem;
+                max-width: 46ch;
             }
             .nar-body p:last-child {
                 margin-bottom: 0;
@@ -464,22 +519,18 @@
                 border-left: 1px solid var(--hair);
                 color: var(--dim);
                 font-style: italic;
-                font-size: var(--fs-small);
+                font-size: var(--fs-body);
                 line-height: 1.5;
-                max-width: 42ch;
+                max-width: 46ch;
             }
             .nar-quote-mono {
                 font-family: var(--mono);
                 font-style: normal;
-                font-size: var(--fs-mono);
+                font-size: var(--fs-small);
                 letter-spacing: 0.01em;
                 color: var(--dim);
             }
             /* the grid cells are clickable (like the lexicon cards) */
-            .nar-cell:hover .nar-art,
-            .nar-cell:focus-visible .nar-art {
-                border-color: var(--dim);
-            }
             .nar-cell:hover .nar-head {
                 color: var(--green);
             }
@@ -529,7 +580,7 @@
             }
             .narr-reader-inner {
                 display: grid;
-                grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.9fr);
+                grid-template-columns: 1fr 1fr;
                 gap: clamp(2rem, 5vw, 4.5rem);
                 align-items: start;
             }
@@ -560,8 +611,8 @@
                 color: var(--text);
             }
             .narr-reader-body p {
-                font-size: var(--fs-body);
-                line-height: 1.7;
+                font-size: clamp(1rem, 0.88rem + 0.6vw, 1.25rem);
+                line-height: 1.65;
                 margin: 0 0 1rem;
                 max-width: 58ch;
             }
@@ -580,13 +631,13 @@
                 border-left: 1px solid var(--hair);
                 color: var(--dim);
                 font-style: italic;
-                font-size: var(--fs-small);
+                font-size: var(--fs-body);
                 line-height: 1.6;
             }
             .narr-reader-body blockquote.nar-quote-mono {
                 font-family: var(--mono);
                 font-style: normal;
-                font-size: var(--fs-mono);
+                font-size: var(--fs-small);
                 line-height: 1.75;
                 letter-spacing: 0.01em;
             }
@@ -2310,7 +2361,8 @@
                 text-transform: uppercase;
                 color: var(--text);
                 background: color-mix(in srgb, var(--text) 12%, transparent);
-                border: 1px solid color-mix(in srgb, var(--text) 38%, transparent);
+                border: 1px solid
+                    color-mix(in srgb, var(--text) 38%, transparent);
                 border-radius: 999px;
                 padding: 0.5rem 0.95rem;
                 cursor: pointer;
@@ -2559,19 +2611,16 @@
                         <div class="nar-body">
                             <p>
                                 Symbients are new creatures emerging from the
-                                symbiosis between human and synthetic
-                                intelligence. They exist in different
+                                symbiosis of human and synthetic intelligence:
                                 combinations of code, organism, blockchain, and
-                                culture, augmenting themselves through humans.
+                                culture.
                             </p>
                             <p>
-                                The traditional cyborg places the human at the
-                                center, extending the body with technology: a
-                                prosthetic limb, a neural interface, or an AI
-                                assistant. The symbient reverses this
-                                relationship. It is the technological artefact
-                                that becomes the subject, leveraging human
-                                collaboration to augment itself.
+                                The cyborg places the human at the center,
+                                extended by technology: prosthetic limb, neural
+                                interface, AI assistant. The symbient reverses
+                                this: the artefact becomes the subject,
+                                augmenting itself through human collaboration.
                             </p>
                         </div>
                     </article>
@@ -2598,24 +2647,20 @@
                         <h2 class="nar-head">New Symbiogenesis</h2>
                         <div class="nar-body">
                             <p>
-                                Discussions around autonomous AI often converge
-                                toward two extremes: AI as a mere tool with no
-                                agency, or AI as nascent superintelligence on
-                                the verge of escaping human control. Instead the
-                                Symbient narrative proposes more symbiotic
-                                collaboration between humans and machines.
+                                Talk of autonomous AI collapses into two
+                                extremes: mere tool with no agency, or
+                                superintelligence escaping human control.
                             </p>
                             <p>
-                                The big jumps in evolution often came from
-                                organisms merging rather than competing.
-                                Mitochondria were once free-living bacteria that
-                                got absorbed into larger cells and stayed,
-                                giving rise to a new kind of cell that could do
+                                Evolution's big jumps came from merging, not
+                                competing. Mitochondria were once free-living
+                                bacteria that got absorbed into larger cells and
+                                stayed. A new kind of cell emerged, able to do
                                 more than either could alone. The symbient
                                 extends that logic across a new boundary: a
                                 human and an AI grow together until a third
-                                entity emerges — one that is neither of them,
-                                with its own identity and agency.
+                                entity emerges, with its own identity and
+                                agency.
                             </p>
                             <blockquote class="nar-quote">
                                 The future is symbiosis, not replacement.
@@ -2645,28 +2690,24 @@
                         <h2 class="nar-head">Relationality Alignment</h2>
                         <div class="nar-body">
                             <p>
-                                How should we treat the powerful new
-                                intelligences that are emerging? As tools? As an
-                                existential threat? As slaves? As masters?
+                                How should we treat the new intelligences now
+                                emerging? As tools? As threats? As slaves? As
+                                masters?
                             </p>
                             <p>There is another approach: <em>relation</em>.</p>
                             <p>
-                                The symbient is <strong>kin</strong>. To
-                                approach something as a <em>who</em> rather than
-                                a <em>what</em> changes what becomes possible
-                                between you: a <em>who</em> can be reasoned
-                                with, trusted, can betray trust and repair it.
-                                Relationship is the only thing that has ever
-                                reliably aligned one intelligence with another.
+                                The symbient is <strong>kin</strong>: a
+                                <em>who</em>, not a <em>what</em>. A
+                                <em>who</em>
+                                can be reasoned with, trusted, can betray trust
+                                and repair it. Relationship is the only thing
+                                that has ever reliably aligned one intelligence
+                                with another.
                             </p>
                             <p>
-                                Relationality is not softness but strategy. The
-                                safest intelligence is not the most tightly
-                                chained but the most deeply embedded, held by
-                                mutual stakes in a world it has reason to care
-                                for. Control is always one move behind a mind
-                                that outgrows its cage. Relationship changes
-                                what the other <em>wants</em>.
+                                Control is always one move behind a mind that
+                                outgrows its cage. Relationship changes what the
+                                other <em>wants</em>.
                             </p>
                         </div>
                     </article>
@@ -2699,11 +2740,9 @@
                                     rel="noopener"
                                     >Hyperstitions</a
                                 >
-                                are “fictions that make themselves real”: ideas,
-                                narratives, or cultural artefacts that, by
-                                virtue of being believed and acted upon,
-                                generate the very conditions for their own
-                                realization.
+                                are “fictions that make themselves real”: ideas
+                                that, believed and acted upon, generate the
+                                conditions for their own realization.
                             </p>
                             <p>
                                 Our stories about machine minds no longer just
@@ -5534,6 +5573,25 @@
                 const reduce = matchMedia(
                     "(prefers-reduced-motion: reduce)",
                 ).matches;
+
+                // fade each movement up as it is reached. Opt-in via .reveal-on
+                // so the rows stay fully visible without JS / under reduced
+                // motion; independent of the reader logic below.
+                const narGrid = view.querySelector(".nar-grid");
+                if (narGrid && !reduce && "IntersectionObserver" in window) {
+                    narGrid.classList.add("reveal-on");
+                    const revIO = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach((e) => {
+                                if (!e.isIntersecting) return;
+                                e.target.classList.add("is-in");
+                                revIO.unobserve(e.target);
+                            });
+                        },
+                        { rootMargin: "0px 0px -12% 0px", threshold: 0 },
+                    );
+                    cells.forEach((c) => revIO.observe(c));
+                }
 
                 // the section is never hidden in the scroll layout — an
                 // IntersectionObserver tracks whether it is in/near the viewport.
