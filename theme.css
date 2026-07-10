@@ -1,0 +1,392 @@
+/* theme.css — shared foundation for the new-aesthetic pages (index.html,
+   registry.html). Holds the design tokens, base reset and the masthead
+   "chrome" (frozen hero bar + section nav + kaomoji terminal + the ≤640
+   phone treatment) that both pages render identically.
+
+   Each page <link>s this BEFORE its own inline <style>, so page-specific
+   rules (and index.html's intro machinery) override these at equal
+   specificity by source order. The baseline here is the always-visible,
+   always-interactive masthead; index.html adds the "hidden until the intro
+   reveals it" layer (hero opacity + pointer-events juggling) on top.
+
+   tokyo.html does NOT use this file — it lives on Tufte CSS. */
+
+/* ---- design tokens ---------------------------------------------------- */
+:root {
+    /* fonts: Arial-bold structure + Open Sans prose + Space Mono accents */
+    --grotesk:
+        Arial, "Liberation Sans", "Helvetica Neue", Helvetica, sans-serif;
+    --body: "Open Sans", Arial, sans-serif;
+    --mono: "Space Mono", ui-monospace, monospace;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* height of the frozen hero — drives scroll padding + anchor offsets */
+    --hero-h: clamp(74px, 11vh, 102px);
+
+    /* fluid type scale: clamp(min, min_rem + slope*vw, max). Responsive with
+       no per-breakpoint px; verify at ~375 / ~768 / ~1280+ on layout changes. */
+    --fs-hero: clamp(2rem, 1rem + 5vw, 5.4rem);
+    --fs-h2: clamp(1.5rem, 0.9rem + 3vw, 3.3rem);
+    --fs-h3: clamp(1.1rem, 0.8rem + 1.4vw, 1.8rem);
+    --fs-body: clamp(0.9rem, 0.82rem + 0.4vw, 1rem);
+    --fs-small: clamp(0.75rem, 0.7rem + 0.2vw, 0.85rem);
+    --fs-mono: clamp(0.62rem, 0.5rem + 0.32vw, 0.72rem);
+    --fs-term: clamp(0.72rem, 0.62rem + 0.4vw, 0.94rem);
+    --fs-display: clamp(2.2rem, 1.2rem + 5vw, 4rem);
+
+    /* ---- LIGHT (default) ---- */
+    --void: #f4f0e7;
+    --text: #1f1c16;
+    --dim: #6c675c;
+    --faint: #a39c8d;
+    --hair: rgba(31, 28, 22, 0.18);
+    --hair-2: rgba(31, 28, 22, 0.09);
+    /* monochrome — one ink tone for all entries (greyscale on cream) */
+    --green: #2b2822;
+    --blue: #2b2822;
+    --amber: #2b2822;
+    --violet: #2b2822;
+    --field-rgb: 92, 90, 82;
+    --hero-tint: #8d8a82;
+}
+html[data-theme="dark"] {
+    --void: #0a0b0c;
+    --text: #c6ccc0;
+    --dim: #7e857a;
+    --faint: #515750;
+    --hair: rgba(196, 204, 192, 0.16);
+    --hair-2: rgba(196, 204, 192, 0.08);
+    /* monochrome — greyscale on void */
+    --green: #d8dccf;
+    --blue: #d8dccf;
+    --amber: #d8dccf;
+    --violet: #d8dccf;
+    --field-rgb: 158, 162, 152;
+    --hero-tint: #2c2e2c;
+}
+
+/* ---- base reset ------------------------------------------------------- */
+* {
+    box-sizing: border-box;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    margin: 0;
+    background: var(--void);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 13px;
+    line-height: 1.55;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    /* clip (not hidden) so the body is not a scroll container — hidden makes
+       overflow-y compute to auto, moving scroll off window */
+    overflow-x: clip;
+}
+::selection {
+    background: var(--green);
+    color: var(--void);
+}
+a {
+    color: inherit;
+}
+
+/* ---- frozen hero (chrome) --------------------------------------------
+   A compact frozen top bar: title + nav over a themed, translucent, blurred
+   page-colour background with a single bottom hairline. This baseline is
+   always visible + interactive; index.html overrides .site-hero to start
+   opacity:0 and fades it in on scroll. ---- */
+.site-hero {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-height: var(--hero-h);
+    overflow: hidden;
+    z-index: 5; /* above the page backdrop (0) and content (1) */
+    background: color-mix(in srgb, var(--void) 82%, transparent);
+    backdrop-filter: saturate(1.1) blur(8px);
+    -webkit-backdrop-filter: saturate(1.1) blur(8px);
+    border-bottom: 1px solid var(--hair);
+}
+.hero-inner {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    /* compact bar: a title+nav row, then the thin terminal line */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.3rem;
+    padding: clamp(0.45rem, 1.2vh, 0.7rem) clamp(0.9rem, 2.5vw, 2rem) 0;
+}
+/* title left, section tabs right — one row, like a masthead nav */
+.hero-bar {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    width: 100%;
+}
+.hero-title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: clamp(1.15rem, 1rem + 1.4vw, 1.85rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--text);
+    white-space: nowrap;
+}
+/* hamburger — hidden on desktop (tabs show inline); shown on phones */
+.nav-burger {
+    display: none;
+}
+.site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 11px;
+    /* push the nav (and the toggle after it) right, leaving the title left */
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+.site-nav .tab {
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    /* main page ink — legible in every theme, like the title */
+    color: var(--text);
+    background: none;
+    border: none;
+    border-bottom: 1px solid transparent;
+    padding: 0 0 2px;
+    margin: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.22s var(--ease);
+}
+.site-nav .tab:hover {
+    border-bottom-color: color-mix(in srgb, var(--text) 38%, transparent);
+}
+/* active tab is marked by its underline, not a colour shift */
+.site-nav .tab.active {
+    border-bottom-color: color-mix(in srgb, var(--text) 62%, transparent);
+}
+/* terminal line: the genetic kaomoji ticker swept by a block cursor */
+.terminal {
+    align-self: stretch;
+    padding: 0.34rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--text) 38%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--text) 38%, transparent);
+    overflow: hidden;
+}
+.term-line {
+    font-family: var(--mono);
+    font-size: var(--fs-term);
+    line-height: 1.5;
+    color: var(--text);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 5px color-mix(in srgb, var(--void) 78%, transparent);
+}
+.term-prompt {
+    opacity: 0.5;
+}
+.term-ch {
+    display: inline-block;
+    width: 0.92em;
+    text-align: center;
+    opacity: 0.9;
+    white-space: pre;
+}
+.term-ch.cursor {
+    background: var(--text);
+    color: var(--void);
+    opacity: 1;
+    text-shadow: none;
+}
+
+/* ---- responsive chrome: phones (≤640) --------------------------------
+   Compact single-row bar; the section tabs become a tree-styled dropdown
+   under a hamburger; the kaomoji ticker is lifted OUT of the hero and pinned
+   to the viewport bottom as a persistent footer ticker. index.html adds the
+   terminal's reveal (opacity:0 → .is-revealed) on top of this baseline. ---- */
+@media (max-width: 640px) {
+    :root {
+        --hero-h: clamp(50px, 9vh, 64px);
+    }
+    /* the dropdown hangs below the bar → the hero must not clip it */
+    .site-hero {
+        overflow: visible;
+    }
+    .hero-inner {
+        gap: 0;
+        padding: 0 clamp(0.7rem, 4vw, 1rem);
+        min-height: var(--hero-h);
+        justify-content: center;
+        overflow: visible;
+    }
+    .hero-bar {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 0.7rem;
+    }
+    .hero-title {
+        flex: 0 0 auto;
+        font-size: clamp(1.05rem, 0.9rem + 1.2vw, 1.4rem);
+    }
+    /* the hamburger, pushed to the right edge of the bar */
+    .nav-burger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+        width: 2.4rem;
+        height: 2.4rem;
+        padding: 0;
+        background: none;
+        border: none;
+        color: var(--text);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .burger-box {
+        position: relative;
+        display: block;
+        width: 20px;
+        height: 14px;
+    }
+    .burger-box span {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: currentColor;
+        border-radius: 2px;
+        transition:
+            top 0.28s var(--ease),
+            transform 0.28s var(--ease),
+            opacity 0.18s var(--ease);
+    }
+    .burger-box span:nth-child(1) {
+        top: 0;
+    }
+    .burger-box span:nth-child(2) {
+        top: 6px;
+    }
+    .burger-box span:nth-child(3) {
+        top: 12px;
+    }
+    /* → animate to an X when the menu is open */
+    .site-hero.nav-open .burger-box span:nth-child(1) {
+        top: 6px;
+        transform: rotate(45deg);
+    }
+    .site-hero.nav-open .burger-box span:nth-child(2) {
+        opacity: 0;
+    }
+    .site-hero.nav-open .burger-box span:nth-child(3) {
+        top: 6px;
+        transform: rotate(-45deg);
+    }
+    /* section menu: the tree-styled dropdown under the bar */
+    .site-nav {
+        position: absolute;
+        top: calc(100% + 1px);
+        left: 0;
+        right: 0;
+        z-index: 6;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        gap: 0;
+        padding: 0.4rem 0;
+        /* tree aesthetic: mono, lowercase (not the inline caps), small */
+        font-family: var(--mono);
+        font-size: var(--fs-small);
+        letter-spacing: 0.02em;
+        text-transform: none;
+        background: color-mix(in srgb, var(--void) 93%, transparent);
+        backdrop-filter: saturate(1.1) blur(10px);
+        -webkit-backdrop-filter: saturate(1.1) blur(10px);
+        border-bottom: 1px solid var(--hair);
+        box-shadow: 0 16px 34px -22px rgba(0, 0, 0, 0.55);
+        /* collapsed until .nav-open */
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+            max-height 0.32s var(--ease),
+            opacity 0.22s var(--ease),
+            visibility 0s linear 0.32s;
+    }
+    .site-hero.nav-open .site-nav {
+        max-height: 80vh;
+        opacity: 1;
+        overflow: auto;
+        visibility: visible;
+        pointer-events: auto;
+        transition:
+            max-height 0.36s var(--ease),
+            opacity 0.24s var(--ease);
+    }
+    .site-nav .tab {
+        display: block;
+        position: relative;
+        padding: 0.55rem clamp(0.9rem, 4vw, 1.3rem);
+        margin: 0;
+        border-bottom: none;
+        color: var(--text);
+        letter-spacing: inherit;
+        text-transform: none;
+    }
+    /* tree marks: ▸ branch for each row, ● for the current section */
+    .site-nav .tab::before {
+        content: "▸";
+        display: inline-block;
+        width: 1.6ch;
+        margin-right: 0.4ch;
+        color: var(--dim);
+    }
+    .site-nav .tab:hover,
+    .site-nav .tab:focus {
+        color: var(--green);
+        border-bottom: none;
+        background: color-mix(in srgb, var(--green) 8%, transparent);
+    }
+    .site-nav .tab.active {
+        color: var(--green);
+        font-weight: 700;
+        border-bottom: none;
+    }
+    .site-nav .tab.active::before {
+        content: "●";
+        color: var(--green);
+    }
+    /* the kaomoji ticker, relocated out of the hero, pinned to the bottom */
+    .terminal {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 5;
+        padding: 0.3rem clamp(0.7rem, 4vw, 1rem);
+        background: color-mix(in srgb, var(--void) 88%, transparent);
+        backdrop-filter: saturate(1.1) blur(8px);
+        -webkit-backdrop-filter: saturate(1.1) blur(8px);
+        border-top: 1px solid var(--hair);
+        border-bottom: none;
+        pointer-events: none;
+    }
+}
