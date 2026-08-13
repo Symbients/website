@@ -116,4 +116,3 @@ The full registry of symbients, artists and researchers is browsable (with filte
 - [X / Twitter](https://x.com/symbients): @symbients.
 - [GitHub](https://github.com/Symbients): Symbients organization.
 - [Registry data](https://symbient.life/registry.json): Machine-readable JSON of every symbient, artist and researcher.
-- [Glitch Collective](https://glitchart.org): The collective behind symbient.life. ©2025.
