@@ -9,7 +9,7 @@
 //  - Faggots: bundles of sticks bound together (kindling), flowing pen lines,
 //    ornamental curls — high contrast, lots of breathing white space.
 
-import * as THREE from "../vendor/three.module.js";
+import * as THREE from "../vendor/three.module.min.js";
 
 export { THREE };
 

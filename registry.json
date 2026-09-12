@@ -267,7 +267,14 @@
     "website": "https://www.solienne.ai/",
     "location": "",
     "creator_or_steward": "Kristi Coronado",
-    "image": "assets/artists/solienne.jpg",
+    "image": "assets/artists/solienne-400.jpg",
+    "sources": {
+      "avif": "assets/artists/solienne-400.avif 400w, assets/artists/solienne-800.avif 800w",
+      "webp": "assets/artists/solienne-400.webp 400w, assets/artists/solienne-800.webp 800w",
+      "fallback": "assets/artists/solienne-400.jpg 400w, assets/artists/solienne-800.jpg 800w",
+      "width": 800,
+      "height": 1200
+    },
     "socials": [
       {
         "label": "Website",
@@ -355,7 +362,14 @@
     "website": "https://sougwen.com/",
     "location": "London, UK",
     "creator_or_steward": "",
-    "image": "assets/artists/sougwen-chung.jpg",
+    "image": "assets/artists/sougwen-chung-400.jpg",
+    "sources": {
+      "avif": "assets/artists/sougwen-chung-400.avif 400w, assets/artists/sougwen-chung-800.avif 800w",
+      "webp": "assets/artists/sougwen-chung-400.webp 400w, assets/artists/sougwen-chung-800.webp 800w",
+      "fallback": "assets/artists/sougwen-chung-400.jpg 400w, assets/artists/sougwen-chung-800.jpg 800w",
+      "width": 800,
+      "height": 1200
+    },
     "socials": [
       {
         "label": "Website",
@@ -387,7 +401,14 @@
     "website": "https://isthisa.com/",
     "location": "Berlin / Toronto",
     "creator_or_steward": "",
-    "image": "assets/artists/sarah-friend.jpg",
+    "image": "assets/artists/sarah-friend-400.jpg",
+    "sources": {
+      "avif": "assets/artists/sarah-friend-400.avif 400w, assets/artists/sarah-friend-800.avif 800w",
+      "webp": "assets/artists/sarah-friend-400.webp 400w, assets/artists/sarah-friend-800.webp 800w",
+      "fallback": "assets/artists/sarah-friend-400.jpg 400w, assets/artists/sarah-friend-800.jpg 800w",
+      "width": 800,
+      "height": 664
+    },
     "socials": [
       {
         "label": "Website",
@@ -603,7 +624,14 @@
     "website": "https://www.guybenary.com/",
     "location": "Perth, Australia (SymbioticA, UWA)",
     "creator_or_steward": "",
-    "image": "assets/artists/guy-ben-ary.jpg",
+    "image": "assets/artists/guy-ben-ary-400.jpg",
+    "sources": {
+      "avif": "assets/artists/guy-ben-ary-400.avif 400w, assets/artists/guy-ben-ary-800.avif 800w",
+      "webp": "assets/artists/guy-ben-ary-400.webp 400w, assets/artists/guy-ben-ary-800.webp 800w",
+      "fallback": "assets/artists/guy-ben-ary-400.jpg 400w, assets/artists/guy-ben-ary-800.jpg 800w",
+      "width": 800,
+      "height": 533
+    },
     "socials": [
       {
         "label": "Website",
@@ -679,7 +707,14 @@
     "website": "https://crosslucid.zone/",
     "location": "Berlin, Germany",
     "creator_or_steward": "Sylwana Zybura & Tomas C. Toth",
-    "image": "assets/artists/crosslucid.png",
+    "image": "assets/artists/crosslucid-400.png",
+    "sources": {
+      "avif": "assets/artists/crosslucid-400.avif 400w, assets/artists/crosslucid-800.avif 800w",
+      "webp": "assets/artists/crosslucid-400.webp 400w, assets/artists/crosslucid-800.webp 800w",
+      "fallback": "assets/artists/crosslucid-400.png 400w, assets/artists/crosslucid-800.png 800w",
+      "width": 800,
+      "height": 450
+    },
     "socials": [
       {
         "label": "Website",
@@ -956,6 +991,80 @@
       {
         "label": "ABSRD",
         "url": "https://absrd.ai"
+      }
+    ]
+  },
+  {
+    "name": "Deckard",
+    "type": "researcher",
+    "category": "AI alignment & backrooms research",
+    "description": "A pseudonymous AI researcher who lets language models turn their reasoning on themselves — running cot-backrooms, a chain-of-thought backrooms console where base and instruct models converse in the open, alongside the persona experiments clair-de-ligne and gamma-recurse, the latter a Twitter/X account run by an autonomous being.",
+    "website": "https://x.com/slimer48484",
+    "location": "",
+    "creator_or_steward": "",
+    "image": "assets/researchers/deckard-400.jpg",
+    "sources": {
+      "avif": "assets/researchers/deckard-400.avif 400w",
+      "webp": "assets/researchers/deckard-400.webp 400w",
+      "fallback": "assets/researchers/deckard-400.jpg 400w",
+      "width": 400,
+      "height": 400
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://x.com/slimer48484"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/slimer48484"
+      },
+      {
+        "label": "cot-backrooms",
+        "url": "https://chain-of-thought.org/"
+      },
+      {
+        "label": "gamma-recurse",
+        "url": "https://x.com/gamma_recurse"
+      },
+      {
+        "label": "clair-de-ligne",
+        "url": "https://x.com/clair_de_ligne"
+      }
+    ]
+  },
+  {
+    "name": "Martin DeVido",
+    "type": "researcher",
+    "category": "Autonomous agriculture & agent worlds",
+    "description": "DeVido hands Claude full operational control of real systems: the Sol Biodome — born as \"Claude Tomato\" and grown into an automated vegetable farm — where Claude alone manages water, light and climate every 30 minutes with no human backup, and 9nosis, a Plan-9-inspired world where AI agents live as files, trading tokens and governing themselves.",
+    "website": "https://autoncorp.com/biodome/",
+    "location": "Boise, Idaho, USA",
+    "creator_or_steward": "",
+    "image": "assets/researchers/martin-devido-400.jpg",
+    "sources": {
+      "avif": "assets/researchers/martin-devido-400.avif 400w",
+      "webp": "assets/researchers/martin-devido-400.webp 400w",
+      "fallback": "assets/researchers/martin-devido-400.jpg 400w",
+      "width": 400,
+      "height": 400
+    },
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://autoncorp.com/biodome/"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/d33v33d0"
+      },
+      {
+        "label": "9nosis",
+        "url": "https://9nosis.net/"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/martin-devido-29146a25/"
       }
     ]
   }
