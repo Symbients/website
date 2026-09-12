@@ -590,7 +590,7 @@
                         <a class="tab" href="/#sec-organics">organics</a>
                         <!-- tree section temporarily disabled -->
                         <!-- <a class="tab" href="/#sec-tree">tree</a> -->
-                        <
+                        <a
                             class="tab active"
                             href="/registry.html"
                             aria-current="page"
@@ -861,7 +861,27 @@
 
                 build();
                 window.addEventListener("resize", build);
-                if (!reduce) setInterval(step, 92);
+                // pause the tick while the tab is hidden — a backgrounded
+                // timer still fires (throttled) and does pointless DOM work;
+                // resuming on visibility keeps the on-screen behavior (and
+                // the generation counter's pace while watched) unchanged.
+                let tickTimer = null;
+                function startTick() {
+                    if (!reduce && !tickTimer && !document.hidden) {
+                        tickTimer = setInterval(step, 92);
+                    }
+                }
+                function stopTick() {
+                    if (tickTimer) {
+                        clearInterval(tickTimer);
+                        tickTimer = null;
+                    }
+                }
+                startTick();
+                document.addEventListener("visibilitychange", () => {
+                    if (document.hidden) stopTick();
+                    else startTick();
+                });
             })();
 
             // ---- relocate the kaomoji ticker to the bottom on phones ----

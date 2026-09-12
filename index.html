@@ -191,11 +191,17 @@
                 border: 1px solid var(--hair);
                 background: color-mix(in srgb, var(--text) 3%, transparent);
                 pointer-events: none;
+                transform-origin: top left;
+                /* FLIP: the box is laid out ONCE at its final (top/left/width/
+                   height) rect; the "from" state is faked with a translate+
+                   scale transform that's then animated back to identity, so
+                   the browser never re-runs layout across the transition —
+                   only compositor-thread transform/opacity frames. Since both
+                   the transform components and the old top/left/width/height
+                   props shared the same duration + easing, the interpolated
+                   on-screen rect is numerically identical at every instant. */
                 transition:
-                    top 0.45s var(--ease),
-                    left 0.45s var(--ease),
-                    width 0.45s var(--ease),
-                    height 0.45s var(--ease),
+                    transform 0.45s var(--ease),
                     opacity 0.7s var(--ease);
             }
 
@@ -1838,6 +1844,11 @@
                 background: color-mix(in srgb, var(--text) 5%, transparent);
                 z-index: 1;
             }
+            #sec-symbients .portrait-link picture {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
             #sec-symbients .portrait-link img {
                 display: block;
                 width: 100%;
@@ -2686,11 +2697,21 @@
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    <img
-                                        id="portrait-img"
-                                        alt=""
-                                        decoding="async"
-                                    />
+                                    <picture>
+                                        <source
+                                            id="portrait-avif"
+                                            type="image/avif"
+                                        />
+                                        <source
+                                            id="portrait-webp"
+                                            type="image/webp"
+                                        />
+                                        <img
+                                            id="portrait-img"
+                                            alt=""
+                                            decoding="async"
+                                        />
+                                    </picture>
                                 </a>
                                 <canvas
                                     class="portrait-frame"
@@ -3393,14 +3414,34 @@
                                 may 29–31, 2026 · berkeley, ca
                             </div>
                             <div class="col-media">
-                                <img
-                                    src="/assets/events/machine-consciousness.png"
-                                    width="1440"
-                                    height="828"
-                                    alt="Machine Consciousness 0001"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
+                                <picture>
+                                    <source
+                                        type="image/avif"
+                                        srcset="
+                                            /assets/events/machine-consciousness-480.avif   480w,
+                                            /assets/events/machine-consciousness-960.avif   960w,
+                                            /assets/events/machine-consciousness-1440.avif 1440w
+                                        "
+                                        sizes="(max-width: 880px) 50vw, 320px"
+                                    />
+                                    <source
+                                        type="image/webp"
+                                        srcset="
+                                            /assets/events/machine-consciousness-480.webp   480w,
+                                            /assets/events/machine-consciousness-960.webp   960w,
+                                            /assets/events/machine-consciousness-1440.webp 1440w
+                                        "
+                                        sizes="(max-width: 880px) 50vw, 320px"
+                                    />
+                                    <img
+                                        src="/assets/events/machine-consciousness-480.png"
+                                        width="1440"
+                                        height="828"
+                                        alt="Machine Consciousness 0001"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </picture>
                             </div>
                             <div class="body">
                                 <div class="inner">
@@ -3809,7 +3850,7 @@
             </section>
             <!-- /sec-writings -->
             <!-- ============ ORGANICS ============================================
-                 The human organisms — artists/makers. 22 cards open a section-
+                 The human organisms — artists/makers. 26 cards open a section-
                  scoped reader (#sec-organics.is-reading) IN PLACE instead of
                  navigating to their data-href; the href is surfaced as the
                  reader's clickable portrait. The grid RE-SHUFFLES (Fisher–Yates)
@@ -3819,7 +3860,7 @@
                     <p class="mh-sub">
                         The artists, makers, and researchers in the symbiosis.
                     </p>
-                    <div class="mh-right">24 organisms · the tending hands</div>
+                    <div class="mh-right">26 organisms · the tending hands</div>
                 </div>
 
                 <!-- NOTE: these organism cards are GENERATED from registry.json
@@ -3851,6 +3892,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/primavera-de-filippi.jpg"
+                                    width="1057"
+                                    height="1057"
                                     alt="Primavera De Filippi"
                                     loading="lazy"
                                     decoding="async"
@@ -3892,12 +3935,32 @@
                                 robotics &amp; collaborative drawing
                             </div>
                             <div class="col-media">
-                                <img
-                                    src="/assets/artists/sougwen-chung.jpg"
-                                    alt="Sougwen Chung"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
+                                <picture>
+                                    <source
+                                        type="image/avif"
+                                        srcset="
+                                            /assets/artists/sougwen-chung-400.avif 400w,
+                                            /assets/artists/sougwen-chung-800.avif 800w
+                                        "
+                                        sizes="(max-width: 520px) 100vw, (max-width: 880px) 50vw, 25vw"
+                                    />
+                                    <source
+                                        type="image/webp"
+                                        srcset="
+                                            /assets/artists/sougwen-chung-400.webp 400w,
+                                            /assets/artists/sougwen-chung-800.webp 800w
+                                        "
+                                        sizes="(max-width: 520px) 100vw, (max-width: 880px) 50vw, 25vw"
+                                    />
+                                    <img
+                                        src="/assets/artists/sougwen-chung-400.jpg"
+                                        width="1067"
+                                        height="1600"
+                                        alt="Sougwen Chung"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </picture>
                             </div>
                             <div class="body">
                                 <div class="inner">
@@ -3932,12 +3995,32 @@
                             <h2 class="term">Sarah Friend</h2>
                             <div class="tag">blockchain art &amp; software</div>
                             <div class="col-media">
-                                <img
-                                    src="/assets/artists/sarah-friend.jpg"
-                                    alt="Sarah Friend"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
+                                <picture>
+                                    <source
+                                        type="image/avif"
+                                        srcset="
+                                            /assets/artists/sarah-friend-400.avif 400w,
+                                            /assets/artists/sarah-friend-800.avif 800w
+                                        "
+                                        sizes="(max-width: 520px) 100vw, (max-width: 880px) 50vw, 25vw"
+                                    />
+                                    <source
+                                        type="image/webp"
+                                        srcset="
+                                            /assets/artists/sarah-friend-400.webp 400w,
+                                            /assets/artists/sarah-friend-800.webp 800w
+                                        "
+                                        sizes="(max-width: 520px) 100vw, (max-width: 880px) 50vw, 25vw"
+                                    />
+                                    <img
+                                        src="/assets/artists/sarah-friend-400.jpg"
+                                        width="2000"
+                                        height="1659"
+                                        alt="Sarah Friend"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </picture>
                             </div>
                             <div class="body">
                                 <div class="inner">
@@ -3974,6 +4057,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/justine-emard.jpg"
+                                    width="940"
+                                    height="496"
                                     alt="Justine Emard"
                                     loading="lazy"
                                     decoding="async"
@@ -4017,6 +4102,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/joel-simon.webp"
+                                    width="600"
+                                    height="600"
                                     alt="Joel Simon"
                                     loading="lazy"
                                     decoding="async"
@@ -4057,6 +4144,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/holly-plus.jpg"
+                                    width="600"
+                                    height="357"
                                     alt="Holly+"
                                     loading="lazy"
                                     decoding="async"
@@ -4098,6 +4187,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/plummer-fernandez.jpg"
+                                    width="558"
+                                    height="802"
                                     alt="Matthew Plummer-Fernandez"
                                     loading="lazy"
                                     decoding="async"
@@ -4141,6 +4232,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/memo-akten.jpg"
+                                    width="837"
+                                    height="1024"
                                     alt="Memo Akten"
                                     loading="lazy"
                                     decoding="async"
@@ -4183,6 +4276,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/gordon-berger.jpg"
+                                    width="1076"
+                                    height="973"
                                     alt="Gordon Berger"
                                     loading="lazy"
                                     decoding="async"
@@ -4222,12 +4317,32 @@
                             <h2 class="term">Guy Ben-Ary</h2>
                             <div class="tag">bio-art &amp; neural robotics</div>
                             <div class="col-media">
-                                <img
-                                    src="/assets/artists/guy-ben-ary.jpg"
-                                    alt="Guy Ben-Ary"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
+                                <picture>
+                                    <source
+                                        type="image/avif"
+                                        srcset="
+                                            /assets/artists/guy-ben-ary-400.avif 400w,
+                                            /assets/artists/guy-ben-ary-800.avif 800w
+                                        "
+                                        sizes="(max-width: 520px) 100vw, (max-width: 880px) 50vw, 25vw"
+                                    />
+                                    <source
+                                        type="image/webp"
+                                        srcset="
+                                            /assets/artists/guy-ben-ary-400.webp 400w,
+                                            /assets/artists/guy-ben-ary-800.webp 800w
+                                        "
+                                        sizes="(max-width: 520px) 100vw, (max-width: 880px) 50vw, 25vw"
+                                    />
+                                    <img
+                                        src="/assets/artists/guy-ben-ary-400.jpg"
+                                        width="1920"
+                                        height="1279"
+                                        alt="Guy Ben-Ary"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </picture>
                             </div>
                             <div class="body">
                                 <div class="inner">
@@ -4264,6 +4379,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/patrick-tresset.webp"
+                                    width="1920"
+                                    height="1436"
                                     alt="Patrick Tresset"
                                     loading="lazy"
                                     decoding="async"
@@ -4308,6 +4425,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/aurece-vettier.webp"
+                                    width="1500"
+                                    height="1000"
                                     alt="Aurece Vettier"
                                     loading="lazy"
                                     decoding="async"
@@ -4347,12 +4466,32 @@
                             <h2 class="term">crosslucid</h2>
                             <div class="tag">ai film &amp; digital collage</div>
                             <div class="col-media">
-                                <img
-                                    src="/assets/artists/crosslucid.png"
-                                    alt="crosslucid"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
+                                <picture>
+                                    <source
+                                        type="image/avif"
+                                        srcset="
+                                            /assets/artists/crosslucid-400.avif 400w,
+                                            /assets/artists/crosslucid-800.avif 800w
+                                        "
+                                        sizes="(max-width: 520px) 100vw, (max-width: 880px) 50vw, 25vw"
+                                    />
+                                    <source
+                                        type="image/webp"
+                                        srcset="
+                                            /assets/artists/crosslucid-400.webp 400w,
+                                            /assets/artists/crosslucid-800.webp 800w
+                                        "
+                                        sizes="(max-width: 520px) 100vw, (max-width: 880px) 50vw, 25vw"
+                                    />
+                                    <img
+                                        src="/assets/artists/crosslucid-400.png"
+                                        width="1100"
+                                        height="619"
+                                        alt="crosslucid"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </picture>
                             </div>
                             <div class="body">
                                 <div class="inner">
@@ -4390,6 +4529,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/artists/harold-cohen.jpg"
+                                    width="389"
+                                    height="256"
                                     alt="Harold Cohen"
                                     loading="lazy"
                                     decoding="async"
@@ -4431,6 +4572,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/0xG.png"
+                                    width="256"
+                                    height="256"
                                     alt="0xG"
                                     loading="lazy"
                                     decoding="async"
@@ -4472,6 +4615,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/neno.jpg"
+                                    width="460"
+                                    height="460"
                                     alt="Neno"
                                     loading="lazy"
                                     decoding="async"
@@ -4513,6 +4658,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/apolinario.jpg"
+                                    width="400"
+                                    height="400"
                                     alt="Apolinário"
                                     loading="lazy"
                                     decoding="async"
@@ -4554,6 +4701,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/jake-hartnell.jpg"
+                                    width="460"
+                                    height="460"
                                     alt="Jake Hartnell"
                                     loading="lazy"
                                     decoding="async"
@@ -4595,6 +4744,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/zilla.jpg"
+                                    width="400"
+                                    height="400"
                                     alt="Zilla"
                                     loading="lazy"
                                     decoding="async"
@@ -4634,6 +4785,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/ryan-ferris.jpg"
+                                    width="400"
+                                    height="400"
                                     alt="Ryan Ferris"
                                     loading="lazy"
                                     decoding="async"
@@ -4676,6 +4829,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/tony-lai.jpg"
+                                    width="400"
+                                    height="400"
                                     alt="Tony Lai"
                                     loading="lazy"
                                     decoding="async"
@@ -4717,6 +4872,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/rik-smith-unna.jpg"
+                                    width="460"
+                                    height="460"
                                     alt="Rik Smith-Unna"
                                     loading="lazy"
                                     decoding="async"
@@ -4755,6 +4912,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/jessy-kate.jpg"
+                                    width="400"
+                                    height="400"
                                     alt="Jessy Kate"
                                     loading="lazy"
                                     decoding="async"
@@ -4795,6 +4954,8 @@
                             <div class="col-media">
                                 <img
                                     src="/assets/researchers/brxs.jpg"
+                                    width="400"
+                                    height="400"
                                     alt="Brxs"
                                     loading="lazy"
                                     decoding="async"
@@ -4814,6 +4975,121 @@
                                     <div class="meta">
                                         <span class="threads"
                                             >↳ <span>protocol.works</span></span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <article
+                            class="col k-live"
+                            id="org-25"
+                            tabindex="0"
+                            data-href="https://x.com/slimer48484"
+                        >
+                            <div class="col-top">
+                                <span class="node"></span>O·25<span class="ct"
+                                    >↗</span
+                                >
+                            </div>
+                            <h2 class="term">Deckard</h2>
+                            <div class="tag">
+                                ai alignment &amp; backrooms research
+                            </div>
+                            <div class="col-media">
+                                <picture>
+                                    <source
+                                        type="image/avif"
+                                        srcset="/assets/researchers/deckard-400.avif"
+                                    />
+                                    <source
+                                        type="image/webp"
+                                        srcset="/assets/researchers/deckard-400.webp"
+                                    />
+                                    <img
+                                        src="/assets/researchers/deckard-400.jpg"
+                                        width="400"
+                                        height="400"
+                                        alt="Deckard"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </picture>
+                            </div>
+                            <div class="body">
+                                <div class="inner">
+                                    <p class="def">
+                                        A pseudonymous AI researcher who lets
+                                        language models turn their reasoning
+                                        on themselves — running cot-backrooms,
+                                        a chain-of-thought backrooms console
+                                        where base and instruct models
+                                        converse in the open, alongside the
+                                        persona experiments clair-de-ligne and
+                                        gamma-recurse, the latter a Twitter/X
+                                        account run by an autonomous being.
+                                    </p>
+                                    <div class="meta">
+                                        <span class="threads"
+                                            >↳ <span>x.com</span></span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <article
+                            class="col k-live"
+                            id="org-26"
+                            tabindex="0"
+                            data-href="https://autoncorp.com/biodome/"
+                        >
+                            <div class="col-top">
+                                <span class="node"></span>O·26<span class="ct"
+                                    >↗</span
+                                >
+                            </div>
+                            <h2 class="term">Martin DeVido</h2>
+                            <div class="tag">
+                                autonomous agriculture &amp; agent worlds
+                            </div>
+                            <div class="col-media">
+                                <picture>
+                                    <source
+                                        type="image/avif"
+                                        srcset="/assets/researchers/martin-devido-400.avif"
+                                    />
+                                    <source
+                                        type="image/webp"
+                                        srcset="/assets/researchers/martin-devido-400.webp"
+                                    />
+                                    <img
+                                        src="/assets/researchers/martin-devido-400.jpg"
+                                        width="400"
+                                        height="400"
+                                        alt="Martin DeVido"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </picture>
+                            </div>
+                            <div class="body">
+                                <div class="inner">
+                                    <p class="def">
+                                        DeVido hands Claude full operational
+                                        control of real systems: the Sol
+                                        Biodome — born as &quot;Claude
+                                        Tomato&quot; and grown into an
+                                        automated vegetable farm — where
+                                        Claude alone manages water, light and
+                                        climate every 30 minutes with no human
+                                        backup, and 9nosis, a Plan-9-inspired
+                                        world where AI agents live as files,
+                                        trading tokens and governing
+                                        themselves.
+                                    </p>
+                                    <div class="meta">
+                                        <span class="threads"
+                                            >↳
+                                            <span>autoncorp.com</span></span
                                         >
                                     </div>
                                 </div>
@@ -5325,7 +5601,27 @@
 
                 build();
                 window.addEventListener("resize", build);
-                if (!reduce) setInterval(step, 92);
+                // pause the tick while the tab is hidden — a backgrounded
+                // timer still fires (throttled) and does pointless DOM work;
+                // resuming on visibility keeps the on-screen behavior (and
+                // the generation counter's pace while watched) unchanged.
+                let tickTimer = null;
+                function startTick() {
+                    if (!reduce && !tickTimer && !document.hidden) {
+                        tickTimer = setInterval(step, 92);
+                    }
+                }
+                function stopTick() {
+                    if (tickTimer) {
+                        clearInterval(tickTimer);
+                        tickTimer = null;
+                    }
+                }
+                startTick();
+                document.addEventListener("visibilitychange", () => {
+                    if (document.hidden) stopTick();
+                    else startTick();
+                });
             })();
 
             // ---- relocate the kaomoji ticker to the bottom on phones ----
@@ -5818,14 +6114,42 @@
                 /* =============================================================
                    RENDER — paint the current symbient into the DOM.
                    ============================================================= */
+                // each entry gives the avif/webp siblings alongside the
+                // original-format fallback — same trio pattern as the
+                // registry.html picture builder, just inlined per-symbient
+                // since this map drives a single fixed <picture> in the DOM.
                 const IMAGES = {
-                    Botto: "/assets/symbients/botto-400.jpg",
-                    "S.A.N": "/assets/symbients/SAN-480.jpg",
-                    Plantoid: "/assets/symbients/plantoid-480.jpg",
-                    "Wib & Wob": "/assets/symbients/wibwob-480.png",
-                    terra0: "/assets/symbients/terra0-480.jpeg",
-                    "Truth Terminal":
-                        "/assets/symbients/truth_terminal_self_portrait-480.jpeg",
+                    Botto: {
+                        avif: "/assets/symbients/botto-400.avif",
+                        webp: "/assets/symbients/botto-400.webp",
+                        fallback: "/assets/symbients/botto-400.jpg",
+                    },
+                    "S.A.N": {
+                        avif: "/assets/symbients/SAN-480.avif",
+                        webp: "/assets/symbients/SAN-480.webp",
+                        fallback: "/assets/symbients/SAN-480.jpg",
+                    },
+                    Plantoid: {
+                        avif: "/assets/symbients/plantoid-480.avif",
+                        webp: "/assets/symbients/plantoid-480.webp",
+                        fallback: "/assets/symbients/plantoid-480.jpg",
+                    },
+                    "Wib & Wob": {
+                        avif: "/assets/symbients/wibwob-480.avif",
+                        webp: "/assets/symbients/wibwob-480.webp",
+                        fallback: "/assets/symbients/wibwob-480.png",
+                    },
+                    terra0: {
+                        avif: "/assets/symbients/terra0-480.avif",
+                        webp: "/assets/symbients/terra0-480.webp",
+                        fallback: "/assets/symbients/terra0-480.jpeg",
+                    },
+                    "Truth Terminal": {
+                        avif: "/assets/symbients/truth_terminal_self_portrait-480.avif",
+                        webp: "/assets/symbients/truth_terminal_self_portrait-480.webp",
+                        fallback:
+                            "/assets/symbients/truth_terminal_self_portrait-480.jpeg",
+                    },
                 };
                 const HREFS = {
                     Botto: "https://botto.com/",
@@ -5838,6 +6162,10 @@
 
                 const portraitLink = document.getElementById("portrait-link");
                 const portraitImg = document.getElementById("portrait-img");
+                const portraitAvif =
+                    document.getElementById("portrait-avif");
+                const portraitWebp =
+                    document.getElementById("portrait-webp");
                 const els = {
                     name: document.getElementById("symbient-name"),
                     cat: document.getElementById("symbient-cat"),
@@ -5882,9 +6210,16 @@
                 }
                 let frameT = 0,
                     frameLast = 0;
+                // the loop stops SCHEDULING itself once out of view (rather
+                // than re-arming every frame just to no-op) — showIO restarts
+                // it via startFrameLoop() when the showcase re-enters view.
+                let frameLoopActive = false;
                 function drawFrame(now) {
+                    if (!showInView) {
+                        frameLoopActive = false;
+                        return;
+                    }
                     requestAnimationFrame(drawFrame);
-                    if (!showInView) return; // animate only while the showcase is in view
                     const W = frameCanvas.clientWidth,
                         H = frameCanvas.clientHeight;
                     if (!W || !H) return;
@@ -5967,8 +6302,13 @@
                         }
                     }
                 }
+                function startFrameLoop() {
+                    if (frameLoopActive) return;
+                    frameLoopActive = true;
+                    requestAnimationFrame(drawFrame);
+                }
                 readFrameColors();
-                requestAnimationFrame(drawFrame);
+                startFrameLoop();
 
                 function cardHTML(c, kind) {
                     // marker: circle = organic, diamond = synthetic. Always in the
@@ -6001,7 +6341,9 @@
                     const src = IMAGES[s.name];
                     const href = HREFS[s.name];
                     if (src) {
-                        portraitImg.src = src;
+                        portraitAvif.srcset = src.avif || "";
+                        portraitWebp.srcset = src.webp || "";
+                        portraitImg.src = src.fallback;
                         portraitImg.alt = s.name;
                         if (href) {
                             portraitLink.href = href;
@@ -6776,6 +7118,7 @@
                         showInView = isIn;
                         if (isIn) {
                             familiar.start();
+                            startFrameLoop(); // resume the ascii-frame rAF loop
                             requestAnimationFrame(() => {
                                 familiar.resize();
                                 render(index); // fresh familiar + wires for this size
@@ -7008,16 +7351,29 @@
                 function fly(from, to) {
                     const g = document.createElement("div");
                     g.className = "cell-ghost";
-                    g.style.top = from.top + "px";
-                    g.style.left = from.left + "px";
-                    g.style.width = from.width + "px";
-                    g.style.height = from.height + "px";
-                    document.body.appendChild(g);
-                    g.getBoundingClientRect(); // reflow so the transition runs
+                    // lay out the ghost at its FINAL rect once (single reflow)…
                     g.style.top = to.top + "px";
                     g.style.left = to.left + "px";
                     g.style.width = to.width + "px";
                     g.style.height = to.height + "px";
+                    // …then invert via transform so it VISUALLY starts at "from"
+                    const sx = to.width ? from.width / to.width : 1;
+                    const sy = to.height ? from.height / to.height : 1;
+                    const tx = from.left - to.left;
+                    const ty = from.top - to.top;
+                    g.style.transform =
+                        "translate(" +
+                        tx +
+                        "px, " +
+                        ty +
+                        "px) scale(" +
+                        sx +
+                        ", " +
+                        sy +
+                        ")";
+                    document.body.appendChild(g);
+                    g.getBoundingClientRect(); // reflow so the transition runs
+                    g.style.transform = "translate(0px, 0px) scale(1, 1)";
                     setTimeout(() => (g.style.opacity = "0"), 520);
                     setTimeout(() => g.remove(), 1320);
                 }
@@ -7495,16 +7851,29 @@
                 function fly(from, to) {
                     const g = document.createElement("div");
                     g.className = "cell-ghost";
-                    g.style.top = from.top + "px";
-                    g.style.left = from.left + "px";
-                    g.style.width = from.width + "px";
-                    g.style.height = from.height + "px";
-                    document.body.appendChild(g);
-                    g.getBoundingClientRect(); // reflow so the transition runs
+                    // lay out the ghost at its FINAL rect once (single reflow)…
                     g.style.top = to.top + "px";
                     g.style.left = to.left + "px";
                     g.style.width = to.width + "px";
                     g.style.height = to.height + "px";
+                    // …then invert via transform so it VISUALLY starts at "from"
+                    const sx = to.width ? from.width / to.width : 1;
+                    const sy = to.height ? from.height / to.height : 1;
+                    const tx = from.left - to.left;
+                    const ty = from.top - to.top;
+                    g.style.transform =
+                        "translate(" +
+                        tx +
+                        "px, " +
+                        ty +
+                        "px) scale(" +
+                        sx +
+                        ", " +
+                        sy +
+                        ")";
+                    document.body.appendChild(g);
+                    g.getBoundingClientRect(); // reflow so the transition runs
+                    g.style.transform = "translate(0px, 0px) scale(1, 1)";
                     setTimeout(() => (g.style.opacity = "0"), 520);
                     setTimeout(() => g.remove(), 1320);
                 }
@@ -7665,7 +8034,7 @@
         <script>
             // ---- organics reader — SECTION-SCOPED to #sec-organics ----
             // Mirrors the events reader (cards carry .col-media portraits +
-            // data-href). The 22 cards open a section-scoped reader
+            // data-href). The 26 cards open a section-scoped reader
             // (#sec-organics.is-reading) IN PLACE instead of navigating to their
             // data-href; the href is surfaced as the reader's clickable portrait.
             // content(e) is the card's real description AS-IS (no placeholder —
@@ -7865,16 +8234,29 @@
                 function fly(from, to) {
                     const g = document.createElement("div");
                     g.className = "cell-ghost";
-                    g.style.top = from.top + "px";
-                    g.style.left = from.left + "px";
-                    g.style.width = from.width + "px";
-                    g.style.height = from.height + "px";
-                    document.body.appendChild(g);
-                    g.getBoundingClientRect(); // reflow so the transition runs
+                    // lay out the ghost at its FINAL rect once (single reflow)…
                     g.style.top = to.top + "px";
                     g.style.left = to.left + "px";
                     g.style.width = to.width + "px";
                     g.style.height = to.height + "px";
+                    // …then invert via transform so it VISUALLY starts at "from"
+                    const sx = to.width ? from.width / to.width : 1;
+                    const sy = to.height ? from.height / to.height : 1;
+                    const tx = from.left - to.left;
+                    const ty = from.top - to.top;
+                    g.style.transform =
+                        "translate(" +
+                        tx +
+                        "px, " +
+                        ty +
+                        "px) scale(" +
+                        sx +
+                        ", " +
+                        sy +
+                        ")";
+                    document.body.appendChild(g);
+                    g.getBoundingClientRect(); // reflow so the transition runs
+                    g.style.transform = "translate(0px, 0px) scale(1, 1)";
                     setTimeout(() => (g.style.opacity = "0"), 520);
                     setTimeout(() => g.remove(), 1320);
                 }
@@ -8324,13 +8706,14 @@
         </script>
 
         <!-- organics no-image cards → generative being-composer familiars.
-             org-13..22 carry no .col-media portrait; give each a generative
-             "familiar" canvas (the lab being-composer) as its card-face
-             placeholder, sized to the SAME 16/10 box as the photo cards so the
-             grid stays uniform. ADDITIVE: a separate module that runs after the
-             organics reader IIFE (which already mapped these href-less cards as
-             img:null / href:null, so the section reader keeps their media
-             hidden — the familiar is a card face ONLY, never in the reader).
+             Any organism card with no .col-media portrait (registry entries
+             without an image) gets a generative "familiar" canvas (the lab
+             being-composer) as its card-face placeholder, sized to the SAME
+             16/10 box as the photo cards so the grid stays uniform. ADDITIVE: a separate module that
+             runs after the organics reader IIFE (which already mapped these
+             cards as img:null — data-href is still set, so the reader's
+             clickable-portrait link stays live, just without a thumbnail —
+             the familiar is a card face ONLY, never in the reader).
              Mirrors the narrative/symbients being-composer lifecycle: lazy
              per-card IntersectionObserver start/stop (never 10 rAF loops at
              once), deterministic seed per organism, recolor on `themechange`,

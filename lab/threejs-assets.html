@@ -7,11 +7,13 @@
         <title>Lab · 2D three.js generative assets — Symbients</title>
 
         <!-- Pin three.js via importmap. Vendored locally under lab/vendor/ so
-             this runs fully offline; no build step. -->
+             this runs fully offline; no build step. Minified official build
+             (same r160 revision as the unminified lab/vendor/three.module.unmin.js.bak
+             kept on disk for reference — API-identical, just not shipped). -->
         <script type="importmap">
             {
                 "imports": {
-                    "three": "./vendor/three.module.js"
+                    "three": "./vendor/three.module.min.js"
                 }
             }
         </script>

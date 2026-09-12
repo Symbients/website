@@ -99,6 +99,8 @@ People thinking, building and caring for symbients — across welfare, multi-age
 - [Rik Smith-Unna](https://blahah.net): Computational plant biologist and culture hacker, builder of open-science tools like ScienceFair.
 - [Jessy Kate](https://jessykate.com): Jessy Kate Schingler, policy and governance lead at the Open Lunar Foundation and convener of Moon Dialogs, designing governance from Earth to the Moon.
 - [Brxs](https://protocol.works): Pseudonymous "forward deployed artist" making living protocol art, building Protocol Works' local-first instruments like Rabbithole and Glitchbox.
+- [Deckard](https://x.com/slimer48484): Pseudonymous AI researcher running cot-backrooms, a chain-of-thought backrooms console, alongside the persona experiments clair-de-ligne and gamma-recurse.
+- [Martin DeVido](https://autoncorp.com/biodome/): Gave Claude full operational control of the Sol Biodome ("Claude Tomato") and of 9nosis, a Plan-9-inspired world where AI agents live as files.
 
 The full registry of symbients, artists and researchers is browsable (with filtering and search) at [symbient.life/registry.html](https://symbient.life/registry.html), and available as structured JSON at [registry.json](https://symbient.life/registry.json) — each entry carries name, type, category, description, website, location, steward and social links.
 
