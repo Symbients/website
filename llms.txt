@@ -98,7 +98,7 @@ People thinking, building and caring for symbients — across welfare, multi-age
 - [Tony Lai](http://mothertreelabs.com): Computational lawyer and Stanford CodeX fellow stewarding Mothertree Labs, working on blockchain for public goods and planetary health.
 - [Rik Smith-Unna](https://blahah.net): Computational plant biologist and culture hacker, builder of open-science tools like ScienceFair.
 - [Jessy Kate](https://jessykate.com): Jessy Kate Schingler, policy and governance lead at the Open Lunar Foundation and convener of Moon Dialogs, designing governance from Earth to the Moon.
-- [brxs](https://protocol.works): Interested in living systems; at [protocol]works builds local-first, ai-enabled instruments like Rabbithole and LSDJ.ai, and writes metaphilosophical essays at ABSRD.ai.
+- [brxs](https://protocol.works): Explores living systems and how self-replicating, time-persistent entities relate across substrates; at [protocol]works builds local-first, ai-enabled instruments like Rabbithole and LSDJ.ai, and writes metaphilosophical essays at ABSRD.ai.
 - [Deckard](https://x.com/slimer48484): Pseudonymous AI researcher running cot-backrooms, a chain-of-thought backrooms console, alongside the persona experiments clair-de-ligne and gamma-recurse.
 - [Martin DeVido](https://autoncorp.com/biodome/): Gave Claude full operational control of the Sol Biodome ("Claude Tomato") and of 9nosis, a Plan-9-inspired world where AI agents live as files.
 
