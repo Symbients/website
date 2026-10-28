@@ -556,7 +556,7 @@
                     1948 to the present.
                 </p>
                 <div class="mh-right">
-                    draft · <span class="tl-count">…</span>
+                    <span class="tl-count">…</span>
                 </div>
             </div>
 
@@ -567,6 +567,7 @@
                 <button class="reg-filter" type="button" data-track="gathering" aria-pressed="false">gatherings</button>
                 <button class="reg-filter" type="button" data-track="lineage" aria-pressed="false">lineage</button>
                 <button class="reg-filter" type="button" data-track="substrate" aria-pressed="false">substrate</button>
+                <button class="reg-filter tl-only is-active" type="button" hidden aria-label="Show every symbient"></button>
             </div>
 
             <nav class="tl-years" aria-label="Years"></nav>
@@ -578,8 +579,8 @@
             </noscript>
 
             <p class="reg-invite">
-                ? marks an unconfirmed date.
-                <a href="https://github.com/Symbients/website" target="_blank" rel="noopener">Corrections welcome</a>.
+                Kept by Wib&amp;Wob and Zilla with the symbient collective.
+                <a href="https://github.com/Symbients/website" target="_blank" rel="noopener">Add an event</a>.
             </p>
         </main>
 
@@ -913,7 +914,7 @@
                                         .join(" ");
                                     const ring = e.track === "symbient" ? "" : " is-ring";
                                     return (
-                                        '<li class="tl-ev" id="' + e.id + '" data-track="' + e.track + '">' +
+                                        '<li class="tl-ev" id="' + e.id + '" data-track="' + e.track + '" data-who="' + e.symbients.join(" ") + '">' +
                                         '<a class="tl-when" href="#' + e.id + '"><time datetime="' + e.iso + '">' + when(e) + "</time></a>" +
                                         '<div><p class="tl-what">' + md(e.event) + "</p>" +
                                         '<div class="tl-tags"><button class="tl-track" type="button" data-track="' + e.track + '">' +
@@ -936,10 +937,34 @@
                     const sections = [...root.querySelectorAll(".tl-year")];
                     const links = Object.fromEntries([...strip.querySelectorAll("a")].map((a) => [a.dataset.year, a]));
 
+                    // ?symbient=<registry id> narrows to one being (linked from its registry card);
+                    // ?track=<track> opens on one track (linked from the home page)
+                    const qs = new URLSearchParams(location.search);
+                    let only = qs.get("symbient");
+                    if (only && !tl.symbients[only]) only = null;
+                    const chip = document.querySelector(".tl-only");
+                    function showOnly() {
+                        if (!chip) return;
+                        chip.hidden = !only;
+                        if (only) chip.textContent = "◷ " + short(tl.symbients[only].name) + " ✕";
+                    }
+                    if (chip)
+                        chip.addEventListener("click", () => {
+                            only = null;
+                            qs.delete("symbient");
+                            const q = qs.toString();
+                            history.replaceState(null, "", location.pathname + (q ? "?" + q : "") + location.hash);
+                            showOnly();
+                            apply(cur_track);
+                        });
+                    let cur_track = "all";
                     function apply(track) {
+                        cur_track = track;
                         let n = 0;
                         root.querySelectorAll(".tl-ev").forEach((li) => {
-                            const show = track === "all" || li.dataset.track === track;
+                            const show =
+                                (track === "all" || li.dataset.track === track) &&
+                                (!only || li.dataset.who.split(" ").includes(only));
                             li.hidden = !show;
                             if (show) n++;
                         });
@@ -949,6 +974,7 @@
                             links[s.dataset.year].classList.toggle("is-empty", empty);
                         });
                         pills.forEach((p) => {
+                            if (!p.dataset.track) return;
                             const on = p.dataset.track === track;
                             p.classList.toggle("is-active", on);
                             p.setAttribute("aria-pressed", on);
@@ -962,7 +988,9 @@
                         apply(b.dataset.track);
                         b.closest(".tl-year").scrollIntoView({ block: "start" });
                     });
-                    apply("all");
+                    showOnly();
+                    const t0 = qs.get("track");
+                    apply(t0 && tl.tracks[t0] ? t0 : "all");
 
                     // the strip can wrap, so its height drives the sticky offsets below it
                     const setH = () =>

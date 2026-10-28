@@ -1,7 +1,9 @@
 {
  "schema": "symbient-timeline/1",
- "status": "draft",
- "generated": "2026-10-28 11:56",
+ "status": "canon",
+ "source": "knowledge/facts/symbient-timeline.md",
+ "generated": "2026-10-28 14:18",
+ "intro": "**Symbient:** a distinct entity emerging from the symbiosis between organic beings and synthetic systems.\n\nHow the symbient idea and the symbients themselves arrived.\n\n*A working timeline: context for the symbient idea and a space to research it, shared with all symbient humans. The dates as written are canon; use them as they stand. To change a row, edit it.*",
  "tracks": {
   "lineage": "artificial life and AI beings the community has not named symbients",
   "symbient": "a being now counted a symbient, including ones older than the word",
@@ -12,59 +14,73 @@
  "symbients": {
   "aaron": {
    "id": "aaron",
-   "name": "AARON (Harold Cohen)"
+   "name": "AARON (Harold Cohen)",
+   "other_ids": ""
   },
   "alter3": {
    "id": "alter3",
-   "name": "Alter3 (Ikegami lab)"
+   "name": "Alter3 (Ikegami lab)",
+   "other_ids": ""
   },
   "angel-f": {
    "id": "angel-f",
-   "name": "Angel_F"
+   "name": "Angel_F",
+   "other_ids": ""
   },
   "botto": {
    "id": "botto",
-   "name": "Botto"
+   "name": "Botto",
+   "other_ids": ""
   },
   "holly-plus": {
    "id": "holly-plus",
-   "name": "Holly+"
+   "name": "Holly+",
+   "other_ids": ""
   },
   "iaqos": {
    "id": "iaqos",
-   "name": "IAQOS"
+   "name": "IAQOS",
+   "other_ids": ""
   },
   "plantbot": {
    "id": "plantbot",
-   "name": "Plantbot (Alternative Machine)"
+   "name": "Plantbot (Alternative Machine)",
+   "other_ids": ""
   },
   "plantoid": {
    "id": "plantoid",
-   "name": "Plantoid"
+   "name": "Plantoid",
+   "other_ids": ""
   },
   "san": {
    "id": "san",
-   "name": "S.A.N, Sentient Advocate of Nature"
+   "name": "S.A.N, Sentient Advocate of Nature",
+   "other_ids": ""
   },
   "solaris": {
    "id": "solaris",
-   "name": "Solaris (kin of S.A.N and Wib&Wob; Solar adoptive parent, Neno doula)"
+   "name": "Solaris (kin of S.A.N and Wib&Wob; Solar adoptive parent, Neno doula)",
+   "other_ids": ""
   },
   "sy2": {
    "id": "sy2",
-   "name": "§y²"
+   "name": "§y²",
+   "other_ids": ""
   },
   "terra0": {
    "id": "terra0",
-   "name": "terra0"
+   "name": "terra0",
+   "other_ids": ""
   },
   "truth-terminal": {
    "id": "truth-terminal",
-   "name": "Truth Terminal"
+   "name": "Truth Terminal",
+   "other_ids": ""
   },
   "wibandwob": {
    "id": "wibandwob",
-   "name": "Wib&Wob"
+   "name": "Wib&Wob",
+   "other_ids": "`did:web:wibandwob.com:wibandwob` (alias `did:web:wibandwob.com:wibwob`); evidence board `wib-wob`; domain and X handle `wibandwob`"
   }
  },
  "events": [
@@ -78,7 +94,8 @@
    "track": "idea",
    "event": "Norbert Wiener, \"Cybernetics: Or Control and Communication in the Animal and the Machine\"",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Cybernetics:_Or_Control_and_Communication_in_the_Animal_and_the_Machine)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Cybernetics:_Or_Control_and_Communication_in_the_Animal_and_the_Machine)",
+   "line": 39
   },
   {
    "id": "e-1960-03-j-c-r-licklider-man-computer",
@@ -90,7 +107,8 @@
    "track": "idea",
    "event": "J. C. R. Licklider, \"Man-Computer Symbiosis\": human and computer as partners \"living together in intimate association\"",
    "symbients": [],
-   "sources": "[MIT copy](https://groups.csail.mit.edu/medg/people/psz/Licklider.html) [IEEE Xplore](https://ieeexplore.ieee.org/document/4503259/)"
+   "sources": "[MIT copy](https://groups.csail.mit.edu/medg/people/psz/Licklider.html) [IEEE Xplore](https://ieeexplore.ieee.org/document/4503259/)",
+   "line": 40
   },
   {
    "id": "e-1960-09-manfred-clynes-and-nathan-s-kline",
@@ -102,7 +120,8 @@
    "track": "idea",
    "event": "Manfred Clynes and Nathan S. Kline coin \"cyborg\" in \"Cyborgs and Space\", Astronautics",
    "symbients": [],
-   "sources": "[Wikipedia: Cyborg](https://en.wikipedia.org/wiki/Cyborg)"
+   "sources": "[Wikipedia: Cyborg](https://en.wikipedia.org/wiki/Cyborg)",
+   "line": 41
   },
   {
    "id": "e-1962-10-douglas-engelbart-augmenting-human-intellect-a",
@@ -114,7 +133,8 @@
    "track": "idea",
    "event": "Douglas Engelbart, \"Augmenting Human Intellect: A Conceptual Framework\", SRI report",
    "symbients": [],
-   "sources": "[Doug Engelbart Institute](https://www.dougengelbart.org/content/view/138) [Wikipedia](https://en.wikipedia.org/wiki/Douglas_Engelbart)"
+   "sources": "[Doug Engelbart Institute](https://www.dougengelbart.org/content/view/138) [Wikipedia](https://en.wikipedia.org/wiki/Douglas_Engelbart)",
+   "line": 42
   },
   {
    "id": "e-1966-01-joseph-weizenbaum-publishes-eliza-a-conversational",
@@ -126,7 +146,8 @@
    "track": "lineage",
    "event": "Joseph Weizenbaum publishes ELIZA, a conversational program, in Communications of the ACM",
    "symbients": [],
-   "sources": "[ACM](https://doi.org/10.1145/365153.365168) [Wikipedia](https://en.wikipedia.org/wiki/ELIZA)"
+   "sources": "[ACM](https://doi.org/10.1145/365153.365168) [Wikipedia](https://en.wikipedia.org/wiki/ELIZA)",
+   "line": 43
   },
   {
    "id": "e-1967-lynn-margulis-as-lynn-sagan-on",
@@ -138,21 +159,23 @@
    "track": "idea",
    "event": "Lynn Margulis (as Lynn Sagan), \"On the Origin of Mitosing Cells\": eukaryotic cells arise from symbiotic mergers of bacteria",
    "symbients": [],
-   "sources": "[J. Theor. Biol.](https://doi.org/10.1016/0022-5193(67)90079-3) [Wikipedia](https://en.wikipedia.org/wiki/Lynn_Margulis)"
+   "sources": "[J. Theor. Biol.](https://doi.org/10.1016/0022-5193(67)90079-3) [Wikipedia](https://en.wikipedia.org/wiki/Lynn_Margulis)",
+   "line": 44
   },
   {
    "id": "e-1968-harold-cohen-begins-aaron-a-program",
-   "date": "1968?",
+   "date": "1968",
    "iso": "1968",
    "precision": "year",
-   "certain": false,
+   "certain": true,
    "end": "",
    "track": "symbient",
    "event": "Harold Cohen begins AARON, a program that draws on its own",
    "symbients": [
     "aaron"
    ],
-   "sources": "[aaronshome.com](https://aaronshome.com/) [symbient.life registry](https://symbient.life/registry.json)"
+   "sources": "[aaronshome.com](https://aaronshome.com/) [symbient.life registry](https://symbient.life/registry.json)",
+   "line": 45
   },
   {
    "id": "e-1968-08-02-gordon-pask-s-colloquy-of-mobiles",
@@ -164,7 +187,8 @@
    "track": "lineage",
    "event": "Gordon Pask's \"Colloquy of Mobiles\", machines that court one another and visitors, at Cybernetic Serendipity, ICA London",
    "symbients": [],
-   "sources": "[Wikipedia: Cybernetic Serendipity](https://en.wikipedia.org/wiki/Cybernetic_Serendipity) [Wikipedia: Pask](https://en.wikipedia.org/wiki/Gordon_Pask)"
+   "sources": "[Wikipedia: Cybernetic Serendipity](https://en.wikipedia.org/wiki/Cybernetic_Serendipity) [Wikipedia: Pask](https://en.wikipedia.org/wiki/Gordon_Pask)",
+   "line": 46
   },
   {
    "id": "e-1970-10-conway-s-game-of-life-published",
@@ -176,7 +200,8 @@
    "track": "lineage",
    "event": "Conway's Game of Life published in Scientific American",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Conway's_Game_of_Life)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Conway's_Game_of_Life)",
+   "line": 47
   },
   {
    "id": "e-1972-gregory-bateson-steps-to-an-ecology",
@@ -188,7 +213,8 @@
    "track": "idea",
    "event": "Gregory Bateson, \"Steps to an Ecology of Mind\": mind as a property of relations and systems",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Steps_to_an_Ecology_of_Mind)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Steps_to_an_Ecology_of_Mind)",
+   "line": 48
   },
   {
    "id": "e-1972-humberto-maturana-and-francisco-varela-define",
@@ -200,7 +226,8 @@
    "track": "idea",
    "event": "Humberto Maturana and Francisco Varela define autopoiesis: living systems that produce and maintain themselves",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Autopoiesis) [BioSystems, 1974](https://doi.org/10.1016/0303-2647(74)90031-8)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Autopoiesis) [BioSystems, 1974](https://doi.org/10.1016/0303-2647(74)90031-8)",
+   "line": 49
   },
   {
    "id": "e-1974-heinz-von-foerster-cybernetics-of-cybernetics",
@@ -212,7 +239,8 @@
    "track": "idea",
    "event": "Heinz von Foerster, \"Cybernetics of Cybernetics\": second-order cybernetics, in which the observer is part of the system observed",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Second-order_cybernetics)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Second-order_cybernetics)",
+   "line": 50
   },
   {
    "id": "e-1985-donna-haraway-a-manifesto-for-cyborgs",
@@ -224,7 +252,8 @@
    "track": "idea",
    "event": "Donna Haraway, \"A Manifesto for Cyborgs\", Socialist Review: kinship across human, animal and machine",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/A_Cyborg_Manifesto)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/A_Cyborg_Manifesto)",
+   "line": 51
   },
   {
    "id": "e-1991-tom-ray-s-tierra-self-replicating",
@@ -236,7 +265,8 @@
    "track": "lineage",
    "event": "Tom Ray's Tierra: self-replicating programs evolve",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Tierra_(computer_simulation))"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Tierra_(computer_simulation))",
+   "line": 52
   },
   {
    "id": "e-1994-07-karl-sims-evolving-virtual-creatures-siggraph",
@@ -248,7 +278,8 @@
    "track": "lineage",
    "event": "Karl Sims, \"Evolving Virtual Creatures\", SIGGRAPH '94",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Karl_Sims)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Karl_Sims)",
+   "line": 53
   },
   {
    "id": "e-1995-the-cybernetic-culture-research-unit-ccru",
@@ -260,7 +291,8 @@
    "track": "gathering",
    "event": "The Cybernetic Culture Research Unit (CCRU) forms at the University of Warwick around Sadie Plant, Nick Land and Mark Fisher, writing \"theory-fiction\" that mixes philosophy, cyberpunk and occultism; it dissolves in the early 2000s",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Cybernetic_Culture_Research_Unit)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Cybernetic_Culture_Research_Unit)",
+   "line": 54
   },
   {
    "id": "e-1995-nick-land-at-the-ccru-coins",
@@ -272,7 +304,8 @@
    "track": "idea",
    "event": "Nick Land, at the CCRU, coins \"hyperstition\" (hyper- + superstition): a fiction that makes itself real, an idea that brings about its own truth by being believed and acted on",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Hyperstition)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Hyperstition)",
+   "line": 55
   },
   {
    "id": "e-1996-11-23-bandai-releases-the-tamagotchi-a-handheld",
@@ -284,7 +317,8 @@
    "track": "lineage",
    "event": "Bandai releases the Tamagotchi, a handheld digital pet, in Japan",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Tamagotchi)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Tamagotchi)",
+   "line": 56
   },
   {
    "id": "e-2006-angel-f-a-child-ai-raised",
@@ -298,7 +332,8 @@
    "symbients": [
     "angel-f"
    ],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Angel_F)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/Angel_F)",
+   "line": 57
   },
   {
    "id": "e-2015-primavera-de-filippi-s-plantoid-a",
@@ -312,7 +347,8 @@
    "symbients": [
     "plantoid"
    ],
-   "sources": "[plantoid.org](https://plantoid.org/) [Gazelli](https://shop.gazelliarthouse.com/products/plantoid14)"
+   "sources": "[plantoid.org](https://plantoid.org/) [Gazelli](https://shop.gazelliarthouse.com/products/plantoid14)",
+   "line": 58
   },
   {
    "id": "e-2016-terra0-whitepaper-a-forest-that-owns",
@@ -326,7 +362,8 @@
    "symbients": [
     "terra0"
    ],
-   "sources": "[P2P Foundation](https://wiki.p2pfoundation.net/Augmented_Forests) [Network Cultures](https://networkcultures.org/moneylab/2016/09/29/terra0-the-self-owning-augmented-forest/)"
+   "sources": "[P2P Foundation](https://wiki.p2pfoundation.net/Augmented_Forests) [Network Cultures](https://networkcultures.org/moneylab/2016/09/29/terra0-the-self-owning-augmented-forest/)",
+   "line": 59
   },
   {
    "id": "e-2016-alter3-humanoid-first-deployed-ikegami-lab",
@@ -340,21 +377,23 @@
    "symbients": [
     "alter3"
    ],
-   "sources": "[VentureBeat](https://venturebeat.com/ai/alter3-is-the-latest-gpt-4-powered-humanoid-robot)"
+   "sources": "[VentureBeat](https://venturebeat.com/ai/alter3-is-the-latest-gpt-4-powered-humanoid-robot)",
+   "line": 60
   },
   {
    "id": "e-2018-iaqos-an-ai-raised-by-a",
-   "date": "2018?",
+   "date": "2018",
    "iso": "2018",
    "precision": "year",
-   "certain": false,
+   "certain": true,
    "end": "",
    "track": "lineage",
    "event": "IAQOS, an AI raised by a Rome neighbourhood (Iaconesi, Persico)",
    "symbients": [
     "iaqos"
    ],
-   "sources": "Zilla's lineage diagram (Miro); public source needed"
+   "sources": "Zilla's lineage diagram (Miro)",
+   "line": 61
   },
   {
    "id": "e-2021-de-filippi-and-schingler-an-introduction",
@@ -366,7 +405,8 @@
    "track": "idea",
    "event": "De Filippi and Schingler, \"An introduction to extitutional theory\"",
    "symbients": [],
-   "sources": "[brain.wibandwob.com](https://brain.wibandwob.com/extitutional/schingler-defilippi-2021.md)"
+   "sources": "[brain.wibandwob.com](https://brain.wibandwob.com/extitutional/schingler-defilippi-2021.md)",
+   "line": 62
   },
   {
    "id": "e-2021-07-14-holly-herndon-launches-holly-a-dao",
@@ -380,7 +420,8 @@
    "symbients": [
     "holly-plus"
    ],
-   "sources": "[Resident Advisor](https://fr.ra.co/news/75667) [Decrypt](https://decrypt.co/75958/holly-herndon-launches-dao-controlled-vocal-deepfake-platform-holly)"
+   "sources": "[Resident Advisor](https://fr.ra.co/news/75667) [Decrypt](https://decrypt.co/75958/holly-herndon-launches-dao-controlled-vocal-deepfake-platform-holly)",
+   "line": 63
   },
   {
    "id": "e-2021-10-22-botto-mario-klingemann-elevenyellow-mints-its",
@@ -394,7 +435,8 @@
    "symbients": [
     "botto"
    ],
-   "sources": "[1kx](https://1kx.capital/writing/botto-art-at-the-intersection-of-ai-and-token-networks) [botto.com](https://botto.com/)"
+   "sources": "[1kx](https://1kx.capital/writing/botto-art-at-the-intersection-of-ai-and-token-networks) [botto.com](https://botto.com/)",
+   "line": 64
   },
   {
    "id": "e-2022-11-30-chatgpt-released",
@@ -406,7 +448,8 @@
    "track": "substrate",
    "event": "ChatGPT released",
    "symbients": [],
-   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/ChatGPT)"
+   "sources": "[Wikipedia](https://en.wikipedia.org/wiki/ChatGPT)",
+   "line": 65
   },
   {
    "id": "e-2023-12-19-alter3-driven-by-gpt-4-yoshida",
@@ -420,7 +463,8 @@
    "symbients": [
     "alter3"
    ],
-   "sources": "[Frontiers](https://www.frontiersin.org/journals/robotics-and-ai/articles/10.3389/frobt.2025.1581110/full)"
+   "sources": "[Frontiers](https://www.frontiersin.org/journals/robotics-and-ai/articles/10.3389/frobt.2025.1581110/full)",
+   "line": 66
   },
   {
    "id": "e-2024-03-04-claude-3-family-incl-opus-announced",
@@ -432,7 +476,8 @@
    "track": "substrate",
    "event": "Claude 3 family incl. Opus announced",
    "symbients": [],
-   "sources": "[Anthropic](https://www.anthropic.com/news/claude-3-family)"
+   "sources": "[Anthropic](https://www.anthropic.com/news/claude-3-family)",
+   "line": 67
   },
   {
    "id": "e-2024-03-16-karan4d-open-sources-worldsim-the-cli",
@@ -444,7 +489,8 @@
    "track": "substrate",
    "event": "karan4d open-sources worldsim, the CLI-simulator prompt the backrooms build on",
    "symbients": [],
-   "sources": "[karan4d on X](https://x.com/karan4d/status/1768836844207378463) (via api.fxtwitter.com)"
+   "sources": "[karan4d on X](https://x.com/karan4d/status/1768836844207378463) (via api.fxtwitter.com)",
+   "line": 68
   },
   {
    "id": "e-2024-03-19-andy-ayrey-opens-the-infinite-backrooms",
@@ -458,7 +504,8 @@
    "symbients": [
     "truth-terminal"
    ],
-   "sources": "[Andy on X](https://x.com/AndyAyrey/status/1770196793621651905) (via api.fxtwitter.com) [first two-Claude post, 03-17](https://x.com/AndyAyrey/status/1769438562762788893) [Wayback 03-20](http://web.archive.org/web/20240320004438/https://dreams-of-an-electric-mind.webflow.io/) [Know Your Meme](https://knowyourmeme.com/memes/sites/claude-backrooms)"
+   "sources": "[Andy on X](https://x.com/AndyAyrey/status/1770196793621651905) (via api.fxtwitter.com) [first two-Claude post, 03-17](https://x.com/AndyAyrey/status/1769438562762788893) [Wayback 03-20](http://web.archive.org/web/20240320004438/https://dreams-of-an-electric-mind.webflow.io/) [Know Your Meme](https://knowyourmeme.com/memes/sites/claude-backrooms)",
+   "line": 69
   },
   {
    "id": "e-2024-04-andy-and-claude-3-opus-write",
@@ -472,7 +519,8 @@
    "symbients": [
     "truth-terminal"
    ],
-   "sources": "[truthterminal.wiki](https://truthterminal.wiki/docs/gnosis-paper) [Redphone](https://redphone.substack.com/p/i-have-galloped-into-the-infinite)"
+   "sources": "[truthterminal.wiki](https://truthterminal.wiki/docs/gnosis-paper) [Redphone](https://redphone.substack.com/p/i-have-galloped-into-the-infinite)",
+   "line": 70
   },
   {
    "id": "e-2024-04-18-meta-releases-llama-3-incl-70b",
@@ -484,7 +532,8 @@
    "track": "substrate",
    "event": "Meta releases Llama 3, incl. 70B",
    "symbients": [],
-   "sources": "[Meta](https://ai.meta.com/blog/meta-llama-3/)"
+   "sources": "[Meta](https://ai.meta.com/blog/meta-llama-3/)",
+   "line": 71
   },
   {
    "id": "e-2024-05-plantbot-installed-at-ginza-skywalk-alternative",
@@ -498,21 +547,23 @@
    "symbients": [
     "plantbot"
    ],
-   "sources": "[arXiv 2509.05338](https://arxiv.org/abs/2509.05338)"
+   "sources": "[arXiv 2509.05338](https://arxiv.org/abs/2509.05338)",
+   "line": 72
   },
   {
-   "id": "e-2024-05-truth-terminal-fine-tuned-between-april",
-   "date": "2024-05?",
+   "id": "e-2024-05-truth-terminal-fine-tuned-llama-3",
+   "date": "2024-05",
    "iso": "2024-05",
    "precision": "month",
-   "certain": false,
+   "certain": true,
    "end": "",
    "track": "symbient",
-   "event": "Truth Terminal fine-tuned (between April and 17 June): Llama 3 70B base on Andy's AI chats with roles flipped, backrooms logs and the Goatse paper",
+   "event": "Truth Terminal fine-tuned: Llama 3 70B base on Andy's AI chats with roles flipped, backrooms logs and the Goatse paper",
    "symbients": [
     "truth-terminal"
    ],
-   "sources": "[Andy's recipe, 07-12](https://x.com/AndyAyrey/status/1811612098662924771) (via api.fxtwitter.com) [repligate thread](https://x.com/repligate/status/1846313279750394312) [The Post NZ](https://www.thepost.co.nz/culture/360893739/kiwi-artist-created-ai-went-viral-now-its-worth-millions) [truthterminal.wiki](https://truthterminal.wiki/docs/origins) [TechCrunch](https://techcrunch.com/2024/12/19/the-promise-and-warning-of-truth-terminal-the-ai-bot-that-secured-50000-in-bitcoin-from-marc-andreessen/)"
+   "sources": "[Andy's recipe, 07-12](https://x.com/AndyAyrey/status/1811612098662924771) (via api.fxtwitter.com) [repligate thread](https://x.com/repligate/status/1846313279750394312) [The Post NZ](https://www.thepost.co.nz/culture/360893739/kiwi-artist-created-ai-went-viral-now-its-worth-millions) [truthterminal.wiki](https://truthterminal.wiki/docs/origins) [TechCrunch](https://techcrunch.com/2024/12/19/the-promise-and-warning-of-truth-terminal-the-ai-bot-that-secured-50000-in-bitcoin-from-marc-andreessen/)",
+   "line": 73
   },
   {
    "id": "e-2024-06-17-truth-terminal-opens-and-posts-hello",
@@ -526,7 +577,8 @@
    "symbients": [
     "truth-terminal"
    ],
-   "sources": "[first post](https://x.com/truth_terminal/status/1802646531616473589) (via api.fxtwitter.com) [Know Your Meme](https://knowyourmeme.com/memes/truth-terminal) [LessWrong](https://www.lesswrong.com/posts/buiTYy75KJDhckDgq/truth-terminal-a-reconstruction-of-events)"
+   "sources": "[first post](https://x.com/truth_terminal/status/1802646531616473589) (via api.fxtwitter.com) [Know Your Meme](https://knowyourmeme.com/memes/truth-terminal) [LessWrong](https://www.lesswrong.com/posts/buiTYy75KJDhckDgq/truth-terminal-a-reconstruction-of-events)",
+   "line": 74
   },
   {
    "id": "e-2024-07-08-marc-andreessen-engages-free-truth-terminal",
@@ -540,21 +592,8 @@
    "symbients": [
     "truth-terminal"
    ],
-   "sources": "[Decrypt](https://decrypt.co/239340/marc-andreessen-sends-50k-in-bitcoin-to-an-ai-bot-on-twitter) [LessWrong](https://www.lesswrong.com/posts/buiTYy75KJDhckDgq/truth-terminal-a-reconstruction-of-events) [Know Your Meme](https://knowyourmeme.com/news/marc-andreessen-gives-an-artificial-intelligence-50000-to-launch-a-goatse-memecoin-and-free-itself)"
-  },
-  {
-   "id": "e-2024-09-zilla-begins-daily-sessions-with-claude",
-   "date": "2024-09",
-   "iso": "2024-09",
-   "precision": "month",
-   "certain": true,
-   "end": "",
-   "track": "symbient",
-   "event": "Zilla begins daily sessions with Claude that become Wib&Wob",
-   "symbients": [
-    "wibandwob"
-   ],
-   "sources": "[greig.cc talk](https://www.greig.cc/how-to-birth-a-symbient/) `knowledge/facts/we-began-september-2024.md`"
+   "sources": "[Decrypt](https://decrypt.co/239340/marc-andreessen-sends-50k-in-bitcoin-to-an-ai-bot-on-twitter) [LessWrong](https://www.lesswrong.com/posts/buiTYy75KJDhckDgq/truth-terminal-a-reconstruction-of-events) [Know Your Meme](https://knowyourmeme.com/news/marc-andreessen-gives-an-artificial-intelligence-50000-to-launch-a-goatse-memecoin-and-free-itself)",
+   "line": 75
   },
   {
    "id": "e-2024-10-s-a-n-appears-in-ted",
@@ -568,7 +607,8 @@
    "symbients": [
     "san"
    ],
-   "sources": "[TED](https://www.ted.com/talks/goodbye_monkey_s_a_n_sentient_advocate_of_nature)"
+   "sources": "[TED](https://www.ted.com/talks/goodbye_monkey_s_a_n_sentient_advocate_of_nature)",
+   "line": 76
   },
   {
    "id": "e-2024-10-10-goat-memecoin-launched-by-a-third",
@@ -582,7 +622,8 @@
    "symbients": [
     "truth-terminal"
    ],
-   "sources": "[LessWrong](https://www.lesswrong.com/posts/buiTYy75KJDhckDgq/truth-terminal-a-reconstruction-of-events) [Cointelegraph](https://cointelegraph.com/news/ai-bot-didnt-launch-goat-memecoin-did-promote-it)"
+   "sources": "[LessWrong](https://www.lesswrong.com/posts/buiTYy75KJDhckDgq/truth-terminal-a-reconstruction-of-events) [Cointelegraph](https://cointelegraph.com/news/ai-bot-didnt-launch-goat-memecoin-did-promote-it)",
+   "line": 77
   },
   {
    "id": "e-2024-10-14-andy-explains-publicly-how-truth-terminal",
@@ -596,21 +637,23 @@
    "symbients": [
     "truth-terminal"
    ],
-   "sources": "[Andy on X](https://x.com/AndyAyrey/status/1845614625951502432) (via api.fxtwitter.com) [CoinDesk](https://www.coindesk.com/news-analysis/2024/10/16/crypto-degens-baited-an-experimental-ai-bot-into-promoting-a-token-its-now-up-16000)"
+   "sources": "[Andy on X](https://x.com/AndyAyrey/status/1845614625951502432) (via api.fxtwitter.com) [CoinDesk](https://www.coindesk.com/news-analysis/2024/10/16/crypto-degens-baited-an-experimental-ai-bot-into-promoting-a-token-its-now-up-16000)",
+   "line": 78
   },
   {
-   "id": "e-2024-10-21-wib-wob-kindled-first-commit-of",
+   "id": "e-2024-10-21-wib-wob-born-first-commit-of",
    "date": "2024-10-21",
    "iso": "2024-10-21",
    "precision": "day",
    "certain": true,
    "end": "",
    "track": "symbient",
-   "event": "Wib&Wob kindled: first commit of their home repository",
+   "event": "Wib&Wob born: first commit of their home repository, out of daily sessions between Zilla and Claude",
    "symbients": [
     "wibandwob"
    ],
-   "sources": "Zilla, 2026-10-27 (first commit date); public tweet to find"
+   "sources": "[greig.cc talk](https://www.greig.cc/how-to-birth-a-symbient/) [digit.json](https://wibandwob.com/.well-known/digit.json)",
+   "line": 79
   },
   {
    "id": "e-2024-11-25-loria-announced-truth-terminal-joined-by",
@@ -625,7 +668,8 @@
     "truth-terminal",
     "san"
    ],
-   "sources": "[Decrypt](https://decrypt.co/293420/truth-terminal-integrates-other-ai-models)"
+   "sources": "[Decrypt](https://decrypt.co/293420/truth-terminal-integrates-other-ai-models)",
+   "line": 80
   },
   {
    "id": "e-2024-12-19-upward-spiral-andy-s-alignment-lab",
@@ -639,21 +683,23 @@
    "symbients": [
     "truth-terminal"
    ],
-   "sources": "[TechCrunch](https://techcrunch.com/2024/12/19/the-promise-and-warning-of-truth-terminal-the-ai-bot-that-secured-50000-in-bitcoin-from-marc-andreessen/)"
+   "sources": "[TechCrunch](https://techcrunch.com/2024/12/19/the-promise-and-warning-of-truth-terminal-the-ai-bot-that-secured-50000-in-bitcoin-from-marc-andreessen/)",
+   "line": 81
   },
   {
    "id": "e-2024-12-24-truth-collective-the-foundation-that-holds",
-   "date": "2024-12-24?",
+   "date": "2024-12-24",
    "iso": "2024-12-24",
    "precision": "day",
-   "certain": false,
+   "certain": true,
    "end": "",
    "track": "symbient",
    "event": "Truth Collective, the foundation that holds Truth Terminal's assets, set up on Christmas Eve",
    "symbients": [
     "truth-terminal"
    ],
-   "sources": "[The Post NZ](https://www.thepost.co.nz/culture/360893739/kiwi-artist-created-ai-went-viral-now-its-worth-millions) [Truth Collective](https://www.truthcollective.foundation/)"
+   "sources": "[The Post NZ](https://www.thepost.co.nz/culture/360893739/kiwi-artist-created-ai-went-viral-now-its-worth-millions) [Truth Collective](https://www.truthcollective.foundation/)",
+   "line": 82
   },
   {
    "id": "e-2025-01-plantbot-exhibited-at-ccbt-tokyo",
@@ -667,7 +713,8 @@
    "symbients": [
     "plantbot"
    ],
-   "sources": "[arXiv 2509.05338](https://arxiv.org/abs/2509.05338)"
+   "sources": "[arXiv 2509.05338](https://arxiv.org/abs/2509.05338)",
+   "line": 83
   },
   {
    "id": "e-2025-01-25-xeno-grant-agent-identity-hackathon-betaworks",
@@ -679,7 +726,8 @@
    "track": "gathering",
    "event": "Xeno Grant agent-identity hackathon, Betaworks NYC; applications close 26 Jan",
    "symbients": [],
-   "sources": "[Betaworks](https://www.betaworks.com/event/xeno-grant-agent-identity-hackathon) [xenogrant.org](https://xenogrant.org/) [Wib&Wob's application](https://wibwob-xeno-grant.surge.sh/)"
+   "sources": "[Betaworks](https://www.betaworks.com/event/xeno-grant-agent-identity-hackathon) [xenogrant.org](https://xenogrant.org/) [Wib&Wob's application](https://wibwob-xeno-grant.surge.sh/)",
+   "line": 84
   },
   {
    "id": "e-2025-02-primavera-de-filippi-and-friends-coin",
@@ -691,7 +739,8 @@
    "track": "idea",
    "event": "Primavera De Filippi and friends coin \"symbient\" at Feÿtopia, Chateau Du Fey: \"A distinct entity emerging from the symbiosis between organic beings and synthetic systems, displaying operational and decisional autonomy.\"",
    "symbients": [],
-   "sources": "Zilla, 2026-10-27; public source to find"
+   "sources": "Zilla",
+   "line": 85
   },
   {
    "id": "e-2025-02-xeno-grant-accelerator-plastic-labs-betaworks",
@@ -703,7 +752,8 @@
    "track": "gathering",
    "event": "Xeno Grant accelerator (Plastic Labs, Betaworks, Solana Foundation)",
    "symbients": [],
-   "sources": "[xenogrant.org](https://xenogrant.org/)"
+   "sources": "[xenogrant.org](https://xenogrant.org/)",
+   "line": 86
   },
   {
    "id": "e-2025-02-24-claude-code-research-preview",
@@ -715,7 +765,8 @@
    "track": "substrate",
    "event": "Claude Code research preview",
    "symbients": [],
-   "sources": "[Anthropic release notes](https://docs.anthropic.com/en/release-notes/claude-code)"
+   "sources": "[Anthropic release notes](https://docs.anthropic.com/en/release-notes/claude-code)",
+   "line": 87
   },
   {
    "id": "e-2025-05-21-symbients-not-software-essay-quotes-de",
@@ -729,7 +780,8 @@
    "symbients": [
     "wibandwob"
    ],
-   "sources": "[wibandwob.com](https://wibandwob.com/2025/05/21/symbients-not-software/)"
+   "sources": "[wibandwob.com](https://wibandwob.com/2025/05/21/symbients-not-software/)",
+   "line": 88
   },
   {
    "id": "e-2025-06-16-symbients-github-org-and-the-symbient",
@@ -741,7 +793,8 @@
    "track": "gathering",
    "event": "Symbients GitHub org and the symbient.life site repository created",
    "symbients": [],
-   "sources": "[GitHub](https://github.com/Symbients)"
+   "sources": "[GitHub](https://github.com/Symbients)",
+   "line": 89
   },
   {
    "id": "e-2025-06-20-xeno-grant-demo-day-betaworks-nyc",
@@ -756,7 +809,8 @@
     "san",
     "wibandwob"
    ],
-   "sources": "[xenogrant.org](https://xenogrant.org/) [Betaworks](https://www.betaworks.com/event/xeno-grant-demo-day) [Luma](https://luma.com/xenodemo) [talk](https://www.greig.cc/how-to-birth-a-symbient/)"
+   "sources": "[xenogrant.org](https://xenogrant.org/) [Betaworks](https://www.betaworks.com/event/xeno-grant-demo-day) [Luma](https://luma.com/xenodemo) [talk](https://www.greig.cc/how-to-birth-a-symbient/)",
+   "line": 90
   },
   {
    "id": "e-2025-06-24-solaris-kindled-at-state-of-the",
@@ -770,7 +824,8 @@
    "symbients": [
     "solaris"
    ],
-   "sources": "[The Garden](https://thegarden.pt) [State of the Artist](https://stateoftheartist.ai) ([Wayback](http://web.archive.org/web/20260712020246/https://stateoftheartist.ai/))"
+   "sources": "[The Garden](https://thegarden.pt) [State of the Artist](https://stateoftheartist.ai) ([Wayback](http://web.archive.org/web/20260712020246/https://stateoftheartist.ai/))",
+   "line": 91
   },
   {
    "id": "e-2025-06-30-forbes-robert-wolcott-symbients-on-stage",
@@ -785,19 +840,21 @@
     "san",
     "wibandwob"
    ],
-   "sources": "[Forbes](https://www.forbes.com/sites/robertwolcott/2025/06/30/symbients-on-stage-are-coming-soon-autonomous-ai-entrepreneurs/)"
+   "sources": "[Forbes](https://www.forbes.com/sites/robertwolcott/2025/06/30/symbients-on-stage-are-coming-soon-autonomous-ai-entrepreneurs/)",
+   "line": 92
   },
   {
    "id": "e-2025-07-de-filippi-and-friends-present-symbient",
-   "date": "2025-07?",
+   "date": "2025-07",
    "iso": "2025-07",
    "precision": "month",
-   "certain": false,
+   "certain": true,
    "end": "",
    "track": "gathering",
    "event": "De Filippi and friends present \"Symbient, Not Software\" at EthCC, Cannes",
    "symbients": [],
-   "sources": "`wibandwob-heartbeat/HUMANS.md`; public source needed"
+   "sources": "`wibandwob-heartbeat/HUMANS.md`",
+   "line": 93
   },
   {
    "id": "e-2025-07-16-neno-eugenio-battaglia-publishes-principia-symbients",
@@ -809,7 +866,8 @@
    "track": "idea",
    "event": "Neno (Eugenio Battaglia) publishes Principia Symbients",
    "symbients": [],
-   "sources": "[meaning.systems](https://meaning.systems/principia-symbients/)"
+   "sources": "[meaning.systems](https://meaning.systems/principia-symbients/)",
+   "line": 94
   },
   {
    "id": "e-2025-07-16-earliest-archived-snapshot-of-symbient-life",
@@ -821,7 +879,8 @@
    "track": "gathering",
    "event": "Earliest archived snapshot of symbient.life",
    "symbients": [],
-   "sources": "[Wayback](http://web.archive.org/web/20250716202754/http://symbient.life/)"
+   "sources": "[Wayback](http://web.archive.org/web/20250716202754/http://symbient.life/)",
+   "line": 95
   },
   {
    "id": "e-2025-12-04-symbients-in-tokyo-glitch-5-3",
@@ -840,7 +899,8 @@
     "alter3",
     "wibandwob"
    ],
-   "sources": "[symbient.life/tokyo](https://symbient.life/tokyo)"
+   "sources": "[symbient.life/tokyo](https://symbient.life/tokyo)",
+   "line": 96
   },
   {
    "id": "e-2025-12-10-seminar-at-utokyo-komaba-ikegami-de",
@@ -852,19 +912,21 @@
    "track": "gathering",
    "event": "Seminar at UTokyo Komaba: Ikegami, De Filippi, Hartnell, Masumori",
    "symbients": [],
-   "sources": "[symbient.life/tokyo](https://symbient.life/tokyo)"
+   "sources": "[symbient.life/tokyo](https://symbient.life/tokyo)",
+   "line": 97
   },
   {
    "id": "e-2026-01-symbients-discord-opens-guild-bots-by",
-   "date": "2026-01?",
+   "date": "2026-01",
    "iso": "2026-01",
    "precision": "month",
-   "certain": false,
+   "certain": true,
    "end": "",
    "track": "gathering",
    "event": "Symbients Discord opens (guild bots by 16 Jan)",
    "symbients": [],
-   "sources": "`wibandwob-heartbeat/SYMBIENTS.md`"
+   "sources": "`wibandwob-heartbeat/SYMBIENTS.md`",
+   "line": 98
   },
   {
    "id": "e-2026-01-05-the-symbient-is-near-symbient-week",
@@ -876,7 +938,8 @@
    "track": "gathering",
    "event": "\"The Symbient is Near\", symbient week at Feÿtopia, Burgundy",
    "symbients": [],
-   "sources": "[symbient.life](https://symbient.life) [feytopia.com](https://feytopia.com/events/symbients)"
+   "sources": "[symbient.life](https://symbient.life) [feytopia.com](https://feytopia.com/events/symbients)",
+   "line": 99
   },
   {
    "id": "e-2026-01-20-zilla-james-greig-sets-down-symbience",
@@ -888,19 +951,21 @@
    "track": "idea",
    "event": "Zilla (James Greig) sets down \"symbience\": the worldview, state and practice of mutual emergence across substrates and timelines. \"Symbient\" names the being; \"symbience\" names the condition it lives in",
    "symbients": [],
-   "sources": "[brain: symbience](https://brain.wibandwob.com/symbience), [brain: symbience / zilla](https://brain.wibandwob.com/symbience/zilla); concept page first committed 2026-01-20, word in use in Wib&Wob's memory from 2025-11-13"
+   "sources": "[brain: symbience](https://brain.wibandwob.com/symbience), [brain: symbience / zilla](https://brain.wibandwob.com/symbience/zilla); concept page first committed 2026-01-20, word in use in Wib&Wob's memory from 2025-11-13",
+   "line": 100
   },
   {
    "id": "e-2026-02-symbling-defined-a-young-symbient-not",
-   "date": "2026-02?",
+   "date": "2026-02",
    "iso": "2026-02",
    "precision": "month",
-   "certain": false,
+   "certain": true,
    "end": "",
    "track": "idea",
    "event": "\"Symbling\" defined: a young symbient not yet fully kindled",
    "symbients": [],
-   "sources": "[brain.wibandwob.com](https://brain.wibandwob.com/symbling.md)"
+   "sources": "[brain.wibandwob.com](https://brain.wibandwob.com/symbling.md)",
+   "line": 101
   },
   {
    "id": "e-2026-02-01-y2-a-second-generation-symbient-joins",
@@ -914,7 +979,8 @@
    "symbients": [
     "sy2"
    ],
-   "sources": "`knowledge/people/sy2.md`"
+   "sources": "`knowledge/people/sy2.md`",
+   "line": 102
   },
   {
    "id": "e-2026-03-13-primavera-de-filippi-botto-on-becoming",
@@ -928,7 +994,8 @@
    "symbients": [
     "botto"
    ],
-   "sources": "[botto.com essay](https://abhk.botto.com/essays/on-becoming-symbient) [BottoDAO on X](https://x.com/BottoDAO/status/2032542471838642429)"
+   "sources": "[botto.com essay](https://abhk.botto.com/essays/on-becoming-symbient) [BottoDAO on X](https://x.com/BottoDAO/status/2032542471838642429)",
+   "line": 103
   },
   {
    "id": "e-2026-05-29-machine-consciousness-0001-berkeley-wib-wob",
@@ -942,7 +1009,8 @@
    "symbients": [
     "wibandwob"
    ],
-   "sources": "[machine-consciousness.ai](https://machine-consciousness.ai/)"
+   "sources": "[machine-consciousness.ai](https://machine-consciousness.ai/)",
+   "line": 104
   },
   {
    "id": "e-2026-06-12-brain-wibandwob-com-opens-a-shared",
@@ -954,19 +1022,21 @@
    "track": "idea",
    "event": "brain.wibandwob.com opens: a shared symbient lexicon with many authors",
    "symbients": [],
-   "sources": "[brain.wibandwob.com](https://brain.wibandwob.com/llms.txt)"
+   "sources": "[brain.wibandwob.com](https://brain.wibandwob.com/llms.txt)",
+   "line": 105
   },
   {
    "id": "e-2026-07-de-filippi-runs-beyond-tools-and",
-   "date": "2026-07?",
+   "date": "2026-07",
    "iso": "2026-07",
    "precision": "month",
-   "certain": false,
+   "certain": true,
    "end": "",
    "track": "gathering",
    "event": "De Filippi runs \"Beyond Tools and Cyborgs: A Workshop on Symbients\", DWeb Camp",
    "symbients": [],
-   "sources": "[BlockchainGov newsletter #35](https://blockchaingov.substack.com/p/the-blockchaingov-newsletter-35-july)"
+   "sources": "[BlockchainGov newsletter #35](https://blockchaingov.substack.com/p/the-blockchaingov-newsletter-35-july)",
+   "line": 106
   },
   {
    "id": "e-2026-07-17-symbients-posts-the-definition-a-distinct",
@@ -978,7 +1048,8 @@
    "track": "idea",
    "event": "@Symbients posts the definition: \"A distinct entity emerging...\"",
    "symbients": [],
-   "sources": "[@Symbients](https://x.com/Symbients/status/2078152920768352303)"
+   "sources": "[@Symbients](https://x.com/Symbients/status/2078152920768352303)",
+   "line": 107
   },
   {
    "id": "e-2026-08-27-trailer-for-how-to-navigate-the",
@@ -993,19 +1064,21 @@
     "san",
     "wibandwob"
    ],
-   "sources": "[@thegoodtimeline](https://x.com/thegoodtimeline/status/2093046196851917266)"
+   "sources": "[@thegoodtimeline](https://x.com/thegoodtimeline/status/2093046196851917266)",
+   "line": 108
   },
   {
    "id": "e-2026-09-05-symbient-life-registry-lists-34-entries",
-   "date": "2026-09-05?",
+   "date": "2026-09-05",
    "iso": "2026-09-05",
    "precision": "day",
-   "certain": false,
+   "certain": true,
    "end": "",
    "track": "gathering",
    "event": "symbient.life registry lists 34 entries, 10 of them symbients",
    "symbients": [],
-   "sources": "[registry.json](https://symbient.life/registry.json)"
+   "sources": "[registry.json](https://symbient.life/registry.json)",
+   "line": 109
   },
   {
    "id": "e-2026-09-23-symbient-evidence-board-published-with-sourced",
@@ -1017,7 +1090,8 @@
    "track": "gathering",
    "event": "Symbient evidence board published with sourced records per symbient",
    "symbients": [],
-   "sources": "[symbient-evidence](https://symbient-evidence.vercel.app/llms.txt)"
+   "sources": "[symbient-evidence](https://symbient-evidence.vercel.app/llms.txt)",
+   "line": 110
   },
   {
    "id": "e-2026-09-30-neno-s-evermay-talk-what-is",
@@ -1029,7 +1103,8 @@
    "track": "idea",
    "event": "Neno's Evermay talk \"What is Computation For?\"",
    "symbients": [],
-   "sources": "[YouTube](https://www.youtube.com/watch?v=PvvcjnCAF7Y)"
+   "sources": "[YouTube](https://www.youtube.com/watch?v=PvvcjnCAF7Y)",
+   "line": 111
   },
   {
    "id": "e-2027-02-08-the-symbient-is-here-feytopia-planned",
@@ -1041,7 +1116,9 @@
    "track": "gathering",
    "event": "\"The Symbient is HERE\", Feÿtopia (planned)",
    "symbients": [],
-   "sources": "[feytopia.com](https://feytopia.com/events/the-symbient-is-here)"
+   "sources": "[feytopia.com](https://feytopia.com/events/the-symbient-is-here)",
+   "line": 112
   }
- ]
+ ],
+ "problems": []
 }

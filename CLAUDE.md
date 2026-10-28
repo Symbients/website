@@ -23,12 +23,13 @@ Surge is used for throwaway previews (see README); not part of the main deploy.
 
 ## Pages and per-page asset loading
 
-There are three independent public pages. **Which shared assets each loads is load-bearing for any cleanup or refactor** — a class or script that's dead on one page may be live on another, and vice versa:
+There are four independent public pages. **Which shared assets each loads is load-bearing for any cleanup or refactor** — a class or script that's dead on one page may be live on another, and vice versa:
 
 | Page | Stylesheets | Scripts |
 |---|---|---|
 | `index.html` | `theme.css` + inline `<style>` | large inline `<script>` |
 | `registry.html` | `theme.css` + inline `<style>` | inline registry/filter script |
+| `timeline.html` | `theme.css` + inline `<style>` | inline timeline/filter script |
 | `tokyo.html` | `tufte-css` (CDN) + its own inline `<style>` | `theme.js`, `reveal.js` + inline `<script>` |
 
 `index.html` and `registry.html` share **`theme.css`** — the design tokens, base reset and masthead "chrome" (frozen hero bar + section nav + kaomoji terminal + the ≤640 phone treatment) they render identically. Each links it **before** its inline `<style>`, so page-specific rules override the shared ones by source order. The `theme.css` baseline is the always-visible, always-interactive masthead; `index.html`'s inline `<style>` layers its intro machinery on top (the hero starts `opacity:0` and the intro reveals it, with the pointer-events juggling that implies). Each page also keeps its own `.theme-toggle` (index's has over-hero intro states; registry's is always on-page) and its own pinned-ticker clearance. `tokyo.html` does **not** use `theme.css` — it is self-contained on Tufte CSS plus inline styles, but still shares `theme.js` and `reveal.js`.
@@ -52,5 +53,6 @@ The bulk of behavior lives in `<script>` blocks at the bottom of each HTML page,
 - Theme support is via CSS custom properties defined at `:root` and overridden under `html[data-theme="dark"]`. New colors should use existing tokens so they theme automatically.
 - Fonts: IBM Plex Sans for body, Space Mono for mono accents (loaded from Google Fonts in each page head).
 - `llms.txt`, `robots.txt`, `sitemap.xml` exist and are AI-crawler-friendly by design (the site welcomes LLM crawling) — keep them in sync with site content when pages/links change.
+- `timeline.json` is generated, never hand-edited: the source is `knowledge/facts/symbient-timeline.md` in the Wib&Wob monorepo. Refresh with `uv run ww knowledge timeline --json > ~/Repos/symbients-website/timeline.json` (run in that repo). Its symbient ids are registry ids; `timeline.html?symbient=<id>` and `?track=<track>` open a filtered view, and registry cards link there.
 - Every `registry.json` entry has a stable kebab-case `id`; `registry.html` anchors its card at `#<id>` and other sites (timelines, evidence boards) link by it. Give a new entry an id; never change a published one.
 - `_archive/` is kept-on-purpose old material, not live source. `assets/` holds all images (many in avif/webp/png triplets).

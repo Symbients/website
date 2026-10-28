@@ -413,6 +413,16 @@
                 width: 14px;
                 height: 14px;
             }
+            /* a symbient with dated events links to its slice of the timeline */
+            .meta .tl-link {
+                color: var(--faint);
+                text-decoration: none;
+                transition: color 0.25s var(--ease);
+            }
+            .meta .tl-link:hover,
+            .meta .tl-link:focus-visible {
+                color: var(--green);
+            }
             /* kind → node tone (monochrome ink per theme, like index) */
             .k-symbient {
                 --node: var(--violet);
@@ -596,6 +606,7 @@
                             aria-current="page"
                             >registry</a
                         >
+                        <a class="tab" href="/timeline.html">timeline</a>
                     </nav>
                     <button
                         class="theme-toggle"
@@ -1177,6 +1188,16 @@
                         });
                         meta.appendChild(row);
                     }
+                    // symbients with dated events: a quiet route to their slice of the timeline
+                    if (e.id && TL.has(e.id)) {
+                        const a = document.createElement("a");
+                        a.className = "tl-link";
+                        a.href = "/timeline.html?symbient=" + encodeURIComponent(e.id);
+                        const n = TL.get(e.id);
+                        a.textContent = "◷ timeline · " + n + (n === 1 ? " event" : " events");
+                        a.addEventListener("click", (ev) => ev.stopPropagation());
+                        meta.appendChild(a);
+                    }
                     inner.append(def, meta);
                     body.appendChild(inner);
 
@@ -1238,12 +1259,22 @@
                     });
                 }
 
-                fetch("/registry.json")
-                    .then((r) => {
+                // timeline.json is optional: without it the cards simply carry no timeline link
+                const TL = new Map(); // symbient id -> number of dated events
+                const timeline = fetch("/timeline.json")
+                    .then((r) => (r.ok ? r.json() : null))
+                    .catch(() => null);
+                Promise.all([
+                    fetch("/registry.json").then((r) => {
                         if (!r.ok) throw new Error("HTTP " + r.status);
                         return r.json();
-                    })
-                    .then((data) => {
+                    }),
+                    timeline,
+                ])
+                    .then(([data, tl]) => {
+                        ((tl && tl.events) || []).forEach((ev) =>
+                            (ev.symbients || []).forEach((id) => TL.set(id, (TL.get(id) || 0) + 1)),
+                        );
                         entries = data;
                         const counters = {};
                         entries.forEach((e) => {
