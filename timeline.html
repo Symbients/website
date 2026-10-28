@@ -516,7 +516,12 @@
                         </span>
                     </button>
                     <!-- tabs come from nav.js (one list for every page) -->
-                    <nav class="site-nav" id="site-nav" aria-label="sections" data-page="timeline"></nav>
+                    <nav class="site-nav" id="site-nav" aria-label="sections" data-page="timeline">
+                        <!-- fallback for readers without JavaScript (crawlers, text browsers); nav.js replaces it -->
+                        <a class="tab" href="/">home</a>
+                        <a class="tab" href="/registry.html">registry</a>
+                        <a class="tab" href="/timeline.html">timeline</a>
+                    </nav>
                     <script src="/nav.js"></script>
                     <button
                         class="theme-toggle"

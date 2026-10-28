@@ -40,7 +40,7 @@ The `index.html` Organics section (`#sec-organics`) is static HTML generated fro
 
 ## Shared JS (each file is a single IIFE, no modules/exports except where noted)
 
-- **`nav.js`** — the masthead tab list for `index.html`, `registry.html` and `timeline.html`. Each page has an empty `<nav id="site-nav" data-page="…">` followed by `<script src="/nav.js"></script>` (not deferred, so the tabs exist before the page's scroll-spy and burger scripts run). Add or rename a tab here, never in a page.
+- **`nav.js`** — the masthead tab list for `index.html`, `registry.html` and `timeline.html`. Each page has a `<nav id="site-nav" data-page="…">` holding three fallback links (home, registry, timeline, for readers without JavaScript) followed by `<script src="/nav.js"></script>` (not deferred, so the tabs exist before the page's scroll-spy and burger scripts run). Add or rename a tab here, never in a page.
 
 - **`theme.js`** — two themes (`light` / `dark`) via `html[data-theme="…"]`. Auto-picks by time of day, persists a manual choice to `localStorage["symbient-theme"]`, and re-checks on focus/visibility. It looks for a `.theme-toggle` element to wire a cycle button and **silently bails if none exists**.
 - **`reveal.js`** — IntersectionObserver that tags below-the-fold `<section>`s with `.reveal` then `.is-visible` as they near the viewport. These classes are **added only here** — without JS or under `prefers-reduced-motion` the page stays fully visible. CSS must keep `.reveal`/`.is-visible` styling in sync.
