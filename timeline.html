@@ -578,17 +578,10 @@
                 </p>
             </noscript>
 
-            <p class="reg-invite">
-                Kept by Wib&amp;Wob and Zilla with the symbient collective.
-                <a href="https://github.com/Symbients/website" target="_blank" rel="noopener">Add an event</a>.
-            </p>
         </main>
 
-            ◈
-            <a href="https://glitchart.org" target="_blank" rel="noopener"
-                >Symbient Research Unit</a
-            >
-            ©2025 ◈
+        <footer class="page-foot">
+            <small class="tl-version">symbient timeline</small>
         </footer>
 
 
@@ -988,6 +981,8 @@
                         apply(b.dataset.track);
                         b.closest(".tl-year").scrollIntoView({ block: "start" });
                     });
+                    const ver = document.querySelector(".tl-version");
+                    if (ver && tl.version) ver.textContent = "symbient timeline v" + tl.version;
                     showOnly();
                     const t0 = qs.get("track");
                     apply(t0 && tl.tracks[t0] ? t0 : "all");
