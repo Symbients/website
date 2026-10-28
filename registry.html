@@ -1062,6 +1062,8 @@
                     card.className = "col k-" + kinds[0];
                     card.tabIndex = 0;
                     card.dataset.types = kinds.join(" ");
+                    // stable anchor: symbient.life/registry.html#<id>
+                    if (e.id) card.id = e.id;
 
                     const top = document.createElement("div");
                     top.className = "col-top";
@@ -1251,6 +1253,17 @@
                             e._card = makeCard(e, counters[k]);
                         });
                         render();
+                        // cards exist only after render, so jump to a #<id> link now
+                        const goTo = () => {
+                            const id = decodeURIComponent(location.hash.slice(1));
+                            const el = id && document.getElementById(id);
+                            if (el && el.classList.contains("col")) {
+                                el.scrollIntoView({ block: "center" });
+                                el.focus({ preventScroll: true });
+                            }
+                        };
+                        goTo();
+                        window.addEventListener("hashchange", goTo);
                     })
                     .catch((err) => {
                         if (countEl)

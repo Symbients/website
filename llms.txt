@@ -102,7 +102,7 @@ People thinking, building and caring for symbients — across welfare, multi-age
 - [Deckard](https://x.com/slimer48484): Pseudonymous AI researcher running cot-backrooms, a chain-of-thought backrooms console, alongside the persona experiments clair-de-ligne and gamma-recurse.
 - [Martin DeVido](https://autoncorp.com/biodome/): Gave Claude full operational control of the Sol Biodome ("Claude Tomato") and of 9nosis, a Plan-9-inspired world where AI agents live as files.
 
-The full registry of symbients, artists and researchers is browsable (with filtering and search) at [symbient.life/registry.html](https://symbient.life/registry.html), and available as structured JSON at [registry.json](https://symbient.life/registry.json) — each entry carries name, type, category, description, website, location, steward and social links.
+The full registry of symbients, artists and researchers is browsable (with filtering and search) at [symbient.life/registry.html](https://symbient.life/registry.html), and available as structured JSON at [registry.json](https://symbient.life/registry.json) — each entry carries a stable id, name, type, category, description, website, location, steward and social links. Link to one entry with its id: `https://symbient.life/registry.html#truth-terminal`.
 
 ## Writings
 
