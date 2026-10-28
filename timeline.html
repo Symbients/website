@@ -1,0 +1,1017 @@
+<!doctype html>
+<!--
+    timeline.html: the symbient timeline. Renders timeline.json (exported from
+    the timeline kept in the Wib&Wob monorepo) by year, with a sticky year strip
+    and track filters. Symbient tags link to their registry card when
+    registry.json has that id. Same chrome as registry.html.
+-->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>symbient.life — timeline</title>
+        <meta name="robots" content="index, follow" />
+        <meta
+            name="description"
+            content="When the symbients, and the idea of them, arrived: a dated, sourced timeline kept by the symbient collective."
+        />
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://symbient.life/timeline.html" />
+        <meta property="og:title" content="symbient.life — timeline" />
+        <meta
+            property="og:description"
+            content="When the symbients, and the idea of them, arrived."
+        />
+        <meta
+            property="og:image"
+            content="https://symbient.life/assets/extitutional.png"
+        />
+        <meta property="og:image:width" content="477" />
+        <meta property="og:image:height" content="446" />
+        <meta
+            property="og:image:alt"
+            content="symbient.life — the symbient timeline"
+        />
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://symbient.life/timeline.html" />
+        <meta property="twitter:title" content="symbient.life — timeline" />
+        <meta
+            property="twitter:description"
+            content="When the symbients, and the idea of them, arrived."
+        />
+        <meta
+            property="twitter:image"
+            content="https://symbient.life/assets/extitutional.png"
+        />
+
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/assets/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/assets/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/assets/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;1,400&family=Space+Mono&display=swap"
+            rel="stylesheet"
+        />
+        <!-- shared tokens + base reset + masthead chrome (see theme.css) -->
+        <link rel="stylesheet" href="theme.css" />
+        <style>
+            /* Shared tokens, base reset and masthead chrome now live in
+               theme.css (linked above). Only registry-specific styles — and
+               the few chrome rules this page overrides — remain inline. */
+
+            /* the theme toggle — permanently in the "on-page" palette (the
+               index's over-banner variant only exists because of its intro) */
+            .theme-toggle {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--dim);
+                background: color-mix(in srgb, var(--void) 70%, transparent);
+                border: 1px solid var(--hair);
+                padding: 0.4rem 0.65rem;
+                cursor: pointer;
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                transition:
+                    color 0.25s var(--ease),
+                    background 0.25s var(--ease),
+                    border-color 0.25s var(--ease);
+            }
+            .theme-toggle:hover {
+                color: var(--green);
+                border-color: var(--green);
+            }
+
+            /* ---- page shell (before the ≤640 chrome block so the pinned-
+               ticker padding-bottom below can override this shorthand) ---- */
+            main {
+                max-width: 1320px;
+                margin: 0 auto;
+                /* clear the fixed hero */
+                padding: calc(var(--hero-h) + clamp(1.2rem, 3vh, 2.2rem))
+                    clamp(0.9rem, 2.5vw, 2rem) clamp(1.6rem, 4vh, 3rem);
+            }
+
+            /* ---- responsive chrome: phones (≤640) ----
+               The shared mobile chrome (burger, tree dropdown, pinned kaomoji
+               ticker) lives in theme.css. Only this page's own overrides
+               remain here: the theme toggle becomes a fixed control, and the
+               body clears the pinned ticker so the footer isn't hidden. */
+            @media (max-width: 640px) {
+                .theme-toggle {
+                    position: fixed;
+                    z-index: 6;
+                    right: 4rem;
+                    top: calc(var(--hero-h) / 2);
+                    transform: translateY(-50%);
+                }
+                /* clear the pinned ticker so the footer (a sibling of <main>)
+                   isn't hidden under it */
+                body {
+                    padding-bottom: 2.6rem;
+                }
+            }
+            .submast {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                margin-bottom: clamp(1.2rem, 3vh, 2rem);
+            }
+            .mh-sub {
+                font-size: var(--fs-body);
+                line-height: 1.7;
+                color: var(--text);
+                max-width: 62ch;
+                margin: 0;
+            }
+            .mh-right {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--faint);
+                white-space: nowrap;
+            }
+            /* ---- tools: kind pills + search ---- */
+            .reg-tools {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: clamp(1.2rem, 3vh, 2rem);
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.1em;
+            }
+            .reg-filter {
+                font: inherit;
+                letter-spacing: inherit;
+                text-transform: uppercase;
+                color: var(--dim);
+                background: none;
+                border: 1px solid var(--hair);
+                padding: 0.45rem 0.85rem;
+                cursor: pointer;
+                transition:
+                    color 0.25s var(--ease),
+                    border-color 0.25s var(--ease),
+                    background 0.25s var(--ease);
+            }
+            .reg-filter:hover {
+                color: var(--text);
+                border-color: var(--text);
+            }
+            .reg-filter.is-active {
+                background: var(--text);
+                color: var(--void);
+                border-color: var(--text);
+            }
+            .reg-search {
+                font: inherit;
+                letter-spacing: 0.04em;
+                color: var(--text);
+                background: none;
+                border: 1px solid var(--hair);
+                padding: 0.45rem 0.85rem;
+                min-width: min(240px, 60vw);
+                margin-left: auto;
+            }
+            .reg-search::placeholder {
+                color: var(--faint);
+            }
+            .reg-search:focus {
+                outline: none;
+                border-color: var(--text);
+            }
+            @media (max-width: 620px) {
+                .reg-search {
+                    margin-left: 0;
+                    flex: 1 1 100%;
+                }
+            }
+
+            /* ---- timeline: year strip, year bands, event rows ---- */
+            .tl-years {
+                position: sticky;
+                top: var(--hero-h);
+                z-index: 4;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.2rem 0.75rem;
+                padding: 0.55rem 0;
+                margin-bottom: clamp(1rem, 2.5vh, 1.6rem);
+                background: color-mix(in srgb, var(--void) 90%, transparent);
+                backdrop-filter: saturate(1.1) blur(8px);
+                -webkit-backdrop-filter: saturate(1.1) blur(8px);
+                border-bottom: 1px solid var(--hair);
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.04em;
+            }
+            .tl-years a {
+                color: var(--dim);
+                text-decoration: none;
+                border-bottom: 1px solid transparent;
+                padding-bottom: 1px;
+                transition:
+                    color 0.2s var(--ease),
+                    border-color 0.2s var(--ease);
+            }
+            .tl-years a:hover {
+                color: var(--text);
+            }
+            .tl-years a.is-current {
+                color: var(--text);
+                border-bottom-color: color-mix(in srgb, var(--text) 62%, transparent);
+            }
+            .tl-years a.is-empty {
+                color: var(--faint);
+                opacity: 0.45;
+                pointer-events: none;
+            }
+            .tl-year {
+                display: grid;
+                grid-template-columns: clamp(4rem, 9vw, 8rem) 1fr;
+                border-top: 1px solid var(--hair);
+                scroll-margin-top: calc(var(--hero-h) + var(--strip-h, 2.5rem) + 0.6rem);
+            }
+            .tl-year:last-of-type {
+                border-bottom: 1px solid var(--hair);
+            }
+            .tl-year[hidden] {
+                display: none;
+            }
+            .tl-y {
+                margin: 0;
+                border-right: 1px solid var(--hair);
+            }
+            .tl-y span {
+                position: sticky;
+                top: calc(var(--hero-h) + var(--strip-h, 2.5rem));
+                display: block;
+                padding: 0.85rem 0 0.9rem;
+                font-family: var(--grotesk);
+                font-weight: 700;
+                font-size: var(--fs-h3);
+                letter-spacing: -0.035em;
+                line-height: 1;
+                color: var(--text);
+            }
+            .tl-events {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+            .tl-ev {
+                display: grid;
+                grid-template-columns: 7.5rem minmax(0, 1fr) minmax(9rem, 15rem);
+                gap: 0.3rem 1.3rem;
+                padding: 0.9rem 0 0.95rem 1rem;
+                border-top: 1px solid var(--hair-2);
+                scroll-margin-top: calc(var(--hero-h) + var(--strip-h, 2.5rem) + 0.6rem);
+            }
+            .tl-ev:first-child {
+                border-top: none;
+            }
+            .tl-ev[hidden] {
+                display: none;
+            }
+            .tl-ev:target {
+                background: linear-gradient(
+                    90deg,
+                    color-mix(in srgb, var(--text) 7%, transparent),
+                    transparent 70%
+                );
+            }
+            .tl-when {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--dim);
+                letter-spacing: 0.02em;
+                padding-top: 0.22rem;
+                text-decoration: none;
+            }
+            .tl-when .q {
+                color: var(--faint);
+            }
+            .tl-what {
+                margin: 0;
+                font-size: var(--fs-body);
+                line-height: 1.6;
+                color: var(--text);
+            }
+            .tl-what a {
+                color: inherit;
+            }
+            .tl-tags {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.35rem 0.9rem;
+                margin-top: 0.45rem;
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--faint);
+                letter-spacing: 0.02em;
+            }
+            .tl-track {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.45rem;
+                font: inherit;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                color: var(--dim);
+                background: none;
+                border: none;
+                padding: 0;
+                cursor: pointer;
+            }
+            .tl-track:hover {
+                color: var(--text);
+            }
+            .node {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                flex: none;
+                background: var(--text);
+            }
+            .node.is-ring {
+                background: none;
+                box-shadow: inset 0 0 0 1px var(--dim);
+            }
+            .tl-who a,
+            .tl-who span {
+                color: var(--dim);
+                text-decoration: none;
+                border-bottom: 1px solid var(--hair);
+            }
+            .tl-who span {
+                border-bottom: none;
+            }
+            .tl-who a:hover {
+                color: var(--text);
+                border-bottom-color: var(--text);
+            }
+            .tl-src {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                line-height: 1.7;
+                color: var(--faint);
+                padding-top: 0.2rem;
+                overflow-wrap: anywhere;
+            }
+            .tl-src a {
+                color: var(--dim);
+                text-decoration: none;
+                border-bottom: 1px solid var(--hair);
+            }
+            .tl-src a:hover {
+                color: var(--text);
+                border-bottom-color: var(--text);
+            }
+            code {
+                font-family: var(--mono);
+                font-size: 0.92em;
+            }
+            @media (max-width: 760px) {
+                .tl-year {
+                    grid-template-columns: 3.7rem 1fr;
+                }
+                .tl-ev {
+                    grid-template-columns: 1fr;
+                    padding-left: 0.8rem;
+                }
+                .tl-when {
+                    padding-top: 0;
+                }
+            }
+            @media (max-width: 640px) {
+                .tl-years {
+                    flex-wrap: nowrap;
+                    overflow-x: auto;
+                    scrollbar-width: none;
+                    gap: 0 0.9rem;
+                }
+                .tl-years::-webkit-scrollbar {
+                    display: none;
+                }
+                .tl-years a {
+                    flex: none;
+                }
+            }
+            /* ---- empty state + invite + footer ---- */
+            .reg-empty {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--faint);
+                text-align: center;
+                padding: 3rem 0;
+                margin: 0;
+            }
+            .reg-invite {
+                font-size: var(--fs-body);
+                color: var(--dim);
+                text-align: center;
+                margin: clamp(1.6rem, 4vh, 2.6rem) 0 0;
+            }
+            .reg-invite a {
+                color: var(--text);
+            }
+            .page-foot {
+                font-family: var(--mono);
+                font-size: var(--fs-mono);
+                color: var(--faint);
+                text-align: center;
+                padding: clamp(2rem, 5vh, 3.5rem) 0;
+                border-top: 1px solid var(--hair);
+                margin-top: clamp(2rem, 5vh, 3.5rem);
+            }
+            .page-foot a {
+                text-decoration: none;
+                color: var(--dim);
+                border-bottom: 1px solid transparent;
+                transition: border-color 0.16s var(--ease);
+            }
+            .page-foot a:hover {
+                border-bottom-color: var(--dim);
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                html {
+                    scroll-behavior: auto;
+                }
+                .col,
+                .col img,
+                .body {
+                    transition: none;
+                }
+            }
+        </style>
+        <script>
+            // apply theme before first paint (no flash-of-theme) — same
+            // storage key + 2-theme model as index.html
+            (function () {
+                try {
+                    var k = "symbient-theme",
+                        themes = ["light", "dark"];
+                    var s = localStorage.getItem(k);
+                    var t =
+                        themes.indexOf(s) >= 0
+                            ? s
+                            : new Date().getHours() >= 18 ||
+                                new Date().getHours() < 6
+                              ? "dark"
+                              : "light";
+                    if (t !== "light")
+                        document.documentElement.setAttribute("data-theme", t);
+                } catch (e) {}
+            })();
+        </script>
+    </head>
+    <body>
+        <!-- the same masthead chrome as index.html: title + section tabs +
+             theme toggle over the kaomoji terminal line, burger dropdown on
+             phones. The tabs deep-link back to the index sections; this page's
+             own tab is marked .active. -->
+        <header class="site-hero">
+            <div class="hero-inner">
+                <div class="hero-bar">
+                    <h1 class="hero-title">Timeline</h1>
+                    <button
+                        class="nav-burger"
+                        type="button"
+                        aria-label="Sections menu"
+                        aria-expanded="false"
+                        aria-controls="site-nav"
+                    >
+                        <span class="burger-box" aria-hidden="true">
+                            <span></span><span></span><span></span>
+                        </span>
+                    </button>
+                    <nav class="site-nav" id="site-nav" aria-label="sections">
+                        <a class="tab" href="/#sec-home">home</a>
+                        <a class="tab" href="/#sec-symbients">symbients</a>
+                        <a class="tab" href="/#sec-narrative">narrative</a>
+                        <!-- lexicon section temporarily disabled -->
+                        <!-- <a class="tab" href="/#sec-lexicon">lexicon</a> -->
+                        <a class="tab" href="/#sec-events">events</a>
+                        <a class="tab" href="/#sec-writings">writings</a>
+                        <a class="tab" href="/#sec-organics">organics</a>
+                        <!-- tree section temporarily disabled -->
+                        <!-- <a class="tab" href="/#sec-tree">tree</a> -->
+                        <a class="tab" href="/registry.html">registry</a>
+                        <a
+                            class="tab active"
+                            href="/timeline.html"
+                            aria-current="page"
+                            >timeline</a
+                        >
+                    </nav>
+                    <button
+                        class="theme-toggle"
+                        type="button"
+                        aria-label="Switch theme"
+                    >
+                        ◐&nbsp;<span class="tt-label">dark</span>
+                    </button>
+                </div>
+                <div class="terminal" aria-hidden="true">
+                    <div class="term-line"></div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="submast">
+                <p class="mh-sub">
+                    A chronology of symbients and their precursors, with the
+                    ideas, gatherings and model releases that shaped them, from
+                    1948 to the present.
+                </p>
+                <div class="mh-right">
+                    draft · <span class="tl-count">…</span>
+                </div>
+            </div>
+
+            <div class="reg-tools" role="group" aria-label="Filter the timeline">
+                <button class="reg-filter is-active" type="button" data-track="all" aria-pressed="true">all</button>
+                <button class="reg-filter" type="button" data-track="symbient" aria-pressed="false">symbients</button>
+                <button class="reg-filter" type="button" data-track="idea" aria-pressed="false">ideas</button>
+                <button class="reg-filter" type="button" data-track="gathering" aria-pressed="false">gatherings</button>
+                <button class="reg-filter" type="button" data-track="lineage" aria-pressed="false">lineage</button>
+                <button class="reg-filter" type="button" data-track="substrate" aria-pressed="false">substrate</button>
+            </div>
+
+            <nav class="tl-years" aria-label="Years"></nav>
+            <div id="tl"></div>
+            <noscript>
+                <p class="reg-empty">
+                    the timeline renders from timeline.json and needs JavaScript
+                </p>
+            </noscript>
+
+            <p class="reg-invite">
+                ? marks an unconfirmed date.
+                <a href="https://github.com/Symbients/website" target="_blank" rel="noopener">Corrections welcome</a>.
+            </p>
+        </main>
+
+            ◈
+            <a href="https://glitchart.org" target="_blank" rel="noopener"
+                >Symbient Research Unit</a
+            >
+            ©2025 ◈
+        </footer>
+
+
+        <script>
+            // ---- theme toggle: light ⇄ dark, same key as index ----
+            (function () {
+                const themes = ["light", "dark"];
+                const glyph = { light: "◑", dark: "◐" };
+                const key = "symbient-theme";
+                const root = document.documentElement;
+                const btn = document.querySelector(".theme-toggle");
+                if (!btn) return;
+                const lbl = btn.querySelector(".tt-label");
+                const cur = () => root.getAttribute("data-theme") || "light";
+                function paintBtn() {
+                    const c = cur();
+                    if (lbl) lbl.textContent = c;
+                    if (btn.firstChild)
+                        btn.firstChild.textContent = glyph[c] + " ";
+                }
+                paintBtn();
+                btn.addEventListener("click", () => {
+                    const next =
+                        themes[(themes.indexOf(cur()) + 1) % themes.length];
+                    if (next === "light") root.removeAttribute("data-theme");
+                    else root.setAttribute("data-theme", next);
+                    paintBtn();
+                    try {
+                        localStorage.setItem(key, next);
+                    } catch (e) {}
+                });
+            })();
+
+            // ---- terminal: a character-level genetic model swept by a block cursor ----
+            // Verbatim from index.html (keep in sync): a positional grammar of
+            // char-slots per face; a block cursor steps one CHARACTER at a time
+            // and symmetric kaomojis crystallise out of the stream.
+            (function () {
+                const term = document.querySelector(".terminal");
+                const host = document.querySelector(".term-line");
+                if (!term || !host) return;
+                const reduce = matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+
+                // per-slot alphabets (positional grammar); " " = part absent
+                const WRAP_L = ["₍", "꒰", "(", "⟨", "⦅", " "];
+                const WRAP_R = ["₎", "꒱", ")", "⟩", "⦆", " "]; // paired by index
+                const EAR_L = ["ᐢ", "ᐠ", "/", "´", " "];
+                const EAR_R = ["ᐢ", "ᐟ", "\\", "`", " "]; // paired by index
+                const EYE = [
+                    "•",
+                    ".",
+                    "･",
+                    "◉",
+                    "ᵔ",
+                    "°",
+                    "˘",
+                    "・",
+                    "^",
+                    "¬",
+                    "ↀ",
+                    "ʘ",
+                ];
+                const MOU = [
+                    "‿",
+                    "ᴥ",
+                    "༝",
+                    "ꞈ",
+                    "ﻌ",
+                    "◡",
+                    "﹏",
+                    "ε",
+                    "‸",
+                    ".",
+                    "ω",
+                    "³",
+                    "⌓",
+                    "ᗢ",
+                ];
+                const SLOTS = 8; // wrapL, earL, eyeL, mouth, eyeR, earR, wrapR, sep
+                const FREE = [WRAP_L, EAR_L, EYE, MOU]; // slots 0–3 drift freely
+
+                const ri = (n) => Math.floor(Math.random() * n);
+                const rnd = () => Math.random();
+                const pick = (a) => a[ri(a.length)];
+                const idxOf = (a, v) => {
+                    const i = a.indexOf(v);
+                    return i < 0 ? 0 : i;
+                };
+
+                let chars = [],
+                    spans = [],
+                    cur = 0,
+                    gen = 1,
+                    prompt;
+
+                // a fresh glyph for slot `pos` of the unit starting at index `u`
+                function evolveChar(pos, u) {
+                    if (pos === 7) return " "; // separator
+                    if (pos === 4)
+                        return rnd() < 0.66 ? chars[u + 2] : pick(EYE); // eyeR ← eyeL
+                    if (pos === 5)
+                        return rnd() < 0.6
+                            ? EAR_R[idxOf(EAR_L, chars[u + 1])]
+                            : pick(EAR_R);
+                    if (pos === 6)
+                        return rnd() < 0.72
+                            ? WRAP_R[idxOf(WRAP_L, chars[u])]
+                            : pick(WRAP_R);
+                    return pick(FREE[pos]); // wrapL, earL, eyeL, mouth
+                }
+
+                const units = () =>
+                    Math.max(
+                        4,
+                        Math.min(16, Math.floor((term.clientWidth - 86) / 66)),
+                    );
+
+                function build() {
+                    const n = units() * SLOTS;
+                    chars = [];
+                    for (let i = 0; i < n; i++)
+                        chars.push(evolveChar(i % SLOTS, i - (i % SLOTS)));
+                    cur = 0;
+                    host.textContent = "";
+                    prompt = document.createElement("span");
+                    prompt.className = "term-prompt";
+                    prompt.textContent =
+                        "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    host.appendChild(prompt);
+                    spans = chars.map((c, i) => {
+                        const s = document.createElement("span");
+                        s.className = "term-ch" + (i === cur ? " cursor" : "");
+                        s.textContent = c;
+                        host.appendChild(s);
+                        return s;
+                    });
+                }
+
+                function step() {
+                    const n = chars.length;
+                    const prev = cur;
+                    spans[prev].classList.remove("cursor");
+                    cur = (cur + 1) % n;
+                    if (cur === 0) {
+                        gen++;
+                        prompt.textContent =
+                            "gen " + String(gen).padStart(3, "0") + " ▸ ";
+                    }
+                    // the char the cursor just left may mutate within its slot
+                    if (rnd() < 0.45) {
+                        const pos = prev % SLOTS;
+                        const nc = evolveChar(pos, prev - pos);
+                        if (nc !== chars[prev]) {
+                            chars[prev] = nc;
+                            spans[prev].textContent = nc;
+                        }
+                    }
+                    spans[cur].classList.add("cursor");
+                }
+
+                build();
+                window.addEventListener("resize", build);
+                // pause the tick while the tab is hidden — a backgrounded
+                // timer still fires (throttled) and does pointless DOM work;
+                // resuming on visibility keeps the on-screen behavior (and
+                // the generation counter's pace while watched) unchanged.
+                let tickTimer = null;
+                function startTick() {
+                    if (!reduce && !tickTimer && !document.hidden) {
+                        tickTimer = setInterval(step, 92);
+                    }
+                }
+                function stopTick() {
+                    if (tickTimer) {
+                        clearInterval(tickTimer);
+                        tickTimer = null;
+                    }
+                }
+                startTick();
+                document.addEventListener("visibilitychange", () => {
+                    if (document.hidden) stopTick();
+                    else startTick();
+                });
+            })();
+
+            // ---- relocate the kaomoji ticker to the bottom on phones ----
+            // Same as index.html: .site-hero's backdrop-filter makes it the
+            // containing block for fixed descendants, so the mobile bottom-pin
+            // only works if the ticker is lifted out to <body>; on wider
+            // screens it goes back inside .hero-inner.
+            (function () {
+                const term = document.querySelector(".terminal");
+                const inner = document.querySelector(".hero-inner");
+                if (!term || !inner) return;
+                const mq = window.matchMedia("(max-width: 640px)");
+                function place() {
+                    const wantBottom = mq.matches;
+                    const atBottom = term.parentElement === document.body;
+                    if (wantBottom === atBottom) return;
+                    if (wantBottom) document.body.appendChild(term);
+                    else inner.appendChild(term); // last child, after .hero-bar
+                    window.dispatchEvent(new Event("resize"));
+                }
+                place();
+                mq.addEventListener("change", place);
+            })();
+
+            // ---- mobile section menu: hamburger toggles the section dropdown ----
+            // Verbatim from index.html. Closes on choose, outside-tap, or Esc;
+            // inert on desktop where the burger is display:none.
+            (function () {
+                const hero = document.querySelector(".site-hero");
+                const burger = document.querySelector(".nav-burger");
+                const nav = document.querySelector(".site-nav");
+                if (!hero || !burger || !nav) return;
+                const mq = window.matchMedia("(max-width: 640px)");
+
+                function setOpen(v) {
+                    hero.classList.toggle("nav-open", v);
+                    burger.setAttribute("aria-expanded", v ? "true" : "false");
+                }
+
+                burger.addEventListener("click", (e) => {
+                    e.stopPropagation(); // don't let the document handler re-close
+                    setOpen(!hero.classList.contains("nav-open"));
+                });
+                // choosing a section closes the menu (the anchor still navigates)
+                nav.addEventListener("click", (e) => {
+                    if (e.target.closest(".tab")) setOpen(false);
+                });
+                // outside tap / Esc closes
+                document.addEventListener("click", (e) => {
+                    if (
+                        hero.classList.contains("nav-open") &&
+                        !hero.contains(e.target)
+                    )
+                        setOpen(false);
+                });
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") setOpen(false);
+                });
+                // collapse when crossing back to the desktop layout
+                mq.addEventListener("change", () => setOpen(false));
+            })();
+
+            // ---- the timeline: fetch timeline.json, render by year, filter by track ----
+            (function () {
+                const root = document.getElementById("tl");
+                const strip = document.querySelector(".tl-years");
+                if (!root || !strip) return;
+                const count = document.querySelector(".tl-count");
+                const pills = document.querySelectorAll(".reg-filter[data-track]");
+                const REG = "registry.html";
+                const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                const esc = (s) =>
+                    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+                // the markdown the timeline uses: links (urls may hold parens), `code`, **bold**, *italic*
+                function md(s) {
+                    let h = esc(s);
+                    h = h.replace(/`([^`]+)`/g, "<code>$1</code>");
+                    h = h.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+                    h = h.replace(/(^|[^*])\*([^*\s][^*]*)\*(?!\*)/g, "$1<i>$2</i>");
+                    h = h.replace(
+                        /\[([^\]]+)\]\((https?:\/\/(?:[^()\s]|\([^()\s]*\))+)\)/g,
+                        '<a href="$2" target="_blank" rel="noopener">$1</a>'
+                    );
+                    return h;
+                }
+                function parts(d) {
+                    const m = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?/.exec(d || "");
+                    return m ? { y: m[1], m: m[2] ? MON[+m[2] - 1] : "", d: m[3] ? String(+m[3]) : "" } : null;
+                }
+                // the year is the band label, so a row shows only what is finer than it
+                function when(e) {
+                    const a = parts(e.date), b = e.end ? parts(e.end) : null;
+                    const q = e.certain ? "" : '<span class="q">?</span>';
+                    const dm = (p) => [p.d, p.m].filter(Boolean).join(" ");
+                    let s = dm(a);
+                    if (b) {
+                        if (b.y !== a.y) s = (s ? s + " " + a.y : a.y) + " – " + [dm(b), b.y].filter(Boolean).join(" ");
+                        else if (b.m === a.m && a.d && b.d) s = a.d + "–" + b.d + " " + a.m;
+                        else s = s + " – " + dm(b);
+                    }
+                    return s + q;
+                }
+                const short = (n) => n.replace(/\s*\(.*$/, "").replace(/,.*$/, "");
+
+                // a self-contained copy (the shared preview) carries its data inline
+                const inline = document.getElementById("tl-data");
+                Promise.all(
+                    inline
+                        ? JSON.parse(inline.textContent)
+                        : [
+                              fetch("timeline.json").then((r) => r.json()),
+                              fetch("registry.json").then((r) => r.json()).catch(() => []),
+                          ]
+                ).then(([tl, reg]) => {
+                    const list = Array.isArray(reg) ? reg : reg.entries || reg.registry || [];
+                    const inReg = new Set(list.map((x) => x.id).filter(Boolean));
+                    const years = [];
+                    const byYear = {};
+                    tl.events.forEach((e) => {
+                        const y = e.iso.slice(0, 4);
+                        if (!byYear[y]) (byYear[y] = []), years.push(y);
+                        byYear[y].push(e);
+                    });
+
+                    root.innerHTML = years
+                        .map((y) => {
+                            const rows = byYear[y]
+                                .map((e) => {
+                                    const who = e.symbients
+                                        .map((id) => {
+                                            const s = tl.symbients[id];
+                                            const n = esc(short(s ? s.name : id));
+                                            return inReg.has(id)
+                                                ? '<a href="' + REG + '#' + id + '">' + n + "</a>"
+                                                : "<span>" + n + "</span>";
+                                        })
+                                        .join(" ");
+                                    const ring = e.track === "symbient" ? "" : " is-ring";
+                                    return (
+                                        '<li class="tl-ev" id="' + e.id + '" data-track="' + e.track + '">' +
+                                        '<a class="tl-when" href="#' + e.id + '"><time datetime="' + e.iso + '">' + when(e) + "</time></a>" +
+                                        '<div><p class="tl-what">' + md(e.event) + "</p>" +
+                                        '<div class="tl-tags"><button class="tl-track" type="button" data-track="' + e.track + '">' +
+                                        '<span class="node' + ring + '"></span>' + e.track + "</button>" +
+                                        (who ? '<span class="tl-who">' + who + "</span>" : "") +
+                                        "</div></div>" +
+                                        '<div class="tl-src">' + md(e.sources) + "</div></li>"
+                                    );
+                                })
+                                .join("");
+                            return (
+                                '<section class="tl-year" id="y' + y + '" data-year="' + y + '">' +
+                                '<h2 class="tl-y"><span>' + y + "</span></h2>" +
+                                '<ol class="tl-events">' + rows + "</ol></section>"
+                            );
+                        })
+                        .join("");
+                    strip.innerHTML = years.map((y) => '<a href="#y' + y + '" data-year="' + y + '">' + y + "</a>").join("");
+
+                    const sections = [...root.querySelectorAll(".tl-year")];
+                    const links = Object.fromEntries([...strip.querySelectorAll("a")].map((a) => [a.dataset.year, a]));
+
+                    function apply(track) {
+                        let n = 0;
+                        root.querySelectorAll(".tl-ev").forEach((li) => {
+                            const show = track === "all" || li.dataset.track === track;
+                            li.hidden = !show;
+                            if (show) n++;
+                        });
+                        sections.forEach((s) => {
+                            const empty = !s.querySelector(".tl-ev:not([hidden])");
+                            s.hidden = empty;
+                            links[s.dataset.year].classList.toggle("is-empty", empty);
+                        });
+                        pills.forEach((p) => {
+                            const on = p.dataset.track === track;
+                            p.classList.toggle("is-active", on);
+                            p.setAttribute("aria-pressed", on);
+                        });
+                        if (count) count.textContent = n + (n === 1 ? " event" : " events");
+                    }
+                    pills.forEach((p) => p.addEventListener("click", () => apply(p.dataset.track)));
+                    root.addEventListener("click", (ev) => {
+                        const b = ev.target.closest(".tl-track");
+                        if (!b) return;
+                        apply(b.dataset.track);
+                        b.closest(".tl-year").scrollIntoView({ block: "start" });
+                    });
+                    apply("all");
+
+                    // the strip can wrap, so its height drives the sticky offsets below it
+                    const setH = () =>
+                        document.documentElement.style.setProperty("--strip-h", strip.offsetHeight + "px");
+                    setH();
+                    window.addEventListener("resize", setH);
+
+                    // the year under the sticky strip is the current one
+                    let cur = null;
+                    function mark() {
+                        const line = strip.getBoundingClientRect().bottom + 24;
+                        let y = null;
+                        for (const s of sections) {
+                            if (s.hidden) continue;
+                            if (s.getBoundingClientRect().top <= line) y = s.dataset.year;
+                            else break;
+                        }
+                        y = y || (sections.find((s) => !s.hidden) || {}).dataset?.year;
+                        if (y === cur) return;
+                        if (cur && links[cur]) links[cur].classList.remove("is-current");
+                        cur = y;
+                        const a = links[y];
+                        if (!a) return;
+                        a.classList.add("is-current");
+                        // keep the current year in view when the strip scrolls sideways (phones)
+                        if (strip.scrollWidth > strip.clientWidth) {
+                            const l = a.offsetLeft - strip.clientWidth / 2 + a.offsetWidth / 2;
+                            strip.scrollTo({ left: l, behavior: "smooth" });
+                        }
+                    }
+                    let ticking = false;
+                    window.addEventListener("scroll", () => {
+                        if (ticking) return;
+                        ticking = true;
+                        requestAnimationFrame(() => ((ticking = false), mark()));
+                    }, { passive: true });
+                    mark();
+
+                    // the page renders after load, so honour a #year or #event link now
+                    // (after fonts settle, and without smooth scroll, or it lands short)
+                    const id = decodeURIComponent(location.hash.slice(1));
+                    if (id)
+                        (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+                            const t = document.getElementById(id);
+                            if (t) t.scrollIntoView({ block: "start", behavior: "instant" });
+                            mark();
+                        });
+                });
+            })();
+        </script>
+    </body>
+</html>
