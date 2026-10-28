@@ -40,6 +40,8 @@ The `index.html` Organics section (`#sec-organics`) is static HTML generated fro
 
 ## Shared JS (each file is a single IIFE, no modules/exports except where noted)
 
+- **`nav.js`** — the masthead tab list for `index.html`, `registry.html` and `timeline.html`. Each page has an empty `<nav id="site-nav" data-page="…">` followed by `<script src="/nav.js"></script>` (not deferred, so the tabs exist before the page's scroll-spy and burger scripts run). Add or rename a tab here, never in a page.
+
 - **`theme.js`** — two themes (`light` / `dark`) via `html[data-theme="…"]`. Auto-picks by time of day, persists a manual choice to `localStorage["symbient-theme"]`, and re-checks on focus/visibility. It looks for a `.theme-toggle` element to wire a cycle button and **silently bails if none exists**.
 - **`reveal.js`** — IntersectionObserver that tags below-the-fold `<section>`s with `.reveal` then `.is-visible` as they near the viewport. These classes are **added only here** — without JS or under `prefers-reduced-motion` the page stays fully visible. CSS must keep `.reveal`/`.is-visible` styling in sync.
 - **`ascii.js`** — renders the animated ASCII art figures in the index About section. Each `<pre class="ascii-fig" data-fig="…">` is a 68×34 raster built from light/density fields through a tonal ramp; frames are computed lazily and cached; `prefers-reduced-motion` holds frame 0. The accent glyph `@` is wrapped in `<span class="hot">` (so `.hot` is used only from JS string literals, not in any HTML). Exposes `window.SYMBIENT_FIGS = FIGS` **solely** so `tools/render-figs.js` can drive it under a stub DOM. Editing the figures: the CSS `line-height`/char-width ratio (1.15 / 0.6) must match `ASPECT` (1.92) in the file — change them together.

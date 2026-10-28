@@ -2340,22 +2340,9 @@
                             <span></span><span></span><span></span>
                         </span>
                     </button>
-                    <nav class="site-nav" id="site-nav" aria-label="sections">
-                        <a class="tab" href="#sec-home">home</a>
-                        <a class="tab" href="#sec-narrative">narrative</a>
-                        <a class="tab" href="#sec-symbients">symbients</a>
-                        <!-- lexicon section temporarily disabled -->
-                        <!-- <a class="tab" href="#sec-lexicon">lexicon</a> -->
-                        <a class="tab" href="#sec-events">events</a>
-                        <a class="tab" href="#sec-writings">writings</a>
-                        <a class="tab" href="#sec-organics">organics</a>
-                        <!-- tree section temporarily disabled -->
-                        <!-- <a class="tab" href="#sec-tree">tree</a> -->
-                        <!-- the non-anchor tabs: separate PAGES.
-                             scroll-spy skips them (it only tracks #sec-* links) -->
-                        <a class="tab" href="/registry.html">registry&nbsp;↗</a>
-                        <a class="tab" href="/timeline.html">timeline&nbsp;↗</a>
-                    </nav>
+                    <!-- tabs come from nav.js (one list for every page) -->
+                    <nav class="site-nav" id="site-nav" aria-label="sections" data-page="home"></nav>
+                    <script src="/nav.js"></script>
                     <button
                         class="theme-toggle"
                         type="button"
