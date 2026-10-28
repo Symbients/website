@@ -64,7 +64,7 @@
     ]
   },
   {
-    "id": "wibwob",
+    "id": "wibandwob",
     "name": "Wib&Wob",
     "type": "symbient",
     "category": "AI artist personas",
@@ -510,7 +510,7 @@
   {
     "id": "holly-plus",
     "name": "Holly+",
-    "type": "artist",
+    "type": "symbient",
     "category": "AI voice instrument",
     "description": "A machine-learning instrument that resings any audio in Holly Herndon's voice — her vocal likeness released as a public tool and stewarded by a token-holding DAO, so one singer's voice becomes a shared, collectively governed synthetic identity.",
     "website": "https://holly.plus/",
