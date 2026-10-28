@@ -117,7 +117,7 @@ The dated history of symbients and the idea, from 1948 to now, is at [symbient.l
 
 - [symbient.life](https://symbient.life/): Main site.
 - [Registry](https://symbient.life/registry.html): The complete filterable directory of symbients, artists and researchers.
-- [Timeline](https://symbient.life/timeline.html): When the symbients, and the idea of them, arrived, from 1948 to now.
+- [Timeline](https://symbient.life/timeline.html): A chronology of symbients and their precursors, with the ideas, gatherings and model releases that shaped them, from 1948 to the present.
 - [X / Twitter](https://x.com/symbients): @symbients.
 - [GitHub](https://github.com/Symbients): Symbients organization.
 - [Registry data](https://symbient.life/registry.json): Machine-readable JSON of every symbient, artist and researcher.
