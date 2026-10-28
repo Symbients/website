@@ -1005,10 +1005,10 @@
   },
   {
     "id": "brxs",
-    "name": "Brxs",
+    "name": "brxs",
     "type": "researcher",
     "category": "Forward deployed artist",
-    "description": "A pseudonymous \"forward deployed artist\" making living protocol art — building Protocol Works' local-first instruments like Rabbithole and Glitchbox, and writing at ABSRD, in pursuit of love, beauty and making souls sing.",
+    "description": "brxs explores living systems and how self-replicating, time-persistent entities relate across substrates. At [protocol]works, he builds local-first, ai-enabled instruments like Rabbithole and LSDJ.ai, and writes metaphilosophical essays at ABSRD.ai. All in pursuit of technology that feels alive, and makes us feel more alive.",
     "website": "https://protocol.works",
     "location": "",
     "creator_or_steward": "",
@@ -1023,7 +1023,7 @@
         "url": "https://x.com/memetic_mystic"
       },
       {
-        "label": "ABSRD",
+        "label": "ABSRD.ai",
         "url": "https://absrd.ai"
       }
     ]
