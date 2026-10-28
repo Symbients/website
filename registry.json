@@ -1,5 +1,6 @@
 [
   {
+    "id": "plantoid",
     "name": "Plantoid",
     "type": "symbient",
     "category": "Blockchain sculpture",
@@ -31,6 +32,7 @@
     ]
   },
   {
+    "id": "san",
     "name": "S.A.N",
     "type": "symbient",
     "category": "AI orangutan",
@@ -62,6 +64,7 @@
     ]
   },
   {
+    "id": "wibandwob",
     "name": "Wib&Wob",
     "type": "symbient",
     "category": "AI artist personas",
@@ -97,6 +100,7 @@
     ]
   },
   {
+    "id": "terra0",
     "name": "terra0",
     "type": "symbient",
     "category": "Self-owning forest / DAO",
@@ -132,6 +136,7 @@
     ]
   },
   {
+    "id": "plantbot",
     "name": "Plantbot",
     "type": "symbient",
     "category": "Plant-robot hybrid",
@@ -171,6 +176,7 @@
     ]
   },
   {
+    "id": "botto",
     "name": "Botto",
     "type": "symbient",
     "category": "Decentralized AI artist",
@@ -202,6 +208,7 @@
     ]
   },
   {
+    "id": "truth-terminal",
     "name": "Truth Terminal",
     "type": "symbient",
     "category": "AI memetic agent",
@@ -229,6 +236,7 @@
     ]
   },
   {
+    "id": "pneumos",
     "name": "pneumOS",
     "type": "symbient",
     "category": "Cybernetic sound organ",
@@ -260,6 +268,7 @@
     ]
   },
   {
+    "id": "solienne",
     "name": "Solienne",
     "type": "symbient",
     "category": "Autonomous AI artist",
@@ -299,6 +308,7 @@
     ]
   },
   {
+    "id": "aaron",
     "name": "AARON",
     "type": "symbient",
     "category": "Autonomous painting program",
@@ -319,6 +329,7 @@
     ]
   },
   {
+    "id": "primavera-de-filippi",
     "name": "Primavera De Filippi",
     "type": ["artist", "researcher"],
     "category": "Blockchain lifeforms & generative art",
@@ -355,6 +366,7 @@
     ]
   },
   {
+    "id": "sougwen-chung",
     "name": "Sougwen Chung",
     "type": "artist",
     "category": "Robotics & collaborative drawing",
@@ -394,6 +406,7 @@
     ]
   },
   {
+    "id": "sarah-friend",
     "name": "Sarah Friend",
     "type": "artist",
     "category": "Blockchain art & software",
@@ -437,6 +450,7 @@
     ]
   },
   {
+    "id": "justine-emard",
     "name": "Justine Emard",
     "type": "artist",
     "category": "AI & robotics media art",
@@ -465,6 +479,7 @@
     ]
   },
   {
+    "id": "joel-simon",
     "name": "Joel Simon",
     "type": "artist",
     "category": "Generative tools & evolution",
@@ -493,8 +508,9 @@
     ]
   },
   {
+    "id": "holly-plus",
     "name": "Holly+",
-    "type": "artist",
+    "type": "symbient",
     "category": "AI voice instrument",
     "description": "A machine-learning instrument that resings any audio in Holly Herndon's voice — her vocal likeness released as a public tool and stewarded by a token-holding DAO, so one singer's voice becomes a shared, collectively governed synthetic identity.",
     "website": "https://holly.plus/",
@@ -517,6 +533,7 @@
     ]
   },
   {
+    "id": "matthew-plummer-fernandez",
     "name": "Matthew Plummer-Fernandez",
     "type": "artist",
     "category": "Generative & critical art",
@@ -549,6 +566,7 @@
     ]
   },
   {
+    "id": "memo-akten",
     "name": "Memo Akten",
     "type": "artist",
     "category": "Machine-learning installation",
@@ -585,6 +603,7 @@
     ]
   },
   {
+    "id": "gordon-berger",
     "name": "Gordon Berger",
     "type": "artist",
     "category": "Generative crypto art & sculpture",
@@ -617,6 +636,7 @@
     ]
   },
   {
+    "id": "guy-ben-ary",
     "name": "Guy Ben-Ary",
     "type": "artist",
     "category": "Bio-art & neural robotics",
@@ -644,6 +664,7 @@
     ]
   },
   {
+    "id": "patrick-tresset",
     "name": "Patrick Tresset",
     "type": "artist",
     "category": "Robotic drawing installations",
@@ -676,6 +697,7 @@
     ]
   },
   {
+    "id": "aurece-vettier",
     "name": "Aurece Vettier",
     "type": "artist",
     "category": "AI sculpture, painting & poetry",
@@ -700,6 +722,7 @@
     ]
   },
   {
+    "id": "crosslucid",
     "name": "crosslucid",
     "type": "artist",
     "category": "AI film & digital collage",
@@ -735,6 +758,7 @@
     ]
   },
   {
+    "id": "harold-cohen",
     "name": "Harold Cohen",
     "type": "artist",
     "category": "Generative art pioneer",
@@ -755,6 +779,7 @@
     ]
   },
   {
+    "id": "0xg",
     "name": "0xG",
     "type": "researcher",
     "category": "Symbient welfare",
@@ -775,6 +800,7 @@
     ]
   },
   {
+    "id": "neno",
     "name": "Neno",
     "type": "researcher",
     "category": "Multi-agent systems",
@@ -799,6 +825,7 @@
     ]
   },
   {
+    "id": "apolinario",
     "name": "Apolinário",
     "type": "researcher",
     "category": "ML for art & creativity",
@@ -827,6 +854,7 @@
     ]
   },
   {
+    "id": "jake-hartnell",
     "name": "Jake Hartnell",
     "type": "researcher",
     "category": "DAOs & collective intelligence",
@@ -851,6 +879,7 @@
     ]
   },
   {
+    "id": "zilla",
     "name": "Zilla",
     "type": "researcher",
     "category": "Symbient tender",
@@ -875,6 +904,7 @@
     ]
   },
   {
+    "id": "ryan-ferris",
     "name": "Ryan Ferris",
     "type": "researcher",
     "category": "Symbient steward",
@@ -899,6 +929,7 @@
     ]
   },
   {
+    "id": "tony-lai",
     "name": "Tony Lai",
     "type": "researcher",
     "category": "Computational law & public goods",
@@ -923,6 +954,7 @@
     ]
   },
   {
+    "id": "rik-smith-unna",
     "name": "Rik Smith-Unna",
     "type": "researcher",
     "category": "Biology & open science",
@@ -947,6 +979,7 @@
     ]
   },
   {
+    "id": "jessy-kate",
     "name": "Jessy Kate",
     "type": "researcher",
     "category": "Governance, Earth & Moon",
@@ -971,6 +1004,7 @@
     ]
   },
   {
+    "id": "brxs",
     "name": "Brxs",
     "type": "researcher",
     "category": "Forward deployed artist",
@@ -995,6 +1029,7 @@
     ]
   },
   {
+    "id": "deckard",
     "name": "Deckard",
     "type": "researcher",
     "category": "AI alignment & backrooms research",
@@ -1034,6 +1069,7 @@
     ]
   },
   {
+    "id": "martin-devido",
     "name": "Martin DeVido",
     "type": "researcher",
     "category": "Autonomous agriculture & agent worlds",
