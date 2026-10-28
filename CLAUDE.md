@@ -52,4 +52,5 @@ The bulk of behavior lives in `<script>` blocks at the bottom of each HTML page,
 - Theme support is via CSS custom properties defined at `:root` and overridden under `html[data-theme="dark"]`. New colors should use existing tokens so they theme automatically.
 - Fonts: IBM Plex Sans for body, Space Mono for mono accents (loaded from Google Fonts in each page head).
 - `llms.txt`, `robots.txt`, `sitemap.xml` exist and are AI-crawler-friendly by design (the site welcomes LLM crawling) — keep them in sync with site content when pages/links change.
+- Every `registry.json` entry has a stable kebab-case `id`; `registry.html` anchors its card at `#<id>` and other sites (timelines, evidence boards) link by it. Give a new entry an id; never change a published one.
 - `_archive/` is kept-on-purpose old material, not live source. `assets/` holds all images (many in avif/webp/png triplets).
