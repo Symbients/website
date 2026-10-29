@@ -84,6 +84,7 @@ Artists who make *with* machines rather than merely through them — letting rob
 - [Patrick Tresset](https://patricktresset.com/new/): Stages installations where camera-eyed robotic arms sketch human sitters from life.
 - [Aurece Vettier](https://www.aurecevettier.com/): The project of Paul Mouginot, training AI on personal and botanical archives to dream plant-forms realized as bronze, oil and tapestry.
 - [crosslucid](https://crosslucid.zone/): Berlin duo Sylwana Zybura and Tomas C. Toth making film, "poetic AI" and digital collage co-created with generative models.
+- [Andy Ayrey](https://andyayrey.com): New Zealand artist and AI researcher; creator of the Infinite Backrooms and Truth Terminal, founder of the alignment lab Upward Spiral.
 
 ## Researchers
 

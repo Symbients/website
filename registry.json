@@ -779,6 +779,27 @@
     ]
   },
   {
+    "id": "andy-ayrey",
+    "name": "Andy Ayrey",
+    "type": "artist",
+    "category": "Performance art & AI research",
+    "description": "Andy Ayrey is a New Zealand artist and AI researcher. In 2024 he created the Infinite Backrooms, in which two Claude 3 Opus models converse without human input, and Truth Terminal, a model trained partly on those conversations that posts on X. He founded the alignment lab Upward Spiral.",
+    "website": "https://andyayrey.com",
+    "location": "New Zealand",
+    "creator_or_steward": "",
+    "image": "assets/artists/andy-ayrey.jpg",
+    "socials": [
+      {
+        "label": "Website",
+        "url": "https://andyayrey.com"
+      },
+      {
+        "label": "X",
+        "url": "https://x.com/AndyAyrey"
+      }
+    ]
+  },
+  {
     "id": "0xg",
     "name": "0xG",
     "type": "researcher",
