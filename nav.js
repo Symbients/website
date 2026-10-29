@@ -1,44 +1,32 @@
-// nav.js: the site's tab list, kept in one place.
+// nav.js: the site's tab list, kept in one place. One tab per page; the home
+// page's sections are reached by scrolling, not from the bar.
 //
-// Each page carries an empty nav and loads this file straight after it, without
-// defer, so the tabs exist before the page's own scripts (scroll-spy, burger) run:
+// Each page carries the nav and loads this file straight after it, without
+// defer, so the tabs exist before the page's own scripts (burger menu) run:
 //
-//   <nav class="site-nav" id="site-nav" aria-label="sections" data-page="registry">
+//   <nav class="site-nav" id="site-nav" aria-label="pages" data-page="registry">
 //       <a class="tab" href="/">home</a> … registry, timeline   (fallback without JavaScript)
 //   </nav>
 //   <script src="/nav.js"></script>
 //
-// The fallback holds only the three pages; nav.js replaces it with the full list.
-// data-page: "home" (index.html: section tabs scroll in place, page tabs carry ↗),
-// or the name of a page tab below (that tab is marked active).
+// data-page names the current page; its tab is marked active. To add a page
+// (about, contact), add a line to PAGES.
 (function () {
     const nav = document.getElementById("site-nav");
     if (!nav) return;
     const page = nav.dataset.page || "";
-    const home = page === "home";
 
-    // sections of index.html, in page order (scroll-spy tracks these #sec-* links)
-    const SECTIONS = [
-        ["home", "sec-home"],
-        ["narrative", "sec-narrative"],
-        ["symbients", "sec-symbients"],
-        // ["lexicon", "sec-lexicon"], // section temporarily disabled
-        ["events", "sec-events"],
-        ["writings", "sec-writings"],
-        ["organics", "sec-organics"],
-        // ["tree", "sec-tree"], // section temporarily disabled
-    ];
-    // separate pages
     const PAGES = [
+        ["home", "/"],
         ["registry", "/registry.html"],
         ["timeline", "/timeline.html"],
     ];
 
-    const tab = (label, href, current) =>
-        '<a class="tab' + (current ? " active" : "") + '" href="' + href + '"' +
-        (current ? ' aria-current="page"' : "") + ">" + label + "</a>";
-
-    nav.innerHTML =
-        SECTIONS.map(([label, id]) => tab(label, (home ? "#" : "/#") + id, false)).join("") +
-        PAGES.map(([label, href]) => tab(home ? label + "&nbsp;↗" : label, href, label === page)).join("");
+    nav.innerHTML = PAGES.map(([label, href]) => {
+        const on = label === page;
+        return (
+            '<a class="tab' + (on ? " active" : "") + '" href="' + href + '"' +
+            (on ? ' aria-current="page"' : "") + ">" + label + "</a>"
+        );
+    }).join("");
 })();

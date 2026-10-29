@@ -2340,10 +2340,10 @@
                             <span></span><span></span><span></span>
                         </span>
                     </button>
-                    <!-- tabs come from nav.js (one list for every page) -->
-                    <nav class="site-nav" id="site-nav" aria-label="sections" data-page="home">
+                    <!-- page tabs come from nav.js (one list for every page) -->
+                    <nav class="site-nav" id="site-nav" aria-label="pages" data-page="home">
                         <!-- fallback for readers without JavaScript (crawlers, text browsers); nav.js replaces it -->
-                        <a class="tab" href="#sec-home">home</a>
+                        <a class="tab" href="/">home</a>
                         <a class="tab" href="/registry.html">registry</a>
                         <a class="tab" href="/timeline.html">timeline</a>
                     </nav>
@@ -5237,7 +5237,8 @@
                 const sections = [
                     ...document.querySelectorAll(".scroll .port-section"),
                 ];
-                if (!links.length || !sections.length) return;
+                // the bar holds page tabs only; the title still tracks the section in view
+                if (!sections.length) return;
 
                 // masthead title tracks the section in view (replaces the old
                 // per-view TITLES map that the SPA set on show()).
