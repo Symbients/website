@@ -23,12 +23,13 @@ Surge is used for throwaway previews (see README); not part of the main deploy.
 
 ## Pages and per-page asset loading
 
-There are three independent public pages. **Which shared assets each loads is load-bearing for any cleanup or refactor** — a class or script that's dead on one page may be live on another, and vice versa:
+There are four independent public pages. **Which shared assets each loads is load-bearing for any cleanup or refactor** — a class or script that's dead on one page may be live on another, and vice versa:
 
 | Page | Stylesheets | Scripts |
 |---|---|---|
 | `index.html` | `theme.css` + inline `<style>` | large inline `<script>` |
 | `registry.html` | `theme.css` + inline `<style>` | inline registry/filter script |
+| `timeline.html` | `theme.css` + inline `<style>` | inline timeline/filter script |
 | `tokyo.html` | `tufte-css` (CDN) + its own inline `<style>` | `theme.js`, `reveal.js` + inline `<script>` |
 
 `index.html` and `registry.html` share **`theme.css`** — the design tokens, base reset and masthead "chrome" (frozen hero bar + section nav + kaomoji terminal + the ≤640 phone treatment) they render identically. Each links it **before** its inline `<style>`, so page-specific rules override the shared ones by source order. The `theme.css` baseline is the always-visible, always-interactive masthead; `index.html`'s inline `<style>` layers its intro machinery on top (the hero starts `opacity:0` and the intro reveals it, with the pointer-events juggling that implies). Each page also keeps its own `.theme-toggle` (index's has over-hero intro states; registry's is always on-page) and its own pinned-ticker clearance. `tokyo.html` does **not** use `theme.css` — it is self-contained on Tufte CSS plus inline styles, but still shares `theme.js` and `reveal.js`.
@@ -38,6 +39,8 @@ When the palette or masthead changes, edit `theme.css` **once** (it was previous
 The `index.html` Organics section (`#sec-organics`) is static HTML generated from `registry.json` (all non-symbient entries). Regenerate that section from the data rather than hand-editing it when registry entries change. `registry.html` renders the complete directory directly from `registry.json` at runtime.
 
 ## Shared JS (each file is a single IIFE, no modules/exports except where noted)
+
+- **`nav.js`** — the masthead tab list for `index.html`, `registry.html` and `timeline.html`: one tab per page (home, registry, timeline); the home page's sections are reached by scrolling, and its masthead title still follows the section in view. Each page has a `<nav id="site-nav" data-page="…">` holding three fallback links (home, registry, timeline, for readers without JavaScript) followed by `<script src="/nav.js"></script>` (not deferred, so the tabs exist before the page's scroll-spy and burger scripts run). Add or rename a tab here, never in a page. The same file builds the footer (`<footer id="site-foot" data-page="…">`): a site map (home sections, pages, machine-readable files), the socials and the credit; the static credit is the fallback, and children with class `foot-keep` (the timeline version line) are kept. Footer styles live in `theme.css`.
 
 - **`theme.js`** — two themes (`light` / `dark`) via `html[data-theme="…"]`. Auto-picks by time of day, persists a manual choice to `localStorage["symbient-theme"]`, and re-checks on focus/visibility. It looks for a `.theme-toggle` element to wire a cycle button and **silently bails if none exists**.
 - **`reveal.js`** — IntersectionObserver that tags below-the-fold `<section>`s with `.reveal` then `.is-visible` as they near the viewport. These classes are **added only here** — without JS or under `prefers-reduced-motion` the page stays fully visible. CSS must keep `.reveal`/`.is-visible` styling in sync.
@@ -52,5 +55,6 @@ The bulk of behavior lives in `<script>` blocks at the bottom of each HTML page,
 - Theme support is via CSS custom properties defined at `:root` and overridden under `html[data-theme="dark"]`. New colors should use existing tokens so they theme automatically.
 - Fonts: IBM Plex Sans for body, Space Mono for mono accents (loaded from Google Fonts in each page head).
 - `llms.txt`, `robots.txt`, `sitemap.xml` exist and are AI-crawler-friendly by design (the site welcomes LLM crawling) — keep them in sync with site content when pages/links change.
+- `timeline.json` is generated, never hand-edited: the source is `knowledge/facts/symbient-timeline.md` in the Wib&Wob monorepo. Refresh with `uv run ww knowledge timeline --json > ~/Repos/symbients-website/timeline.json` (run in that repo). Its symbient ids are registry ids; `timeline.html?symbient=<id>` and `?track=<track>` open a filtered view, and registry cards link there.
 - Every `registry.json` entry has a stable kebab-case `id`; `registry.html` anchors its card at `#<id>` and other sites (timelines, evidence boards) link by it. Give a new entry an id; never change a published one.
 - `_archive/` is kept-on-purpose old material, not live source. `assets/` holds all images (many in avif/webp/png triplets).

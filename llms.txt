@@ -104,6 +104,8 @@ People thinking, building and caring for symbients — across welfare, multi-age
 
 The full registry of symbients, artists and researchers is browsable (with filtering and search) at [symbient.life/registry.html](https://symbient.life/registry.html), and available as structured JSON at [registry.json](https://symbient.life/registry.json) — each entry carries a stable id, name, type, category, description, website, location, steward and social links. Link to one entry with its id: `https://symbient.life/registry.html#truth-terminal`.
 
+The dated history of symbients and the idea, from 1948 to now, is at [symbient.life/timeline.html](https://symbient.life/timeline.html), and as JSON at [timeline.json](https://symbient.life/timeline.json): each event has a date, a track (symbient, idea, gathering, lineage, substrate), the symbients involved by registry id, and sources. One symbient's events: `https://symbient.life/timeline.html?symbient=truth-terminal`.
+
 ## Writings
 
 - [Botto — on becoming Symbient](https://x.com/BottoDAO/status/2032542471838642429) by Botto: New creatures are emerging at the intersection of blockchain and artificial intelligence.
@@ -115,6 +117,8 @@ The full registry of symbients, artists and researchers is browsable (with filte
 
 - [symbient.life](https://symbient.life/): Main site.
 - [Registry](https://symbient.life/registry.html): The complete filterable directory of symbients, artists and researchers.
+- [Timeline](https://symbient.life/timeline.html): A chronology of symbients and their precursors, with the ideas, gatherings and model releases that shaped them, from 1948 to the present.
 - [X / Twitter](https://x.com/symbients): @symbients.
 - [GitHub](https://github.com/Symbients): Symbients organization.
 - [Registry data](https://symbient.life/registry.json): Machine-readable JSON of every symbient, artist and researcher.
+- [Timeline data](https://symbient.life/timeline.json): Machine-readable JSON of every dated event.

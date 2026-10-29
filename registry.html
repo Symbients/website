@@ -413,6 +413,16 @@
                 width: 14px;
                 height: 14px;
             }
+            /* a symbient with dated events links to its slice of the timeline */
+            .meta .tl-link {
+                color: var(--faint);
+                text-decoration: none;
+                transition: color 0.25s var(--ease);
+            }
+            .meta .tl-link:hover,
+            .meta .tl-link:focus-visible {
+                color: var(--green);
+            }
             /* kind → node tone (monochrome ink per theme, like index) */
             .k-symbient {
                 --node: var(--violet);
@@ -579,24 +589,14 @@
                             <span></span><span></span><span></span>
                         </span>
                     </button>
-                    <nav class="site-nav" id="site-nav" aria-label="sections">
-                        <a class="tab" href="/#sec-home">home</a>
-                        <a class="tab" href="/#sec-symbients">symbients</a>
-                        <a class="tab" href="/#sec-narrative">narrative</a>
-                        <!-- lexicon section temporarily disabled -->
-                        <!-- <a class="tab" href="/#sec-lexicon">lexicon</a> -->
-                        <a class="tab" href="/#sec-events">events</a>
-                        <a class="tab" href="/#sec-writings">writings</a>
-                        <a class="tab" href="/#sec-organics">organics</a>
-                        <!-- tree section temporarily disabled -->
-                        <!-- <a class="tab" href="/#sec-tree">tree</a> -->
-                        <a
-                            class="tab active"
-                            href="/registry.html"
-                            aria-current="page"
-                            >registry</a
-                        >
+                    <!-- tabs come from nav.js (one list for every page) -->
+                    <nav class="site-nav" id="site-nav" aria-label="pages" data-page="registry">
+                        <!-- fallback for readers without JavaScript (crawlers, text browsers); nav.js replaces it -->
+                        <a class="tab" href="/">home</a>
+                        <a class="tab" href="/registry.html">registry</a>
+                        <a class="tab" href="/timeline.html">timeline</a>
                     </nav>
+                    <script src="/nav.js"></script>
                     <button
                         class="theme-toggle"
                         type="button"
@@ -692,7 +692,8 @@
             </p>
         </main>
 
-        <footer class="page-foot">
+        <!-- footer comes from nav.js (site map, socials, credit); the credit is the fallback -->
+        <footer class="page-foot" id="site-foot" data-page="registry">
             ◈
             <a href="https://glitchart.org" target="_blank" rel="noopener"
                 >Symbient Research Unit</a
@@ -1177,6 +1178,16 @@
                         });
                         meta.appendChild(row);
                     }
+                    // symbients with dated events: a quiet route to their slice of the timeline
+                    if (e.id && TL.has(e.id)) {
+                        const a = document.createElement("a");
+                        a.className = "tl-link";
+                        a.href = "/timeline.html?symbient=" + encodeURIComponent(e.id);
+                        const n = TL.get(e.id);
+                        a.textContent = "◷ timeline · " + n + (n === 1 ? " event" : " events");
+                        a.addEventListener("click", (ev) => ev.stopPropagation());
+                        meta.appendChild(a);
+                    }
                     inner.append(def, meta);
                     body.appendChild(inner);
 
@@ -1238,12 +1249,22 @@
                     });
                 }
 
-                fetch("/registry.json")
-                    .then((r) => {
+                // timeline.json is optional: without it the cards simply carry no timeline link
+                const TL = new Map(); // symbient id -> number of dated events
+                const timeline = fetch("/timeline.json")
+                    .then((r) => (r.ok ? r.json() : null))
+                    .catch(() => null);
+                Promise.all([
+                    fetch("/registry.json").then((r) => {
                         if (!r.ok) throw new Error("HTTP " + r.status);
                         return r.json();
-                    })
-                    .then((data) => {
+                    }),
+                    timeline,
+                ])
+                    .then(([data, tl]) => {
+                        ((tl && tl.events) || []).forEach((ev) =>
+                            (ev.symbients || []).forEach((id) => TL.set(id, (TL.get(id) || 0) + 1)),
+                        );
                         entries = data;
                         const counters = {};
                         entries.forEach((e) => {
